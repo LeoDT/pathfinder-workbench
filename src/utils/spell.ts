@@ -1,0 +1,15 @@
+export const translates = {
+  school: '学派',
+  level: '环位',
+  domain: '领域',
+  castingTime: '施法时间',
+  components: '成分',
+  range: '距离',
+  effect: '效果',
+  target: '目标',
+  area: '区域',
+  aiming: '目标, 区域或区域',
+  duration: '持续时间',
+  saving: '豁免',
+  resistance: '法术抗力',
+};

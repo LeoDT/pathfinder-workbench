@@ -1,0 +1,42 @@
+.spell {
+  .spell-description {
+    table {
+      width: 100%;
+      margin: 0.5rem 0;
+
+      th {
+        background-color: #48bb78;
+        font-weight: normal;
+        text-align: left;
+        color: #fff;
+        padding: 0.25rem;
+      }
+
+      td {
+        border-bottom: 1px solid #9ae6b4;
+        padding: 0.25rem;
+      }
+
+      td[colspan],
+      th[colspan] {
+        text-align: center;
+      }
+
+      tr:last-child {
+        td {
+          border-bottom: none;
+        }
+      }
+
+      tr:nth-child(2n + 1) {
+        td {
+          background-color: #c6f6d5;
+        }
+
+        td:first-child:last-child {
+          background-color: #fff;
+        }
+      }
+    }
+  }
+}
