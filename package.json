@@ -2,6 +2,7 @@
   "name": "pathfinder-workbench",
   "version": "0.1.0",
   "private": true,
+  "homepage": "https://leodt.github.io/pathfinder-workbench/",
   "dependencies": {
     "@chakra-ui/icons": "^1.0.5",
     "@chakra-ui/react": "^1.3.2",
@@ -33,8 +34,10 @@
     "wouter": "^2.7.3"
   },
   "scripts": {
+    "predeploy": "npm run build",
+    "deploy": "gh-pages -d build",
     "start": "react-scripts start",
-    "build": "react-scripts build",
+    "build": "react-scripts build && cp build/index.html build/404.html",
     "test": "react-scripts test",
     "eject": "react-scripts eject"
   },
@@ -61,6 +64,7 @@
     "@typescript-eslint/parser": "^4.14.2",
     "elint": "^2.0.1",
     "eslint-plugin-react": "^7.22.0",
+    "gh-pages": "^3.1.0",
     "node-sass": "^5.0.0"
   }
 }
