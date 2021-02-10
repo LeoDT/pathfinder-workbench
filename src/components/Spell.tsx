@@ -7,11 +7,14 @@ import { translates as spellTranslates } from '../utils/spell';
 
 interface Props {
   spell: SpellType;
+  showName?: boolean;
+  showMeta?: boolean;
+  showDescription?: boolean;
 }
 
 export function SpellMeta({ spell }: Props): JSX.Element {
   return (
-    <Table size="sm">
+    <Table size="sm" mt="2">
       <Tbody>
         {(Object.keys(spell.meta) as Array<keyof SpellMetaType>).map((k) => (
           <Tr key={k}>
@@ -26,24 +29,33 @@ export function SpellMeta({ spell }: Props): JSX.Element {
   );
 }
 
-export default function Spell({ spell }: Props): JSX.Element {
+export default function Spell({
+  spell,
+  showName = true,
+  showMeta = true,
+  showDescription = true,
+}: Props): JSX.Element {
   return (
-    <Box border="1px" borderColor="gray.200" p="2" mb="2" className="spell">
-      <Stack direction="row" align="center" mb="2">
-        <Badge>{spell.book.toUpperCase()}</Badge>
-        <Heading as="h4" fontSize="lg" color="purple.600">
-          {spell.name} <small style={{ fontWeight: 'normal' }}>({spell.id})</small>
-        </Heading>
-      </Stack>
+    <Box className="spell">
+      {showName ? (
+        <Stack direction="row" align="center">
+          <Badge>{spell.book.toUpperCase()}</Badge>
+          <Heading as="h4" fontSize="lg" color="purple.600">
+            {spell.name} <small style={{ fontWeight: 'normal' }}>({spell.id})</small>
+          </Heading>
+        </Stack>
+      ) : null}
 
-      <SpellMeta spell={spell} />
+      {showMeta ? <SpellMeta spell={spell} /> : null}
 
-      <Text
-        pt="1"
-        whiteSpace="pre-wrap"
-        dangerouslySetInnerHTML={{ __html: spell.description }}
-        className="spell-description"
-      />
+      {showDescription ? (
+        <Text
+          pt="1"
+          whiteSpace="pre-wrap"
+          dangerouslySetInnerHTML={{ __html: spell.description }}
+          className="spell-description"
+        />
+      ) : null}
     </Box>
   );
 }

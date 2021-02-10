@@ -1,20 +1,20 @@
 import Fuse from 'fuse.js';
 
-import { EntityTypes } from './types';
+import { Entity } from './types';
 
-export type CollectionType = 'spell' | 'weapon';
+export type CollectionEntityType = 'spell' | 'weapon';
 
 export interface CollectionOptions {
   searchFields: Array<string>;
 }
 
-export class Collection<T = EntityTypes> {
-  type: CollectionType;
+export class Collection<T extends Entity = Entity> {
+  type: CollectionEntityType;
   data: Array<T>;
 
   fuse: Fuse<T>;
 
-  constructor(type: CollectionType, data: Array<T>, options: CollectionOptions) {
+  constructor(type: CollectionEntityType, data: Array<T>, options: CollectionOptions) {
     this.type = type;
     this.data = data;
 
@@ -24,5 +24,9 @@ export class Collection<T = EntityTypes> {
 
       keys: options.searchFields,
     });
+  }
+
+  getById(id: string): T | null {
+    return this.data.find((s) => s.id === id) || null;
   }
 }

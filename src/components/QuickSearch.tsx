@@ -30,7 +30,9 @@ export default function QuickSearch(): JSX.Element {
       </Box>
       <Box flexGrow={1} overflowY="auto">
         {searchResult.spell.map(({ item }) => (
-          <Spell spell={item as SpellType} key={item.id} />
+          <Box key={item.id} mb="2" border="1px" borderColor="gray.200" p="2" borderRadius="md">
+            <Spell spell={item as SpellType} />
+          </Box>
         ))}
       </Box>
     </>

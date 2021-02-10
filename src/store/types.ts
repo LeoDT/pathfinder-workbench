@@ -12,7 +12,12 @@ export interface SpellMeta {
   resistance?: string;
 }
 
-export interface Spell {
+export interface Entity {
+  id: string;
+  name: string;
+}
+
+export interface Spell extends Entity {
   id: string;
   name: string;
   meta: SpellMeta;
@@ -20,9 +25,7 @@ export interface Spell {
   description: string;
 }
 
-export interface Weapon {
+export interface Weapon extends Entity {
   id: string;
   name: string;
 }
-
-export type EntityTypes = Spell | Weapon;
