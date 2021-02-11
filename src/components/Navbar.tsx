@@ -1,5 +1,6 @@
-import { Box, Heading, Container, Flex, Spacer, IconButton } from '@chakra-ui/react';
+import { Box, Container, Heading, Flex, Spacer, IconButton, HStack } from '@chakra-ui/react';
 import { Search2Icon } from '@chakra-ui/icons';
+import { GiAncientSword } from 'react-icons/gi';
 
 import QuickSearchToggler from './QuickSearchToggler';
 import NavLink from './NavLink';
@@ -9,9 +10,12 @@ export default function Navbar(): JSX.Element {
     <Box bg="white" borderBottom="1px" borderColor="gray.300" py={3}>
       <Container>
         <Flex alignItems="center">
-          <Heading as="h1" fontSize="initial" mr="8">
-            Pathfinder Workbench
-          </Heading>
+          <HStack mr="8" color="gray.700">
+            <GiAncientSword size={28} />
+            <Heading as="h1" fontSize="large">
+              PFWB
+            </Heading>
+          </HStack>
           <NavLink to="/player">Player</NavLink>
           <Spacer />
           <QuickSearchToggler>

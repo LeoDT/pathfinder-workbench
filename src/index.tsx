@@ -3,6 +3,7 @@ import ReactDOM from 'react-dom';
 import { ChakraProvider, extendTheme } from '@chakra-ui/react';
 import { configure } from 'mobx';
 
+import { CONTAINER_WIDTH } from './constant';
 import { StoreContext, Store } from './store';
 
 import App from './App';
@@ -15,7 +16,7 @@ const theme = extendTheme({
   components: {
     Container: {
       baseStyle: {
-        maxW: '1024px',
+        maxW: CONTAINER_WIDTH,
       },
     },
   },

@@ -1,4 +1,4 @@
-import { BrowserRouter as Router, Route } from 'react-router-dom';
+import { BrowserRouter as Router, Route, Switch, Redirect } from 'react-router-dom';
 import { Box } from '@chakra-ui/react';
 
 import Navbar from './components/Navbar';
@@ -11,7 +11,11 @@ function App(): JSX.Element {
         <Navbar />
 
         <Box pt="4">
-          <Route path="/player" component={PlayerPage} />
+          <Switch>
+            <Route path="/player" component={PlayerPage} />
+
+            <Redirect to="/player" />
+          </Switch>
         </Box>
       </Box>
     </Router>

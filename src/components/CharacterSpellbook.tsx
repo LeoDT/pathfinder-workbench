@@ -23,12 +23,14 @@ import CollectionEntityPicker from './CollectionEntityPicker';
 
 import { Spell as SpellType } from '../store/types';
 import { useCurrentCharacter } from '../store/character';
+import { useIsSmallerScreen } from '../utils/react';
 import Spell from './Spell';
 
-export default function PlayerSpellBook(): JSX.Element {
+export default function CharacterSpellbook(): JSX.Element {
   const initialFocusRef = useRef<HTMLInputElement>(null);
   const character = useCurrentCharacter();
   const [showSpell, setShowSpell] = useState<SpellType | null>();
+  const isSmallerScreen = useIsSmallerScreen();
 
   return (
     <>
@@ -49,10 +51,10 @@ export default function PlayerSpellBook(): JSX.Element {
           </PopoverBody>
         </PopoverContent>
       </Popover>
-      <Divider m="2" />
+      <Divider my="2" />
       <Observer>
         {() => (
-          <SimpleGrid columns={3} spacing="2">
+          <SimpleGrid columns={isSmallerScreen ? 1 : 3} spacing="2">
             {Array.from(character.spellbook).map((spell) => (
               <Flex
                 key={spell.id}
