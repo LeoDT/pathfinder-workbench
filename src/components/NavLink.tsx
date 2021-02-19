@@ -1,17 +1,14 @@
-import { useTheme } from '@chakra-ui/react';
-import { NavLink as RouterNavLink } from 'react-router-dom';
+import { Link, LinkProps } from '@chakra-ui/react';
+import { Link as RouterLink, LinkProps as RouterLinkProps, useRouteMatch } from 'react-router-dom';
 
-interface Props extends React.DOMAttributes<HTMLAnchorElement> {
+interface Props
+  extends LinkProps,
+    Pick<RouterLinkProps, 'to' | 'component' | 'innerRef' | 'replace'> {
   to: string;
-  children: JSX.Element | string;
 }
 
-export default function NavLink({ to, children, onClick }: Props): JSX.Element {
-  const theme = useTheme();
+export default function NavLink({ to, ...props }: Props): JSX.Element {
+  const match = useRouteMatch(to);
 
-  return (
-    <RouterNavLink to={to} activeStyle={{ color: theme.colors.teal[400] }} onClick={onClick}>
-      {children}
-    </RouterNavLink>
-  );
+  return <Link as={RouterLink} color={match ? 'teal.400' : 'black'} to={to} {...props} />;
 }

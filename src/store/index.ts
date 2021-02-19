@@ -3,9 +3,10 @@ import { observable, IObservableArray, autorun } from 'mobx';
 import { set, entries } from 'idb-keyval';
 
 import SPELL_DATA from '../data/spells.json';
+import FEAT_DATA from '../data/feats.json';
 import { createContextNoNullCheck } from '../utils/react';
 
-import { Entity, Spell } from './types';
+import { Entity, Spell, Feat } from './types';
 import { Collection, CollectionEntityType } from './collection';
 import Character from './character';
 
@@ -17,6 +18,9 @@ export class Store {
   constructor() {
     this.collections = [
       new Collection<Spell>('spell', SPELL_DATA, {
+        searchFields: ['id', 'name'],
+      }),
+      new Collection<Feat>('feat', FEAT_DATA, {
         searchFields: ['id', 'name'],
       }),
     ];
@@ -32,17 +36,8 @@ export class Store {
   quickSearch(
     key: string,
     limitEach = 20
-  ): Record<CollectionEntityType, Fuse.FuseResult<Entity>[]> {
-    const result: Record<CollectionEntityType, Fuse.FuseResult<Entity>[]> = {
-      spell: [],
-      weapon: [],
-    };
-
-    this.collections.forEach((c) => {
-      result[c.type] = c.fuse.search(key, { limit: limitEach });
-    });
-
-    return result;
+  ): Array<[CollectionEntityType, Fuse.FuseResult<Entity>[]]> {
+    return this.collections.map((c) => [c.type, c.fuse.search(key, { limit: limitEach })]);
   }
 
   persist(): void {

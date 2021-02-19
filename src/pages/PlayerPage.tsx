@@ -11,6 +11,7 @@ import {
 } from '@chakra-ui/react';
 import { ChevronDownIcon } from '@chakra-ui/icons';
 import { Route, useLocation, Switch, Redirect, useHistory } from 'react-router-dom';
+import { GiSpellBook, GiDiploma } from 'react-icons/gi';
 
 import { useIsSmallerScreen } from '../utils/react';
 import { CurrentCharacterContext } from '../store/character';
@@ -23,8 +24,8 @@ import CharacterSpellbook from '../components/CharacterSpellbook';
 const SIDEBAR_WIDTH = 140;
 
 const NAV_LINKS = [
-  { text: 'Spellbook', url: '/player/spellbook' },
-  { text: 'Feats', url: '/player/feats' },
+  { text: 'Spellbook', url: '/player/spellbook', icon: GiSpellBook },
+  { text: 'Feats', url: '/player/feats', icon: GiDiploma },
 ];
 
 export default function PlayerPage(): JSX.Element {
@@ -66,7 +67,9 @@ export default function PlayerPage(): JSX.Element {
                       history.push(n.url);
                     }}
                   >
-                    <NavLink to={n.url}>{n.text}</NavLink>
+                    <NavLink to={n.url} fontSize="large">
+                      {n.text}
+                    </NavLink>
                   </MenuItem>
                 ))}
               </MenuList>
@@ -77,7 +80,9 @@ export default function PlayerPage(): JSX.Element {
           <Box pos="fixed" width={SIDEBAR_WIDTH} borderRight="1px" borderColor="gray.400">
             {NAV_LINKS.map((n) => (
               <Box key={n.url}>
-                <NavLink to={n.url}>{n.text}</NavLink>
+                <NavLink to={n.url} fontSize="large">
+                  {n.text}
+                </NavLink>
               </Box>
             ))}
           </Box>

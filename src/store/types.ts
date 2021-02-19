@@ -1,3 +1,8 @@
+export interface Entity {
+  id: string;
+  name: string;
+}
+
 export interface SpellMeta {
   school?: string;
   level?: string;
@@ -12,20 +17,24 @@ export interface SpellMeta {
   resistance?: string;
 }
 
-export interface Entity {
-  id: string;
-  name: string;
-}
-
 export interface Spell extends Entity {
-  id: string;
-  name: string;
   meta: SpellMeta;
   book: string;
   description: string;
 }
 
-export interface Weapon extends Entity {
-  id: string;
-  name: string;
+export interface FeatMeta {
+  requirement?: string;
+  benefit?: string;
+  special?: string;
+  normal?: string;
 }
+
+export interface Feat extends Entity {
+  meta: FeatMeta;
+  book: string;
+  brief: string;
+  description?: string;
+}
+
+export type Weapon = Entity;

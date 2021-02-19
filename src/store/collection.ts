@@ -2,7 +2,7 @@ import Fuse from 'fuse.js';
 
 import { Entity } from './types';
 
-export type CollectionEntityType = 'spell' | 'weapon';
+export type CollectionEntityType = 'spell' | 'feat' | 'weapon';
 
 export interface CollectionOptions {
   searchFields: Array<string>;
