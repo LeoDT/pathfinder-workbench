@@ -2,6 +2,7 @@ import './Feat.scss';
 
 import { Box, HStack, Badge, Heading, Table, Tbody, Tr, Td, Text } from '@chakra-ui/react';
 
+import { ENTITY_COLORS } from '../constant';
 import { Feat as FeatType, FeatMeta as FeatMetaType } from '../store/types';
 import { featTranslates } from '../utils/feat';
 
@@ -42,7 +43,7 @@ export default function Feat({
       {showName ? (
         <HStack direction="row" align="center">
           <Badge>{feat.book.toUpperCase()}</Badge>
-          <Heading as="h4" fontSize="lg" color="red.600">
+          <Heading as="h4" fontSize="lg" color={ENTITY_COLORS.feat}>
             {feat.name} <small style={{ fontWeight: 'normal' }}>({feat.id})</small>
           </Heading>
         </HStack>

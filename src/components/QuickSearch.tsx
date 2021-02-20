@@ -4,17 +4,17 @@ import {
   InputGroup,
   Input,
   InputLeftElement,
-  Tabs,
-  TabList,
-  Tab,
   Menu,
   MenuButton,
   MenuItem,
   MenuList,
   Button,
+  Tag,
+  HStack,
 } from '@chakra-ui/react';
 import { Search2Icon, ChevronDownIcon } from '@chakra-ui/icons';
 
+import { ENTITY_COLORS } from '../constant';
 import { useStore } from '../store';
 import { CollectionEntityType } from '../store/collection';
 import { Entity, Spell as SpellType, Feat as FeatType } from '../store/types';
@@ -81,55 +81,55 @@ export default function QuickSearch(): JSX.Element {
         </InputGroup>
         {results && results?.length > 0 ? (
           isSmallerScreen ? (
-            <>
-              <Menu matchWidth autoSelect={false}>
-                <MenuButton
-                  mt="2"
-                  as={Button}
-                  rightIcon={<ChevronDownIcon />}
-                  variant="outline"
-                  width="100%"
-                  colorScheme="blackAlpha"
-                >
-                  {entityTypeTranslates[currentType]}
-                </MenuButton>
-                <MenuList>
-                  {searchResult.map(([type, r]) =>
-                    r.length > 0 ? (
-                      <MenuItem
-                        key={type}
-                        onClick={() => {
-                          setCurrentType(type);
-                        }}
-                      >
-                        {entityTypeTranslates[type]}
-                      </MenuItem>
-                    ) : null
-                  )}
-                </MenuList>
-              </Menu>
-            </>
-          ) : (
-            <Tabs>
-              <TabList pl="1" pt="1">
+            <Menu matchWidth autoSelect={false}>
+              <MenuButton
+                mt="2"
+                as={Button}
+                rightIcon={<ChevronDownIcon />}
+                variant="outline"
+                width="100%"
+                colorScheme="blackAlpha"
+              >
+                {entityTypeTranslates[currentType]}
+              </MenuButton>
+              <MenuList>
                 {searchResult.map(([type, r]) =>
                   r.length > 0 ? (
-                    <Tab
+                    <MenuItem
                       key={type}
-                      onClick={() => setCurrentType(type)}
-                      isSelected={currentType === type}
+                      onClick={() => {
+                        setCurrentType(type);
+                      }}
                     >
                       {entityTypeTranslates[type]}
-                    </Tab>
+                    </MenuItem>
                   ) : null
                 )}
-              </TabList>
-            </Tabs>
+              </MenuList>
+            </Menu>
+          ) : (
+            <HStack pt="2">
+              {searchResult.map(([type, r]) =>
+                r.length > 0 ? (
+                  <Tag
+                    key={type}
+                    onClick={() => setCurrentType(type)}
+                    bgColor={ENTITY_COLORS[type]}
+                    color="white"
+                    cursor="pointer"
+                    size="lg"
+                    opacity={type === currentType ? 1 : 0.6}
+                  >
+                    {entityTypeTranslates[type]}({r.length})
+                  </Tag>
+                ) : null
+              )}
+            </HStack>
           )
         ) : null}
       </Box>
       {results && resultType && results?.length > 0 ? (
-        <Box flexGrow={1} overflowY="auto">
+        <Box flexGrow={1} overflowY="auto" key={resultType}>
           {results.map(({ item }) => (
             <QuickSearchResultItem key={item.id} type={resultType} item={item} />
           ))}

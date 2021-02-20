@@ -2,6 +2,7 @@ import './Spell.scss';
 
 import { Box, Heading, Badge, Text, Stack, Table, Tbody, Tr, Td } from '@chakra-ui/react';
 
+import { ENTITY_COLORS } from '../constant';
 import { Spell as SpellType, SpellMeta as SpellMetaType } from '../store/types';
 import { translates as spellTranslates } from '../utils/spell';
 
@@ -40,7 +41,7 @@ export default function Spell({
       {showName ? (
         <Stack direction="row" align="center">
           <Badge>{spell.book.toUpperCase()}</Badge>
-          <Heading as="h4" fontSize="lg" color="purple.600">
+          <Heading as="h4" fontSize="lg" color={ENTITY_COLORS.spell}>
             {spell.name} <small style={{ fontWeight: 'normal' }}>({spell.id})</small>
           </Heading>
         </Stack>
