@@ -3,6 +3,7 @@ import { Box } from '@chakra-ui/react';
 
 import Navbar from './components/Navbar';
 import PlayerPage from './pages/PlayerPage';
+import DMPage from './pages/DMPage';
 
 function App(): JSX.Element {
   return (
@@ -13,6 +14,7 @@ function App(): JSX.Element {
         <Box pt="4">
           <Switch>
             <Route path="/player" component={PlayerPage} />
+            <Route path="/dm" component={DMPage} />
 
             <Redirect to="/player" />
           </Switch>

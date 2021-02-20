@@ -16,7 +16,10 @@ export default function Navbar(): JSX.Element {
               PFWB
             </Heading>
           </HStack>
-          <NavLink to="/player">Player</NavLink>
+          <HStack>
+            <NavLink to="/player">Player</NavLink>
+            <NavLink to="/dm">DM</NavLink>
+          </HStack>
           <Spacer />
           <QuickSearchToggler>
             <IconButton aria-label="Quick Search" size="sm" icon={<Search2Icon />} />

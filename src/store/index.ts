@@ -7,15 +7,19 @@ import FEAT_DATA from '../data/feats.json';
 import { createContextNoNullCheck } from '../utils/react';
 
 import { Entity, Spell, Feat } from './types';
+import DMStore from './dm';
 import { Collection, CollectionEntityType } from './collection';
 import Character from './character';
 
 export class Store {
+  dm: DMStore;
   collections: Array<Collection>;
 
   characters: IObservableArray<Character>;
 
   constructor() {
+    this.dm = new DMStore();
+
     this.collections = [
       new Collection<Spell>('spell', SPELL_DATA, {
         searchFields: ['id', 'name'],
@@ -45,6 +49,8 @@ export class Store {
       this.characters.forEach((c) => {
         set(`character:${c.id}`, Character.stringify(c));
       });
+
+      set('dm:characters', JSON.stringify(this.dm.characters));
     });
   }
 
@@ -52,8 +58,14 @@ export class Store {
     const persisted = await entries();
 
     persisted.forEach(([k, v]) => {
-      if (typeof k === 'string' && k.startsWith('character')) {
-        this.characters.push(Character.parse(v, this.collections[0] as Collection<Spell>));
+      if (typeof k === 'string') {
+        if (k.startsWith('character')) {
+          this.characters.push(Character.parse(v, this.collections[0] as Collection<Spell>));
+        }
+
+        if (k === 'dm:characters') {
+          this.dm.characters.replace(JSON.parse(v));
+        }
       }
     });
 
