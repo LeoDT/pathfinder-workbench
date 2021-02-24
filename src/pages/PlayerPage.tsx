@@ -11,21 +11,20 @@ import {
 } from '@chakra-ui/react';
 import { ChevronDownIcon } from '@chakra-ui/icons';
 import { Route, useLocation, Switch, Redirect, useHistory } from 'react-router-dom';
-import { GiSpellBook, GiDiploma } from 'react-icons/gi';
 
 import { useIsSmallerScreen } from '../utils/react';
 import { CurrentCharacterContext } from '../store/character';
 import { useStore } from '../store';
 
-import CharacterFeats from '../components/CharacterFeats';
 import NavLink from '../components/NavLink';
-import CharacterSpellbook from '../components/CharacterSpellbook';
+import CharacterBasic from '../components/Player/CharacterBasic';
+import CharacterSpellbook from '../components/Player/CharacterSpellbook';
 
 const SIDEBAR_WIDTH = 140;
 
 const NAV_LINKS = [
-  { text: 'Spellbook', url: '/player/spellbook', icon: GiSpellBook },
-  { text: 'Feats', url: '/player/feats', icon: GiDiploma },
+  { text: 'Basic', url: '/player/basic' },
+  { text: 'Spellbook', url: '/player/spellbook' },
 ];
 
 export default function PlayerPage(): JSX.Element {
@@ -89,10 +88,10 @@ export default function PlayerPage(): JSX.Element {
         )}
         <Box pl={showMenuNav ? 0 : SIDEBAR_WIDTH + 20}>
           <Switch>
+            <Route path="/player/basic" component={CharacterBasic} />
             <Route path="/player/spellbook" component={CharacterSpellbook} />
-            <Route path="/player/feats" component={CharacterFeats} />
 
-            <Redirect to="/player/spellbook" />
+            <Redirect to="/player/basic" />
           </Switch>
         </Box>
       </Container>

@@ -2,26 +2,22 @@ import { useMemo, useState, MutableRefObject } from 'react';
 import { Box, InputGroup, Input, InputLeftElement } from '@chakra-ui/react';
 import { Search2Icon } from '@chakra-ui/icons';
 
-import { useStore } from '../store';
-import { CollectionEntityType } from '../store/collection';
+import { Collection } from '../store/collection';
 import { Entity } from '../store/types';
 
 interface Props {
-  collectionEntityType: CollectionEntityType;
+  collection: Collection;
   onPick: (entity: Entity) => void;
   inputRef?: MutableRefObject<HTMLInputElement | null>;
 }
 
 export default function CollectionEntityPicker({
-  collectionEntityType,
+  collection,
   inputRef,
   onPick,
 }: Props): JSX.Element {
-  const store = useStore();
   const [searchKey, setSearchKey] = useState('');
   const searchResult = useMemo(() => {
-    const collection = store.collections.find((c) => c.type === collectionEntityType);
-
     return collection?.fuse.search(searchKey) || [];
   }, [searchKey]);
 

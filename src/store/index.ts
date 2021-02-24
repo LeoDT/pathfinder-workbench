@@ -2,32 +2,24 @@ import Fuse from 'fuse.js';
 import { observable, IObservableArray, autorun } from 'mobx';
 import { set, entries } from 'idb-keyval';
 
-import SPELL_DATA from '../data/spells.json';
-import FEAT_DATA from '../data/feats.json';
 import { createContextNoNullCheck } from '../utils/react';
 
-import { Entity, Spell, Feat } from './types';
+import { Entity } from './types';
 import DMStore from './dm';
-import { Collection, CollectionEntityType } from './collection';
+import { collections, Collection, CollectionEntityType } from './collection';
 import Character from './character';
 
 export class Store {
   dm: DMStore;
-  collections: Array<Collection>;
+
+  collections: typeof collections; // for components
 
   characters: IObservableArray<Character>;
 
   constructor() {
     this.dm = new DMStore();
 
-    this.collections = [
-      new Collection<Spell>('spell', SPELL_DATA, {
-        searchFields: ['id', 'name'],
-      }),
-      new Collection<Feat>('feat', FEAT_DATA, {
-        searchFields: ['id', 'name'],
-      }),
-    ];
+    this.collections = collections;
 
     this.characters = observable.array([], { deep: false });
   }
@@ -41,7 +33,10 @@ export class Store {
     key: string,
     limitEach = 20
   ): Array<[CollectionEntityType, Fuse.FuseResult<Entity>[]]> {
-    return this.collections.map((c) => [c.type, c.fuse.search(key, { limit: limitEach })]);
+    return ([collections.spell, collections.feat] as Array<Collection<Entity>>).map((c) => [
+      c.type,
+      c.fuse.search(key, { limit: limitEach }),
+    ]);
   }
 
   persist(): void {
@@ -60,7 +55,7 @@ export class Store {
     persisted.forEach(([k, v]) => {
       if (typeof k === 'string') {
         if (k.startsWith('character')) {
-          this.characters.push(Character.parse(v, this.collections[0] as Collection<Spell>));
+          this.characters.push(Character.parse(v, collections.spell));
         }
 
         if (k === 'dm:characters') {

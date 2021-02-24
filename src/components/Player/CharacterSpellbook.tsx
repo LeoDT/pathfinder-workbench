@@ -19,14 +19,17 @@ import { DeleteIcon } from '@chakra-ui/icons';
 import { useRef, useState } from 'react';
 import { Observer } from 'mobx-react-lite';
 
-import CollectionEntityPicker from './CollectionEntityPicker';
+import CollectionEntityPicker from '../CollectionEntityPicker';
 
-import { Spell as SpellType } from '../store/types';
-import { useCurrentCharacter } from '../store/character';
-import { useIsSmallerScreen } from '../utils/react';
-import Spell from './Spell';
+import { useStore } from '../../store';
+import { Spell as SpellType } from '../../store/types';
+import { useCurrentCharacter } from '../../store/character';
+import { useIsSmallerScreen } from '../../utils/react';
+
+import Spell from '../Spell';
 
 export default function CharacterSpellbook(): JSX.Element {
+  const store = useStore();
   const initialFocusRef = useRef<HTMLInputElement>(null);
   const character = useCurrentCharacter();
   const [showSpell, setShowSpell] = useState<SpellType | null>();
@@ -42,7 +45,7 @@ export default function CharacterSpellbook(): JSX.Element {
           <PopoverBody>
             <PopoverArrow />
             <CollectionEntityPicker
-              collectionEntityType="spell"
+              collection={store.collections.spell}
               inputRef={initialFocusRef}
               onPick={(item) => {
                 character.spellbook.add(item as SpellType);

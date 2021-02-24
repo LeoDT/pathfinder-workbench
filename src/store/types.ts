@@ -1,6 +1,32 @@
+export enum AbilityType {
+  str = 'str',
+  dex = 'dex',
+  con = 'con',
+  int = 'int',
+  wis = 'wis',
+  cha = 'cha',
+}
+
+export interface Abilities {
+  [AbilityType.str]: number;
+  [AbilityType.dex]: number;
+  [AbilityType.con]: number;
+  [AbilityType.int]: number;
+  [AbilityType.wis]: number;
+  [AbilityType.cha]: number;
+}
+
 export interface Entity {
   id: string;
   name: string;
+}
+
+export interface Race extends Entity {
+  ability: Partial<Abilities>;
+}
+
+export interface Class extends Entity {
+  hd: number;
 }
 
 export interface SpellMeta {
