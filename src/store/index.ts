@@ -55,7 +55,7 @@ export class Store {
     persisted.forEach(([k, v]) => {
       if (typeof k === 'string') {
         if (k.startsWith('character')) {
-          this.characters.push(Character.parse(v, collections.spell));
+          this.characters.push(Character.parse(v));
         }
 
         if (k === 'dm:characters') {

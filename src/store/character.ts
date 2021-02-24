@@ -1,11 +1,21 @@
-import { isEmpty } from 'lodash-es';
+import { isEmpty, pick } from 'lodash-es';
 import { observable, makeObservable, ObservableSet, computed, action } from 'mobx';
 import shortid from 'shortid';
 
 import { createContextNoNullCheck } from '../utils/react';
-import { Collection, collections } from './collection';
+import { collections } from './collection';
 import { Abilities, Spell, Race, AbilityType } from './types';
 import { getModifiers, getTotalScoreCosts, addBonusScores } from '../utils/ability';
+
+interface OptionalCharacterParams {
+  id?: string;
+  baseAbility?: Abilities;
+  bonusAbilityType?: AbilityType;
+
+  raceId?: string;
+  classId?: string;
+  spellbookIds?: string[];
+}
 
 export default class Character {
   id: string;
@@ -15,10 +25,21 @@ export default class Character {
 
   raceId: string;
   classId: string;
-  spellbook: ObservableSet<Spell>;
+  spellbookIds: ObservableSet<string>;
 
-  constructor(name: string, id?: string) {
+  constructor(
+    name: string,
+    {
+      id,
+      baseAbility,
+      bonusAbilityType = AbilityType.str,
+      raceId = 'Human',
+      classId = 'Fighter',
+      spellbookIds,
+    }: OptionalCharacterParams = {}
+  ) {
     makeObservable(this, {
+      name: observable,
       baseAbility: observable,
 
       abilityModifier: computed,
@@ -27,23 +48,25 @@ export default class Character {
       bonusAbilityType: observable,
       bonusAbility: computed,
 
-      setRace: action,
       raceId: observable,
       race: computed,
+      setRace: action,
 
       classId: observable,
+
+      spellbook: computed,
     });
 
     this.name = name;
     this.id = id ?? shortid.generate();
 
-    this.baseAbility = { str: 10, dex: 10, con: 10, int: 10, wis: 10, cha: 10 };
-    this.bonusAbilityType = AbilityType.str;
+    this.baseAbility = baseAbility ?? { str: 10, dex: 10, con: 10, int: 10, wis: 10, cha: 10 };
+    this.bonusAbilityType = bonusAbilityType ?? AbilityType.str;
 
-    this.raceId = 'Human';
-    this.classId = 'Fighter';
+    this.raceId = raceId;
+    this.classId = classId;
 
-    this.spellbook = observable.set(new Set(), { deep: false });
+    this.spellbookIds = observable.set(new Set(spellbookIds), { deep: false });
   }
 
   get ability(): Abilities {
@@ -81,25 +104,32 @@ export default class Character {
     this.bonusAbilityType = AbilityType.str;
   }
 
+  get spellbook(): Array<Spell> {
+    return Array.from(this.spellbookIds)
+      .map((id) => collections.spell.getById(id))
+      .filter((t): t is Spell => Boolean(t));
+  }
+
+  static serializableProps = [
+    'raceId',
+    'classId',
+    'baseAbility',
+    'bonusAbilityType',
+    'spellbookIds',
+  ];
+
   static stringify(c: Character): string {
     return JSON.stringify({
       id: c.id,
       name: c.name,
       spellbook: Array.from(c.spellbook).map((s) => s.id),
+      ...pick(c, Character.serializableProps),
     });
   }
 
-  static parse(s: string, spellCollection: Collection<Spell>): Character {
+  static parse(s: string): Character {
     const json = JSON.parse(s);
-    const character = new Character(json.name, json.id);
-
-    for (const spellId of json.spellbook) {
-      const spell = spellCollection.getById(spellId);
-
-      if (spell) {
-        character.spellbook.add(spell);
-      }
-    }
+    const character = new Character(json.name, json);
 
     return character;
   }

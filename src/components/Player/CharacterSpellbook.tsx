@@ -48,7 +48,7 @@ export default function CharacterSpellbook(): JSX.Element {
               collection={store.collections.spell}
               inputRef={initialFocusRef}
               onPick={(item) => {
-                character.spellbook.add(item as SpellType);
+                character.spellbookIds.add(item.id);
               }}
             />
           </PopoverBody>
@@ -79,7 +79,7 @@ export default function CharacterSpellbook(): JSX.Element {
                   _hover={{ color: 'red.600' }}
                   onClick={(e) => {
                     if (confirm('Are you sure?')) {
-                      character.spellbook.delete(spell);
+                      character.spellbookIds.delete(spell.id);
                     }
                     e.stopPropagation();
                   }}

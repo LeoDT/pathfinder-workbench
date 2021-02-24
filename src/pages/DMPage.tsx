@@ -32,6 +32,7 @@ export default function DMPage(): JSX.Element {
         </Button>
         <Spacer />
         <Button onClick={() => dm.rollAllInitiative()}>全员投先攻</Button>
+        <Button onClick={() => dm.healAll()}>全员恢复</Button>
         <ButtonSwitch
           options={[
             { text: '创建顺序', value: 'normal' },

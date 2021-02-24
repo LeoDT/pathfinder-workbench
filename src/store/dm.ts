@@ -6,6 +6,7 @@ export interface DMCharacter {
   name: string;
   initiative: string;
   hp: string;
+  maxHP: string;
   rolledInitiative: number;
 }
 
@@ -15,6 +16,7 @@ export default class DMStore {
   constructor() {
     makeObservable(this, {
       rollAllInitiative: action,
+      healAll: action,
       sortedCharacters: computed,
     });
 
@@ -36,6 +38,7 @@ export default class DMStore {
       name: this.getNonConflictName(name),
       initiative: '0',
       hp: '1',
+      maxHP: '10',
       rolledInitiative: 0,
     });
   }
@@ -50,6 +53,15 @@ export default class DMStore {
 
   rollAllInitiative(): void {
     this.characters.forEach((c) => this.rollInitiative(c));
+  }
+
+  heal(c: DMCharacter): void {
+    c.hp = c.maxHP;
+  }
+  healAll(): void {
+    this.characters.forEach((c) => {
+      c.hp = c.maxHP;
+    });
   }
 
   getNonConflictName(name: string): string {

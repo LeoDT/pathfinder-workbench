@@ -64,7 +64,7 @@ export default function Character({ character: c }: Props): JSX.Element {
                 type="number"
               />
             </Box>
-            <Box p="2">
+            <Box p="2" borderRight="1px" borderColor="gray.200">
               <Text fontSize="xx-small" color="gray.400">
                 HP
               </Text>
@@ -72,6 +72,19 @@ export default function Character({ character: c }: Props): JSX.Element {
                 value={c.hp}
                 onChange={(e) => {
                   c.hp = e.target.value;
+                }}
+                variant="unstyled"
+                type="number"
+              />
+            </Box>
+            <Box p="2">
+              <Text fontSize="xx-small" color="gray.400">
+                Max HP
+              </Text>
+              <Input
+                value={c.maxHP}
+                onChange={(e) => {
+                  c.maxHP = e.target.value;
                 }}
                 variant="unstyled"
                 type="number"
@@ -86,6 +99,9 @@ export default function Character({ character: c }: Props): JSX.Element {
             <Spacer />
             <Button size="xs" onClick={() => dm.rollInitiative(c)}>
               投先攻
+            </Button>
+            <Button size="xs" onClick={() => dm.heal(c)}>
+              恢复
             </Button>
             <Button
               colorScheme="red"
