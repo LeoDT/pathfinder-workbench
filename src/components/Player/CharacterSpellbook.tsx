@@ -44,13 +44,18 @@ export default function CharacterSpellbook(): JSX.Element {
         <PopoverContent>
           <PopoverBody>
             <PopoverArrow />
-            <CollectionEntityPicker
-              collection={store.collections.spell}
-              inputRef={initialFocusRef}
-              onPick={(item) => {
-                character.spellbookIds.add(item.id);
-              }}
-            />
+            <Observer>
+              {() => (
+                <CollectionEntityPicker
+                  collection={store.collections.spell}
+                  inputRef={initialFocusRef}
+                  onPick={(id) => {
+                    character.spellbookIds.add(id);
+                  }}
+                  items={Array.from(character.spellbookIds)}
+                />
+              )}
+            </Observer>
           </PopoverBody>
         </PopoverContent>
       </Popover>

@@ -1,4 +1,4 @@
-import { useMemo, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import {
   Box,
   InputGroup,
@@ -62,6 +62,10 @@ export default function QuickSearch(): JSX.Element {
   const [currentType, setCurrentType] = useState(() => searchResult?.[0]?.[0]);
   const isSmallerScreen = useIsSmallerScreen();
   const [resultType, results] = searchResult.find(([t]) => currentType === t) || [];
+
+  useEffect(() => {
+    setCurrentType(searchResult?.[0]?.[0]);
+  }, [searchResult]);
 
   return (
     <>

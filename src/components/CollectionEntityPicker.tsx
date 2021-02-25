@@ -1,13 +1,13 @@
 import { useMemo, useState, MutableRefObject } from 'react';
-import { Box, InputGroup, Input, InputLeftElement } from '@chakra-ui/react';
-import { Search2Icon } from '@chakra-ui/icons';
+import { Box, InputGroup, Input, InputLeftElement, Icon, Text, HStack } from '@chakra-ui/react';
+import { FaSearch, FaCheck } from 'react-icons/fa';
 
 import { Collection } from '../store/collection';
-import { Entity } from '../store/types';
 
 interface Props {
   collection: Collection;
-  onPick: (entity: Entity) => void;
+  onPick: (id: string) => void;
+  items: Array<string>;
   inputRef?: MutableRefObject<HTMLInputElement | null>;
 }
 
@@ -15,6 +15,7 @@ export default function CollectionEntityPicker({
   collection,
   inputRef,
   onPick,
+  items,
 }: Props): JSX.Element {
   const [searchKey, setSearchKey] = useState('');
   const searchResult = useMemo(() => {
@@ -25,7 +26,7 @@ export default function CollectionEntityPicker({
     <Box>
       <InputGroup>
         <InputLeftElement>
-          <Search2Icon color="gray.400" />
+          <Icon as={FaSearch} color="gray.400" />
         </InputLeftElement>
         <Input
           ref={inputRef}
@@ -39,21 +40,31 @@ export default function CollectionEntityPicker({
       </InputGroup>
       {searchResult.length > 0 ? (
         <Box borderTop="1px" borderColor="gray.100" mt="2" maxH={300} overflow="auto">
-          {searchResult.map(({ item }) => (
-            <Box
-              key={item.id}
-              onClick={() => onPick(item)}
-              p="2"
-              borderBottom="1px"
-              borderColor="gray.200"
-              cursor="pointer"
-              _hover={{
-                background: 'gray.100',
-              }}
-            >
-              {item.name} ({item.id})
-            </Box>
-          ))}
+          {searchResult.map(({ item }) => {
+            const picked = items.includes(item.id);
+
+            return (
+              <HStack
+                key={item.id}
+                onClick={() => {
+                  if (!picked) onPick(item.id);
+                }}
+                p="2"
+                borderBottom="1px"
+                borderColor="gray.200"
+                _hover={{
+                  background: 'gray.100',
+                }}
+                color={picked ? 'gray.400' : 'black'}
+                cursor={picked ? 'not-allowed' : 'pointer'}
+              >
+                {picked ? <Icon as={FaCheck} /> : null}
+                <Text>
+                  {item.name} ({item.id})
+                </Text>
+              </HStack>
+            );
+          })}
         </Box>
       ) : null}
     </Box>
