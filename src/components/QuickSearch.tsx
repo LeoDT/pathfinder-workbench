@@ -64,8 +64,12 @@ export default function QuickSearch(): JSX.Element {
   const [resultType, results] = searchResult.find(([t]) => currentType === t) || [];
 
   useEffect(() => {
-    setCurrentType(searchResult?.[0]?.[0]);
-  }, [searchResult]);
+    const hasResult = searchResult.map(([t]) => t);
+
+    if (!hasResult.includes(currentType)) {
+      setCurrentType(searchResult?.[0]?.[0]);
+    }
+  }, [currentType, searchResult]);
 
   return (
     <>
