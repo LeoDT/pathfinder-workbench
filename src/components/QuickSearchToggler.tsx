@@ -24,7 +24,7 @@ export default function QuickSearchToggler({ children }: Props): JSX.Element {
       <Drawer isOpen={isOpen} onClose={onClose} size="lg">
         <DrawerOverlay>
           <DrawerContent>
-            <DrawerHeader>Quick Search</DrawerHeader>
+            <DrawerHeader>搜一切</DrawerHeader>
             <DrawerBody d="flex" flexDir="column">
               <QuickSearch />
             </DrawerBody>

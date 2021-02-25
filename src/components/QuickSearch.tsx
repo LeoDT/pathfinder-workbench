@@ -71,7 +71,7 @@ export default function QuickSearch(): JSX.Element {
             <Search2Icon color="gray.400" />
           </InputLeftElement>
           <Input
-            placeholder="Search Anything"
+            placeholder="计划是搜一切"
             autoFocus
             value={searchKey}
             onChange={(e) => {

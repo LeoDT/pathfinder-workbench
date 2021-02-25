@@ -1,4 +1,4 @@
-import { Box, Container, Heading, Flex, Spacer, IconButton, HStack } from '@chakra-ui/react';
+import { Box, Container, Heading, Flex, Spacer, IconButton, HStack, Icon } from '@chakra-ui/react';
 import { Search2Icon } from '@chakra-ui/icons';
 import { GiAncientSword } from 'react-icons/gi';
 
@@ -11,13 +11,13 @@ export default function Navbar(): JSX.Element {
       <Container>
         <Flex alignItems="center">
           <HStack mr="8" color="gray.700">
-            <GiAncientSword size={28} />
+            <Icon as={GiAncientSword} h="28px" w="28px" />
             <Heading as="h1" fontSize="large">
               PFWB
             </Heading>
           </HStack>
           <HStack>
-            <NavLink to="/player">Player</NavLink>
+            <NavLink to="/player">PC</NavLink>
             <NavLink to="/dm">DM</NavLink>
           </HStack>
           <Spacer />

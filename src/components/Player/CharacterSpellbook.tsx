@@ -39,7 +39,7 @@ export default function CharacterSpellbook(): JSX.Element {
     <>
       <Popover initialFocusRef={initialFocusRef} placement="bottom-start">
         <PopoverTrigger>
-          <Button size="sm">Add Spell</Button>
+          <Button size="sm">添加法术</Button>
         </PopoverTrigger>
         <PopoverContent>
           <PopoverBody>

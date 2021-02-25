@@ -23,8 +23,8 @@ import CharacterSpellbook from '../components/Player/CharacterSpellbook';
 const SIDEBAR_WIDTH = 140;
 
 const NAV_LINKS = [
-  { text: 'Basic', url: '/player/basic' },
-  { text: 'Spellbook', url: '/player/spellbook' },
+  { text: '基本', url: '/player/basic' },
+  { text: '法术', url: '/player/spellbook' },
 ];
 
 export default function PlayerPage(): JSX.Element {
