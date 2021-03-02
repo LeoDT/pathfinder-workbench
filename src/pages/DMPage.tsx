@@ -1,6 +1,19 @@
 import { useState } from 'react';
 import { Observer } from 'mobx-react-lite';
-import { Button, Container, SimpleGrid, HStack, Spacer } from '@chakra-ui/react';
+import {
+  Button,
+  ButtonGroup,
+  IconButton,
+  Menu,
+  MenuButton,
+  MenuList,
+  MenuItem,
+  Container,
+  SimpleGrid,
+  HStack,
+  Spacer,
+} from '@chakra-ui/react';
+import { FaChevronDown } from 'react-icons/fa';
 
 import { useStore } from '../store';
 import { useIsSmallerScreen } from '../utils/react';
@@ -15,8 +28,10 @@ export default function DMPage(): JSX.Element {
 
   return (
     <Container>
-      <HStack w="full">
+      <HStack w="full" wrap="wrap" spacing={[0, 2]}>
         <Button
+          mb={[2, 0]}
+          mr={[2, 0]}
           onClick={() => {
             dm.addCharacter('无名氏');
           }}
@@ -24,6 +39,7 @@ export default function DMPage(): JSX.Element {
           添加人物
         </Button>
         <Button
+          mb={[2, 0]}
           onClick={() => {
             dm.addCharacter('敌人');
           }}
@@ -31,8 +47,16 @@ export default function DMPage(): JSX.Element {
           添加敌人
         </Button>
         <Spacer />
-        <Button onClick={() => dm.rollAllInitiative()}>全员投先攻</Button>
-        <Button onClick={() => dm.healAll()}>全员恢复</Button>
+        <ButtonGroup isAttached mb={[2, 0]}>
+          <Button onClick={() => dm.rollAllInitiative()}>全员投先攻</Button>
+          <Menu placement="bottom-end">
+            <MenuButton as={IconButton} icon={<FaChevronDown />} aria-label="More Action" />
+            <MenuList>
+              <MenuItem onClick={() => dm.rollAllPerception()}>全员投察觉</MenuItem>
+              <MenuItem onClick={() => dm.healAll()}>全员恢复</MenuItem>
+            </MenuList>
+          </Menu>
+        </ButtonGroup>
         <ButtonSwitch
           options={[
             { text: '创建顺序', value: 'normal' },

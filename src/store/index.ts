@@ -59,7 +59,7 @@ export class Store {
         }
 
         if (k === 'dm:characters') {
-          this.dm.characters.replace(JSON.parse(v));
+          this.dm.characters.replace(DMStore.parseCharacters(v));
         }
       }
     });

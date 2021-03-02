@@ -1,15 +1,5 @@
 import { Observer } from 'mobx-react-lite';
-import {
-  VStack,
-  HStack,
-  Input,
-  InputGroup,
-  InputRightElement,
-  Box,
-  Text,
-  Button,
-  Spacer,
-} from '@chakra-ui/react';
+import { VStack, HStack, Input, Box, Text, Button } from '@chakra-ui/react';
 
 import { useStore } from '../../store';
 import { DMCharacter } from '../../store/dm';
@@ -32,11 +22,19 @@ export default function Character({ character: c }: Props): JSX.Element {
           spacing={0}
           opacity={parseInt(c.hp) <= 0 ? 0.6 : 1}
         >
-          <Box borderBottom="1px" borderColor="gray.200" p="2" w="100%">
-            <Text fontSize="xx-small" color="gray.400">
-              姓名
-            </Text>
-            <InputGroup>
+          <HStack
+            borderBottom="1px"
+            borderBottomColor="gray.200"
+            borderTopWidth="6px"
+            borderTopColor={stringToColor(c.name)}
+            borderTopRadius="md"
+            p="2"
+            w="100%"
+          >
+            <Box flexBasis="50%">
+              <Text fontSize="xx-small" color="gray.400">
+                姓名
+              </Text>
               <Input
                 value={c.name}
                 onChange={(e) => {
@@ -46,24 +44,20 @@ export default function Character({ character: c }: Props): JSX.Element {
                 fontSize="lg"
                 fontWeight="bold"
               />
-              <InputRightElement w="4" h="4" bgColor={stringToColor(c.name)} top="6px" />
-            </InputGroup>
-          </Box>
+            </Box>
+            <Box>
+              <Text fontSize="sm">
+                先攻: {parseInt(c.initiative) + c.rolledInitiative}({c.initiative} +{' '}
+                {c.rolledInitiative})
+              </Text>
+              <Text fontSize="sm">
+                察觉: {parseInt(c.perception) + c.rolledPerception}({c.perception} +{' '}
+                {c.rolledPerception})
+              </Text>
+            </Box>
+          </HStack>
 
           <HStack spacing={0} borderBottom="1px" borderColor="gray.200">
-            <Box p="2" borderRight="1px" borderColor="gray.200">
-              <Text fontSize="xx-small" color="gray.400">
-                先攻加值
-              </Text>
-              <Input
-                value={c.initiative}
-                onChange={(e) => {
-                  c.initiative = e.target.value;
-                }}
-                variant="unstyled"
-                type="number"
-              />
-            </Box>
             <Box p="2" borderRight="1px" borderColor="gray.200">
               <Text fontSize="xx-small" color="gray.400">
                 HP
@@ -91,14 +85,40 @@ export default function Character({ character: c }: Props): JSX.Element {
               />
             </Box>
           </HStack>
+          <HStack spacing={0} borderBottom="1px" borderColor="gray.200">
+            <Box p="2" borderRight="1px" borderColor="gray.200">
+              <Text fontSize="xx-small" color="gray.400">
+                先攻加值
+              </Text>
+              <Input
+                value={c.initiative}
+                onChange={(e) => {
+                  c.initiative = e.target.value;
+                }}
+                variant="unstyled"
+                type="number"
+              />
+            </Box>
+            <Box p="2">
+              <Text fontSize="xx-small" color="gray.400">
+                察觉加值
+              </Text>
+              <Input
+                value={c.perception}
+                onChange={(e) => {
+                  c.perception = e.target.value;
+                }}
+                variant="unstyled"
+                type="number"
+              />
+            </Box>
+          </HStack>
           <HStack p="2" justify="flex-start" align="center" w="full">
-            <Text fontSize="sm">
-              先攻: {parseInt(c.initiative) + c.rolledInitiative}({c.initiative} +{' '}
-              {c.rolledInitiative})
-            </Text>
-            <Spacer />
             <Button size="xs" onClick={() => dm.rollInitiative(c)}>
               投先攻
+            </Button>
+            <Button size="xs" onClick={() => dm.rollPerception(c)}>
+              投察觉
             </Button>
             <Button size="xs" onClick={() => dm.heal(c)}>
               恢复
