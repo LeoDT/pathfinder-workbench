@@ -18,12 +18,14 @@ import { useStore } from '../store';
 
 import NavLink from '../components/NavLink';
 import CharacterBasic from '../components/Player/CharacterBasic';
+import CharacterSkills from '../components/Player/CharacterSkills';
 import CharacterSpellbook from '../components/Player/CharacterSpellbook';
 
 const SIDEBAR_WIDTH = 140;
 
 const NAV_LINKS = [
   { text: '基本', url: '/player/basic' },
+  { text: '技能', url: '/player/skills' },
   { text: '法术', url: '/player/spellbook' },
 ];
 
@@ -45,7 +47,12 @@ export default function PlayerPage(): JSX.Element {
 
   return (
     <CurrentCharacterContext.Provider value={currentCharacter}>
-      <Container>
+      <Container
+        display={showMenuNav ? 'block' : 'flex'}
+        justifyContent="flex-start"
+        alignItems="flex-start"
+        pt="4"
+      >
         {showMenuNav ? (
           <>
             <Menu matchWidth autoSelect={false}>
@@ -76,7 +83,7 @@ export default function PlayerPage(): JSX.Element {
             <Divider my="2" />
           </>
         ) : (
-          <Box pos="fixed" width={SIDEBAR_WIDTH} borderRight="1px" borderColor="gray.400">
+          <Box width={SIDEBAR_WIDTH} borderRight="1px" borderColor="gray.400" flexShrink={0}>
             {NAV_LINKS.map((n) => (
               <Box key={n.url}>
                 <NavLink to={n.url} fontSize="large">
@@ -86,9 +93,10 @@ export default function PlayerPage(): JSX.Element {
             ))}
           </Box>
         )}
-        <Box pl={showMenuNav ? 0 : SIDEBAR_WIDTH + 20}>
+        <Box pl={showMenuNav ? '0' : '4'} flexGrow={1}>
           <Switch>
             <Route path="/player/basic" component={CharacterBasic} />
+            <Route path="/player/skills" component={CharacterSkills} />
             <Route path="/player/spellbook" component={CharacterSpellbook} />
 
             <Redirect to="/player/basic" />

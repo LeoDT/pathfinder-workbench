@@ -11,7 +11,7 @@ function App(): JSX.Element {
       <Box>
         <Navbar />
 
-        <Box pt="4">
+        <Box>
           <Switch>
             <Route path="/player" component={PlayerPage} />
             <Route path="/dm" component={DMPage} />

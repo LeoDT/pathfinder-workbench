@@ -1,10 +1,10 @@
 import { isEmpty, pick } from 'lodash-es';
-import { observable, makeObservable, ObservableSet, computed, action } from 'mobx';
+import { observable, makeObservable, ObservableSet, ObservableMap, computed, action } from 'mobx';
 import shortid from 'shortid';
 
 import { createContextNoNullCheck } from '../utils/react';
 import { collections } from './collection';
-import { Abilities, Spell, Race, AbilityType } from './types';
+import { Abilities, Spell, Race, AbilityType, Skill, Class } from './types';
 import { getModifiers, getTotalScoreCosts, addBonusScores } from '../utils/ability';
 
 interface OptionalCharacterParams {
@@ -12,8 +12,11 @@ interface OptionalCharacterParams {
   baseAbility?: Abilities;
   bonusAbilityType?: AbilityType;
 
+  level?: number;
+
   raceId?: string;
   classId?: string;
+  skillRanks?: Array<[string, number]>;
   spellbookIds?: string[];
 }
 
@@ -23,8 +26,11 @@ export default class Character {
   baseAbility: Abilities;
   bonusAbilityType: AbilityType;
 
+  level: number;
+
   raceId: string;
   classId: string;
+  skillRanks: ObservableMap<string, number>;
   spellbookIds: ObservableSet<string>;
 
   constructor(
@@ -33,8 +39,10 @@ export default class Character {
       id,
       baseAbility,
       bonusAbilityType = AbilityType.str,
+      level = 1,
       raceId = 'Human',
       classId = 'Fighter',
+      skillRanks = [],
       spellbookIds,
     }: OptionalCharacterParams = {}
   ) {
@@ -53,6 +61,7 @@ export default class Character {
       setRace: action,
 
       classId: observable,
+      class: computed,
 
       spellbook: computed,
     });
@@ -63,10 +72,39 @@ export default class Character {
     this.baseAbility = baseAbility ?? { str: 10, dex: 10, con: 10, int: 10, wis: 10, cha: 10 };
     this.bonusAbilityType = bonusAbilityType ?? AbilityType.str;
 
+    this.level = level;
+
     this.raceId = raceId;
     this.classId = classId;
 
+    this.skillRanks = observable.map(new Map<string, number>(skillRanks), { deep: false });
+
     this.spellbookIds = observable.set(new Set(spellbookIds), { deep: false });
+  }
+
+  get race(): Race {
+    return (
+      collections.race.getById(this.raceId) || {
+        id: 'unknown',
+        name: '未知',
+        ability: {},
+      }
+    );
+  }
+  setRace(raceId: string): void {
+    this.raceId = raceId;
+    this.bonusAbilityType = AbilityType.str;
+  }
+
+  get class(): Class {
+    return (
+      collections.class.getById(this.classId) || {
+        id: 'unknown',
+        name: '未知',
+        hd: 0,
+        classSkills: [],
+      }
+    );
   }
 
   get ability(): Abilities {
@@ -89,19 +127,18 @@ export default class Character {
     this.baseAbility = { str: 10, dex: 10, con: 10, int: 10, wis: 10, cha: 10 };
   }
 
-  get race(): Race {
-    return (
-      collections.race.getById(this.raceId) || {
-        id: 'unknown',
-        name: '未知',
-        ability: {},
-      }
-    );
+  isClassSkill(s: Skill): boolean {
+    return this.class.classSkills.includes(s.id);
   }
+  getSkillDetail(
+    s: Skill
+  ): { rank: number; modifier: number; classBonus: number; isClassSkill: boolean; total: number } {
+    const rank = this.skillRanks.get(s.id) || 0;
+    const modifier = this.abilityModifier[s.ability];
+    const isClassSkill = this.isClassSkill(s);
+    const classBonus = rank > 0 && isClassSkill ? 3 : 0;
 
-  setRace(raceId: string): void {
-    this.raceId = raceId;
-    this.bonusAbilityType = AbilityType.str;
+    return { rank, modifier, classBonus, isClassSkill, total: rank + modifier + classBonus };
   }
 
   get spellbook(): Array<Spell> {

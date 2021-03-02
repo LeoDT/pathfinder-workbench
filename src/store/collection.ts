@@ -1,13 +1,14 @@
 import Fuse from 'fuse.js';
 
+import { Entity, Race, Spell, Feat, Class, Skill } from './types';
+
+import SKILL_DATA from '../data/skills.json';
 import RACE_DATA from '../data/races.json';
 import CLASS_DATA from '../data/classes.json';
 import SPELL_DATA from '../data/spells.json';
 import FEAT_DATA from '../data/feats.json';
 
-import { Entity, Race, Spell, Feat, Class } from './types';
-
-export type CollectionEntityType = 'race' | 'class' | 'spell' | 'feat' | 'weapon';
+export type CollectionEntityType = 'skill' | 'race' | 'class' | 'spell' | 'feat' | 'weapon';
 
 export interface CollectionOptions {
   searchFields: Array<string>;
@@ -37,6 +38,9 @@ export class Collection<T extends Entity = Entity> {
 }
 
 export const collections = {
+  skill: new Collection<Skill>('skill', SKILL_DATA as Array<Skill>, {
+    searchFields: ['id', 'name'],
+  }),
   race: new Collection<Race>('race', RACE_DATA, {
     searchFields: ['id', 'name'],
   }),

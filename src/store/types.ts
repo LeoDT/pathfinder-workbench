@@ -21,12 +21,19 @@ export interface Entity {
   name: string;
 }
 
+export interface Skill extends Entity {
+  ability: AbilityType;
+  category?: boolean;
+  subs?: Array<Entity>;
+}
+
 export interface Race extends Entity {
   ability: Partial<Abilities>;
 }
 
 export interface Class extends Entity {
   hd: number;
+  classSkills: Array<string>;
 }
 
 export interface SpellMeta {

@@ -1,4 +1,4 @@
-import { HStack, VStack, Spacer, IconButton, Text, ButtonGroup } from '@chakra-ui/react';
+import { HStack, Spacer, IconButton, Text, ButtonGroup } from '@chakra-ui/react';
 import { FaPlus, FaMinus } from 'react-icons/fa';
 
 import { AbilityType } from '../store/types';
@@ -10,6 +10,7 @@ import {
 } from '../utils/ability';
 
 import AbilityIcon from './AbilityIcon';
+import StatNumber from './StatNumber';
 
 interface Props {
   ability: AbilityType;
@@ -19,19 +20,6 @@ interface Props {
   min?: number;
   isIncreaseDisabled?: boolean;
   racial?: number;
-}
-
-function AbilityNumber({ number, text }: { number: string | number; text: string }) {
-  return (
-    <VStack spacing="0">
-      <Text fontSize="large" textAlign="center" lineHeight="1">
-        {number}
-      </Text>
-      <Text fontSize="xs" color="gray.500" lineHeight="1">
-        {text}
-      </Text>
-    </VStack>
-  );
 }
 
 export default function AbilityInput({
@@ -50,9 +38,9 @@ export default function AbilityInput({
         {ability.toUpperCase()}
       </Text>
       <Spacer />
-      <AbilityNumber number={showModifier(getModifierFromScore(score + racial))} text="mod" />
-      <AbilityNumber number={showModifier(racial)} text="racial" />
-      <AbilityNumber number={score + racial} text="score" />
+      <StatNumber number={showModifier(getModifierFromScore(score + racial))} text="mod" />
+      <StatNumber number={showModifier(racial)} text="racial" />
+      <StatNumber number={score + racial} text="score" />
 
       <ButtonGroup isAttached>
         <IconButton
