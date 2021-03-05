@@ -1,3 +1,4 @@
+import { memo } from 'react';
 import { VStack, Text } from '@chakra-ui/react';
 
 interface Props {
@@ -5,7 +6,7 @@ interface Props {
   text: string;
 }
 
-export default function StatNumber({ number, text }: Props): JSX.Element {
+export function StatNumber({ number, text }: Props): JSX.Element {
   return (
     <VStack spacing="0">
       <Text fontSize="large" textAlign="center" lineHeight="1">
@@ -17,3 +18,5 @@ export default function StatNumber({ number, text }: Props): JSX.Element {
     </VStack>
   );
 }
+
+export default memo(StatNumber);

@@ -12,6 +12,11 @@ import * as serviceWorkerRegistration from './serviceWorkerRegistration';
 configure({ enforceActions: 'never' });
 
 const theme = extendTheme({
+  colors: {
+    gray: {
+      10: '#F6F6F6',
+    },
+  },
   components: {
     Container: {
       baseStyle: {

@@ -57,11 +57,11 @@ export default function Feat({
 
       {showMeta ? <FeatMeta feat={feat} /> : null}
 
-      {showDescription && feat.description ? (
+      {showDescription && feat.desc ? (
         <Text
           pt="1"
           whiteSpace="pre-wrap"
-          dangerouslySetInnerHTML={{ __html: feat.description }}
+          dangerouslySetInnerHTML={{ __html: feat.desc }}
           className="feat-description"
         />
       ) : null}

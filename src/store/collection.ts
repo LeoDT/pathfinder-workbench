@@ -41,7 +41,7 @@ export const collections = {
   skill: new Collection<Skill>('skill', SKILL_DATA as Array<Skill>, {
     searchFields: ['id', 'name'],
   }),
-  race: new Collection<Race>('race', RACE_DATA, {
+  race: new Collection<Race>('race', RACE_DATA as Array<Race>, {
     searchFields: ['id', 'name'],
   }),
   spell: new Collection<Spell>('spell', SPELL_DATA, {

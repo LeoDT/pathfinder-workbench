@@ -22,5 +22,9 @@
   },
   "include": [
     "src"
-  ]
+  ],
+  "exclude": [
+    "src/data/*.json"
+  ],
+  "extends": "./tsconfig.custom.json"
 }

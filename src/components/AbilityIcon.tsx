@@ -1,4 +1,5 @@
 import { Box, Icon } from '@chakra-ui/react';
+import { memo } from 'react';
 import {
   GiFist,
   GiBullseye,
@@ -19,7 +20,7 @@ const icons = {
   cha: { icon: GiFlyingFlag, color: 'pink.500' },
 };
 
-export default function AbilityIcon({ ability }: { ability: AbilityType }): JSX.Element {
+export function AbilityIcon({ ability }: { ability: AbilityType }): JSX.Element {
   const { icon, color } = icons[ability];
 
   return (
@@ -28,3 +29,5 @@ export default function AbilityIcon({ ability }: { ability: AbilityType }): JSX.
     </Box>
   );
 }
+
+export default memo(AbilityIcon);

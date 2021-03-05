@@ -6,11 +6,13 @@ import { createContextNoNullCheck } from '../utils/react';
 
 import { Entity } from './types';
 import DMStore from './dm';
+import UIStore from './ui';
 import { collections, Collection, CollectionEntityType } from './collection';
 import Character from './character';
 
 export class Store {
   dm: DMStore;
+  ui: UIStore;
 
   collections: typeof collections; // for components
 
@@ -19,6 +21,7 @@ export class Store {
   constructor() {
     this.dm = new DMStore();
 
+    this.ui = new UIStore();
     this.collections = collections;
 
     this.characters = observable.array([], { deep: false });

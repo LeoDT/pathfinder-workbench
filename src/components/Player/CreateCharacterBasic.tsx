@@ -1,29 +1,41 @@
 import { isEmpty } from 'lodash-es';
 import { Observer } from 'mobx-react-lite';
-import { Button, Box, VStack, Text, HStack, Spacer, Divider } from '@chakra-ui/react';
+import { Button, Box, VStack, Text, HStack, Spacer, Divider, Input } from '@chakra-ui/react';
 
 import { useStore } from '../../store';
-import { useCurrentCharacter } from '../../store/character';
-import {
-  ABILITY_TYPES,
-  getScoreCost,
-  ABILITY_POINTS,
-  abilityTranslates,
-} from '../../utils/ability';
+import { useCreateCharacterStore } from '../../store/createCharacter';
+import { ABILITY_TYPES, getScoreCost, abilityTranslates } from '../../utils/ability';
 
 import AbilityInput from '../AbilityInput';
 import CollectionEntitySelect from '../CollectionEntitySelect';
 import Select from '../Select';
 
-export default function CharacterBasic(): JSX.Element {
+export default function CreateCharacterBasic(): JSX.Element {
   const store = useStore();
-  const character = useCurrentCharacter();
+  const create = useCreateCharacterStore();
+  const { character } = create;
 
   return (
     <Box maxW="sm">
       <Observer>
         {() => (
           <VStack w="full">
+            <HStack w="full">
+              <Text fontSize="lg" whiteSpace="nowrap">
+                姓名
+              </Text>
+              <Spacer />
+              <Input
+                value={character.name}
+                onChange={(e) => {
+                  character.name = e.target.value;
+                }}
+                textAlign="right"
+                variant="unstyled"
+                maxW="50%"
+              />
+            </HStack>
+            <Divider />
             <HStack w="full" spacing="0">
               <Text fontSize="lg">种族</Text>
               <Spacer />
@@ -61,9 +73,9 @@ export default function CharacterBasic(): JSX.Element {
               <Spacer />
               <CollectionEntitySelect
                 collection={store.collections.class}
-                value={character.classId}
+                value={create.upgrade.classId}
                 onChange={(id) => {
-                  character.classId = id;
+                  create.upgrade.classId = id;
                 }}
               />
             </HStack>
@@ -73,13 +85,11 @@ export default function CharacterBasic(): JSX.Element {
       </Observer>
       <Observer>
         {() => {
-          const remainPoints = ABILITY_POINTS - character.abilityCost;
-
           return (
             <>
               <HStack my="2">
-                <Text fontSize="lg">点数: {remainPoints} / 25</Text>
-                <Button size="xs" onClick={() => character.resetBaseAbility()}>
+                <Text fontSize="lg">点数: {create.abilityPointsRemain} / 25</Text>
+                <Button size="xs" onClick={() => create.resetBaseAbility()}>
                   重置
                 </Button>
               </HStack>
@@ -97,8 +107,8 @@ export default function CharacterBasic(): JSX.Element {
                         character.baseAbility[ab] = v;
                       }}
                       isIncreaseDisabled={
-                        character.abilityCost >= ABILITY_POINTS ||
-                        getScoreCost(score + 1) - getScoreCost(score) > remainPoints
+                        create.abilityPointsRemain <= 0 ||
+                        getScoreCost(score + 1) - getScoreCost(score) > create.abilityPointsRemain
                       }
                     />
                   );

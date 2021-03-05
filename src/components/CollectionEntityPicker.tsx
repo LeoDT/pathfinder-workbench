@@ -1,21 +1,42 @@
-import { useMemo, useState, MutableRefObject } from 'react';
-import { Box, InputGroup, Input, InputLeftElement, Icon, Text, HStack } from '@chakra-ui/react';
+import { useMemo, useState, MutableRefObject, useRef, useEffect } from 'react';
+import {
+  Box,
+  Button,
+  InputGroup,
+  Input,
+  InputLeftElement,
+  Icon,
+  Text,
+  HStack,
+  PopoverTrigger,
+  Popover,
+  PopoverContent,
+  PopoverBody,
+  PopoverArrow,
+  useDisclosure,
+} from '@chakra-ui/react';
 import { FaSearch, FaCheck } from 'react-icons/fa';
 
 import { Collection } from '../store/collection';
 
+import { EntityQuickViewerToggler } from './EntityQuickViewer';
+
 interface Props {
   collection: Collection;
   onPick: (id: string) => void;
-  items: Array<string>;
+  onUnpick?: (id: string) => void;
+  items?: Array<string>;
   inputRef?: MutableRefObject<HTMLInputElement | null>;
+  quickViewer?: boolean;
 }
 
 export default function CollectionEntityPicker({
   collection,
   inputRef,
   onPick,
+  onUnpick,
   items,
+  quickViewer = true,
 }: Props): JSX.Element {
   const [searchKey, setSearchKey] = useState('');
   const searchResult = useMemo(() => {
@@ -41,13 +62,19 @@ export default function CollectionEntityPicker({
       {searchResult.length > 0 ? (
         <Box borderTop="1px" borderColor="gray.100" mt="2" maxH={300} overflow="auto">
           {searchResult.map(({ item }) => {
-            const picked = items.includes(item.id);
+            const picked = items?.includes(item.id);
 
             return (
               <HStack
                 key={item.id}
                 onClick={() => {
-                  if (!picked) onPick(item.id);
+                  if (picked) {
+                    if (onUnpick) {
+                      onUnpick(item.id);
+                    }
+                  } else {
+                    onPick(item.id);
+                  }
                 }}
                 p="2"
                 borderBottom="1px"
@@ -56,17 +83,61 @@ export default function CollectionEntityPicker({
                   background: 'gray.100',
                 }}
                 color={picked ? 'gray.400' : 'black'}
-                cursor={picked ? 'not-allowed' : 'pointer'}
+                cursor={!onUnpick && picked ? 'not-allowed' : 'pointer'}
               >
                 {picked ? <Icon as={FaCheck} /> : null}
                 <Text>
                   {item.name} ({item.id})
                 </Text>
+                {quickViewer ? (
+                  <EntityQuickViewerToggler kind={collection.type} entity={item} />
+                ) : null}
               </HStack>
             );
           })}
         </Box>
       ) : null}
     </Box>
+  );
+}
+
+interface PopoverProps extends Props {
+  text: string;
+  disabled?: boolean;
+}
+
+export function CollectionEntityPickerPopover({
+  text,
+  disabled,
+  ...props
+}: PopoverProps): JSX.Element {
+  const { isOpen, onClose, onToggle } = useDisclosure();
+  const initialFocusRef = useRef<HTMLInputElement>(null);
+
+  useEffect(() => {
+    if (disabled) {
+      onClose();
+    }
+  }, [disabled]);
+
+  return (
+    <Popover
+      initialFocusRef={initialFocusRef}
+      placement="bottom-start"
+      isOpen={isOpen}
+      onClose={onClose}
+    >
+      <PopoverTrigger>
+        <Button disabled={disabled} onClick={onToggle}>
+          {text}
+        </Button>
+      </PopoverTrigger>
+      <PopoverContent>
+        <PopoverBody>
+          <PopoverArrow />
+          <CollectionEntityPicker inputRef={initialFocusRef} {...props} />
+        </PopoverBody>
+      </PopoverContent>
+    </Popover>
   );
 }

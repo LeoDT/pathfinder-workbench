@@ -1,11 +1,28 @@
-import { isEmpty, pick } from 'lodash-es';
-import { observable, makeObservable, ObservableSet, ObservableMap, computed, action } from 'mobx';
+import { isEmpty, pick, last, compact, uniq } from 'lodash-es';
+import {
+  observable,
+  makeObservable,
+  ObservableSet,
+  IObservableArray,
+  computed,
+  action,
+} from 'mobx';
 import shortid from 'shortid';
 
 import { createContextNoNullCheck } from '../utils/react';
 import { collections } from './collection';
-import { Abilities, Spell, Race, AbilityType, Skill, Class } from './types';
-import { getModifiers, getTotalScoreCosts, addBonusScores } from '../utils/ability';
+import {
+  AbilityType,
+  Abilities,
+  Spell,
+  Race,
+  Feat,
+  Skill,
+  Class,
+  ClassFeat,
+  CharacterUpgrade,
+} from './types';
+import { getModifiers, addBonusScores } from '../utils/ability';
 
 interface OptionalCharacterParams {
   id?: string;
@@ -16,7 +33,6 @@ interface OptionalCharacterParams {
 
   raceId?: string;
   classId?: string;
-  skillRanks?: Array<[string, number]>;
   spellbookIds?: string[];
 }
 
@@ -26,11 +42,11 @@ export default class Character {
   baseAbility: Abilities;
   bonusAbilityType: AbilityType;
 
-  level: number;
+  pendingUpgrade: CharacterUpgrade | null;
+  upgrades: IObservableArray<CharacterUpgrade>;
 
   raceId: string;
-  classId: string;
-  skillRanks: ObservableMap<string, number>;
+  favoredClassId: string;
   spellbookIds: ObservableSet<string>;
 
   constructor(
@@ -39,19 +55,15 @@ export default class Character {
       id,
       baseAbility,
       bonusAbilityType = AbilityType.str,
-      level = 1,
-      raceId = 'Human',
+      raceId = 'Dwarf',
       classId = 'Fighter',
-      skillRanks = [],
       spellbookIds,
     }: OptionalCharacterParams = {}
   ) {
     makeObservable(this, {
       name: observable,
       baseAbility: observable,
-
       abilityModifier: computed,
-      abilityCost: computed,
 
       bonusAbilityType: observable,
       bonusAbility: computed,
@@ -60,10 +72,21 @@ export default class Character {
       race: computed,
       setRace: action,
 
-      classId: observable,
-      class: computed,
+      favoredClassId: observable,
 
       spellbook: computed,
+
+      pendingUpgrade: observable,
+      startUpgrade: action,
+      finishUpgrade: action,
+
+      level: computed,
+      levelDetail: computed,
+      gainedClassFeats: computed,
+      classes: computed,
+
+      classSkills: computed,
+      skillRanks: computed,
     });
 
     this.name = name;
@@ -72,12 +95,12 @@ export default class Character {
     this.baseAbility = baseAbility ?? { str: 10, dex: 10, con: 10, int: 10, wis: 10, cha: 10 };
     this.bonusAbilityType = bonusAbilityType ?? AbilityType.str;
 
-    this.level = level;
+    this.pendingUpgrade = null;
+    this.upgrades = observable.array([], { deep: false });
+
+    this.favoredClassId = classId;
 
     this.raceId = raceId;
-    this.classId = classId;
-
-    this.skillRanks = observable.map(new Map<string, number>(skillRanks), { deep: false });
 
     this.spellbookIds = observable.set(new Set(spellbookIds), { deep: false });
   }
@@ -88,6 +111,7 @@ export default class Character {
         id: 'unknown',
         name: '未知',
         ability: {},
+        racialTrait: [],
       }
     );
   }
@@ -96,25 +120,11 @@ export default class Character {
     this.bonusAbilityType = AbilityType.str;
   }
 
-  get class(): Class {
-    return (
-      collections.class.getById(this.classId) || {
-        id: 'unknown',
-        name: '未知',
-        hd: 0,
-        classSkills: [],
-      }
-    );
-  }
-
   get ability(): Abilities {
     return addBonusScores(this.baseAbility, this.bonusAbility);
   }
   get abilityModifier(): Abilities {
     return getModifiers(this.ability);
-  }
-  get abilityCost(): number {
-    return getTotalScoreCosts(this.baseAbility);
   }
   get bonusAbility(): Partial<Abilities> {
     if (isEmpty(this.race.ability)) {
@@ -123,13 +133,107 @@ export default class Character {
 
     return this.race.ability;
   }
-  resetBaseAbility(): void {
-    this.baseAbility = { str: 10, dex: 10, con: 10, int: 10, wis: 10, cha: 10 };
+
+  startUpgrade(): void {
+    const lastUpgrade = last(this.upgrades);
+    const lastUpgradeClass = lastUpgrade ? lastUpgrade.classId : 'Fighter';
+
+    this.pendingUpgrade = {
+      classId: lastUpgradeClass,
+      skills: new Map(),
+      gainFeat: this.level % 2 === 1 ? 1 : 0,
+      gainAbility: this.level % 4 === 1 ? 1 : 0,
+    };
+  }
+  finishUpgrade(): void {
+    if (this.pendingUpgrade) {
+      this.upgrades.push(this.pendingUpgrade);
+      this.pendingUpgrade = null;
+    }
+  }
+
+  get upgradesWithPending(): Array<CharacterUpgrade> {
+    return compact([...this.upgrades, this.pendingUpgrade]);
+  }
+  get level(): number {
+    return Math.max(this.upgradesWithPending.length, 1);
+  }
+  get levelDetail(): Array<[Class, number]> {
+    const levels: Record<string, number> = {};
+
+    this.upgradesWithPending.forEach(({ classId }) => {
+      levels[classId] = levels[classId] ? levels[classId] + 1 : 1;
+    });
+
+    return Object.keys(levels).map((classId, level) => {
+      const clas = collections.class.getById(classId) as Class;
+
+      return [clas, level];
+    });
+  }
+
+  get gainedClassFeats(): Array<ClassFeat> {
+    return this.upgradesWithPending
+      .map((up, l) => {
+        const clas = collections.class.getById(up.classId) as Class;
+        const level = clas.levels[l];
+
+        return level.special?.map((s) => {
+          const f = clas.feats.find((f) => f.id === s);
+
+          if (f) {
+            return f;
+          }
+
+          console.warn(`class feat ${s} for ${clas.id} not found`);
+
+          return undefined;
+        });
+      })
+      .flat()
+      .filter((f): f is ClassFeat => Boolean(f));
+  }
+
+  get classes(): Array<Class> {
+    return uniq(this.upgradesWithPending.map((u) => u.classId)).map(
+      (cId) =>
+        collections.class.getById(cId) || {
+          id: 'unknown',
+          name: '未知',
+          hd: 0,
+          classSkills: [],
+          skillPoints: 0,
+          proficiencies: { weapon: ['simple'] },
+          feats: [],
+          levels: [],
+        }
+    );
+  }
+
+  get classSkills(): Array<string> {
+    return uniq(this.classes.map((c) => c.classSkills).flat());
   }
 
   isClassSkill(s: Skill): boolean {
-    return this.class.classSkills.includes(s.id);
+    if (s.parent) {
+      return this.classSkills.includes(s.parent) || this.classSkills.includes(s.id);
+    }
+
+    return this.classSkills.includes(s.id);
   }
+
+  get skillRanks(): Map<string, number> {
+    const ranks = new Map<string, number>();
+
+    this.upgradesWithPending.forEach(({ skills }) => {
+      Array.from(skills.entries()).forEach(([k, v]) => {
+        ranks.set(k, (ranks.get(k) || 0) + v);
+      });
+    });
+
+    return ranks;
+  }
+
   getSkillDetail(
     s: Skill
   ): { rank: number; modifier: number; classBonus: number; isClassSkill: boolean; total: number } {
@@ -139,6 +243,10 @@ export default class Character {
     const classBonus = rank > 0 && isClassSkill ? 3 : 0;
 
     return { rank, modifier, classBonus, isClassSkill, total: rank + modifier + classBonus };
+  }
+
+  get gainedFeats(): Array<Feat> {
+    return [];
   }
 
   get spellbook(): Array<Spell> {

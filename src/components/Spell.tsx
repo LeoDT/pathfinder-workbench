@@ -53,7 +53,7 @@ export default function Spell({
         <Text
           pt="1"
           whiteSpace="pre-wrap"
-          dangerouslySetInnerHTML={{ __html: spell.description }}
+          dangerouslySetInnerHTML={{ __html: spell.desc }}
           className="spell-description"
         />
       ) : null}

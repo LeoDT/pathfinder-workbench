@@ -2,6 +2,8 @@ import { BrowserRouter as Router, Route, Switch, Redirect } from 'react-router-d
 import { Box } from '@chakra-ui/react';
 
 import Navbar from './components/Navbar';
+import EntityQuickViewer from './components/EntityQuickViewer';
+
 import PlayerPage from './pages/PlayerPage';
 import DMPage from './pages/DMPage';
 
@@ -19,6 +21,8 @@ function App(): JSX.Element {
             <Redirect to="/player" />
           </Switch>
         </Box>
+
+        <EntityQuickViewer />
       </Box>
     </Router>
   );
