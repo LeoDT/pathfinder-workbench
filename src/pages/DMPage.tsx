@@ -27,7 +27,7 @@ export default function DMPage(): JSX.Element {
   const isSmallerScreen = useIsSmallerScreen();
 
   return (
-    <Container>
+    <Container pt="2">
       <HStack w="full" wrap="wrap" spacing={[0, 2]}>
         <Button
           mb={[2, 0]}
@@ -53,7 +53,9 @@ export default function DMPage(): JSX.Element {
             <MenuButton as={IconButton} icon={<FaChevronDown />} aria-label="More Action" />
             <MenuList>
               <MenuItem onClick={() => dm.rollAllPerception()}>全员投察觉</MenuItem>
+              <MenuItem onClick={() => dm.rollAllWillSave()}>全员投意志</MenuItem>
               <MenuItem onClick={() => dm.healAll()}>全员恢复</MenuItem>
+              <MenuItem onClick={() => dm.recoverAllTracker()}>全员恢复Tracker</MenuItem>
             </MenuList>
           </Menu>
         </ButtonGroup>
