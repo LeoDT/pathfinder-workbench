@@ -23,6 +23,7 @@ import {
   CharacterUpgrade,
 } from './types';
 import { getModifiers, addBonusScores } from '../utils/ability';
+import { getClassFeatByLevel } from '../utils/class';
 
 interface OptionalCharacterParams {
   id?: string;
@@ -106,14 +107,7 @@ export default class Character {
   }
 
   get race(): Race {
-    return (
-      collections.race.getById(this.raceId) || {
-        id: 'unknown',
-        name: '未知',
-        ability: {},
-        racialTrait: [],
-      }
-    );
+    return collections.race.getById(this.raceId);
   }
   setRace(raceId: string): void {
     this.raceId = raceId;
@@ -141,8 +135,11 @@ export default class Character {
     this.pendingUpgrade = {
       classId: lastUpgradeClass,
       skills: new Map(),
-      gainFeat: this.level % 2 === 1 ? 1 : 0,
-      gainAbility: this.level % 4 === 1 ? 1 : 0,
+      abilities: {},
+      feats: [],
+      spells: new Map(),
+      levelFeat: this.level % 2 === 1,
+      levelAbility: this.level % 4 === 1,
     };
   }
   finishUpgrade(): void {
@@ -166,7 +163,7 @@ export default class Character {
     });
 
     return Object.keys(levels).map((classId, level) => {
-      const clas = collections.class.getById(classId) as Class;
+      const clas = collections.class.getById(classId);
 
       return [clas, level];
     });
@@ -175,45 +172,22 @@ export default class Character {
   get gainedClassFeats(): Array<ClassFeat> {
     return this.upgradesWithPending
       .map((up, l) => {
-        const clas = collections.class.getById(up.classId) as Class;
-        const level = clas.levels[l];
+        const clas = collections.class.getById(up.classId);
 
-        return level.special?.map((s) => {
-          const f = clas.feats.find((f) => f.id === s);
-
-          if (f) {
-            return f;
-          }
-
-          console.warn(`class feat ${s} for ${clas.id} not found`);
-
-          return undefined;
-        });
+        return getClassFeatByLevel(clas, l);
       })
       .flat()
       .filter((f): f is ClassFeat => Boolean(f));
   }
-
   get classes(): Array<Class> {
-    return uniq(this.upgradesWithPending.map((u) => u.classId)).map(
-      (cId) =>
-        collections.class.getById(cId) || {
-          id: 'unknown',
-          name: '未知',
-          hd: 0,
-          classSkills: [],
-          skillPoints: 0,
-          proficiencies: { weapon: ['simple'] },
-          feats: [],
-          levels: [],
-        }
+    return uniq(this.upgradesWithPending.map((u) => u.classId)).map((cId) =>
+      collections.class.getById(cId)
     );
   }
 
   get classSkills(): Array<string> {
     return uniq(this.classes.map((c) => c.classSkills).flat());
   }
-
   isClassSkill(s: Skill): boolean {
     if (s.parent) {
       return this.classSkills.includes(s.parent) || this.classSkills.includes(s.id);
@@ -221,7 +195,6 @@ export default class Character {
 
     return this.classSkills.includes(s.id);
   }
-
   get skillRanks(): Map<string, number> {
     const ranks = new Map<string, number>();
 
@@ -233,7 +206,6 @@ export default class Character {
 
     return ranks;
   }
-
   getSkillDetail(
     s: Skill
   ): { rank: number; modifier: number; classBonus: number; isClassSkill: boolean; total: number } {
@@ -250,9 +222,7 @@ export default class Character {
   }
 
   get spellbook(): Array<Spell> {
-    return Array.from(this.spellbookIds)
-      .map((id) => collections.spell.getById(id))
-      .filter((t): t is Spell => Boolean(t));
+    return Array.from(this.spellbookIds).map((id) => collections.spell.getById(id));
   }
 
   static serializableProps = [

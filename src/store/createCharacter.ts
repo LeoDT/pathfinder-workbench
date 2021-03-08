@@ -2,11 +2,19 @@ import { makeObservable, computed } from 'mobx';
 
 import { createContextNoNullCheck } from '../utils/react';
 import { ABILITY_POINTS, getTotalScoreCosts } from '../utils/ability';
+import { getClassFeatByLevel } from '../utils/class';
+import { getBonusFeatEffect } from '../utils/effect';
 
-import { Class, CharacterUpgrade } from './types';
+import { Class, CharacterUpgrade, ClassFeat, FeatType } from './types';
 
 import { collections } from './collection';
 import Character from './character';
+
+export interface GainFeatReason {
+  reason: 'race' | 'class' | 'level';
+  featType?: FeatType;
+  index: number;
+}
 
 export default class CreateCharacter {
   character: Character;
@@ -17,6 +25,7 @@ export default class CreateCharacter {
       abilityPointsCost: computed,
       abilityPointsRemain: computed,
       class: computed,
+      newGainedClassFeats: computed,
       skillPoints: computed,
       skillPointsRemain: computed,
       skillPointsUsed: computed,
@@ -24,6 +33,10 @@ export default class CreateCharacter {
 
     this.character = new Character('新角色');
     this.character.startUpgrade();
+
+    if (this.gainFeatReasons.length) {
+      this.upgrade.feats = Array(this.gainFeatReasons.length);
+    }
   }
 
   resetBaseAbility(): void {
@@ -44,8 +57,40 @@ export default class CreateCharacter {
     return this.abilityPointsRemain === 0;
   }
 
+  get gainFeatReasons(): Array<GainFeatReason> {
+    const reasons: Array<GainFeatReason> = [];
+    let index = 0;
+
+    if (this.upgrade.levelFeat) {
+      reasons.push({ reason: 'level', index });
+      index += 1;
+    }
+
+    const racialTrait = this.character.race.racialTrait.find(
+      (t) => t.effects && getBonusFeatEffect(t.effects)
+    );
+    const racialEffect = racialTrait?.effects ? getBonusFeatEffect(racialTrait.effects) : null;
+    if (racialEffect) {
+      reasons.push({ reason: 'race', index, featType: racialEffect.featType });
+      index += 1;
+    }
+
+    const classFeat = this.newGainedClassFeats.find(
+      (t) => t.effects && getBonusFeatEffect(t.effects)
+    );
+    const classEffect = classFeat?.effects ? getBonusFeatEffect(classFeat.effects) : null;
+    if (classEffect) {
+      reasons.push({ reason: 'class', index, featType: classEffect.featType });
+      index += 1;
+    }
+
+    return reasons;
+  }
   get class(): Class {
-    return collections.class.getById(this.upgrade.classId) as Class;
+    return collections.class.getById(this.upgrade.classId);
+  }
+  get newGainedClassFeats(): ClassFeat[] {
+    return getClassFeatByLevel(this.class, this.character.level);
   }
 
   get skillPoints(): number {

@@ -19,7 +19,7 @@ export default function CollectionEntitySelect({
   return (
     <Menu placement="bottom-start">
       <MenuButton as={Button}>
-        {(value ? collection.getById(value)?.name : '') || placeholder}
+        {(value ? collection.getById(value).name : '') || placeholder}
       </MenuButton>
       <MenuList>
         {collection.data.map((e) => (

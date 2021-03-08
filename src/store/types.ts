@@ -1,3 +1,7 @@
+import { Effect } from './effectTypes';
+
+export * from './effectTypes';
+
 export enum Alignment {
   LG = 'LG',
   NG = 'NG',
@@ -41,6 +45,7 @@ export interface Skill extends Entity {
 
 export interface RacialTrait extends Entity {
   desc?: string;
+  effects?: Array<Effect>;
 }
 export interface Race extends Entity {
   ability: Partial<Abilities>;
@@ -74,15 +79,37 @@ export interface FeatMeta {
   normal?: string;
 }
 
+export type FeatType =
+  | 'general'
+  | 'combat'
+  | 'metamagic'
+  | 'item creation'
+  | 'teamwork'
+  | 'grit'
+  | 'performance'
+  | 'style'
+  | 'panache'
+  | 'technique'
+  | 'stare'
+  | 'arcane discovery';
+
 export interface Feat extends Entity {
   meta: FeatMeta;
   book: string;
+  type: FeatType[];
   brief: string;
   desc?: string;
+  effects?: Effect[];
 }
 
+export interface ClassFeatGrow extends Entity {
+  level: number;
+  effects?: Effect[];
+}
 export interface ClassFeat extends Entity {
   desc: string;
+  effects?: Array<Effect>;
+  grow?: Array<ClassFeatGrow>;
 }
 
 export interface ClassProficiencies {
@@ -114,10 +141,10 @@ export type Weapon = Entity;
 export interface CharacterUpgrade {
   classId: string;
   skills: Map<string, number>;
-  abilities?: Partial<Abilities>;
-  feats?: Array<string>; //feat id
-  spells?: Map<number, string>; //spell level & spell id
+  abilities: Partial<Abilities>;
+  feats: Array<string>; //feat id
+  spells: Map<number, string>; //spell level & spell id
 
-  gainFeat: number;
-  gainAbility: number;
+  levelFeat: boolean;
+  levelAbility: boolean;
 }

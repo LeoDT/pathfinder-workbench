@@ -32,8 +32,14 @@ export class Collection<T extends Entity = Entity> {
     });
   }
 
-  getById(id: string): T | null {
-    return this.data.find((s) => s.id === id) || null;
+  getById(id: string): T {
+    const e = this.data.find((s) => s.id === id);
+
+    if (e) {
+      return e;
+    }
+
+    throw Error(`can not find ${this.type} with id ${id}`);
   }
 }
 
@@ -47,10 +53,10 @@ export const collections = {
   spell: new Collection<Spell>('spell', SPELL_DATA, {
     searchFields: ['id', 'name'],
   }),
-  feat: new Collection<Feat>('feat', FEAT_DATA, {
+  feat: new Collection<Feat>('feat', FEAT_DATA as Feat[], {
     searchFields: ['id', 'name'],
   }),
-  class: new Collection<Class>('class', CLASS_DATA, {
+  class: new Collection<Class>('class', CLASS_DATA as Array<Class>, {
     searchFields: ['id', 'name'],
   }),
 };

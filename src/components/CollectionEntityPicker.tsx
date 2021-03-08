@@ -5,6 +5,7 @@ import {
   InputGroup,
   Input,
   InputLeftElement,
+  InputRightElement,
   Icon,
   Text,
   HStack,
@@ -15,7 +16,7 @@ import {
   PopoverArrow,
   useDisclosure,
 } from '@chakra-ui/react';
-import { FaSearch, FaCheck } from 'react-icons/fa';
+import { FaSearch, FaCheck, FaTimesCircle } from 'react-icons/fa';
 
 import { Collection } from '../store/collection';
 
@@ -58,6 +59,17 @@ export default function CollectionEntityPicker({
             setSearchKey(e.target.value);
           }}
         />
+        {searchKey ? (
+          <InputRightElement>
+            <Icon
+              as={FaTimesCircle}
+              color="gray.400"
+              cursor="pointer"
+              _hover={{ color: 'gray.600' }}
+              onClick={() => setSearchKey('')}
+            />
+          </InputRightElement>
+        ) : null}
       </InputGroup>
       {searchResult.length > 0 ? (
         <Box borderTop="1px" borderColor="gray.100" mt="2" maxH={300} overflow="auto">
@@ -82,7 +94,6 @@ export default function CollectionEntityPicker({
                 _hover={{
                   background: 'gray.100',
                 }}
-                color={picked ? 'gray.400' : 'black'}
                 cursor={!onUnpick && picked ? 'not-allowed' : 'pointer'}
               >
                 {picked ? <Icon as={FaCheck} /> : null}
