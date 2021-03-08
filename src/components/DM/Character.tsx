@@ -61,15 +61,19 @@ export default function Character({ character: c }: Props): JSX.Element {
               />
             </Box>
             <Box pt="1">
-              <Text fontSize="sm">
+              <Text fontSize="xs">
                 先攻: {parseInt(c.initiative) + c.rolledInitiative}({c.initiative} +{' '}
                 {c.rolledInitiative})
               </Text>
-              <Text fontSize="sm">
+              <Text fontSize="xs">
                 察觉: {parseInt(c.perception) + c.rolledPerception}({c.perception} +{' '}
                 {c.rolledPerception})
               </Text>
-              <Text fontSize="sm">
+              <Text fontSize="xs">
+                察言观色: {parseInt(c.senseMotive) + c.rolledSenseMotive}({c.senseMotive} +{' '}
+                {c.rolledSenseMotive})
+              </Text>
+              <Text fontSize="xs">
                 意志: {parseInt(c.willSave) + c.rolledWillSave}({c.willSave} + {c.rolledWillSave})
               </Text>
             </Box>
@@ -130,6 +134,19 @@ export default function Character({ character: c }: Props): JSX.Element {
                 type="number"
               />
             </Box>
+            <Box p="2" borderRight="1px" borderColor="gray.200">
+              <Text fontSize="xx-small" color="gray.400">
+                察言观色
+              </Text>
+              <Input
+                value={c.senseMotive}
+                onChange={(e) => {
+                  c.senseMotive = e.target.value;
+                }}
+                variant="unstyled"
+                type="number"
+              />
+            </Box>
             <Box p="2">
               <Text fontSize="xx-small" color="gray.400">
                 意志豁免
@@ -153,6 +170,7 @@ export default function Character({ character: c }: Props): JSX.Element {
               <MenuList ml="-2">
                 <MenuItem onClick={() => dm.rollInitiative(c)}>先攻</MenuItem>
                 <MenuItem onClick={() => dm.rollPerception(c)}>察觉</MenuItem>
+                <MenuItem onClick={() => dm.rollSenseMotive(c)}>察言观色</MenuItem>
                 <MenuItem onClick={() => dm.rollWillSave(c)}>意志</MenuItem>
               </MenuList>
             </Menu>

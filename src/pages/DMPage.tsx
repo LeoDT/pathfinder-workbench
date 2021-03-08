@@ -53,6 +53,7 @@ export default function DMPage(): JSX.Element {
             <MenuButton as={IconButton} icon={<FaChevronDown />} aria-label="More Action" />
             <MenuList>
               <MenuItem onClick={() => dm.rollAllPerception()}>全员投察觉</MenuItem>
+              <MenuItem onClick={() => dm.rollAllSenseMotive()}>全员投察言观色</MenuItem>
               <MenuItem onClick={() => dm.rollAllWillSave()}>全员投意志</MenuItem>
               <MenuItem onClick={() => dm.healAll()}>全员恢复</MenuItem>
               <MenuItem onClick={() => dm.recoverAllTracker()}>全员恢复Tracker</MenuItem>

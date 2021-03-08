@@ -12,25 +12,29 @@ export interface Tracker {
 export interface DMCharacter {
   id: string;
   name: string;
-  initiative: string;
   hp: string;
   maxHP: string;
+  initiative: string;
   perception: string;
+  senseMotive: string;
   willSave: string;
   rolledInitiative: number;
   rolledPerception: number;
+  rolledSenseMotive: number;
   rolledWillSave: number;
   trackers: Array<Tracker>;
 }
 
 const DEFAULT_CHARACTER_PROPS = {
-  initiative: '0',
   hp: '1',
   maxHP: '10',
+  initiative: '0',
   perception: '0',
   willSave: '0',
+  senseMotive: '0',
   rolledInitiative: 0,
   rolledPerception: 0,
+  rolledSenseMotive: 0,
   rolledWillSave: 0,
   trackers: [],
 };
@@ -42,6 +46,7 @@ export default class DMStore {
     makeObservable(this, {
       rollAllInitiative: action,
       rollAllPerception: action,
+      rollAllSenseMotive: action,
       rollAllWillSave: action,
 
       healAll: action,
@@ -89,6 +94,13 @@ export default class DMStore {
   }
   rollAllPerception(): void {
     this.characters.forEach((c) => this.rollPerception(c));
+  }
+
+  rollSenseMotive(c: DMCharacter): void {
+    c.rolledSenseMotive = Math.ceil(Math.random() * 20);
+  }
+  rollAllSenseMotive(): void {
+    this.characters.forEach((c) => this.rollSenseMotive(c));
   }
 
   rollWillSave(c: DMCharacter): void {
