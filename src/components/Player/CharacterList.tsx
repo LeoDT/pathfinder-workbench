@@ -51,7 +51,14 @@ export default function CharacterList(): JSX.Element {
                     </Heading>
                     <Text fontSize="md">
                       {c.race.name}{' '}
-                      {c.levelDetail.map(([clas, level]) => `${level}级${clas.name}`).join('/')}
+                      {Object.keys(c.levelDetail)
+                        .map((cId) => {
+                          const clas = store.collections.class.getById(cId);
+                          const level = c.levelDetail[cId];
+
+                          return `${level}级${clas.name}`;
+                        })
+                        .join('/')}
                     </Text>
                   </HStack>
                 </LinkOverlay>

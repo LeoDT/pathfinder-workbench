@@ -26,7 +26,7 @@ export default function CreateCharacterFeat(): JSX.Element {
                 : null;
 
               return (
-                <Box key={r.reason}>
+                <Box key={r.reason} mb="4">
                   <Heading as="h3" fontSize="lg" mb="2">
                     新专长({gainFeatReasonTranslates[r.reason]})
                   </Heading>

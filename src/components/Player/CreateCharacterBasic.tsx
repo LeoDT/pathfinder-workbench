@@ -44,6 +44,8 @@ export default function CreateCharacterBasic(): JSX.Element {
                 value={character.raceId}
                 onChange={(id) => {
                   character.raceId = id;
+
+                  create.resetUpgradeFeats();
                 }}
               />
             </HStack>
@@ -75,7 +77,7 @@ export default function CreateCharacterBasic(): JSX.Element {
                 collection={store.collections.class}
                 value={create.upgrade.classId}
                 onChange={(id) => {
-                  create.upgrade.classId = id;
+                  create.updateClass(id);
                 }}
               />
             </HStack>

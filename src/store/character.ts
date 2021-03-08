@@ -155,18 +155,14 @@ export default class Character {
   get level(): number {
     return Math.max(this.upgradesWithPending.length, 1);
   }
-  get levelDetail(): Array<[Class, number]> {
+  get levelDetail(): Record<string, number> {
     const levels: Record<string, number> = {};
 
     this.upgradesWithPending.forEach(({ classId }) => {
       levels[classId] = levels[classId] ? levels[classId] + 1 : 1;
     });
 
-    return Object.keys(levels).map((classId, level) => {
-      const clas = collections.class.getById(classId);
-
-      return [clas, level];
-    });
+    return levels;
   }
 
   get gainedClassFeats(): Array<ClassFeat> {

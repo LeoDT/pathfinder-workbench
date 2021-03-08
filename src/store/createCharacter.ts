@@ -22,10 +22,14 @@ export default class CreateCharacter {
   constructor() {
     makeObservable(this, {
       isBasicValid: computed,
+
       abilityPointsCost: computed,
       abilityPointsRemain: computed,
+
       class: computed,
+      gainFeatReasons: computed,
       newGainedClassFeats: computed,
+
       skillPoints: computed,
       skillPointsRemain: computed,
       skillPointsUsed: computed,
@@ -33,12 +37,11 @@ export default class CreateCharacter {
 
     this.character = new Character('新角色');
     this.character.startUpgrade();
-
-    if (this.gainFeatReasons.length) {
-      this.upgrade.feats = Array(this.gainFeatReasons.length);
-    }
   }
 
+  resetUpgradeFeats(): void {
+    this.upgrade.feats = Array(this.gainFeatReasons.length);
+  }
   resetBaseAbility(): void {
     this.character.baseAbility = { str: 10, dex: 10, con: 10, int: 10, wis: 10, cha: 10 };
   }
@@ -86,11 +89,17 @@ export default class CreateCharacter {
 
     return reasons;
   }
+  get newGainedClassFeats(): ClassFeat[] {
+    return getClassFeatByLevel(this.class, this.character.levelDetail[this.class.id] || 1);
+  }
+
+  updateClass(cId: string): void {
+    this.upgrade.classId = cId;
+
+    this.resetUpgradeFeats();
+  }
   get class(): Class {
     return collections.class.getById(this.upgrade.classId);
-  }
-  get newGainedClassFeats(): ClassFeat[] {
-    return getClassFeatByLevel(this.class, this.character.level);
   }
 
   get skillPoints(): number {
