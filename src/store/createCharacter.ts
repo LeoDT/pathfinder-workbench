@@ -37,6 +37,7 @@ export default class CreateCharacter {
 
     this.character = new Character('新角色');
     this.character.startUpgrade();
+    this.resetUpgradeFeats();
   }
 
   resetUpgradeFeats(): void {
