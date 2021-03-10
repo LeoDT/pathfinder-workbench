@@ -10,6 +10,7 @@ import {
   MenuButton,
   MenuList,
   MenuItem,
+  Portal,
 } from '@chakra-ui/react';
 
 import { useStore } from '../../store';
@@ -163,16 +164,17 @@ export default function Character({ character: c }: Props): JSX.Element {
           </HStack>
           <HStack p="2" justify="flex-start" align="center" w="full">
             <CharacterTracker character={c} />
-            <Menu>
+            <Menu isLazy>
               <MenuButton as={Button} size="sm">
                 投
               </MenuButton>
-              <MenuList ml="-2">
-                <MenuItem onClick={() => dm.rollInitiative(c)}>先攻</MenuItem>
-                <MenuItem onClick={() => dm.rollPerception(c)}>察觉</MenuItem>
-                <MenuItem onClick={() => dm.rollSenseMotive(c)}>察言观色</MenuItem>
-                <MenuItem onClick={() => dm.rollWillSave(c)}>意志</MenuItem>
-              </MenuList>
+              <Portal>
+                <MenuList>
+                  <MenuItem onClick={() => dm.rollInitiative(c)}>先攻</MenuItem>
+                  <MenuItem onClick={() => dm.rollPerception(c)}>察觉</MenuItem>
+                  <MenuItem onClick={() => dm.rollWillSave(c)}>意志</MenuItem>
+                </MenuList>
+              </Portal>
             </Menu>
 
             <Button size="sm" onClick={() => dm.heal(c)}>

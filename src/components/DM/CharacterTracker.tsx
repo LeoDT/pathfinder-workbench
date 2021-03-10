@@ -6,7 +6,6 @@ import {
   HStack,
   Popover,
   PopoverTrigger,
-  PopoverArrow,
   PopoverContent,
   PopoverBody,
   PopoverFooter,
@@ -102,7 +101,6 @@ export default function CharacterTracker({ character }: Props): JSX.Element {
           <Observer>
             {() => (
               <PopoverBody>
-                <PopoverArrow />
                 {character.trackers.length === 0 ? (
                   <Text fontSize="lg">暂无Tracker</Text>
                 ) : (
