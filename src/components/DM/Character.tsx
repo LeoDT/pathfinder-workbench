@@ -94,7 +94,7 @@ export default function Character({ character: c }: Props): JSX.Element {
                 type="number"
               />
             </Box>
-            <Box p="2">
+            <Box p="2" borderRight="1px" borderColor="gray.200">
               <Text fontSize="xx-small" color="gray.400">
                 Max HP
               </Text>
@@ -102,6 +102,19 @@ export default function Character({ character: c }: Props): JSX.Element {
                 value={c.maxHP}
                 onChange={(e) => {
                   c.maxHP = e.target.value;
+                }}
+                variant="unstyled"
+                type="number"
+              />
+            </Box>
+            <Box p="2">
+              <Text fontSize="xx-small" color="gray.400">
+                消耗品同调
+              </Text>
+              <Input
+                value={c.attunement}
+                onChange={(e) => {
+                  c.attunement = e.target.value;
                 }}
                 variant="unstyled"
                 type="number"

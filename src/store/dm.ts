@@ -14,6 +14,7 @@ export interface DMCharacter {
   name: string;
   hp: string;
   maxHP: string;
+  attunement: string;
   initiative: string;
   perception: string;
   senseMotive: string;
@@ -28,6 +29,7 @@ export interface DMCharacter {
 const DEFAULT_CHARACTER_PROPS = {
   hp: '1',
   maxHP: '10',
+  attunement: '0',
   initiative: '0',
   perception: '0',
   willSave: '0',
@@ -54,6 +56,7 @@ export default class DMStore {
       addTracker: action,
       recoverTracker: action,
       recoverAllTracker: action,
+      recoverAllAttunment: action,
 
       sortedCharacters: computed,
     });
@@ -134,6 +137,12 @@ export default class DMStore {
   }
   recoverAllTracker(): void {
     this.characters.forEach((c) => this.recoverTracker(c));
+  }
+
+  recoverAllAttunment(): void {
+    this.characters.forEach((c) => {
+      c.attunement = '0';
+    });
   }
 
   getNonConflictName(name: string): string {
