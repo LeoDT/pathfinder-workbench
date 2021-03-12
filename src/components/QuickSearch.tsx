@@ -17,7 +17,7 @@ import { Search2Icon, ChevronDownIcon } from '@chakra-ui/icons';
 import { ENTITY_COLORS } from '../constant';
 import { useStore } from '../store';
 import { CollectionEntityType } from '../store/collection';
-import { Entity, Spell as SpellType, Feat as FeatType } from '../store/types';
+import { Entity, Spell as SpellType, Feat as FeatType } from '../types/core';
 import { useIsSmallerScreen } from '../utils/react';
 import { entityTypeTranslates } from '../utils/entity';
 import Spell from './Spell';

@@ -22,7 +22,7 @@ import { Observer } from 'mobx-react-lite';
 import CollectionEntityPicker from '../CollectionEntityPicker';
 
 import { useStore } from '../../store';
-import { Spell as SpellType } from '../../store/types';
+import { Spell as SpellType } from '../../types/core';
 import { useCurrentCharacter } from '../../store/character';
 import { useIsSmallerScreen } from '../../utils/react';
 

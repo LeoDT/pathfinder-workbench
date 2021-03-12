@@ -3,7 +3,7 @@ import './Spell.scss';
 import { Box, Heading, Badge, Text, Stack, Table, Tbody, Tr, Td } from '@chakra-ui/react';
 
 import { ENTITY_COLORS } from '../constant';
-import { Spell as SpellType, SpellMeta as SpellMetaType } from '../store/types';
+import { Spell as SpellType, SpellMeta as SpellMetaType } from '../types/core';
 import { translates as spellTranslates } from '../utils/spell';
 
 interface Props {

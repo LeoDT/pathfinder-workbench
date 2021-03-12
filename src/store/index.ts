@@ -4,7 +4,7 @@ import { set, entries } from 'idb-keyval';
 
 import { createContextNoNullCheck } from '../utils/react';
 
-import { Entity } from './types';
+import { Entity } from '../types/core';
 import DMStore from './dm';
 import UIStore from './ui';
 import { collections, Collection, CollectionEntityType } from './collection';
@@ -25,6 +25,9 @@ export class Store {
     this.collections = collections;
 
     this.characters = observable.array([], { deep: false });
+
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    (window as any).store = this;
   }
 
   async init(): Promise<void> {

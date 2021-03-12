@@ -1,6 +1,6 @@
 import { isEmpty } from 'lodash-es';
 import { Observer } from 'mobx-react-lite';
-import { Button, Box, VStack, Text, HStack, Spacer, Divider, Input } from '@chakra-ui/react';
+import { Button, Box, VStack, Text, HStack, Spacer, Input } from '@chakra-ui/react';
 
 import { useStore } from '../../store';
 import { useCreateCharacterStore } from '../../store/createCharacter';
@@ -9,6 +9,8 @@ import { ABILITY_TYPES, getScoreCost, abilityTranslates } from '../../utils/abil
 import AbilityInput from '../AbilityInput';
 import CollectionEntitySelect from '../CollectionEntitySelect';
 import Select from '../Select';
+import ClassSpecialityPickerToggler from '../ClassSpecialityPickerToggler';
+import ClassSpecialityDisplayer from '../ClassSpecialityDisplayer';
 
 export default function CreateCharacterBasic(): JSX.Element {
   const store = useStore();
@@ -20,7 +22,7 @@ export default function CreateCharacterBasic(): JSX.Element {
       <Observer>
         {() => (
           <VStack w="full">
-            <HStack w="full">
+            <HStack w="full" pb="2" borderBottom="1px" borderColor="gray.200">
               <Text fontSize="lg" whiteSpace="nowrap">
                 姓名
               </Text>
@@ -35,8 +37,7 @@ export default function CreateCharacterBasic(): JSX.Element {
                 maxW="50%"
               />
             </HStack>
-            <Divider />
-            <HStack w="full" spacing="0">
+            <HStack w="full" spacing="0" pb="2" borderBottom="1px" borderColor="gray.200">
               <Text fontSize="lg">种族</Text>
               <Spacer />
               <CollectionEntitySelect
@@ -49,28 +50,24 @@ export default function CreateCharacterBasic(): JSX.Element {
                 }}
               />
             </HStack>
-            <Divider />
             {isEmpty(character.race.ability) ? (
-              <>
-                <HStack w="full" spacing="0">
-                  <Text fontSize="lg">能力奖励</Text>
-                  <Spacer />
-                  <Select
-                    options={ABILITY_TYPES.map((t) => ({
-                      text: abilityTranslates[t],
-                      value: t,
-                      key: t,
-                    }))}
-                    value={character.bonusAbilityType}
-                    onChange={(v) => {
-                      character.bonusAbilityType = v;
-                    }}
-                  />
-                </HStack>
-                <Divider />
-              </>
+              <HStack w="full" spacing="0" pb="2" borderBottom="1px" borderColor="gray.200">
+                <Text fontSize="lg">能力奖励</Text>
+                <Spacer />
+                <Select
+                  options={ABILITY_TYPES.map((t) => ({
+                    text: abilityTranslates[t],
+                    value: t,
+                    key: t,
+                  }))}
+                  value={character.bonusAbilityType}
+                  onChange={(v) => {
+                    character.bonusAbilityType = v;
+                  }}
+                />
+              </HStack>
             ) : null}
-            <HStack w="full" spacing="0">
+            <HStack w="full" spacing="0" pb="2" borderBottom="1px" borderColor="gray.200">
               <Text fontSize="lg">职业</Text>
               <Spacer />
               <CollectionEntitySelect
@@ -81,7 +78,31 @@ export default function CreateCharacterBasic(): JSX.Element {
                 }}
               />
             </HStack>
-            <Divider />
+            {create.newGainedClassSpeciality.map((e) => (
+              <HStack
+                key={e.type}
+                w="full"
+                spacing="0"
+                pb="2"
+                borderBottom="1px"
+                borderColor="gray.200"
+              >
+                <Text fontSize="lg">职业特性</Text>
+                <Spacer />
+                <VStack alignItems="flex-end">
+                  <ClassSpecialityPickerToggler
+                    effect={e}
+                    value={create.upgrade.classSpeciality}
+                    onChange={(v) => {
+                      create.upgrade.classSpeciality = v;
+                    }}
+                  />
+                  {create.upgrade.classSpeciality ? (
+                    <ClassSpecialityDisplayer classSpeciality={create.upgrade.classSpeciality} />
+                  ) : null}
+                </VStack>
+              </HStack>
+            ))}
           </VStack>
         )}
       </Observer>

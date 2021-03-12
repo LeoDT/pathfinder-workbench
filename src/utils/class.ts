@@ -1,4 +1,6 @@
-import { Class, ClassFeat } from '../store/types';
+import { Class, ClassFeat } from '../types/core';
+import { ClassSpecialityType } from '../types/characterUpgrade';
+import { EffectGainClassSpeciality, EffectType } from '../types/effectType';
 
 export function getClassFeatByLevel(clas: Class, l: number): Array<ClassFeat> {
   const level = clas.levels[l - 1];
@@ -27,4 +29,21 @@ export function getClassFeatByLevel(clas: Class, l: number): Array<ClassFeat> {
       throw Error(`class feat ${s} for ${clas.id} not found`);
     }) || []
   );
+}
+
+export const classSpecialtyTranslates = {
+  [ClassSpecialityType.arcaneSchool]: '奥术学派',
+};
+
+export const gainClassSpecialityEffectType = [EffectType.gainArcaneSchool];
+
+export function getClassSpecialityTypeFromEffect(
+  effect: EffectGainClassSpeciality
+): ClassSpecialityType {
+  switch (effect.type) {
+    case EffectType.gainArcaneSchool:
+      return ClassSpecialityType.arcaneSchool;
+    default:
+      throw Error(`Unknown EffectGainClassSpeciality.type ${effect.type}`);
+  }
 }

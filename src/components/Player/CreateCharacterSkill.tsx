@@ -1,4 +1,4 @@
-import { without } from 'lodash';
+import { without } from 'lodash-es';
 import { useState } from 'react';
 import { Observer } from 'mobx-react-lite';
 import { Button, Box, VStack, HStack, Text, Icon, Spacer } from '@chakra-ui/react';

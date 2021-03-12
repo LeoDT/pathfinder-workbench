@@ -1,14 +1,23 @@
 import Fuse from 'fuse.js';
 
-import { Entity, Race, Spell, Feat, Class, Skill } from './types';
+import { Entity, Race, Spell, Feat, Class, Skill } from '../types/core';
+import { ArcaneSchool } from '../types/arcaneSchool';
 
 import SKILL_DATA from '../data/skills.json';
 import RACE_DATA from '../data/races.json';
 import CLASS_DATA from '../data/classes.json';
 import SPELL_DATA from '../data/spells.json';
 import FEAT_DATA from '../data/feats.json';
+import ARCANE_SCHOOL_DATA from '../data/arcane-schools.json';
 
-export type CollectionEntityType = 'skill' | 'race' | 'class' | 'spell' | 'feat' | 'weapon';
+export type CollectionEntityType =
+  | 'skill'
+  | 'race'
+  | 'class'
+  | 'spell'
+  | 'feat'
+  | 'weapon'
+  | 'arcaneSchool';
 
 export interface CollectionOptions {
   searchFields: Array<string>;
@@ -53,10 +62,17 @@ export const collections = {
   spell: new Collection<Spell>('spell', SPELL_DATA, {
     searchFields: ['id', 'name'],
   }),
-  feat: new Collection<Feat>('feat', FEAT_DATA as Feat[], {
+  feat: new Collection<Feat>('feat', FEAT_DATA as Array<Feat>, {
     searchFields: ['id', 'name'],
   }),
   class: new Collection<Class>('class', CLASS_DATA as Array<Class>, {
     searchFields: ['id', 'name'],
   }),
+  arcaneSchool: new Collection<ArcaneSchool>(
+    'arcaneSchool',
+    ARCANE_SCHOOL_DATA as Array<ArcaneSchool>,
+    {
+      searchFields: ['id', 'name'],
+    }
+  ),
 };

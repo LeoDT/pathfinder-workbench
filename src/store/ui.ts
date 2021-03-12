@@ -1,7 +1,7 @@
 import { makeObservable, observable } from 'mobx';
 
 import { CollectionEntityType } from './collection';
-import { Entity } from './types';
+import { Entity } from '../types/core';
 
 export default class UIStore {
   quickViewerKind: CollectionEntityType | null;

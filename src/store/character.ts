@@ -11,17 +11,8 @@ import shortid from 'shortid';
 
 import { createContextNoNullCheck } from '../utils/react';
 import { collections } from './collection';
-import {
-  AbilityType,
-  Abilities,
-  Spell,
-  Race,
-  Feat,
-  Skill,
-  Class,
-  ClassFeat,
-  CharacterUpgrade,
-} from './types';
+import { AbilityType, Abilities, Spell, Race, Feat, Skill, Class, ClassFeat } from '../types/core';
+import { CharacterUpgrade } from '../types/characterUpgrade';
 import { getModifiers, addBonusScores } from '../utils/ability';
 import { getClassFeatByLevel } from '../utils/class';
 
@@ -130,7 +121,7 @@ export default class Character {
 
   startUpgrade(): void {
     const lastUpgrade = last(this.upgrades);
-    const lastUpgradeClass = lastUpgrade ? lastUpgrade.classId : 'Fighter';
+    const lastUpgradeClass = lastUpgrade ? lastUpgrade.classId : 'Wizard';
 
     this.pendingUpgrade = {
       classId: lastUpgradeClass,

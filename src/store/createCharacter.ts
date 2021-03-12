@@ -1,11 +1,14 @@
+import { compact } from 'lodash-es';
 import { makeObservable, computed } from 'mobx';
 
 import { createContextNoNullCheck } from '../utils/react';
 import { ABILITY_POINTS, getTotalScoreCosts } from '../utils/ability';
-import { getClassFeatByLevel } from '../utils/class';
+import { gainClassSpecialityEffectType, getClassFeatByLevel } from '../utils/class';
 import { getBonusFeatEffect } from '../utils/effect';
 
-import { Class, CharacterUpgrade, ClassFeat, FeatType } from './types';
+import { Class, ClassFeat, FeatType } from '../types/core';
+import { EffectGainClassSpeciality } from '../types/effectType';
+import { CharacterUpgrade } from '../types/characterUpgrade';
 
 import { collections } from './collection';
 import Character from './character';
@@ -29,6 +32,7 @@ export default class CreateCharacter {
       class: computed,
       gainFeatReasons: computed,
       newGainedClassFeats: computed,
+      newGainedClassSpeciality: computed,
 
       skillPoints: computed,
       skillPointsRemain: computed,
@@ -38,6 +42,9 @@ export default class CreateCharacter {
     this.character = new Character('新角色');
     this.character.startUpgrade();
     this.resetUpgradeFeats();
+
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    (window as any).create = this;
   }
 
   resetUpgradeFeats(): void {
@@ -101,6 +108,19 @@ export default class CreateCharacter {
   }
   get class(): Class {
     return collections.class.getById(this.upgrade.classId);
+  }
+
+  get newGainedClassSpeciality(): Array<EffectGainClassSpeciality> {
+    // TODO: there should be only one speciality
+    return compact(
+      this.newGainedClassFeats
+        .map((cf) =>
+          cf.effects?.filter((e): e is EffectGainClassSpeciality =>
+            gainClassSpecialityEffectType.includes(e.type)
+          )
+        )
+        .flat()
+    );
   }
 
   get skillPoints(): number {

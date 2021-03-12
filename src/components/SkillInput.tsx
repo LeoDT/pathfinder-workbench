@@ -2,7 +2,7 @@ import { memo } from 'react';
 import { HStack, Text, Icon, Spacer, ButtonGroup, IconButton } from '@chakra-ui/react';
 import { FaStar, FaMinus, FaPlus } from 'react-icons/fa';
 
-import { Skill, AbilityType } from '../store/types';
+import { Skill, AbilityType } from '../types/core';
 
 import AbilityIcon from './AbilityIcon';
 import StatNumber from './StatNumber';

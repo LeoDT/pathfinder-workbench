@@ -13,7 +13,7 @@ import { FaInfoCircle } from 'react-icons/fa';
 
 import { useStore } from '../store';
 import { CollectionEntityType } from '../store/collection';
-import { Entity, Feat as FeatEntity } from '../store/types';
+import { Entity, Feat as FeatEntity } from '../types/core';
 
 import Feat from './Feat';
 

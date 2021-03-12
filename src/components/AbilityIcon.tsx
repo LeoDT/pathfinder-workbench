@@ -9,7 +9,7 @@ import {
   GiFlyingFlag,
 } from 'react-icons/gi';
 
-import { AbilityType } from '../store/types';
+import { AbilityType } from '../types/core';
 
 const icons = {
   str: { icon: GiFist, color: 'orange.500' },

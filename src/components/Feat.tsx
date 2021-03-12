@@ -3,7 +3,7 @@ import './Feat.scss';
 import { Box, HStack, Badge, Heading, Table, Tbody, Tr, Td, Text } from '@chakra-ui/react';
 
 import { ENTITY_COLORS } from '../constant';
-import { Feat as FeatType, FeatMeta as FeatMetaType } from '../store/types';
+import { Feat as FeatType, FeatMeta as FeatMetaType } from '../types/core';
 import { featTranslates } from '../utils/feat';
 
 interface Props {

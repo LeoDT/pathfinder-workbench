@@ -1,7 +1,7 @@
 import { HStack, Spacer, IconButton, Text, ButtonGroup } from '@chakra-ui/react';
 import { FaPlus, FaMinus } from 'react-icons/fa';
 
-import { AbilityType } from '../store/types';
+import { AbilityType } from '../types/core';
 import {
   getModifierFromScore,
   showModifier,

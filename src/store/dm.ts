@@ -1,4 +1,4 @@
-import { cloneDeep } from 'lodash';
+import { cloneDeep } from 'lodash-es';
 import { observable, IObservableArray, makeObservable, action, computed } from 'mobx';
 import shortid from 'shortid';
 

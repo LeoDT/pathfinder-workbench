@@ -1,6 +1,6 @@
 import { mapValues } from 'lodash-es';
 
-import { Abilities, AbilityType } from '../store/types';
+import { Abilities, AbilityType } from '../types/core';
 
 export const ABILITY_TYPES = [
   AbilityType.str,

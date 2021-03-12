@@ -144,8 +144,8 @@ export function CollectionEntityPickerPopover({
         </Button>
       </PopoverTrigger>
       <PopoverContent>
+        <PopoverArrow />
         <PopoverBody>
-          <PopoverArrow />
           <CollectionEntityPicker inputRef={initialFocusRef} {...props} />
         </PopoverBody>
       </PopoverContent>

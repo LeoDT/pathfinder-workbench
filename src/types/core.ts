@@ -1,6 +1,4 @@
-import { Effect } from './effectTypes';
-
-export * from './effectTypes';
+import { Effect } from './effectType';
 
 export enum Alignment {
   LG = 'LG',
@@ -37,19 +35,21 @@ export interface Entity {
   name: string;
 }
 
+export interface SpecialFeat extends Entity {
+  desc: string;
+  effects?: Effect[];
+  type?: 'su' | 'ex' | 'sp';
+}
+
 export interface Skill extends Entity {
   ability: AbilityType;
   category?: boolean;
   parent?: string;
 }
 
-export interface RacialTrait extends Entity {
-  desc?: string;
-  effects?: Array<Effect>;
-}
 export interface Race extends Entity {
   ability: Partial<Abilities>;
-  racialTrait: Array<RacialTrait>;
+  racialTrait: Array<SpecialFeat>;
 }
 
 export interface SpellMeta {
@@ -106,9 +106,7 @@ export interface ClassFeatGrow extends Entity {
   level: number;
   effects?: Effect[];
 }
-export interface ClassFeat extends Entity {
-  desc: string;
-  effects?: Array<Effect>;
+export interface ClassFeat extends SpecialFeat {
   grow?: Array<ClassFeatGrow>;
 }
 
@@ -137,14 +135,3 @@ export interface Class extends Entity {
 }
 
 export type Weapon = Entity;
-
-export interface CharacterUpgrade {
-  classId: string;
-  skills: Map<string, number>;
-  abilities: Partial<Abilities>;
-  feats: Array<string>; //feat id
-  spells: Map<number, string>; //spell level & spell id
-
-  levelFeat: boolean;
-  levelAbility: boolean;
-}
