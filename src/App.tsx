@@ -9,7 +9,7 @@ import DMPage from './pages/DMPage';
 
 function App(): JSX.Element {
   return (
-    <Router basename={process.env.NODE_ENV === 'development' ? '/' : '/pathfinder-workbench'}>
+    <Router basename={process.env.NODE_ENV === 'development' ? '/' : process.env.PFWB_BASENAME}>
       <Box>
         <Navbar />
 
