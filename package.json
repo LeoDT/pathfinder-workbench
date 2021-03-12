@@ -2,7 +2,7 @@
   "name": "pathfinder-workbench",
   "version": "0.1.0",
   "private": true,
-  "homepage": ".",
+  "homepage": "https://leodt.github.io/pathfinder-workbench/",
   "dependencies": {
     "@chakra-ui/icons": "^1.0.6",
     "@chakra-ui/react": "^1.3.4",
