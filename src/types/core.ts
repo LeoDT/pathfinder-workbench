@@ -72,6 +72,8 @@ export interface Spell extends Entity {
   desc: string;
 }
 
+export type SpellCastingType = 'wizard-like' | 'sorcerer-like' | 'cleric-like';
+
 export interface FeatMeta {
   requirement?: string;
   benefit?: string;

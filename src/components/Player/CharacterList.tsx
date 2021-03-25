@@ -39,6 +39,7 @@ export default function CharacterList(): JSX.Element {
                 boxShadow="sm"
                 borderRadius="md"
                 p="4"
+                mb="4"
                 transition="box-shadow .15s ease-in-out"
                 _hover={{
                   boxShadow: 'md',

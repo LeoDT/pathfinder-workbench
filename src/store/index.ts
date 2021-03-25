@@ -69,10 +69,6 @@ export class Store {
         }
       }
     });
-
-    if (this.characters.length < 1) {
-      this.characters.push(new Character('Default'));
-    }
   }
 }
 

@@ -1,5 +1,6 @@
 import './Spell.scss';
 
+import { memo } from 'react';
 import { Box, Heading, Badge, Text, Stack, Table, Tbody, Tr, Td } from '@chakra-ui/react';
 
 import { ENTITY_COLORS } from '../constant';
@@ -30,7 +31,7 @@ export function SpellMeta({ spell }: Props): JSX.Element {
   );
 }
 
-export default function Spell({
+export function Spell({
   spell,
   showName = true,
   showMeta = true,
@@ -40,7 +41,9 @@ export default function Spell({
     <Box className="spell">
       {showName ? (
         <Stack direction="row" align="center">
-          <Badge>{spell.book.toUpperCase()}</Badge>
+          <Badge minW="3em" textAlign="center" px="0">
+            {spell.book.toUpperCase()}
+          </Badge>
           <Heading as="h4" fontSize="lg" color={ENTITY_COLORS.spell}>
             {spell.name} <small style={{ fontWeight: 'normal' }}>({spell.id})</small>
           </Heading>
@@ -60,3 +63,5 @@ export default function Spell({
     </Box>
   );
 }
+
+export default memo(Spell);

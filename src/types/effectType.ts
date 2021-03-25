@@ -1,9 +1,10 @@
-import { AbilityType, FeatType } from './core';
+import { AbilityType, FeatType, SpellCastingType } from './core';
 
 export enum EffectType {
   gainFeat = 'gainFeat',
   abilityBonus = 'abilityBonus',
   gainArcaneSchool = 'gainArcaneSchool',
+  gainSpellCasting = 'gainSpellCasting',
 }
 
 export interface EffectGainFeat {
@@ -21,6 +22,16 @@ export interface EffectGainArcaneSchool {
   standardForbidden: number;
 }
 
-export type Effect = EffectGainFeat | EffectAbilityBonus | EffectGainArcaneSchool;
+export interface EffectGainSpellCasting {
+  type: EffectType.gainSpellCasting;
+  castingType: SpellCastingType;
+  abilityType: AbilityType;
+}
+
+export type Effect =
+  | EffectGainFeat
+  | EffectAbilityBonus
+  | EffectGainArcaneSchool
+  | EffectGainSpellCasting;
 
 export type EffectGainClassSpeciality = EffectGainArcaneSchool;

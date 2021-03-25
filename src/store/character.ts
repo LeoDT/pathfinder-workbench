@@ -1,20 +1,15 @@
 import { isEmpty, pick, last, compact, uniq } from 'lodash-es';
-import {
-  observable,
-  makeObservable,
-  ObservableSet,
-  IObservableArray,
-  computed,
-  action,
-} from 'mobx';
+import { observable, makeObservable, IObservableArray, computed, action } from 'mobx';
 import shortid from 'shortid';
 
 import { createContextNoNullCheck } from '../utils/react';
 import { collections } from './collection';
-import { AbilityType, Abilities, Spell, Race, Feat, Skill, Class, ClassFeat } from '../types/core';
+import { AbilityType, Abilities, Race, Skill, Class, ClassFeat } from '../types/core';
 import { CharacterUpgrade } from '../types/characterUpgrade';
 import { getModifiers, addBonusScores } from '../utils/ability';
-import { getClassFeatByLevel } from '../utils/class';
+import { getClassFeatByLevel, getSpellCastingEffectFromClassLevel } from '../utils/class';
+
+import Spellbook from './spellbook';
 
 interface OptionalCharacterParams {
   id?: string;
@@ -24,8 +19,7 @@ interface OptionalCharacterParams {
   level?: number;
 
   raceId?: string;
-  classId?: string;
-  spellbookIds?: string[];
+  upgrades?: CharacterUpgrade[];
 }
 
 export default class Character {
@@ -38,8 +32,8 @@ export default class Character {
   upgrades: IObservableArray<CharacterUpgrade>;
 
   raceId: string;
-  favoredClassId: string;
-  spellbookIds: ObservableSet<string>;
+  favoredClassIds: string[];
+  spellbooks: IObservableArray<Spellbook>;
 
   constructor(
     name: string,
@@ -48,8 +42,7 @@ export default class Character {
       baseAbility,
       bonusAbilityType = AbilityType.str,
       raceId = 'Dwarf',
-      classId = 'Fighter',
-      spellbookIds,
+      upgrades,
     }: OptionalCharacterParams = {}
   ) {
     makeObservable(this, {
@@ -64,9 +57,7 @@ export default class Character {
       race: computed,
       setRace: action,
 
-      favoredClassId: observable,
-
-      spellbook: computed,
+      favoredClassIds: observable,
 
       pendingUpgrade: observable,
       startUpgrade: action,
@@ -88,13 +79,13 @@ export default class Character {
     this.bonusAbilityType = bonusAbilityType ?? AbilityType.str;
 
     this.pendingUpgrade = null;
-    this.upgrades = observable.array([], { deep: false });
+    this.upgrades = observable.array(upgrades || [], { deep: false });
 
-    this.favoredClassId = classId;
+    this.favoredClassIds = [];
 
     this.raceId = raceId;
 
-    this.spellbookIds = observable.set(new Set(spellbookIds), { deep: false });
+    this.spellbooks = observable.array([], { deep: false });
   }
 
   get race(): Race {
@@ -128,7 +119,7 @@ export default class Character {
       skills: new Map(),
       abilities: {},
       feats: [],
-      spells: new Map(),
+      spells: [],
       levelFeat: this.level % 2 === 1,
       levelAbility: this.level % 4 === 1,
     };
@@ -156,15 +147,19 @@ export default class Character {
     return levels;
   }
 
-  get gainedClassFeats(): Array<ClassFeat> {
-    return this.upgradesWithPending
-      .map((up, l) => {
-        const clas = collections.class.getById(up.classId);
+  get gainedClassFeats(): Record<string, ClassFeat[]> {
+    const result: Record<string, ClassFeat[]> = {};
 
-        return getClassFeatByLevel(clas, l);
-      })
-      .flat()
-      .filter((f): f is ClassFeat => Boolean(f));
+    this.upgradesWithPending.forEach((up) => {
+      result[up.classId] = result[up.classId] || [];
+
+      const clas = collections.class.getById(up.classId);
+      const feats = getClassFeatByLevel(clas, result[up.classId].length + 1);
+
+      result[up.classId] = [...result[up.classId], ...feats];
+    });
+
+    return result;
   }
   get classes(): Array<Class> {
     return uniq(this.upgradesWithPending.map((u) => u.classId)).map((cId) =>
@@ -204,27 +199,27 @@ export default class Character {
     return { rank, modifier, classBonus, isClassSkill, total: rank + modifier + classBonus };
   }
 
-  get gainedFeats(): Array<Feat> {
-    return [];
+  initSpellbook(): void {
+    const books: Array<Spellbook> = [];
+
+    Object.keys(this.levelDetail).forEach((c) => {
+      const clas = collections.class.getById(c);
+      const e = getSpellCastingEffectFromClassLevel(clas, this.levelDetail[c]);
+
+      if (e) {
+        books.push(new Spellbook(this, clas, e.castingType, e.abilityType, []));
+      }
+    });
+
+    this.spellbooks.replace(books);
   }
 
-  get spellbook(): Array<Spell> {
-    return Array.from(this.spellbookIds).map((id) => collections.spell.getById(id));
-  }
-
-  static serializableProps = [
-    'raceId',
-    'classId',
-    'baseAbility',
-    'bonusAbilityType',
-    'spellbookIds',
-  ];
+  static serializableProps = ['raceId', 'baseAbility', 'bonusAbilityType', 'upgrades'];
 
   static stringify(c: Character): string {
     return JSON.stringify({
       id: c.id,
       name: c.name,
-      spellbook: Array.from(c.spellbook).map((s) => s.id),
       ...pick(c, Character.serializableProps),
     });
   }

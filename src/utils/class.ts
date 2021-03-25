@@ -1,6 +1,7 @@
+import { range } from 'lodash-es';
 import { Class, ClassFeat } from '../types/core';
 import { ClassSpecialityType } from '../types/characterUpgrade';
-import { EffectGainClassSpeciality, EffectType } from '../types/effectType';
+import { EffectGainClassSpeciality, EffectGainSpellCasting, EffectType } from '../types/effectType';
 
 export function getClassFeatByLevel(clas: Class, l: number): Array<ClassFeat> {
   const level = clas.levels[l - 1];
@@ -46,4 +47,25 @@ export function getClassSpecialityTypeFromEffect(
     default:
       throw Error(`Unknown EffectGainClassSpeciality.type ${effect.type}`);
   }
+}
+
+export function getSpellCastingEffectFromClassLevel(
+  clas: Class,
+  level: number
+): EffectGainSpellCasting | null {
+  const feats = range(level)
+    .map((l) => getClassFeatByLevel(clas, l + 1))
+    .flat();
+
+  let effect = null;
+
+  feats.forEach((f) =>
+    f.effects?.forEach((e) => {
+      if (e.type === EffectType.gainSpellCasting) {
+        effect = e;
+      }
+    })
+  );
+
+  return effect;
 }

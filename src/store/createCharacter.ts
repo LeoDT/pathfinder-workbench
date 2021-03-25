@@ -12,6 +12,7 @@ import { CharacterUpgrade } from '../types/characterUpgrade';
 
 import { collections } from './collection';
 import Character from './character';
+import Spellbook from './spellbook';
 
 export interface GainFeatReason {
   reason: 'race' | 'class' | 'level';
@@ -19,13 +20,13 @@ export interface GainFeatReason {
   index: number;
 }
 
+export type InvalidReason = 'classSpeciality' | 'abilityPoints' | 'skillPoints' | 'feat' | 'spell';
+
 export default class CreateCharacter {
   character: Character;
 
   constructor() {
     makeObservable(this, {
-      isBasicValid: computed,
-
       abilityPointsCost: computed,
       abilityPointsRemain: computed,
 
@@ -37,10 +38,15 @@ export default class CreateCharacter {
       skillPoints: computed,
       skillPointsRemain: computed,
       skillPointsUsed: computed,
+
+      spellbook: computed,
     });
 
     this.character = new Character('新角色');
     this.character.startUpgrade();
+    this.character.initSpellbook();
+
+    this.spellbook?.initKnownSpells();
     this.resetUpgradeFeats();
 
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -63,9 +69,6 @@ export default class CreateCharacter {
   }
   get abilityPointsRemain(): number {
     return ABILITY_POINTS - this.abilityPointsCost;
-  }
-  get isBasicValid(): boolean {
-    return this.abilityPointsRemain === 0;
   }
 
   get gainFeatReasons(): Array<GainFeatReason> {
@@ -131,6 +134,37 @@ export default class CreateCharacter {
   }
   get skillPointsRemain(): number {
     return this.skillPoints - this.skillPointsUsed;
+  }
+
+  get spellbook(): Spellbook | undefined {
+    return this.character.spellbooks.find((sb) => sb.class.id === this.upgrade.classId);
+  }
+
+  get spellbookValid(): boolean {
+    if (!this.spellbook) return true;
+
+    switch (this.spellbook.castingType) {
+      case 'wizard-like':
+        return this.upgrade.spells.length === this.spellbook.wizardNewSpellSlots;
+
+      default:
+        return false;
+    }
+  }
+
+  validate(): InvalidReason[] {
+    const validates: Array<[InvalidReason, boolean]> = [
+      ['abilityPoints', this.abilityPointsRemain !== 0],
+      [
+        'classSpeciality',
+        this.newGainedClassSpeciality.length > 0 && !this.upgrade.classSpeciality,
+      ],
+      ['skillPoints', this.skillPointsRemain !== 0],
+      ['feat', this.gainFeatReasons.length !== this.upgrade.feats.length],
+      ['spell', !this.spellbookValid],
+    ];
+
+    return validates.filter(([, v]) => v).map(([r]) => r);
   }
 }
 

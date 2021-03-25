@@ -1,5 +1,6 @@
 import './Feat.scss';
 
+import { memo } from 'react';
 import { Box, HStack, Badge, Heading, Table, Tbody, Tr, Td, Text } from '@chakra-ui/react';
 
 import { ENTITY_COLORS } from '../constant';
@@ -31,7 +32,7 @@ function FeatMeta({ feat }: { feat: FeatType }) {
   );
 }
 
-export default function Feat({
+export function Feat({
   feat,
   showName = true,
   showBrief = true,
@@ -68,3 +69,5 @@ export default function Feat({
     </Box>
   );
 }
+
+export default memo(Feat);

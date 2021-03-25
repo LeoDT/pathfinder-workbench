@@ -18,7 +18,7 @@ export interface CharacterUpgrade {
   skills: Map<string, number>;
   abilities: Partial<Abilities>;
   feats: Array<string>; //feat id
-  spells: Map<number, string>; //spell level & spell id
+  spells: Array<string>; //spell level & spell id
 
   levelFeat: boolean;
   levelAbility: boolean;
