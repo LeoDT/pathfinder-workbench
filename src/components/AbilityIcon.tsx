@@ -20,12 +20,17 @@ const icons = {
   cha: { icon: GiFlyingFlag, color: 'pink.500' },
 };
 
-export function AbilityIcon({ ability }: { ability: AbilityType }): JSX.Element {
+interface Props {
+  ability: AbilityType;
+  iconSize?: number | number[];
+}
+
+export function AbilityIcon({ ability, iconSize = 8 }: Props): JSX.Element {
   const { icon, color } = icons[ability];
 
   return (
     <Box bgColor={color} p="1" borderRadius="md">
-      <Icon as={icon} color="white" w={8} h={8} />
+      <Icon as={icon} color="white" w={iconSize} h={iconSize} />
     </Box>
   );
 }

@@ -2,14 +2,27 @@ import { isEmpty, pick, last, compact, uniq } from 'lodash-es';
 import { observable, makeObservable, IObservableArray, computed, action } from 'mobx';
 import shortid from 'shortid';
 
-import { createContextNoNullCheck } from '../utils/react';
 import { collections } from './collection';
-import { AbilityType, Abilities, Race, Skill, Class, ClassFeat } from '../types/core';
+import {
+  AbilityType,
+  Abilities,
+  Race,
+  Skill,
+  Class,
+  ClassLevel,
+  ClassFeat,
+  Feat,
+} from '../types/core';
 import { CharacterUpgrade } from '../types/characterUpgrade';
 import { getModifiers, addBonusScores } from '../utils/ability';
-import { getClassFeatByLevel, getSpellCastingEffectFromClassLevel } from '../utils/class';
+import {
+  getClassFeatByLevel,
+  getSpellCastingEffectFromClassLevel,
+  getClassLevel,
+} from '../utils/class';
 
 import Spellbook from './spellbook';
+import CharacterStatus from './characterStatus';
 
 interface OptionalCharacterParams {
   id?: string;
@@ -34,6 +47,8 @@ export default class Character {
   raceId: string;
   favoredClassIds: string[];
   spellbooks: IObservableArray<Spellbook>;
+
+  status: CharacterStatus;
 
   constructor(
     name: string,
@@ -65,11 +80,15 @@ export default class Character {
 
       level: computed,
       levelDetail: computed,
+      levelDetailForShow: computed,
+      classLevelDetail: computed,
       gainedClassFeats: computed,
       classes: computed,
 
       classSkills: computed,
       skillRanks: computed,
+
+      gainedFeats: computed,
     });
 
     this.name = name;
@@ -86,6 +105,7 @@ export default class Character {
     this.raceId = raceId;
 
     this.spellbooks = observable.array([], { deep: false });
+    this.status = new CharacterStatus(this);
   }
 
   get race(): Race {
@@ -137,26 +157,52 @@ export default class Character {
   get level(): number {
     return Math.max(this.upgradesWithPending.length, 1);
   }
-  get levelDetail(): Record<string, number> {
-    const levels: Record<string, number> = {};
+  get levelDetail(): Map<Class, number> {
+    const levels = new Map<Class, number>();
 
     this.upgradesWithPending.forEach(({ classId }) => {
-      levels[classId] = levels[classId] ? levels[classId] + 1 : 1;
+      const clas = collections.class.getById(classId);
+      const l = levels.get(clas) || 0;
+
+      levels.set(clas, l + 1);
     });
 
     return levels;
   }
+  get levelDetailForShow(): Array<string> {
+    return Array.from(this.levelDetail.entries()).map(([clas, level]) => `${level}级${clas.name}`);
+  }
+  get classLevelDetail(): Map<Class, ClassLevel> {
+    const classLevels = new Map<Class, ClassLevel>();
 
-  get gainedClassFeats(): Record<string, ClassFeat[]> {
-    const result: Record<string, ClassFeat[]> = {};
+    this.levelDetail.forEach((l, clas) => {
+      const classLevel = getClassLevel(clas, l);
+
+      classLevels.set(clas, classLevel);
+    });
+
+    return classLevels;
+  }
+
+  getLevelForClass(clas: Class): number {
+    const l = this.levelDetail.get(clas);
+
+    if (l) {
+      return l;
+    }
+
+    throw new Error('No class level for character');
+  }
+
+  get gainedClassFeats(): Map<Class, ClassFeat[]> {
+    const result = new Map<Class, ClassFeat[]>();
 
     this.upgradesWithPending.forEach((up) => {
-      result[up.classId] = result[up.classId] || [];
-
       const clas = collections.class.getById(up.classId);
-      const feats = getClassFeatByLevel(clas, result[up.classId].length + 1);
+      const r = result.get(clas) || [];
+      const feats = getClassFeatByLevel(clas, r.length + 1);
 
-      result[up.classId] = [...result[up.classId], ...feats];
+      result.set(clas, [...r, ...feats]);
     });
 
     return result;
@@ -199,12 +245,17 @@ export default class Character {
     return { rank, modifier, classBonus, isClassSkill, total: rank + modifier + classBonus };
   }
 
+  get gainedFeats(): Feat[] {
+    return this.upgradesWithPending
+      .map((up) => up.feats.map((f) => collections.feat.getById(f)))
+      .flat();
+  }
+
   initSpellbook(): void {
     const books: Array<Spellbook> = [];
 
-    Object.keys(this.levelDetail).forEach((c) => {
-      const clas = collections.class.getById(c);
-      const e = getSpellCastingEffectFromClassLevel(clas, this.levelDetail[c]);
+    this.levelDetail.forEach((level, clas) => {
+      const e = getSpellCastingEffectFromClassLevel(clas, level);
 
       if (e) {
         books.push(new Spellbook(this, clas, e.castingType, e.abilityType, []));
@@ -231,5 +282,3 @@ export default class Character {
     return character;
   }
 }
-
-export const [useCurrentCharacter, CurrentCharacterContext] = createContextNoNullCheck<Character>();

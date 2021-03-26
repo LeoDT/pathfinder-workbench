@@ -39,6 +39,7 @@ export interface SpecialFeat extends Entity {
   desc: string;
   effects?: Effect[];
   type?: 'su' | 'ex' | 'sp';
+  replace?: string[];
 }
 
 export interface Skill extends Entity {
@@ -47,9 +48,14 @@ export interface Skill extends Entity {
   parent?: string;
 }
 
+export type RaceSize = 'small' | 'medium';
 export interface Race extends Entity {
   ability: Partial<Abilities>;
   racialTrait: Array<SpecialFeat>;
+  alternateRacialTrait: Array<SpecialFeat>;
+  desc: Record<string, string>;
+  size: RaceSize;
+  speed: string;
 }
 
 export interface SpellMeta {

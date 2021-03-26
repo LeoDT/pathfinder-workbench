@@ -4,8 +4,6 @@ import SPELL_BY_CLASS_LEVEL from '../../data/spell-by-class-level.json';
 
 import { Collection } from './base';
 
-console.log(SPELL_BY_CLASS_LEVEL);
-
 export default class SpellCollection extends Collection<Spell> {
   static spellByClassLevel = SPELL_BY_CLASS_LEVEL as Record<string, string[][]>;
 

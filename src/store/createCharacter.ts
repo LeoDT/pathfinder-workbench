@@ -101,7 +101,7 @@ export default class CreateCharacter {
     return reasons;
   }
   get newGainedClassFeats(): ClassFeat[] {
-    return getClassFeatByLevel(this.class, this.character.levelDetail[this.class.id] || 1);
+    return getClassFeatByLevel(this.class, this.character.levelDetail.get(this.class) || 1);
   }
 
   updateClass(cId: string): void {

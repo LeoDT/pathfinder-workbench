@@ -41,7 +41,7 @@ export default class Spellbook {
   }
 
   get cl(): number {
-    return this.character.levelDetail[this.class.id];
+    return this.character.getLevelForClass(this.class);
   }
 
   get abilityModifier(): number {

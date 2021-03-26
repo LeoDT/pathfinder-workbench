@@ -1,10 +1,20 @@
 import { range } from 'lodash-es';
-import { Class, ClassFeat } from '../types/core';
+import { Class, ClassLevel, ClassFeat } from '../types/core';
 import { ClassSpecialityType } from '../types/characterUpgrade';
 import { EffectGainClassSpeciality, EffectGainSpellCasting, EffectType } from '../types/effectType';
 
-export function getClassFeatByLevel(clas: Class, l: number): Array<ClassFeat> {
+export function getClassLevel(clas: Class, l: number): ClassLevel {
   const level = clas.levels[l - 1];
+
+  if (level) {
+    return level;
+  }
+
+  throw new Error(`class ${clas.id} do no have level ${l}`);
+}
+
+export function getClassFeatByLevel(clas: Class, l: number): Array<ClassFeat> {
+  const level = getClassLevel(clas, l);
 
   return (
     level.special?.map((s) => {

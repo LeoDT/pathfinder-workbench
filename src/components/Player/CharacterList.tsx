@@ -7,9 +7,12 @@ import {
   LinkOverlay,
   Text,
   HStack,
+  Spacer,
+  Icon,
 } from '@chakra-ui/react';
 import { Observer } from 'mobx-react-lite';
 import { Link } from 'react-router-dom';
+import { FaRegTrashAlt } from 'react-icons/fa';
 
 import { useStore } from '../../store';
 
@@ -32,7 +35,7 @@ export default function CharacterList(): JSX.Element {
         {() => (
           <>
             {store.characters.map((c) => (
-              <LinkBox
+              <Box
                 key={c.id}
                 border="1px"
                 borderColor="gray.200"
@@ -45,25 +48,35 @@ export default function CharacterList(): JSX.Element {
                   boxShadow: 'md',
                 }}
               >
-                <LinkOverlay as={Link} to={`/player/${c.id}/basic`}>
-                  <HStack>
-                    <Heading as="h3" fontSize="xl">
-                      {c.name}
-                    </Heading>
-                    <Text fontSize="md">
-                      {c.race.name}{' '}
-                      {Object.keys(c.levelDetail)
-                        .map((cId) => {
-                          const clas = store.collections.class.getById(cId);
-                          const level = c.levelDetail[cId];
-
-                          return `${level}级${clas.name}`;
-                        })
-                        .join('/')}
-                    </Text>
-                  </HStack>
-                </LinkOverlay>
-              </LinkBox>
+                <HStack>
+                  <LinkBox>
+                    <LinkOverlay as={Link} to={`/player/character/${c.id}`}>
+                      <HStack>
+                        <Heading as="h3" fontSize="xl" color="teal">
+                          {c.name}
+                        </Heading>
+                        <Text fontSize="md">
+                          {c.race.name} {c.levelDetailForShow.join('/')}
+                        </Text>
+                      </HStack>
+                    </LinkOverlay>
+                  </LinkBox>
+                  <Spacer />
+                  <Icon
+                    as={FaRegTrashAlt}
+                    color="red.500"
+                    _hover={{ color: 'red.600' }}
+                    width="4"
+                    height="4"
+                    cursor="pointer"
+                    onClick={() => {
+                      if (confirm('角色删除无法恢复, 确认删除吗?')) {
+                        store.characters.remove(c);
+                      }
+                    }}
+                  />
+                </HStack>
+              </Box>
             ))}
           </>
         )}
