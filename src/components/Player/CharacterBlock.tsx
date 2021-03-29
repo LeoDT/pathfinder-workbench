@@ -17,9 +17,16 @@ export function VBlockItem({ label, children, ...props }: BlockItemProps): JSX.E
       borderColor="gray.200"
       w="full"
       _last={{ borderBottom: '0' }}
+      role="group"
       {...props}
     >
-      <Text color="gray.500">{label}</Text>
+      <Text
+        color="gray.500"
+        _groupHover={{ color: 'gray.700' }}
+        transition="color .15s ease-in-out"
+      >
+        {label}
+      </Text>
       <Spacer />
       <Box>{children}</Box>
     </HStack>
@@ -28,8 +35,20 @@ export function VBlockItem({ label, children, ...props }: BlockItemProps): JSX.E
 
 export function HBlockItem({ label, children, ...props }: BlockItemProps): JSX.Element {
   return (
-    <HStack p="2" borderRight="1px" borderColor="gray.200" _last={{ borderRight: '0' }} {...props}>
-      <Text color="gray.500" whiteSpace="nowrap">
+    <HStack
+      p="2"
+      borderRight="1px"
+      borderColor="gray.200"
+      _last={{ borderRight: '0' }}
+      role="group"
+      {...props}
+    >
+      <Text
+        color="gray.500"
+        _groupHover={{ color: 'gray.700' }}
+        transition="color .15s ease-in-out"
+        whiteSpace="nowrap"
+      >
         {label}
       </Text>
       <Spacer />
