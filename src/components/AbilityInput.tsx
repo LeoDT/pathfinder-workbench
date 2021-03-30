@@ -19,6 +19,7 @@ interface Props {
   max?: number;
   min?: number;
   isIncreaseDisabled?: boolean;
+  isDecreaseDisabled?: boolean;
   racial?: number;
 }
 

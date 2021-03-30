@@ -1,6 +1,6 @@
 import Fuse from 'fuse.js';
-import { observable, IObservableArray, autorun } from 'mobx';
-import { set, entries } from 'idb-keyval';
+import { observable, IObservableArray, autorun, observe } from 'mobx';
+import { set, entries, del } from 'idb-keyval';
 
 import { createContextNoNullCheck } from '../utils/react';
 
@@ -52,6 +52,14 @@ export class Store {
       });
 
       set('dm:characters', JSON.stringify(this.dm.characters));
+    });
+
+    observe(this.characters, (change) => {
+      if (change.type === 'splice') {
+        change.removed.forEach((i) => {
+          del(`character:${i.id}`);
+        });
+      }
     });
   }
 

@@ -22,7 +22,7 @@ import { useStore } from '../store';
 import { ClassSpecialityArcaneSchool, ClassSpecialityType } from '../types/characterUpgrade';
 
 interface Props {
-  value?: ClassSpecialityArcaneSchool;
+  value: ClassSpecialityArcaneSchool | null;
   onChange: (v: ClassSpecialityArcaneSchool) => void;
   standardForbidden: number;
 }

@@ -1,4 +1,4 @@
-import { isEmpty, pick, last, compact, uniq } from 'lodash-es';
+import { isEmpty, pick, last, compact, uniq, range } from 'lodash-es';
 import { observable, makeObservable, IObservableArray, computed, action } from 'mobx';
 import shortid from 'shortid';
 
@@ -56,7 +56,7 @@ export default class Character {
       id,
       baseAbility,
       bonusAbilityType = AbilityType.str,
-      raceId = 'Dwarf',
+      raceId = 'Human',
       upgrades,
     }: OptionalCharacterParams = {}
   ) {
@@ -76,17 +76,20 @@ export default class Character {
 
       pendingUpgrade: observable,
       startUpgrade: action,
+      cancelUpgrade: action,
       finishUpgrade: action,
 
       level: computed,
       levelDetail: computed,
       levelDetailForShow: computed,
+      levelDetailWithoutPending: computed,
       classLevelDetail: computed,
       gainedClassFeats: computed,
       classes: computed,
 
       classSkills: computed,
       skillRanks: computed,
+      skillRanksWithoutPending: computed,
 
       gainedFeats: computed,
     });
@@ -106,6 +109,8 @@ export default class Character {
 
     this.spellbooks = observable.array([], { deep: false });
     this.status = new CharacterStatus(this);
+
+    this.ensureSpellbooks();
   }
 
   get race(): Race {
@@ -132,7 +137,7 @@ export default class Character {
 
   startUpgrade(): void {
     const lastUpgrade = last(this.upgrades);
-    const lastUpgradeClass = lastUpgrade ? lastUpgrade.classId : 'Wizard';
+    const lastUpgradeClass = lastUpgrade ? lastUpgrade.classId : 'Barbarian';
 
     this.pendingUpgrade = {
       classId: lastUpgradeClass,
@@ -142,7 +147,11 @@ export default class Character {
       spells: [],
       levelFeat: this.level % 2 === 1,
       levelAbility: this.level % 4 === 1,
+      classSpeciality: null,
     };
+  }
+  cancelUpgrade(): void {
+    this.pendingUpgrade = null;
   }
   finishUpgrade(): void {
     if (this.pendingUpgrade) {
@@ -172,6 +181,18 @@ export default class Character {
   get levelDetailForShow(): Array<string> {
     return Array.from(this.levelDetail.entries()).map(([clas, level]) => `${level}级${clas.name}`);
   }
+  get levelDetailWithoutPending(): Map<Class, number> {
+    const levels = new Map<Class, number>();
+
+    this.upgrades.forEach(({ classId }) => {
+      const clas = collections.class.getById(classId);
+      const l = levels.get(clas) || 0;
+
+      levels.set(clas, l + 1);
+    });
+
+    return levels;
+  }
   get classLevelDetail(): Map<Class, ClassLevel> {
     const classLevels = new Map<Class, ClassLevel>();
 
@@ -197,12 +218,13 @@ export default class Character {
   get gainedClassFeats(): Map<Class, ClassFeat[]> {
     const result = new Map<Class, ClassFeat[]>();
 
-    this.upgradesWithPending.forEach((up) => {
-      const clas = collections.class.getById(up.classId);
-      const r = result.get(clas) || [];
-      const feats = getClassFeatByLevel(clas, r.length + 1);
-
-      result.set(clas, [...r, ...feats]);
+    this.levelDetail.forEach((level, clas) => {
+      result.set(
+        clas,
+        range(level)
+          .map((l) => getClassFeatByLevel(clas, l + 1))
+          .flat()
+      );
     });
 
     return result;
@@ -234,6 +256,17 @@ export default class Character {
 
     return ranks;
   }
+  get skillRanksWithoutPending(): Map<string, number> {
+    const ranks = new Map<string, number>();
+
+    this.upgrades.forEach(({ skills }) => {
+      Array.from(skills.entries()).forEach(([k, v]) => {
+        ranks.set(k, (ranks.get(k) || 0) + v);
+      });
+    });
+
+    return ranks;
+  }
   getSkillDetail(
     s: Skill
   ): { rank: number; modifier: number; classBonus: number; isClassSkill: boolean; total: number } {
@@ -251,32 +284,46 @@ export default class Character {
       .flat();
   }
 
-  initSpellbook(): void {
+  ensureSpellbooks(): void {
     const books: Array<Spellbook> = [];
 
     this.levelDetail.forEach((level, clas) => {
+      const existedSpellbook = this.spellbooks.find((sb) => sb.class === clas);
+
+      if (existedSpellbook) {
+        books.push(existedSpellbook);
+      }
+
       const e = getSpellCastingEffectFromClassLevel(clas, level);
 
       if (e) {
-        books.push(new Spellbook(this, clas, e.castingType, e.abilityType, []));
+        const newSpellbook = new Spellbook(this, clas, e.castingType, e.abilityType);
+        books.push(newSpellbook);
       }
     });
 
     this.spellbooks.replace(books);
   }
 
-  static serializableProps = ['raceId', 'baseAbility', 'bonusAbilityType', 'upgrades'];
+  static serializableProps = ['raceId', 'baseAbility', 'bonusAbilityType'];
 
   static stringify(c: Character): string {
     return JSON.stringify({
       id: c.id,
       name: c.name,
+      upgrades: c.upgrades.map((u) => ({ ...u, skills: Array.from(u.skills.entries()) })),
       ...pick(c, Character.serializableProps),
     });
   }
 
   static parse(s: string): Character {
     const json = JSON.parse(s);
+
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    json.upgrades = json.upgrades.map((u: any) => {
+      return { ...u, skills: new Map(u.skills) };
+    });
+
     const character = new Character(json.name, json);
 
     return character;

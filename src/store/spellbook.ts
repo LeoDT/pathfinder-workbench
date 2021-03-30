@@ -1,5 +1,5 @@
 import { range } from 'lodash-es';
-import { computed, observable, makeObservable, action } from 'mobx';
+import { computed, makeObservable } from 'mobx';
 
 import { AbilityType, Class, Spell, SpellCastingType } from '../types/core';
 
@@ -8,42 +8,29 @@ import { spellsPerDayByAbilityModifier } from '../utils/spell';
 import { collections } from './collection';
 import Character from './character';
 
-type KnownSpells = Array<string[] | 'all'>;
-
 export default class Spellbook {
   character: Character;
   class: Class;
   castingType: SpellCastingType;
   abilityType: AbilityType;
-  knownSpellIds: KnownSpells;
 
-  constructor(
-    c: Character,
-    clas: Class,
-    castingType: SpellCastingType,
-    abilityType: AbilityType,
-    knownSpellIds: string[][]
-  ) {
+  constructor(c: Character, clas: Class, castingType: SpellCastingType, abilityType: AbilityType) {
     makeObservable(this, {
       cl: computed,
       abilityModifier: computed,
       classSpells: computed,
       knownSpells: computed,
-
-      initKnownSpells: action,
     });
 
     this.character = c;
     this.class = clas;
     this.castingType = castingType;
     this.abilityType = abilityType;
-    this.knownSpellIds = observable.array(knownSpellIds);
   }
 
   get cl(): number {
     return this.character.getLevelForClass(this.class);
   }
-
   get abilityModifier(): number {
     return this.character.abilityModifier[this.abilityType];
   }
@@ -54,20 +41,36 @@ export default class Spellbook {
       .map((spells) => spells.map((s) => collections.spell.getById(s)));
   }
 
+  get knownSpellIds(): string[] {
+    const fromUpgrades = this.character.upgradesWithPending.map((u) => u.spells).flat();
+    let fromClass: string[] = [];
+
+    switch (this.castingType) {
+      case 'wizard-like':
+        fromClass = collections.spell.getByClassLevel(this.class, 0);
+    }
+
+    return [...fromClass, ...fromUpgrades];
+  }
   get knownSpells(): Array<Spell[]> {
-    return this.knownSpellIds.map((spells, level) => {
-      if (spells === 'all') {
-        return collections.spell
-          .getByClassLevel(this.class, level)
-          .map((s) => collections.spell.getById(s));
+    const spells: Array<Spell[]> = [];
+
+    this.knownSpellIds.forEach((sId) => {
+      const level = collections.spell.getSpellLevelForClass(sId, this.class);
+      const spell = collections.spell.getById(sId);
+
+      if (!spells[level]) {
+        spells[level] = [];
       }
 
-      return spells.map((s) => collections.spell.getById(s));
+      spells[level].push(spell);
     });
+
+    return spells;
   }
 
   get spellsPerDay(): number[] {
-    const byClass = this.class.levels[this.cl].spellsPerDay as number[];
+    const byClass = this.class.levels[this.cl - 1].spellsPerDay as number[];
     const modifier = this.abilityModifier;
     // 0 level spells is not affected by ability modifiers
     const byAbility = [0, ...spellsPerDayByAbilityModifier[modifier]];
@@ -82,25 +85,15 @@ export default class Spellbook {
     });
   }
 
-  initKnownSpells(): void {
-    this.knownSpellIds = observable.array([]);
-
-    switch (this.castingType) {
-      case 'wizard-like': {
-        this.knownSpellIds.push('all');
-        break;
-      }
-
-      default:
-        return;
-    }
-  }
-
   get wizardNewSpellSlots(): number {
     if (this.cl === 1) {
       return 3 + this.abilityModifier;
     }
 
     return 2;
+  }
+
+  static stringify(): void {
+    return;
   }
 }

@@ -1,5 +1,14 @@
-import { HStack, Box, Text, Spacer, StackProps, Heading, SimpleGrid } from '@chakra-ui/react';
-import { useCurrentCharacter } from './context';
+import {
+  HStack,
+  Box,
+  Text,
+  Spacer,
+  StackProps,
+  Heading,
+  SimpleGrid,
+  Button,
+} from '@chakra-ui/react';
+import { Link } from 'react-router-dom';
 
 import { AbilityType } from '../../types/core';
 import { sizeTranslates } from '../../utils/race';
@@ -9,6 +18,8 @@ import StatNumber from '../StatNumber';
 import AbilityIcon from '../AbilityIcon';
 import TextWithLinebreaks from '../TextWithLinebreaks';
 import SimpleEntity from '../SimpleEntity';
+
+import { useCurrentCharacter } from './context';
 import { Block, VBlockItem, HBlockItem } from './CharacterBlock';
 
 const rowStyle: StackProps = {
@@ -54,6 +65,20 @@ export default function CharacterDetailBasic(): JSX.Element {
 
   return (
     <>
+      <Box position="relative">
+        <Button
+          position="absolute"
+          right="0"
+          top="-10"
+          as={Link}
+          to={`/player/character/${character.id}/upgrade`}
+          colorScheme="teal"
+          size="sm"
+        >
+          升级
+        </Button>
+      </Box>
+
       <HStack {...rowStyle}>
         <HStack w={['full', '40%']} flexShrink={0}>
           <Block w="50%">

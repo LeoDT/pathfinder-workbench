@@ -35,7 +35,8 @@ interface Props {
   isClassSkill: boolean;
   max: number;
   min: number;
-  noMorePoints: boolean;
+  isIncreaseDisabled?: boolean;
+  isDecreaseDisabled?: boolean;
   onChange: (s: number) => void;
 }
 
@@ -47,7 +48,8 @@ export default function SkillInput({
   isClassSkill,
   max,
   min,
-  noMorePoints,
+  isIncreaseDisabled,
+  isDecreaseDisabled,
   onChange,
 }: Props): JSX.Element {
   return (
@@ -64,14 +66,14 @@ export default function SkillInput({
           icon={<FaMinus />}
           onClick={() => onChange(rank - 1)}
           size="sm"
-          disabled={rank <= min}
+          disabled={rank <= min || isDecreaseDisabled}
         />
         <IconButton
           aria-label="Increase Ability"
           icon={<FaPlus />}
           onClick={() => onChange(rank + 1)}
           size="sm"
-          disabled={rank >= max || noMorePoints}
+          disabled={rank >= max || isIncreaseDisabled}
         />
       </ButtonGroup>
     </HStack>

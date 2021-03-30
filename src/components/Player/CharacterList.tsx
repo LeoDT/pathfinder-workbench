@@ -16,14 +16,16 @@ import { FaRegTrashAlt } from 'react-icons/fa';
 
 import { useStore } from '../../store';
 
-import Bread from './Bread';
+import Bread, { useBreadcrumb } from './Bread';
 
 export default function CharacterList(): JSX.Element {
   const store = useStore();
 
+  useBreadcrumb('角色列表', '/player/list');
+
   return (
     <Box>
-      <Bread items={[{ text: '角色列表', link: '/player/list' }]} />
+      <Bread />
 
       <Divider my="4" />
 

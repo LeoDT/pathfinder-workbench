@@ -1,5 +1,5 @@
 import { compact } from 'lodash-es';
-import { makeObservable, computed } from 'mobx';
+import { makeObservable, computed, action } from 'mobx';
 
 import { createContextNoNullCheck } from '../utils/react';
 import { ABILITY_POINTS, getTotalScoreCosts } from '../utils/ability';
@@ -22,15 +22,19 @@ export interface GainFeatReason {
 
 export type InvalidReason = 'classSpeciality' | 'abilityPoints' | 'skillPoints' | 'feat' | 'spell';
 
-export default class CreateCharacter {
+export default class CreateCharacterStore {
   character: Character;
 
-  constructor() {
+  constructor(character?: Character) {
     makeObservable(this, {
+      resetUpgradeFeats: action,
+      resetBaseAbility: action,
+
       abilityPointsCost: computed,
       abilityPointsRemain: computed,
 
       class: computed,
+      updateClass: action,
       gainFeatReasons: computed,
       newGainedClassFeats: computed,
       newGainedClassSpeciality: computed,
@@ -42,11 +46,10 @@ export default class CreateCharacter {
       spellbook: computed,
     });
 
-    this.character = new Character('新角色');
+    this.character = character || new Character('新角色');
     this.character.startUpgrade();
-    this.character.initSpellbook();
+    this.character.ensureSpellbooks();
 
-    this.spellbook?.initKnownSpells();
     this.resetUpgradeFeats();
 
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -71,7 +74,7 @@ export default class CreateCharacter {
     return ABILITY_POINTS - this.abilityPointsCost;
   }
 
-  get gainFeatReasons(): Array<GainFeatReason> {
+  getGainFeatReasons(includeRacial: boolean): Array<GainFeatReason> {
     const reasons: Array<GainFeatReason> = [];
     let index = 0;
 
@@ -80,13 +83,15 @@ export default class CreateCharacter {
       index += 1;
     }
 
-    const racialTrait = this.character.race.racialTrait.find(
-      (t) => t.effects && getBonusFeatEffect(t.effects)
-    );
-    const racialEffect = racialTrait?.effects ? getBonusFeatEffect(racialTrait.effects) : null;
-    if (racialEffect) {
-      reasons.push({ reason: 'race', index, featType: racialEffect.featType });
-      index += 1;
+    if (includeRacial) {
+      const racialTrait = this.character.race.racialTrait.find(
+        (t) => t.effects && getBonusFeatEffect(t.effects)
+      );
+      const racialEffect = racialTrait?.effects ? getBonusFeatEffect(racialTrait.effects) : null;
+      if (racialEffect) {
+        reasons.push({ reason: 'race', index, featType: racialEffect.featType });
+        index += 1;
+      }
     }
 
     const classFeat = this.newGainedClassFeats.find(
@@ -100,6 +105,9 @@ export default class CreateCharacter {
 
     return reasons;
   }
+  get gainFeatReasons(): Array<GainFeatReason> {
+    return this.getGainFeatReasons(true);
+  }
   get newGainedClassFeats(): ClassFeat[] {
     return getClassFeatByLevel(this.class, this.character.levelDetail.get(this.class) || 1);
   }
@@ -108,6 +116,8 @@ export default class CreateCharacter {
     this.upgrade.classId = cId;
 
     this.resetUpgradeFeats();
+    this.upgrade.classSpeciality = null;
+    this.character.ensureSpellbooks();
   }
   get class(): Class {
     return collections.class.getById(this.upgrade.classId);
@@ -171,4 +181,4 @@ export default class CreateCharacter {
 export const [
   useCreateCharacterStore,
   CreateCharacterStoreContext,
-] = createContextNoNullCheck<CreateCharacter>();
+] = createContextNoNullCheck<CreateCharacterStore>();

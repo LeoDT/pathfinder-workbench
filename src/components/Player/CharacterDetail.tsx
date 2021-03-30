@@ -6,14 +6,17 @@ import { useStore } from '../../store';
 import Character from '../../store/character';
 import { CurrentCharacterContext } from './context';
 
-import Bread from './Bread';
+import Bread, { useBreadcrumb } from './Bread';
 import CharacterDetailBasic from './CharacterDetailBasic';
+import CharacterUpgrade from './UpgradeCharacter';
 
 export default function CharacterDetail(): JSX.Element | null {
   const store = useStore();
   const { id } = useParams<{ id: string }>();
-  const { path } = useRouteMatch();
+  const { path, url } = useRouteMatch();
   const [character, setCharacter] = useState<Character | null>(null);
+
+  useBreadcrumb(`角色: ${character?.name || ''}`, url);
 
   useEffect(() => {
     const dispose = autorun(() => {
@@ -22,6 +25,9 @@ export default function CharacterDetail(): JSX.Element | null {
 
         if (c) {
           setCharacter(c);
+
+          // eslint-disable-next-line @typescript-eslint/no-explicit-any
+          (window as any).character = c;
         }
       }
     });
@@ -34,10 +40,11 @@ export default function CharacterDetail(): JSX.Element | null {
   return character ? (
     <CurrentCharacterContext.Provider value={character}>
       <>
-        <Bread items={[{ text: `角色: ${character.name}`, link: path }]} />
+        <Bread mb="2" />
 
         <Switch>
           <Route path={`${path}/basic`} component={CharacterDetailBasic} />
+          <Route path={`${path}/upgrade`} component={CharacterUpgrade} />
 
           <Redirect to={`${path}/basic`} />
         </Switch>

@@ -7,7 +7,7 @@ import ArcaneSchoolPicker from './ArcaneSchoolPicker';
 
 interface Props {
   effect: EffectGainClassSpeciality;
-  value?: ClassSpeciality;
+  value: ClassSpeciality | null;
   onChange: (v: ClassSpeciality) => void;
 }
 
