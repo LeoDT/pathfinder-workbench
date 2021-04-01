@@ -1,7 +1,7 @@
 import { Box, BoxProps, HStack, Text, StackProps, Spacer } from '@chakra-ui/react';
 
 export function Block(props: BoxProps): JSX.Element {
-  return <Box border="1px" borderColor="gray.200" borderRadius="md" mb="2" {...props} />;
+  return <Box border="1px" borderColor="gray.200" borderRadius="md" {...props} />;
 }
 
 interface BlockItemProps extends StackProps {
