@@ -4,10 +4,10 @@ import { FaPlus, FaMinus } from 'react-icons/fa';
 import { AbilityType } from '../types/core';
 import {
   getModifierFromScore,
-  showModifier,
   MAXIMUM_ABILITY_SCORE,
   MINIMUM_ABILITY_SCORE,
 } from '../utils/ability';
+import { showModifier } from '../utils/modifier';
 
 import AbilityIcon from './AbilityIcon';
 import StatNumber from './StatNumber';

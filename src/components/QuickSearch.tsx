@@ -17,11 +17,19 @@ import { Search2Icon, ChevronDownIcon } from '@chakra-ui/icons';
 import { ENTITY_COLORS } from '../constant';
 import { useStore } from '../store';
 import { CollectionEntityType } from '../store/collection';
-import { Entity, Spell as SpellType, Feat as FeatType } from '../types/core';
+import {
+  Entity,
+  Spell as SpellType,
+  Feat as FeatType,
+  WeaponType as WeaponTypeType,
+  ArmorType as ArmorTypeType,
+} from '../types/core';
 import { useIsSmallerScreen } from '../utils/react';
 import { entityTypeTranslates } from '../utils/entity';
 import Spell from './Spell';
 import Feat from './Feat';
+import WeaponType from './WeaponType';
+import ArmorType from './ArmorType';
 
 function QuickSearchResultItem({ item, type }: { item: Entity; type: CollectionEntityType }) {
   let el = null;
@@ -32,6 +40,12 @@ function QuickSearchResultItem({ item, type }: { item: Entity; type: CollectionE
       break;
     case 'feat':
       el = <Feat feat={item as FeatType} />;
+      break;
+    case 'weaponType':
+      el = <WeaponType weaponType={item as WeaponTypeType} />;
+      break;
+    case 'armorType':
+      el = <ArmorType armorType={item as ArmorTypeType} />;
       break;
     default:
       break;

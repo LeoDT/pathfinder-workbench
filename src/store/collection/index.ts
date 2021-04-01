@@ -14,29 +14,23 @@ import RACE_DATA from '../../data/races.json';
 import CLASS_DATA from '../../data/classes.json';
 import SPELL_DATA from '../../data/spells.json';
 import FEAT_DATA from '../../data/feats.json';
+import WEAPON_TYPES_DATA from '../../data/weapon-types.json';
+import ARMOR_TYPES_DATA from '../../data/armor-types.json';
 import ARCANE_SCHOOL_DATA from '../../data/arcane-schools.json';
 
 import { Collection } from './base';
 export * from './base';
 import SpellCollection from './spell';
+import WeaponTypeCollection from './weaponType';
+import ArmorTypeCollection from './armorType';
 
 export const collections = {
-  skill: new Collection<Skill>('skill', SKILL_DATA as any, {
-    searchFields: ['id', 'name'],
-  }),
-  race: new Collection<Race>('race', RACE_DATA as any, {
-    searchFields: ['id', 'name'],
-  }),
-  spell: new SpellCollection('spell', SPELL_DATA as any, {
-    searchFields: ['id', 'name'],
-  }),
-  feat: new Collection<Feat>('feat', FEAT_DATA as any, {
-    searchFields: ['id', 'name'],
-  }),
-  class: new Collection<Class>('class', CLASS_DATA as any, {
-    searchFields: ['id', 'name'],
-  }),
-  arcaneSchool: new Collection<ArcaneSchool>('arcaneSchool', ARCANE_SCHOOL_DATA as any, {
-    searchFields: ['id', 'name'],
-  }),
+  skill: new Collection<Skill>('skill', SKILL_DATA as any),
+  race: new Collection<Race>('race', RACE_DATA as any),
+  spell: new SpellCollection(SPELL_DATA as any),
+  feat: new Collection<Feat>('feat', FEAT_DATA as any),
+  class: new Collection<Class>('class', CLASS_DATA as any),
+  weaponType: new WeaponTypeCollection(WEAPON_TYPES_DATA as any),
+  armorType: new ArmorTypeCollection(ARMOR_TYPES_DATA as any),
+  arcaneSchool: new Collection<ArcaneSchool>('arcaneSchool', ARCANE_SCHOOL_DATA as any),
 };

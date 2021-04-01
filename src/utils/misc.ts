@@ -12,3 +12,11 @@ export function stringToColor(str: string): string {
 
   return color;
 }
+
+export function showDistance(d: number): string {
+  return `${d} 尺`;
+}
+
+export function showWeight(w: number): string {
+  return `${w} 磅`;
+}

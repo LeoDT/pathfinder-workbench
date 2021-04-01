@@ -39,10 +39,6 @@ export function getModifiers(ab: Abilities): Abilities {
   return mapValues(ab, getModifierFromScore);
 }
 
-export function showModifier(mod: number): string {
-  return `${mod < 0 ? '' : '+'}${mod}`;
-}
-
 export const ABILITY_COST: Record<number, number> = {
   7: -4,
   8: -2,

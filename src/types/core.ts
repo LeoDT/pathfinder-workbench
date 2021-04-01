@@ -142,4 +142,41 @@ export interface Class extends Entity {
   levels: Array<ClassLevel>;
 }
 
-export type Weapon = Entity;
+export type WeaponTraining = 'simple' | 'martial' | 'exotic';
+export type WeaponCategory = 'light' | 'one-handed' | 'two-handed' | 'ranged';
+export type WeaponDamageType = 'P' | 'B' | 'S' | 'P or S' | 'B or S' | 'B and P' | 'P and S';
+
+export interface WeaponTypeMeta {
+  training: WeaponTraining;
+  category: WeaponCategory;
+  cost: string;
+  damage?: string;
+  critical?: string;
+  range?: number;
+  weight: number;
+  damageType?: WeaponDamageType;
+  special?: string[];
+}
+
+export interface WeaponType extends Entity {
+  desc?: string;
+  meta: WeaponTypeMeta;
+}
+
+export type ArmorCategory = 'light' | 'medium' | 'heavy' | 'shield';
+
+export interface ArmorTypeMeata {
+  category: ArmorCategory;
+  cost: string;
+  ac: number;
+  maxDex?: number;
+  penalty: number;
+  arcaneFailureChance: string;
+  speed30?: number;
+  speed20?: number;
+  weight: number;
+}
+export interface ArmorType extends Entity {
+  desc?: string;
+  meta: ArmorTypeMeata;
+}

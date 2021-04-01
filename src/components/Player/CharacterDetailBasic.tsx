@@ -14,7 +14,8 @@ import { Link } from 'react-router-dom';
 
 import { AbilityType } from '../../types/core';
 import { sizeTranslates } from '../../utils/race';
-import { abilityTranslates, showModifier } from '../../utils/ability';
+import { abilityTranslates } from '../../utils/ability';
+import { showModifier } from '../../utils/modifier';
 
 import StatNumber from '../StatNumber';
 import AbilityIcon from '../AbilityIcon';

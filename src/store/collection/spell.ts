@@ -2,10 +2,14 @@ import { Class, Spell } from '../../types/core';
 
 import SPELL_BY_CLASS_LEVEL from '../../data/spell-by-class-level.json';
 
-import { Collection } from './base';
+import { Collection, CollectionOptions } from './base';
 
 export default class SpellCollection extends Collection<Spell> {
   static spellByClassLevel = SPELL_BY_CLASS_LEVEL as Record<string, string[][]>;
+
+  constructor(data: Array<Spell>, options?: CollectionOptions) {
+    super('spell', data, options);
+  }
 
   getByClass(clas: Class | string): string[][] {
     const cId = (typeof clas === 'string' ? clas : clas.id).toLowerCase();

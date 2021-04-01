@@ -10,6 +10,13 @@ import UIStore from './ui';
 import { collections, Collection, CollectionEntityType } from './collection';
 import Character from './character';
 
+const quickSearchCollections = [
+  collections.spell,
+  collections.feat,
+  collections.weaponType,
+  collections.armorType,
+];
+
 export class Store {
   dm: DMStore;
   ui: UIStore;
@@ -39,7 +46,7 @@ export class Store {
     key: string,
     limitEach = 20
   ): Array<[CollectionEntityType, Fuse.FuseResult<Entity>[]]> {
-    return ([collections.spell, collections.feat] as Array<Collection<Entity>>).map((c) => [
+    return (quickSearchCollections as Array<Collection<Entity>>).map((c) => [
       c.type,
       c.fuse.search(key, { limit: limitEach }),
     ]);

@@ -4,6 +4,7 @@ export const entityTypeTranslates = {
   class: '职业',
   spell: '法术',
   feat: '专长',
-  weapon: '武器',
+  weaponType: '武器',
+  armorType: '护甲',
   arcaneSchool: '奥术学派',
 };
