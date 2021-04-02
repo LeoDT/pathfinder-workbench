@@ -1,17 +1,7 @@
 import Fuse from 'fuse.js';
-import { keyBy, merge } from 'lodash-es';
+import { merge } from 'lodash-es';
 
-import { Entity } from '../../types/core';
-
-export type CollectionEntityType =
-  | 'skill'
-  | 'race'
-  | 'class'
-  | 'spell'
-  | 'feat'
-  | 'weaponType'
-  | 'armorType'
-  | 'arcaneSchool';
+import { Entity, EntityType } from '../../types/core';
 
 export interface CollectionOptions {
   searchFields: Array<string>;
@@ -23,13 +13,13 @@ const defaultOptions: CollectionOptions = {
 
 export class Collection<T extends Entity = Entity> {
   options: CollectionOptions;
-  type: CollectionEntityType;
+  type: EntityType;
   data: Array<T>;
 
   fuse: Fuse<T>;
   idIndex: Record<string, T>;
 
-  constructor(type: CollectionEntityType, data: Array<T>, options?: CollectionOptions) {
+  constructor(type: EntityType, data: Array<T>, options?: CollectionOptions) {
     this.options = merge({}, options, defaultOptions);
     this.type = type;
     this.data = data;
@@ -40,7 +30,12 @@ export class Collection<T extends Entity = Entity> {
       keys: this.options.searchFields,
     });
 
-    this.idIndex = keyBy(this.data, 'id');
+    this.idIndex = {};
+
+    for (const i of data) {
+      this.idIndex[i.id] = i;
+      i._type = type;
+    }
   }
 
   getById(id: string): T {

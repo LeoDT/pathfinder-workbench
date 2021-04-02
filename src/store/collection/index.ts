@@ -6,7 +6,7 @@
 // for vscode: json.d.ts for this folder, to declare json as any
 // for cra: add `as any` for all the json imports
 
-import { Race, Feat, Class, Skill } from '../../types/core';
+import { Race, Feat, Class, Skill, ArmorType } from '../../types/core';
 import { ArcaneSchool } from '../../types/arcaneSchool';
 
 import SKILL_DATA from '../../data/skills.json';
@@ -22,7 +22,6 @@ import { Collection } from './base';
 export * from './base';
 import SpellCollection from './spell';
 import WeaponTypeCollection from './weaponType';
-import ArmorTypeCollection from './armorType';
 
 export const collections = {
   skill: new Collection<Skill>('skill', SKILL_DATA as any),
@@ -31,6 +30,6 @@ export const collections = {
   feat: new Collection<Feat>('feat', FEAT_DATA as any),
   class: new Collection<Class>('class', CLASS_DATA as any),
   weaponType: new WeaponTypeCollection(WEAPON_TYPES_DATA as any),
-  armorType: new ArmorTypeCollection(ARMOR_TYPES_DATA as any),
+  armorType: new Collection<ArmorType>('armorType', ARMOR_TYPES_DATA as any),
   arcaneSchool: new Collection<ArcaneSchool>('arcaneSchool', ARCANE_SCHOOL_DATA as any),
 };

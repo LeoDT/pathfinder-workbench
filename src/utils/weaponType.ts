@@ -10,6 +10,7 @@ export const weaponTypeMetaTranslates: Record<keyof WeaponTypeMeta, string> = {
   weight: '重量',
   damageType: '伤害类型',
   special: '特性',
+  bothHand: '两手使用',
 };
 
 export const weaponTrainingTranslates: Record<WeaponTraining, string> = {

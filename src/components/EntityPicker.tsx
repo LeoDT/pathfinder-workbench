@@ -11,6 +11,7 @@ import {
   Icon,
   Text,
   HStack,
+  Spacer,
   PopoverTrigger,
   Popover,
   PopoverContent,
@@ -21,7 +22,6 @@ import {
 import { FaSearch, FaCheck, FaTimesCircle } from 'react-icons/fa';
 
 import { Entity } from '../types/core';
-import { CollectionEntityType } from '../store/collection';
 
 import { EntityQuickViewerToggler } from './EntityQuickViewer';
 
@@ -32,7 +32,6 @@ export interface Props {
   items?: Array<string>;
   inputRef?: MutableRefObject<HTMLInputElement | null>;
   quickViewer?: boolean;
-  entityType?: CollectionEntityType;
   entities?: Array<Entity>;
   listAll?: boolean;
 }
@@ -44,7 +43,6 @@ export default function EntityPicker({
   items,
   quickViewer = true,
   fuse,
-  entityType,
   entities,
   listAll = false,
 }: Props): JSX.Element {
@@ -63,7 +61,7 @@ export default function EntityPicker({
   }, [fuse, entities]);
   const searchResult = useMemo(() => {
     return realFuse.search(searchKey) || [];
-  }, [searchKey]);
+  }, [realFuse, searchKey]);
   const results = useMemo(() => {
     if (listAll && entities && !searchKey) {
       return entities;
@@ -130,9 +128,8 @@ export default function EntityPicker({
                 <Text>
                   {item.name} ({item.id})
                 </Text>
-                {quickViewer && entityType ? (
-                  <EntityQuickViewerToggler kind={entityType} entity={item} />
-                ) : null}
+                <Spacer />
+                {quickViewer ? <EntityQuickViewerToggler entity={item} /> : null}
               </HStack>
             );
           })}

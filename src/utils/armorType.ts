@@ -1,3 +1,8 @@
+import { ArmorType, ArmorSize } from '../types/core';
+
+import ARMOR_SIZE_DATA from '../data/armor-size.json';
+import { Coin, coinMultiply } from './coin';
+
 export const armorTypeMetaTranslates = {
   category: '盔甲类型',
   cost: '价格',
@@ -8,6 +13,7 @@ export const armorTypeMetaTranslates = {
   speed30: '速度30尺',
   speed20: '速度20尺',
   weight: '重量',
+  buckler: '小圆盾',
 };
 
 export const armorCategoryTranslates = {
@@ -16,3 +22,18 @@ export const armorCategoryTranslates = {
   heavy: '重型盔甲',
   shield: '盾牌',
 };
+
+export function getArmorCostWeightInSize(
+  a: ArmorType,
+  size: ArmorSize
+): { cost: Coin; weight: number } {
+  const { cost, weight } = a.meta;
+
+  const multipliers = ARMOR_SIZE_DATA[size];
+
+  if (multipliers) {
+    return { cost: coinMultiply(cost, multipliers.cost), weight: weight * multipliers.weight };
+  }
+
+  throw new Error(`invalid armor size: ${size}`);
+}

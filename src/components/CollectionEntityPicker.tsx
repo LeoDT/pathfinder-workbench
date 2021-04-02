@@ -11,7 +11,7 @@ interface Props extends Omit<EntityPickerProps, 'fuse'> {
 }
 
 export default function CollectionEntityPicker({ collection, ...props }: Props): JSX.Element {
-  return <EntityPicker fuse={collection.fuse} {...props} />;
+  return <EntityPicker fuse={collection.fuse} entities={collection.data} {...props} />;
 }
 
 interface PopoverProps extends Omit<EntityPickerPopoverProps, 'fuse'> {
@@ -19,5 +19,5 @@ interface PopoverProps extends Omit<EntityPickerPopoverProps, 'fuse'> {
 }
 
 export function CollectionEntityPickerPopover({ collection, ...props }: PopoverProps): JSX.Element {
-  return <EntityPickerPopover fuse={collection.fuse} {...props} />;
+  return <EntityPickerPopover fuse={collection.fuse} entities={collection.data} {...props} />;
 }

@@ -23,6 +23,7 @@ import {
 
 import Spellbook from './spellbook';
 import CharacterStatus from './characterStatus';
+import CharacterEquip from './characterEquip';
 
 interface OptionalCharacterParams {
   id?: string;
@@ -49,6 +50,7 @@ export default class Character {
   spellbooks: IObservableArray<Spellbook>;
 
   status: CharacterStatus;
+  equipment: CharacterEquip;
 
   constructor(
     name: string,
@@ -109,6 +111,7 @@ export default class Character {
 
     this.spellbooks = observable.array([], { deep: false });
     this.status = new CharacterStatus(this);
+    this.equipment = new CharacterEquip(this);
 
     this.ensureSpellbooks();
   }
@@ -312,6 +315,7 @@ export default class Character {
       id: c.id,
       name: c.name,
       upgrades: c.upgrades.map((u) => ({ ...u, skills: Array.from(u.skills.entries()) })),
+      equipment: CharacterEquip.stringify(c.equipment),
       ...pick(c, Character.serializableProps),
     });
   }
@@ -325,6 +329,10 @@ export default class Character {
     });
 
     const character = new Character(json.name, json);
+
+    if (json.equipment) {
+      character.equipment = CharacterEquip.parse(json.equipment, character);
+    }
 
     return character;
   }

@@ -16,7 +16,6 @@ import { Search2Icon, ChevronDownIcon } from '@chakra-ui/icons';
 
 import { ENTITY_COLORS } from '../constant';
 import { useStore } from '../store';
-import { CollectionEntityType } from '../store/collection';
 import {
   Entity,
   Spell as SpellType,
@@ -31,10 +30,10 @@ import Feat from './Feat';
 import WeaponType from './WeaponType';
 import ArmorType from './ArmorType';
 
-function QuickSearchResultItem({ item, type }: { item: Entity; type: CollectionEntityType }) {
+function QuickSearchResultItem({ item }: { item: Entity }) {
   let el = null;
 
-  switch (type) {
+  switch (item._type) {
     case 'spell':
       el = <Spell spell={item as SpellType} />;
       break;
@@ -153,7 +152,7 @@ export default function QuickSearch(): JSX.Element {
       {results && resultType && results?.length > 0 ? (
         <Box flexGrow={1} overflowY="auto" key={resultType}>
           {results.map(({ item }) => (
-            <QuickSearchResultItem key={item.id} type={resultType} item={item} />
+            <QuickSearchResultItem key={item.id} item={item} />
           ))}
         </Box>
       ) : null}

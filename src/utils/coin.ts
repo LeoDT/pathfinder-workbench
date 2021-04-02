@@ -7,7 +7,7 @@ export interface Coin {
 
 const coinStringRegex = /^(?<amount>\d+)\s?(?<unit>[csgp]p)$/i;
 
-export function makeCoin(amount: number, unit: CoinUnit): Coin {
+export function makeCoin(amount: number, unit: CoinUnit = 'gp'): Coin {
   return {
     amount,
     unit,
@@ -22,6 +22,14 @@ export function makeCoinFromString(g: string): Coin {
   }
 
   return makeCoin(parseInt(amount), unit as CoinUnit);
+}
+
+//TODO: different unit
+export function coinAdd(a: string | Coin, b: string | Coin): Coin {
+  const ac = typeof a === 'string' ? makeCoinFromString(a) : a;
+  const bc = typeof b === 'string' ? makeCoinFromString(b) : b;
+
+  return makeCoin(ac.amount + bc.amount, ac.unit);
 }
 
 export function coinMultiply(c: string | Coin, t: number): Coin {

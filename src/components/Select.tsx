@@ -1,11 +1,23 @@
-import { Button, Menu, MenuButton, MenuItem, MenuList, Icon } from '@chakra-ui/react';
-import { FaCheck } from 'react-icons/fa';
+import {
+  Button,
+  Menu,
+  MenuButton,
+  MenuItem,
+  MenuList,
+  Icon,
+  HStack,
+  Text,
+  ButtonProps,
+} from '@chakra-ui/react';
+import { FaCheck, FaChevronDown } from 'react-icons/fa';
 
 interface Props<T = string> {
   options: Array<{ text: string; value: T; key?: string }>;
   onChange: (v: T) => void;
   value: T | null;
   placeholder?: string;
+  buttonProps?: ButtonProps;
+  withArrow?: boolean;
 }
 
 export default function Select<T>({
@@ -13,13 +25,22 @@ export default function Select<T>({
   value,
   onChange,
   placeholder = 'Select',
+  buttonProps,
+  withArrow = true,
 }: Props<T>): JSX.Element {
   return (
     <Menu placement="bottom-start">
-      <MenuButton as={Button}>
-        {(value ? options.find(({ value: v }) => v === value)?.text : '') || placeholder}
+      <MenuButton as={Button} {...buttonProps}>
+        <HStack>
+          <Text>
+            {buttonProps?.children ||
+              (value !== null ? options.find(({ value: v }) => v === value)?.text : '') ||
+              placeholder}
+          </Text>
+          {withArrow ? <Icon as={FaChevronDown} display="inine-block" /> : null}
+        </HStack>
       </MenuButton>
-      <MenuList>
+      <MenuList backgroundColor="white">
         {options.map((o, i) => (
           <MenuItem
             key={o.key ?? i}

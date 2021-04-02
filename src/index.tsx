@@ -19,6 +19,9 @@ const theme = extendTheme({
       10: '#F6F6F6',
     },
   },
+  zIndices: {
+    quickViewer: 3000,
+  },
   components: {
     Container: {
       baseStyle: {

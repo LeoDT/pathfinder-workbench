@@ -1,4 +1,5 @@
 export const entityTypeTranslates = {
+  common: 'TODO',
   skill: '技能',
   race: '种族',
   class: '职业',

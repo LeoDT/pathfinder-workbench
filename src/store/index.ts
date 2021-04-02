@@ -4,10 +4,10 @@ import { set, entries, del } from 'idb-keyval';
 
 import { createContextNoNullCheck } from '../utils/react';
 
-import { Entity } from '../types/core';
+import { Entity, EntityType } from '../types/core';
 import DMStore from './dm';
 import UIStore from './ui';
-import { collections, Collection, CollectionEntityType } from './collection';
+import { collections, Collection } from './collection';
 import Character from './character';
 
 const quickSearchCollections = [
@@ -42,10 +42,7 @@ export class Store {
     this.persist();
   }
 
-  quickSearch(
-    key: string,
-    limitEach = 20
-  ): Array<[CollectionEntityType, Fuse.FuseResult<Entity>[]]> {
+  quickSearch(key: string, limitEach = 20): Array<[EntityType, Fuse.FuseResult<Entity>[]]> {
     return (quickSearchCollections as Array<Collection<Entity>>).map((c) => [
       c.type,
       c.fuse.search(key, { limit: limitEach }),

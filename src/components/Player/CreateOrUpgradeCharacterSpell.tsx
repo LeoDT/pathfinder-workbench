@@ -72,11 +72,7 @@ function SpellsForLevel({ createOrUpgrade, spellbook, level, perday }: SpellsFor
                   />
                   <SimpleGrid columns={[1, 3]} spacing="2" mt="2" mb="4">
                     {spells.map((s) => (
-                      <SimpleEntity
-                        key={s}
-                        entity={collections.spell.getById(s)}
-                        entityType="spell"
-                      />
+                      <SimpleEntity key={s} entity={collections.spell.getById(s)} />
                     ))}
                   </SimpleGrid>
                 </>
@@ -88,7 +84,7 @@ function SpellsForLevel({ createOrUpgrade, spellbook, level, perday }: SpellsFor
                   </Heading>
                   <SimpleGrid columns={[1, 3]} spacing="2" mb="4">
                     {knownSpells?.map((s) => (
-                      <SimpleEntity key={s.id} entity={s} entityType="spell" />
+                      <SimpleEntity key={s.id} entity={s} />
                     ))}
                   </SimpleGrid>
                 </>

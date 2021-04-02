@@ -30,12 +30,25 @@ export interface Abilities {
   [AbilityType.cha]: number;
 }
 
+export type EntityType =
+  | 'common'
+  | 'skill'
+  | 'race'
+  | 'class'
+  | 'spell'
+  | 'feat'
+  | 'weaponType'
+  | 'armorType'
+  | 'arcaneSchool';
+
 export interface Entity {
+  _type: EntityType;
   id: string;
   name: string;
 }
 
 export interface SpecialFeat extends Entity {
+  _type: 'common';
   desc: string;
   effects?: Effect[];
   type?: 'su' | 'ex' | 'sp';
@@ -43,6 +56,7 @@ export interface SpecialFeat extends Entity {
 }
 
 export interface Skill extends Entity {
+  _type: 'skill';
   ability: AbilityType;
   category?: boolean;
   parent?: string;
@@ -50,6 +64,7 @@ export interface Skill extends Entity {
 
 export type RaceSize = 'small' | 'medium';
 export interface Race extends Entity {
+  _type: 'race';
   ability: Partial<Abilities>;
   racialTrait: Array<SpecialFeat>;
   alternateRacialTrait: Array<SpecialFeat>;
@@ -73,6 +88,7 @@ export interface SpellMeta {
 }
 
 export interface Spell extends Entity {
+  _type: 'spell';
   meta: SpellMeta;
   book: string;
   desc: string;
@@ -102,6 +118,7 @@ export type FeatType =
   | 'arcane discovery';
 
 export interface Feat extends Entity {
+  _type: 'feat';
   meta: FeatMeta;
   book: string;
   type: FeatType[];
@@ -111,10 +128,12 @@ export interface Feat extends Entity {
 }
 
 export interface ClassFeatGrow extends Entity {
+  _type: 'common';
   level: number;
   effects?: Effect[];
 }
 export interface ClassFeat extends SpecialFeat {
+  _type: 'common';
   grow?: Array<ClassFeatGrow>;
 }
 
@@ -134,6 +153,7 @@ export interface ClassLevel {
 }
 
 export interface Class extends Entity {
+  _type: 'class';
   hd: number;
   classSkills: Array<string>;
   skillPoints: number;
@@ -156,9 +176,11 @@ export interface WeaponTypeMeta {
   weight: number;
   damageType?: WeaponDamageType;
   special?: string[];
+  bothHand?: boolean;
 }
 
 export interface WeaponType extends Entity {
+  _type: 'weaponType';
   desc?: string;
   meta: WeaponTypeMeta;
 }
@@ -175,8 +197,40 @@ export interface ArmorTypeMeata {
   speed30?: number;
   speed20?: number;
   weight: number;
+  buckler?: boolean;
 }
 export interface ArmorType extends Entity {
+  _type: 'armorType';
   desc?: string;
   meta: ArmorTypeMeata;
 }
+
+export type WeaponSize = 'tiny' | 'small' | 'medium' | 'large' | 'huge';
+
+export interface Weapon extends Entity {
+  _type: 'common';
+  equipmentType: 'weapon';
+  type: WeaponType;
+  id: string;
+  name: string;
+  masterwork: boolean;
+  enchantment: number;
+  size: WeaponSize;
+}
+
+export type ArmorSize = 'tiny' | 'small' | 'medium' | 'large' | 'huge';
+
+export interface Armor extends Entity {
+  _type: 'common';
+  equipmentType: 'armor';
+  type: ArmorType;
+  id: string;
+  name: string;
+  masterwork: boolean;
+  enchantment: number;
+  spiked: boolean;
+  size: ArmorSize;
+}
+
+export type EquipmentType = 'weapon' | 'armor';
+export type Equipment = Weapon | Armor;

@@ -24,6 +24,8 @@ import SimpleEntity from '../SimpleEntity';
 
 import { useCurrentCharacter } from './context';
 import { Block, VBlockItem, HBlockItem } from './CharacterBlock';
+import CharacterDetailEquip from './CharacterDetailEquip';
+import CharacterDetailStorage from './CharacterDetailStorage';
 
 const abilityStyle: StackProps = {
   flexBasis: [1 / 2, 1 / 3],
@@ -203,6 +205,25 @@ export default function CharacterDetailBasic(): JSX.Element {
           </Box>
         </Stack>
 
+        <Stack direction={['column', 'row']} alignItems={['flex-start', 'stretch']}>
+          <Box flexBasis={['50%', '100%']}>
+            <Block p="2" h="full">
+              <Heading as="h4" fontSize="xl" mb="4">
+                装备
+              </Heading>
+              <CharacterDetailEquip />
+            </Block>
+          </Box>
+          <Box flexBasis={['50%', '100%']}>
+            <Block p="2" h="full">
+              <Heading as="h4" fontSize="xl" mb="4">
+                仓库
+              </Heading>
+              <CharacterDetailStorage />
+            </Block>
+          </Box>
+        </Stack>
+
         {Array.from(character.gainedClassFeats.entries()).map(([clas, feats]) => (
           <Block p="2" key={clas.id}>
             <Heading as="h4" fontSize="xl" mb="4">
@@ -231,7 +252,7 @@ export default function CharacterDetailBasic(): JSX.Element {
           </Heading>
           <SimpleGrid columns={[1, 3]} spacing="2">
             {character.gainedFeats.map((f) => (
-              <SimpleEntity key={f.id} entity={f} entityType="feat" />
+              <SimpleEntity key={f.id} entity={f} />
             ))}
           </SimpleGrid>
         </Block>

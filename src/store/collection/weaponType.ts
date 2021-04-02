@@ -1,10 +1,8 @@
-import { WeaponType } from '../../types/core';
+import { WeaponType, WeaponSize } from '../../types/core';
 
 import WEAPON_SIZE_DATA from '../../data/weapon-size.json';
 
 import { Collection, CollectionOptions } from './base';
-
-export type WeaponSize = 'tiny' | 'small' | 'medium' | 'large' | 'huge';
 
 export default class WeaponTypeCollection extends Collection<WeaponType> {
   static sizeDamage = WEAPON_SIZE_DATA as Array<Record<WeaponSize, string>>;

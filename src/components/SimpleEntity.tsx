@@ -1,27 +1,29 @@
 import { Heading, HStack, Spacer } from '@chakra-ui/react';
 
-import { Entity, Spell as SpellType, Feat as FeatType } from '../types/core';
-import { CollectionEntityType } from '../store/collection';
+import {
+  Entity,
+  Spell as SpellType,
+  Feat as FeatType,
+  WeaponType as WeaponTypeType,
+  ArmorType as ArmorTypeType,
+} from '../types/core';
 
 import { EntityQuickViewerToggler } from './EntityQuickViewer';
 
 import Spell from './Spell';
 import Feat from './Feat';
+import WeaponType from './WeaponType';
+import ArmorType from './ArmorType';
 
 interface Props {
   entity: Entity;
-  entityType: CollectionEntityType;
   quickViewer?: boolean;
 }
 
-export default function SimpleEntity({
-  entity,
-  entityType,
-  quickViewer = true,
-}: Props): JSX.Element {
+export default function SimpleEntity({ entity, quickViewer = true }: Props): JSX.Element {
   let child;
 
-  switch (entityType) {
+  switch (entity._type) {
     case 'spell': {
       child = <Spell spell={entity as SpellType} showDescription={false} showMeta={false} />;
       break;
@@ -38,6 +40,22 @@ export default function SimpleEntity({
       );
       break;
     }
+
+    case 'weaponType':
+      child = (
+        <WeaponType
+          weaponType={entity as WeaponTypeType}
+          showMeta={false}
+          showDescription={false}
+        />
+      );
+      break;
+
+    case 'armorType':
+      child = (
+        <ArmorType armorType={entity as ArmorTypeType} showMeta={false} showDescription={false} />
+      );
+      break;
 
     default:
       child = (
@@ -60,7 +78,7 @@ export default function SimpleEntity({
     >
       {child}
       <Spacer />
-      {quickViewer ? <EntityQuickViewerToggler entity={entity} kind={entityType} /> : null}
+      {quickViewer ? <EntityQuickViewerToggler entity={entity} /> : null}
     </HStack>
   );
 }
