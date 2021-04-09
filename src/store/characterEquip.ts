@@ -4,7 +4,7 @@ import { makeObservable, action, observable, IObservableArray, computed } from '
 import { Armor, Equipment, Weapon } from '../types/core';
 import { SelectOptions } from '../types/misc';
 import { Coin } from '../utils/coin';
-import { equipmentCostWeight } from '../utils/equipment';
+import { equipmentCostWeight, showEquipment } from '../utils/equipment';
 
 import Character from './character';
 import { collections } from './collection';
@@ -39,15 +39,24 @@ export default class CharacterEquip {
 
       mainHandId: observable,
       mainHand: computed,
+      mainHandAttack: computed,
+      mainHandDamageModifier: computed,
 
       offHandId: observable,
       offHand: computed,
+      offHandAttack: computed,
+      offHandDamageModifier: computed,
+
+      isHoldingTwoHand: computed,
+      isTwoWeapon: computed,
 
       bucklerId: observable,
       buckler: computed,
 
       armorId: observable,
       armor: computed,
+
+      armorClassModifier: computed,
 
       hold: action,
       unhold: action,
@@ -79,7 +88,7 @@ export default class CharacterEquip {
             !e.type.meta.buckler)
       )
       .map((e) => ({
-        text: e.name,
+        text: showEquipment(e),
         value: e,
       }));
   }
@@ -89,7 +98,7 @@ export default class CharacterEquip {
         Boolean(e.equipmentType === 'armor' && e.type._type === 'armorType' && e.type.meta.buckler)
       )
       .map((e) => ({
-        text: e.name,
+        text: showEquipment(e),
         value: e,
       }));
   }
@@ -103,7 +112,7 @@ export default class CharacterEquip {
         )
       )
       .map((e) => ({
-        text: e.name,
+        text: showEquipment(e),
         value: e,
       }));
   }
@@ -157,6 +166,61 @@ export default class CharacterEquip {
     return modifier;
   }
 
+  get offHandAttack(): number {
+    let modifier = 0;
+    switch (this.offHand?.type.meta.category) {
+      case 'light':
+      case 'one-handed':
+      case 'two-handed':
+        modifier = this.character.abilityModifier.str;
+        break;
+
+      case 'ranged':
+        modifier = this.character.abilityModifier.dex;
+    }
+
+    return this.character.status.maxBab + modifier;
+  }
+
+  get offHandDamageModifier(): number {
+    let modifier = 0;
+    switch (this.offHand?.type.meta.category) {
+      case 'light':
+      case 'one-handed':
+        modifier = this.character.abilityModifier.str;
+        break;
+      case 'two-handed':
+        modifier = Math.floor(this.character.abilityModifier.str * 1.5);
+    }
+
+    return modifier;
+  }
+
+  get armorClassModifier(): number {
+    let mod = 0;
+
+    if (this.armor) {
+      mod += this.armor.type.meta.ac;
+    }
+
+    if (this.offHand?.type.meta.category === 'shield') {
+      mod += this.offHand?.type.meta.ac;
+    }
+
+    if (this.buckler) {
+      mod += this.buckler?.type.meta.ac;
+    }
+
+    return mod;
+  }
+
+  get isHoldingTwoHand(): boolean {
+    return Boolean(
+      this.mainHand === this.offHand &&
+        this.mainHand &&
+        this.mainHand.type.meta.category === 'two-handed'
+    );
+  }
   get isTwoWeapon(): boolean {
     return Boolean(
       this.mainHand !== this.offHand && this.mainHand && this.offHand?.equipmentType === 'weapon'
@@ -174,6 +238,10 @@ export default class CharacterEquip {
         }
 
         if (hand === 'main') {
+          if (this.isHoldingTwoHand) {
+            this.offHandId = undefined;
+          }
+
           this.mainHandId = e.id;
         }
 
@@ -222,7 +290,7 @@ export default class CharacterEquip {
     this.bucklerId = undefined;
   }
 
-  wear(a: Armor, part?: BodyPart): void {
+  wear(a: Armor, part: BodyPart = 'armor'): void {
     switch (part) {
       case 'armor':
         this.armorId = a.id;
@@ -230,7 +298,7 @@ export default class CharacterEquip {
     }
   }
 
-  unwear(part?: BodyPart): void {
+  unwear(part: BodyPart = 'armor'): void {
     switch (part) {
       case 'armor':
         this.armorId = undefined;
@@ -245,7 +313,7 @@ export default class CharacterEquip {
       bucklerId: e.bucklerId,
       armorId: e.armorId,
       storage: e.storage.map((e) => ({
-        ...pick(e, ['equipmentType', 'id', 'name', 'masterwork', 'enchantment', 'spiked']),
+        ...pick(e, ['equipmentType', 'id', 'size', 'name', 'masterwork', 'enchantment', 'spiked']),
         typeId: e.type.id,
       })),
     });

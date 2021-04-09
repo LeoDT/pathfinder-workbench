@@ -149,3 +149,21 @@ export function makeWeapon(
     enchantment,
   };
 }
+
+export function showEquipment(e: Equipment): string {
+  const n = [e.name];
+
+  if (e.enchantment) {
+    n.push(`+${e.enchantment}`);
+  }
+
+  if (e.masterwork && !e.enchantment) {
+    n.push('(精品)');
+  }
+
+  if (e.equipmentType === 'armor' && e.spiked) {
+    n.unshift('带刺');
+  }
+
+  return n.join('');
+}

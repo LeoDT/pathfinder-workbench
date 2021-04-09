@@ -103,12 +103,15 @@ export default class CharacterStatus {
     return 10 + this.maxBab + this.modifier.str + this.modifier.con;
   }
   get ac(): number {
-    return 0;
+    return [10, this.modifier.dex, this.character.equipment.armorClassModifier].reduce(
+      (acc, i) => acc + i,
+      0
+    );
   }
   get flatFooted(): number {
-    return 0;
+    return this.ac - this.modifier.dex;
   }
   get touch(): number {
-    return 10 + this.modifier.dex;
+    return this.ac - this.character.equipment.armorClassModifier;
   }
 }

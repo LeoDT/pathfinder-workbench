@@ -6,3 +6,9 @@ export const ENTITY_COLORS: Record<string, string> = {
   weaponType: 'orange.600',
   armorType: 'red.600',
 };
+
+export const EQUIPMENT_COLOR_SCHEME = {
+  weapon: 'orange',
+  armor: 'red',
+  item: 'gray',
+};

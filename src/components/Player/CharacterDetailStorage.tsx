@@ -1,16 +1,11 @@
 import { Observer } from 'mobx-react-lite';
-import { Box, Table, Tbody, Thead, Tr, Td, Th, Text } from '@chakra-ui/react';
+import { Box, HStack, Tag, Text } from '@chakra-ui/react';
 
 import { useCurrentCharacter } from './context';
 
 import { CreateEquipmentToggler } from '../CreateEquipment';
-import { showCoin } from '../../utils/coin';
-import { showWeight } from '../../utils/misc';
-
-const stickyTHStyles = {
-  top: '0',
-  backgroundColor: 'white',
-};
+import { EQUIPMENT_COLOR_SCHEME } from '../../constant';
+import { showEquipment } from '../../utils/equipment';
 
 export default function CharacterDetailStorage(): JSX.Element {
   const character = useCurrentCharacter();
@@ -30,31 +25,19 @@ export default function CharacterDetailStorage(): JSX.Element {
       <Observer>
         {() =>
           character.equipment.storageWithCostWeight.length ? (
-            <Box maxH={200} overflowY="auto">
-              <Table position="relative">
-                <Thead>
-                  <Tr>
-                    <Th {...stickyTHStyles} position="sticky">
-                      名称
-                    </Th>
-                    <Th {...stickyTHStyles} position="sticky" isNumeric>
-                      花费
-                    </Th>
-                    <Th {...stickyTHStyles} position="sticky" isNumeric>
-                      重量
-                    </Th>
-                  </Tr>
-                </Thead>
-                <Tbody>
-                  {character.equipment.storageWithCostWeight.map(({ e, cost, weight }) => (
-                    <Tr key={e.id}>
-                      <Td>{e.name}</Td>
-                      <Td isNumeric>{showCoin(cost)}</Td>
-                      <Td isNumeric>{showWeight(weight)}</Td>
-                    </Tr>
-                  ))}
-                </Tbody>
-              </Table>
+            <Box>
+              <HStack maxH={200} spacing="2" flexWrap="wrap" overflowY="auto" overflowX="hidden">
+                {character.equipment.storageWithCostWeight.map(({ e }) => (
+                  <Tag
+                    key={e.id}
+                    variant="outline"
+                    colorScheme={EQUIPMENT_COLOR_SCHEME[e.equipmentType]}
+                    cursor="default"
+                  >
+                    {showEquipment(e)}
+                  </Tag>
+                ))}
+              </HStack>
             </Box>
           ) : (
             <Text color="gray">空无一物</Text>
