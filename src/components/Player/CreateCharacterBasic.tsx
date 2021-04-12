@@ -11,6 +11,7 @@ import CollectionEntitySelect from '../CollectionEntitySelect';
 import Select from '../Select';
 import ClassSpecialityPickerToggler from '../ClassSpecialityPickerToggler';
 import ClassSpecialityDisplayer from '../ClassSpecialityDisplayer';
+import { SkillSystem } from '../../types/core';
 
 export default function CreateCharacterBasic(): JSX.Element {
   const store = useStore();
@@ -35,6 +36,22 @@ export default function CreateCharacterBasic(): JSX.Element {
                 textAlign="right"
                 variant="unstyled"
                 maxW="50%"
+              />
+            </HStack>
+            <HStack w="full" spacing="0" pb="2" borderBottom="1px" borderColor="gray.200">
+              <Text fontSize="lg">技能系统</Text>
+              <Spacer />
+              <Select
+                options={
+                  [
+                    { text: '核心', value: 'core' },
+                    { text: '简化', value: 'consolidated' },
+                  ] as Array<{ text: string; value: SkillSystem }>
+                }
+                value={character.skillSystem}
+                onChange={(v) => {
+                  character.setSkillSystem(v);
+                }}
               />
             </HStack>
             <HStack w="full" spacing="0" pb="2" borderBottom="1px" borderColor="gray.200">

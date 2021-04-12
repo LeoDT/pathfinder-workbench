@@ -1,5 +1,5 @@
 import { compact } from 'lodash-es';
-import { makeObservable, computed, action } from 'mobx';
+import { makeObservable, computed, action, reaction } from 'mobx';
 
 import { createContextNoNullCheck } from '../utils/react';
 import { ABILITY_POINTS, getTotalScoreCosts } from '../utils/ability';
@@ -51,6 +51,13 @@ export default class CreateCharacterStore {
     this.character.ensureSpellbooks();
 
     this.resetUpgradeFeats();
+
+    reaction(
+      () => this.character.skillSystem,
+      () => {
+        this.upgrade.skills = new Map();
+      }
+    );
 
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     (window as any).create = this;
@@ -137,7 +144,10 @@ export default class CreateCharacterStore {
   }
 
   get skillPoints(): number {
-    return this.class.skillPoints + this.character.abilityModifier.int;
+    const classSkillPoints =
+      this.class.skillPoints / Math.floor(this.character.skillSystem === 'core' ? 1 : 2);
+
+    return classSkillPoints + this.character.abilityModifier.int;
   }
   get skillPointsUsed(): number {
     return Array.from(this.upgrade.skills.values()).reduce((acc, r) => acc + r, 0);

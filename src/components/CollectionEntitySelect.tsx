@@ -1,5 +1,5 @@
-import { Button, Menu, MenuButton, MenuItem, MenuList, Icon } from '@chakra-ui/react';
-import { FaCheck } from 'react-icons/fa';
+import { Button, Menu, MenuButton, MenuItem, MenuList, Icon, Text, HStack } from '@chakra-ui/react';
+import { FaCheck, FaChevronDown } from 'react-icons/fa';
 
 import { Collection } from '../store/collection';
 
@@ -8,6 +8,7 @@ interface Props {
   onChange: (v: string) => void;
   value: string | null;
   placeholder?: string;
+  withArrow?: boolean;
 }
 
 export default function CollectionEntitySelect({
@@ -15,11 +16,15 @@ export default function CollectionEntitySelect({
   onChange,
   value,
   placeholder = 'Select',
+  withArrow = true,
 }: Props): JSX.Element {
   return (
     <Menu placement="bottom-start">
       <MenuButton as={Button}>
-        {(value ? collection.getById(value).name : '') || placeholder}
+        <HStack>
+          <Text>{(value ? collection.getById(value).name : '') || placeholder}</Text>
+          {withArrow ? <Icon as={FaChevronDown} display="inine-block" /> : null}
+        </HStack>
       </MenuButton>
       <MenuList>
         {collection.data.map((e) => (

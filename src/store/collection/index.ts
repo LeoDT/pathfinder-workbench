@@ -9,7 +9,8 @@
 import { Race, Feat, Class, Skill, ArmorType } from '../../types/core';
 import { ArcaneSchool } from '../../types/arcaneSchool';
 
-import SKILL_DATA from '../../data/skills.json';
+import CORE_SKILL_DATA from '../../data/core-skills.json';
+import CONSOLIDATED_SKILL_DATA from '../../data/consolidated-skills.json';
 import RACE_DATA from '../../data/races.json';
 import CLASS_DATA from '../../data/classes.json';
 import SPELL_DATA from '../../data/spells.json';
@@ -24,7 +25,8 @@ import SpellCollection from './spell';
 import WeaponTypeCollection from './weaponType';
 
 export const collections = {
-  skill: new Collection<Skill>('skill', SKILL_DATA as any),
+  coreSkill: new Collection<Skill>('skill', CORE_SKILL_DATA as any),
+  consolidatedSkill: new Collection<Skill>('skill', CONSOLIDATED_SKILL_DATA as any),
   race: new Collection<Race>('race', RACE_DATA as any),
   spell: new SpellCollection(SPELL_DATA as any),
   feat: new Collection<Feat>('feat', FEAT_DATA as any),

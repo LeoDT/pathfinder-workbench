@@ -1,4 +1,4 @@
-import { isEmpty, pick, last, compact, uniq, range } from 'lodash-es';
+import { isEmpty, pick, last, compact, uniq, range, intersection } from 'lodash-es';
 import { observable, makeObservable, IObservableArray, computed, action } from 'mobx';
 import shortid from 'shortid';
 
@@ -12,6 +12,7 @@ import {
   ClassLevel,
   ClassFeat,
   Feat,
+  SkillSystem,
 } from '../types/core';
 import { CharacterUpgrade } from '../types/characterUpgrade';
 import { getModifiers, addBonusScores } from '../utils/ability';
@@ -39,6 +40,7 @@ interface OptionalCharacterParams {
 export default class Character {
   id: string;
   name: string;
+  skillSystem: SkillSystem;
   baseAbility: Abilities;
   bonusAbilityType: AbilityType;
 
@@ -64,6 +66,7 @@ export default class Character {
   ) {
     makeObservable(this, {
       name: observable,
+      skillSystem: observable,
       baseAbility: observable,
       abilityModifier: computed,
 
@@ -96,8 +99,9 @@ export default class Character {
       gainedFeats: computed,
     });
 
-    this.name = name;
     this.id = id ?? shortid.generate();
+    this.name = name;
+    this.skillSystem = 'core';
 
     this.baseAbility = baseAbility ?? { str: 10, dex: 10, con: 10, int: 10, wis: 10, cha: 10 };
     this.bonusAbilityType = bonusAbilityType ?? AbilityType.str;
@@ -114,6 +118,10 @@ export default class Character {
     this.equipment = new CharacterEquip(this);
 
     this.ensureSpellbooks();
+  }
+
+  setSkillSystem(s: SkillSystem): void {
+    this.skillSystem = s;
   }
 
   get race(): Race {
@@ -244,6 +252,10 @@ export default class Character {
   isClassSkill(s: Skill): boolean {
     if (s.parent) {
       return this.classSkills.includes(s.parent) || this.classSkills.includes(s.id);
+    }
+
+    if (s.core) {
+      return intersection(this.classSkills, s.core).length > 0;
     }
 
     return this.classSkills.includes(s.id);

@@ -55,11 +55,14 @@ export interface SpecialFeat extends Entity {
   replace?: string[];
 }
 
+export type SkillSystem = 'core' | 'consolidated';
+
 export interface Skill extends Entity {
   _type: 'skill';
   ability: AbilityType;
   category?: boolean;
   parent?: string;
+  core?: string[];
 }
 
 export type RaceSize = 'small' | 'medium';
