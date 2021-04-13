@@ -1,7 +1,9 @@
+import { range } from 'lodash-es';
 import { Observer } from 'mobx-react-lite';
 import { Button, Box, VStack, Text, HStack, Spacer } from '@chakra-ui/react';
 
 import { ABILITY_TYPES } from '../../utils/ability';
+import { favoredClassBonusOptions } from '../../utils/upgrade';
 import { useUpgradeCharacterStore } from '../../store/upgradeCharacter';
 
 import AbilityInput from '../AbilityInput';
@@ -55,6 +57,34 @@ export default function CreateCharacterBasic(): JSX.Element {
                 </VStack>
               </HStack>
             ))}
+            {upgradeStore.character.favoredClassIds.includes(upgradeStore.upgrade.classId) ? (
+              <HStack w="full" spacing="0" pb="2" borderBottom="1px" borderColor="gray.200">
+                <Text fontSize="lg">天赋职业奖励</Text>
+                <Spacer />
+                <Select
+                  options={favoredClassBonusOptions}
+                  value={upgradeStore.upgrade.favoredClassBonus}
+                  onChange={(v) => {
+                    upgradeStore.upgrade.favoredClassBonus = v;
+                  }}
+                />
+              </HStack>
+            ) : null}
+            <HStack w="full" spacing="0" pb="2" borderBottom="1px" borderColor="gray.200">
+              <Text fontSize="lg">HP({upgradeStore.character.status.hp})</Text>
+              <Spacer />
+              <Select
+                options={range(upgradeStore.class.hd).map((i) => ({
+                  text: (i + 1).toString(),
+                  value: i + 1,
+                }))}
+                value={upgradeStore.upgrade.hp}
+                onChange={(v) => {
+                  upgradeStore.upgrade.hp = v;
+                }}
+                menuListProps={{ maxH: '30vh', overflowY: 'auto' }}
+              />
+            </HStack>
           </VStack>
         )}
       </Observer>

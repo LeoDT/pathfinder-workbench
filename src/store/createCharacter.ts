@@ -48,6 +48,7 @@ export default class CreateCharacterStore {
 
     this.character = character || new Character('新角色');
     this.character.startUpgrade();
+    this.updateClass(this.upgrade.classId);
     this.character.ensureSpellbooks();
 
     this.resetUpgradeFeats();
@@ -122,6 +123,12 @@ export default class CreateCharacterStore {
   updateClass(cId: string): void {
     this.upgrade.classId = cId;
 
+    if (this.character.level === 1) {
+      this.character.favoredClassIds = [cId];
+    } else {
+      this.upgrade.hp = this.class.hd / 2 + 1;
+    }
+
     this.resetUpgradeFeats();
     this.upgrade.classSpeciality = null;
     this.character.ensureSpellbooks();
@@ -147,7 +154,9 @@ export default class CreateCharacterStore {
     const classSkillPoints =
       this.class.skillPoints / Math.floor(this.character.skillSystem === 'core' ? 1 : 2);
 
-    return classSkillPoints + this.character.abilityModifier.int;
+    const favoredClassBonus = this.upgrade.favoredClassBonus === 'skill' ? 1 : 0;
+
+    return classSkillPoints + favoredClassBonus + this.character.abilityModifier.int;
   }
   get skillPointsUsed(): number {
     return Array.from(this.upgrade.skills.values()).reduce((acc, r) => acc + r, 0);

@@ -27,6 +27,7 @@ import { useCurrentCharacter } from './context';
 import { Block, VBlockItem, HBlockItem } from './CharacterBlock';
 import CharacterDetailEquip from './CharacterDetailEquip';
 import CharacterDetailStorage from './CharacterDetailStorage';
+import { alignmentTranslates } from '../../utils/alignment';
 
 const abilityStyle: StackProps = {
   flexBasis: [1 / 2, 1 / 3],
@@ -98,7 +99,7 @@ export default function CharacterDetailBasic(): JSX.Element {
                         <Box key={t}>{t}</Box>
                       ))}
                     </VBlockItem>
-                    <VBlockItem label="阵营">混乱善良</VBlockItem>
+                    <VBlockItem label="阵营">{alignmentTranslates[character.alignment]}</VBlockItem>
                     <VBlockItem label="信仰">莎伦莱</VBlockItem>
                   </Block>
                 </Box>

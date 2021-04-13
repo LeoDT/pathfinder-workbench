@@ -13,12 +13,17 @@ export interface ClassSpecialityArcaneSchool {
 
 export type ClassSpeciality = ClassSpecialityArcaneSchool;
 
+export type FavoredClassBonus = 'hp' | 'skill' | 'custom';
+
 export interface CharacterUpgrade {
   classId: string;
+  favoredClassBonus: FavoredClassBonus;
   skills: Map<string, number>;
   abilities: Partial<Abilities>;
   feats: Array<string>; //feat id
   spells: Array<string>;
+
+  hp: number;
 
   levelFeat: boolean;
   levelAbility: boolean;

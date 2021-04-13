@@ -1,6 +1,7 @@
 import { makeObservable, computed } from 'mobx';
 import { Abilities } from '../types/core';
 
+import { collections } from './collection';
 import Character from './character';
 
 export default class CharacterStatus {
@@ -31,8 +32,18 @@ export default class CharacterStatus {
   get hp(): number {
     let base = 0;
 
-    this.character.levelDetail.forEach((level, clas) => {
-      base += clas.hd + (clas.hd / 2 + 1) * (level - 1);
+    this.character.upgradesWithPending.forEach((u, level) => {
+      if (u.hp === 0) {
+        const clas = collections.class.getById(u.classId);
+
+        base += level === 0 ? clas.hd : clas.hd / 2 + 1;
+      } else {
+        base += u.hp;
+      }
+
+      if (u.favoredClassBonus === 'hp') {
+        base += 1;
+      }
     });
 
     base += this.character.level * this.modifier.con;

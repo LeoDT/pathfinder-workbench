@@ -7,8 +7,12 @@ import { Collection, CollectionOptions } from './base';
 export default class WeaponTypeCollection extends Collection<WeaponType> {
   static sizeDamage = WEAPON_SIZE_DATA as Array<Record<WeaponSize, string>>;
 
+  unarmedStrike: WeaponType;
+
   constructor(data: Array<WeaponType>, options?: CollectionOptions) {
     super('weaponType', data, options);
+
+    this.unarmedStrike = this.getById('Unarmed strike');
   }
 
   getDamageForSize(w: WeaponType, size: WeaponSize): string {

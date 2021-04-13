@@ -7,6 +7,7 @@ import {
   Icon,
   HStack,
   Text,
+  BoxProps,
   ButtonProps,
 } from '@chakra-ui/react';
 import { FaCheck, FaChevronDown } from 'react-icons/fa';
@@ -18,6 +19,7 @@ interface Props<T = string> {
   placeholder?: string;
   buttonProps?: ButtonProps;
   withArrow?: boolean;
+  menuListProps?: BoxProps;
 }
 
 export default function Select<T>({
@@ -27,6 +29,7 @@ export default function Select<T>({
   placeholder = 'Select',
   buttonProps,
   withArrow = true,
+  menuListProps,
 }: Props<T>): JSX.Element {
   return (
     <Menu placement="bottom-start">
@@ -40,7 +43,7 @@ export default function Select<T>({
           {withArrow ? <Icon as={FaChevronDown} display="inine-block" /> : null}
         </HStack>
       </MenuButton>
-      <MenuList backgroundColor="white">
+      <MenuList backgroundColor="white" {...menuListProps}>
         {options.map((o, i) => (
           <MenuItem
             key={o.key ?? i}

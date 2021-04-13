@@ -13,6 +13,7 @@ import {
   ClassFeat,
   Feat,
   SkillSystem,
+  Alignment,
 } from '../types/core';
 import { CharacterUpgrade } from '../types/characterUpgrade';
 import { getModifiers, addBonusScores } from '../utils/ability';
@@ -28,8 +29,11 @@ import CharacterEquip from './characterEquip';
 
 interface OptionalCharacterParams {
   id?: string;
+  skillSystem?: SkillSystem;
+  alignment?: Alignment;
   baseAbility?: Abilities;
   bonusAbilityType?: AbilityType;
+  favoredClassIds?: string[];
 
   level?: number;
 
@@ -41,6 +45,7 @@ export default class Character {
   id: string;
   name: string;
   skillSystem: SkillSystem;
+  alignment: Alignment;
   baseAbility: Abilities;
   bonusAbilityType: AbilityType;
 
@@ -58,15 +63,19 @@ export default class Character {
     name: string,
     {
       id,
+      skillSystem = 'core',
+      alignment = Alignment.N,
       baseAbility,
       bonusAbilityType = AbilityType.str,
       raceId = 'Human',
+      favoredClassIds,
       upgrades,
     }: OptionalCharacterParams = {}
   ) {
     makeObservable(this, {
       name: observable,
       skillSystem: observable,
+      alignment: observable,
       baseAbility: observable,
       abilityModifier: computed,
 
@@ -76,8 +85,6 @@ export default class Character {
       raceId: observable,
       race: computed,
       setRace: action,
-
-      favoredClassIds: observable,
 
       pendingUpgrade: observable,
       startUpgrade: action,
@@ -101,7 +108,8 @@ export default class Character {
 
     this.id = id ?? shortid.generate();
     this.name = name;
-    this.skillSystem = 'core';
+    this.skillSystem = skillSystem;
+    this.alignment = alignment;
 
     this.baseAbility = baseAbility ?? { str: 10, dex: 10, con: 10, int: 10, wis: 10, cha: 10 };
     this.bonusAbilityType = bonusAbilityType ?? AbilityType.str;
@@ -109,7 +117,7 @@ export default class Character {
     this.pendingUpgrade = null;
     this.upgrades = observable.array(upgrades || [], { deep: false });
 
-    this.favoredClassIds = [];
+    this.favoredClassIds = observable.array(favoredClassIds || [], { deep: false });
 
     this.raceId = raceId;
 
@@ -152,6 +160,8 @@ export default class Character {
 
     this.pendingUpgrade = {
       classId: lastUpgradeClass,
+      favoredClassBonus: 'hp',
+      hp: 0,
       skills: new Map(),
       abilities: {},
       feats: [],
@@ -320,7 +330,14 @@ export default class Character {
     this.spellbooks.replace(books);
   }
 
-  static serializableProps = ['raceId', 'baseAbility', 'bonusAbilityType'];
+  static serializableProps = [
+    'skillSystem',
+    'alignment',
+    'raceId',
+    'baseAbility',
+    'bonusAbilityType',
+    'favoredClassIds',
+  ];
 
   static stringify(c: Character): string {
     return JSON.stringify({

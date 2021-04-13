@@ -1,5 +1,6 @@
 import { Observer } from 'mobx-react-lite';
-import { Box, HStack, Text } from '@chakra-ui/react';
+import { Box, HStack, Text, IconButton, Icon } from '@chakra-ui/react';
+import { FaTrash } from 'react-icons/fa';
 
 import { useCurrentCharacter } from './context';
 
@@ -32,6 +33,14 @@ export default function CharacterDetailEquip(): JSX.Element {
                 }}
               />
               {equip.mainHand ? <Text>{equip.mainHand.name}</Text> : <Text>赤手空拳</Text>}
+              <IconButton
+                size="sm"
+                icon={<Icon as={FaTrash} />}
+                aria-label="脱下"
+                colorScheme="red"
+                variant="ghost"
+                onClick={() => equip.unhold('main')}
+              />
             </HStack>
             <Block>
               <HStack spacing="0">
@@ -69,6 +78,14 @@ export default function CharacterDetailEquip(): JSX.Element {
                 }}
               />
               {equip.offHand ? <Text>{equip.offHand.name}</Text> : <Text>赤手空拳</Text>}
+              <IconButton
+                size="sm"
+                icon={<Icon as={FaTrash} />}
+                aria-label="脱下"
+                colorScheme="red"
+                variant="ghost"
+                onClick={() => equip.unhold('off')}
+              />
             </HStack>
             {(() => {
               if (equip.isHoldingTwoHand) return null;
@@ -131,6 +148,14 @@ export default function CharacterDetailEquip(): JSX.Element {
                 }}
               />
               {equip.armor ? <Text>{equip.armor.name}</Text> : <Text>赤身裸体</Text>}
+              <IconButton
+                size="sm"
+                icon={<Icon as={FaTrash} />}
+                aria-label="脱下"
+                colorScheme="red"
+                variant="ghost"
+                onClick={() => equip.unwear()}
+              />
             </HStack>
             {equip.armor ? (
               <Block>
