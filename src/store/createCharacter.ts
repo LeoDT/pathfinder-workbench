@@ -4,23 +4,27 @@ import { makeObservable, computed, action, reaction } from 'mobx';
 import { createContextNoNullCheck } from '../utils/react';
 import { ABILITY_POINTS, getTotalScoreCosts } from '../utils/ability';
 import { gainClassSpecialityEffectType, getClassFeatByLevel } from '../utils/class';
-import { getBonusFeatEffect } from '../utils/effect';
 
-import { Class, ClassFeat, FeatType } from '../types/core';
-import { EffectGainClassSpeciality } from '../types/effectType';
+import { Class, ClassFeat } from '../types/core';
+import { EffectGainClassSpeciality, EffectGainFeatArgs } from '../types/effectType';
 import { CharacterUpgrade } from '../types/characterUpgrade';
 
 import { collections } from './collection';
 import Character from './character';
 import Spellbook from './spellbook';
 
-export interface GainFeatReason {
+export interface GainFeatReason extends EffectGainFeatArgs {
   reason: 'race' | 'class' | 'level';
-  featType?: FeatType;
   index: number;
 }
 
-export type InvalidReason = 'classSpeciality' | 'abilityPoints' | 'skillPoints' | 'feat' | 'spell';
+export type InvalidReason =
+  | 'classSpeciality'
+  | 'abilityPoints'
+  | 'skillPoints'
+  | 'feat'
+  | 'spell'
+  | 'favoredClass';
 
 export default class CreateCharacterStore {
   character: Character;
@@ -66,6 +70,12 @@ export default class CreateCharacterStore {
 
   resetUpgradeFeats(): void {
     this.upgrade.feats = Array(this.gainFeatReasons.length);
+
+    this.gainFeatReasons.forEach((r, i) => {
+      if (r.forceFeat) {
+        this.upgrade.feats[i] = r.forceFeat;
+      }
+    });
   }
   resetBaseAbility(): void {
     this.character.baseAbility = { str: 10, dex: 10, con: 10, int: 10, wis: 10, cha: 10 };
@@ -91,25 +101,31 @@ export default class CreateCharacterStore {
       index += 1;
     }
 
-    if (includeRacial) {
-      const racialTrait = this.character.race.racialTrait.find(
-        (t) => t.effects && getBonusFeatEffect(t.effects)
-      );
-      const racialEffect = racialTrait?.effects ? getBonusFeatEffect(racialTrait.effects) : null;
-      if (racialEffect) {
-        reasons.push({ reason: 'race', index, featType: racialEffect.featType });
-        index += 1;
-      }
-    }
+    // when leveling up, only class feat bring new feats
+    const newGainedEffects =
+      this.character.level > 1
+        ? this.character.effect.getEffectsFromClassFeats(this.newGainedClassFeats)
+        : undefined;
+    const effects = this.character.effect.getGainFeatEffects(newGainedEffects);
 
-    const classFeat = this.newGainedClassFeats.find(
-      (t) => t.effects && getBonusFeatEffect(t.effects)
-    );
-    const classEffect = classFeat?.effects ? getBonusFeatEffect(classFeat.effects) : null;
-    if (classEffect) {
-      reasons.push({ reason: 'class', index, featType: classEffect.featType });
-      index += 1;
-    }
+    effects.forEach(({ effect, source }) => {
+      switch (source._type) {
+        case 'classFeat':
+          if (this.newGainedClassFeats.includes(source)) {
+            reasons.push({ reason: 'class', index, ...effect.args });
+            index += 1;
+          }
+          break;
+        case 'racialTrait':
+          if (includeRacial) {
+            reasons.push({ reason: 'race', index, ...effect.args });
+            index += 1;
+          }
+          break;
+        default:
+          break;
+      }
+    });
 
     return reasons;
   }
@@ -189,8 +205,9 @@ export default class CreateCharacterStore {
         this.newGainedClassSpeciality.length > 0 && !this.upgrade.classSpeciality,
       ],
       ['skillPoints', this.skillPointsRemain !== 0],
-      ['feat', this.gainFeatReasons.length !== this.upgrade.feats.length],
+      ['feat', this.gainFeatReasons.length !== compact(this.upgrade.feats).length],
       ['spell', !this.spellbookValid],
+      ['favoredClass', this.character.favoredClassIds.length !== this.character.maxFavoredClass],
     ];
 
     return validates.filter(([, v]) => v).map(([r]) => r);

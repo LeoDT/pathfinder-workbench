@@ -24,7 +24,7 @@ export default function ClassSpecialityPickerToggler({
         <ArcaneSchoolPicker
           value={value}
           onChange={onChange}
-          standardForbidden={effect.standardForbidden}
+          standardForbidden={effect.args.standardForbidden}
         />
       );
     default:

@@ -1,3 +1,4 @@
+import { uniq } from 'lodash-es';
 import {
   HStack,
   VStack,
@@ -233,7 +234,7 @@ export default function CharacterDetailBasic(): JSX.Element {
                 <Heading as="h4" fontSize="xl" mb="4">
                   {clas.name} ({character.getLevelForClass(clas)}级)
                 </Heading>
-                {feats.map((cf) => (
+                {uniq(feats).map((cf) => (
                   <Box
                     key={cf.id}
                     mb="4"

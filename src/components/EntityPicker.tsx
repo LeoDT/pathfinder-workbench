@@ -33,6 +33,7 @@ export interface Props {
   inputRef?: MutableRefObject<HTMLInputElement | null>;
   quickViewer?: boolean;
   entities?: Array<Entity>;
+  disabledEntityIds?: string[];
   listAll?: boolean;
 }
 
@@ -44,6 +45,7 @@ export default function EntityPicker({
   quickViewer = true,
   fuse,
   entities,
+  disabledEntityIds,
   listAll = false,
 }: Props): JSX.Element {
   const [searchKey, setSearchKey] = useState('');
@@ -101,7 +103,10 @@ export default function EntityPicker({
         <Box borderTop="1px" borderColor="gray.100" mt="2" maxH={300} overflow="auto">
           {results.map((item) => {
             const picked = items?.includes(item.id);
-            const disabled = (!onUnpick && picked) || (!onPick && !picked);
+            const disabled =
+              (!onUnpick && picked) ||
+              (!onPick && !picked) ||
+              Boolean(disabledEntityIds?.includes(item.id));
 
             return (
               <HStack

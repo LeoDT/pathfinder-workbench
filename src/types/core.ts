@@ -37,6 +37,8 @@ export type EntityType =
   | 'class'
   | 'spell'
   | 'feat'
+  | 'racialTrait'
+  | 'classFeat'
   | 'weaponType'
   | 'armorType'
   | 'arcaneSchool';
@@ -48,7 +50,6 @@ export interface Entity {
 }
 
 export interface SpecialFeat extends Entity {
-  _type: 'common';
   desc: string;
   effects?: Effect[];
   type?: 'su' | 'ex' | 'sp';
@@ -66,11 +67,14 @@ export interface Skill extends Entity {
 }
 
 export type RaceSize = 'small' | 'medium';
+export interface RacialTrait extends SpecialFeat {
+  _type: 'racialTrait';
+}
 export interface Race extends Entity {
   _type: 'race';
   ability: Partial<Abilities>;
-  racialTrait: Array<SpecialFeat>;
-  alternateRacialTrait: Array<SpecialFeat>;
+  racialTrait: Array<RacialTrait>;
+  alternateRacialTrait: Array<RacialTrait>;
   desc: Record<string, string>;
   size: RaceSize;
   speed: string;
@@ -136,8 +140,9 @@ export interface ClassFeatGrow extends Entity {
   effects?: Effect[];
 }
 export interface ClassFeat extends SpecialFeat {
-  _type: 'common';
+  _type: 'classFeat';
   grow?: Array<ClassFeatGrow>;
+  original?: ClassFeat;
 }
 
 export interface ClassProficiencies {

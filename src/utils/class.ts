@@ -1,7 +1,8 @@
-import { range } from 'lodash-es';
 import { Class, ClassLevel, ClassFeat } from '../types/core';
 import { ClassSpecialityType } from '../types/characterUpgrade';
-import { EffectGainClassSpeciality, EffectGainSpellCasting, EffectType } from '../types/effectType';
+import { EffectGainClassSpeciality, EffectType } from '../types/effectType';
+
+import { collections } from '../store/collection';
 
 export function getClassLevel(clas: Class, l: number): ClassLevel {
   const level = clas.levels[l - 1];
@@ -18,23 +19,26 @@ export function getClassFeatByLevel(clas: Class, l: number): Array<ClassFeat> {
 
   return (
     level.special?.map((s) => {
-      const f = clas.feats.find((f) => {
+      let hit = null;
+
+      clas.feats.forEach((f) => {
         if (f.grow) {
           const g = f.grow.find((fg) => fg.id === s);
 
           if (g) {
-            return {
-              ...g,
-              desc: f.desc,
-            };
+            hit = collections.class.getGrowedClassFeat(f, g);
+
+            return false;
           }
         }
 
-        return f.id === s;
+        if (f.id === s) {
+          hit = f;
+        }
       });
 
-      if (f) {
-        return f;
+      if (hit) {
+        return hit;
       }
 
       throw Error(`class feat ${s} for ${clas.id} not found`);
@@ -57,25 +61,4 @@ export function getClassSpecialityTypeFromEffect(
     default:
       throw Error(`Unknown EffectGainClassSpeciality.type ${effect.type}`);
   }
-}
-
-export function getSpellCastingEffectFromClassLevel(
-  clas: Class,
-  level: number
-): EffectGainSpellCasting | null {
-  const feats = range(level)
-    .map((l) => getClassFeatByLevel(clas, l + 1))
-    .flat();
-
-  let effect = null;
-
-  feats.forEach((f) =>
-    f.effects?.forEach((e) => {
-      if (e.type === EffectType.gainSpellCasting) {
-        effect = e;
-      }
-    })
-  );
-
-  return effect;
 }

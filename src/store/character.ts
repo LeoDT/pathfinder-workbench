@@ -1,31 +1,28 @@
-import { isEmpty, pick, last, compact, uniq, range, intersection } from 'lodash-es';
-import { observable, makeObservable, IObservableArray, computed, action } from 'mobx';
+import { compact, intersection, isEmpty, last, pick, range, uniq } from 'lodash-es';
+import { IObservableArray, action, computed, makeObservable, observable } from 'mobx';
 import shortid from 'shortid';
 
-import { collections } from './collection';
-import {
-  AbilityType,
-  Abilities,
-  Race,
-  Skill,
-  Class,
-  ClassLevel,
-  ClassFeat,
-  Feat,
-  SkillSystem,
-  Alignment,
-} from '../types/core';
 import { CharacterUpgrade } from '../types/characterUpgrade';
-import { getModifiers, addBonusScores } from '../utils/ability';
 import {
-  getClassFeatByLevel,
-  getSpellCastingEffectFromClassLevel,
-  getClassLevel,
-} from '../utils/class';
-
-import Spellbook from './spellbook';
-import CharacterStatus from './characterStatus';
+  Abilities,
+  AbilityType,
+  Alignment,
+  Class,
+  ClassFeat,
+  ClassLevel,
+  Feat,
+  Race,
+  RacialTrait,
+  Skill,
+  SkillSystem,
+} from '../types/core';
+import { addBonusScores, getModifiers } from '../utils/ability';
+import { getClassFeatByLevel, getClassLevel } from '../utils/class';
+import CharacterEffect from './characterEffect';
 import CharacterEquip from './characterEquip';
+import CharacterStatus from './characterStatus';
+import { collections } from './collection';
+import Spellbook from './spellbook';
 
 interface OptionalCharacterParams {
   id?: string;
@@ -58,6 +55,7 @@ export default class Character {
 
   status: CharacterStatus;
   equipment: CharacterEquip;
+  effect: CharacterEffect;
 
   constructor(
     name: string,
@@ -76,6 +74,7 @@ export default class Character {
       name: observable,
       skillSystem: observable,
       alignment: observable,
+      favoredClassIds: observable,
       baseAbility: observable,
       abilityModifier: computed,
 
@@ -117,13 +116,14 @@ export default class Character {
     this.pendingUpgrade = null;
     this.upgrades = observable.array(upgrades || [], { deep: false });
 
-    this.favoredClassIds = observable.array(favoredClassIds || [], { deep: false });
+    this.favoredClassIds = favoredClassIds || [];
 
     this.raceId = raceId;
 
     this.spellbooks = observable.array([], { deep: false });
     this.status = new CharacterStatus(this);
     this.equipment = new CharacterEquip(this);
+    this.effect = new CharacterEffect(this);
 
     this.ensureSpellbooks();
   }
@@ -138,6 +138,9 @@ export default class Character {
   setRace(raceId: string): void {
     this.raceId = raceId;
     this.bonusAbilityType = AbilityType.str;
+  }
+  get racialTraits(): Array<RacialTrait> {
+    return this.race.racialTrait;
   }
 
   get ability(): Abilities {
@@ -157,6 +160,8 @@ export default class Character {
   startUpgrade(): void {
     const lastUpgrade = last(this.upgrades);
     const lastUpgradeClass = lastUpgrade ? lastUpgrade.classId : 'Barbarian';
+    const levelFeat = (this.level + 1) % 2 === 1;
+    const levelAbility = (this.level + 1) % 4 === 1;
 
     this.pendingUpgrade = {
       classId: lastUpgradeClass,
@@ -166,8 +171,8 @@ export default class Character {
       abilities: {},
       feats: [],
       spells: [],
-      levelFeat: this.level % 2 === 1,
-      levelAbility: this.level % 4 === 1,
+      levelFeat,
+      levelAbility,
       classSpeciality: null,
     };
   }
@@ -213,6 +218,17 @@ export default class Character {
     });
 
     return levels;
+  }
+
+  get maxFavoredClass(): number {
+    let max = 1;
+    const effects = this.effect.getGainFavoredClassAmountEffects();
+
+    effects.forEach(({ effect }) => {
+      max += effect.args.amount;
+    });
+
+    return max;
   }
   get classLevelDetail(): Map<Class, ClassLevel> {
     const classLevels = new Map<Class, ClassLevel>();
@@ -305,25 +321,38 @@ export default class Character {
 
   get gainedFeats(): Feat[] {
     return this.upgradesWithPending
-      .map((up) => up.feats.map((f) => collections.feat.getById(f)))
+      .map((up) => up.feats.filter((f) => f).map((f) => collections.feat.getById(f)))
       .flat();
   }
 
   ensureSpellbooks(): void {
     const books: Array<Spellbook> = [];
 
-    this.levelDetail.forEach((level, clas) => {
-      const existedSpellbook = this.spellbooks.find((sb) => sb.class === clas);
+    const effects = this.effect.getGainSpellCastingEffects();
 
-      if (existedSpellbook) {
-        books.push(existedSpellbook);
-      }
+    effects.forEach(({ effect, source }) => {
+      const clas = this.classes.find((c) => {
+        if (source._type === 'classFeat') {
+          return c.feats.indexOf(source) !== -1;
+        }
 
-      const e = getSpellCastingEffectFromClassLevel(clas, level);
+        return false;
+      });
 
-      if (e) {
-        const newSpellbook = new Spellbook(this, clas, e.castingType, e.abilityType);
-        books.push(newSpellbook);
+      if (clas) {
+        const existedSpellbook = this.spellbooks.find((sb) => sb.class === clas);
+
+        if (existedSpellbook) {
+          books.push(existedSpellbook);
+        } else {
+          const newSpellbook = new Spellbook(
+            this,
+            clas,
+            effect.args.castingType,
+            effect.args.abilityType
+          );
+          books.push(newSpellbook);
+        }
       }
     });
 

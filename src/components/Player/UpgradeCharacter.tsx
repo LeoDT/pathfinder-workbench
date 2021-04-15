@@ -18,12 +18,17 @@ import CharacterFinish from './UpgradeCharacterFinish';
 
 export default function UpgradeCharacter(): JSX.Element {
   const character = useCurrentCharacter();
-  const [upgrade] = useState(() => new UpgradeCharacterStore(character));
+  // initialize here will cause react setstate and mobx action conflict, so do it in an effect
+  const [upgrade, setUpgrade] = useState<UpgradeCharacterStore | null>(null);
   const historyUnblock = useRef<null | (() => void)>(null);
   const { url, path } = useRouteMatch();
   const history = useHistory();
 
   useBreadcrumb('升级', url);
+
+  useEffect(() => {
+    setUpgrade(new UpgradeCharacterStore(character));
+  }, [character]);
 
   useEffect(() => {
     const unblock = history.block((location) => {
@@ -43,39 +48,41 @@ export default function UpgradeCharacter(): JSX.Element {
 
   return (
     <HistoryUnblockContext.Provider value={historyUnblock}>
-      <UpgradeCharacterStoreContext.Provider value={upgrade}>
-        <>
-          <HStackNav mb="6">
-            <HStackNavItem
-              backgroundColor="red.500"
-              color="white"
-              borderColor="red.500"
-              flexGrow={0}
-              to={`${url}/../`}
-              _hover={{ textDecoration: 'none', backgroundColor: 'red.600' }}
-            >
-              <Icon as={FaChevronLeft} color="white" boxSize="1.2rem" />
-            </HStackNavItem>
-            <HStackNavItem to={`${url}/basic`}>基础</HStackNavItem>
-            <HStackNavItem to={`${url}/skill`}>技能</HStackNavItem>
-            <HStackNavItem to={`${url}/feat`}>专长</HStackNavItem>
-            <HStackNavItem to={`${url}/spell`}>法术</HStackNavItem>
-            <HStackNavItem to={`${url}/finish`}>完成</HStackNavItem>
-          </HStackNav>
+      {upgrade ? (
+        <UpgradeCharacterStoreContext.Provider value={upgrade}>
+          <>
+            <HStackNav mb="6">
+              <HStackNavItem
+                backgroundColor="red.500"
+                color="white"
+                borderColor="red.500"
+                flexGrow={0}
+                to={`${url}/../`}
+                _hover={{ textDecoration: 'none', backgroundColor: 'red.600' }}
+              >
+                <Icon as={FaChevronLeft} color="white" boxSize="1.2rem" />
+              </HStackNavItem>
+              <HStackNavItem to={`${url}/basic`}>基础</HStackNavItem>
+              <HStackNavItem to={`${url}/skill`}>技能</HStackNavItem>
+              <HStackNavItem to={`${url}/feat`}>专长</HStackNavItem>
+              <HStackNavItem to={`${url}/spell`}>法术</HStackNavItem>
+              <HStackNavItem to={`${url}/finish`}>完成</HStackNavItem>
+            </HStackNav>
 
-          <Box>
-            <Switch>
-              <Route path={`${path}/basic`} component={CharacterBasic} />
-              <Route path={`${path}/skill`} component={CharacterSkill} />
-              <Route path={`${path}/feat`} component={CharacterFeat} />
-              <Route path={`${path}/spell`} component={CharacterSpell} />
-              <Route path={`${path}/finish`} component={CharacterFinish} />
+            <Box>
+              <Switch>
+                <Route path={`${path}/basic`} component={CharacterBasic} />
+                <Route path={`${path}/skill`} component={CharacterSkill} />
+                <Route path={`${path}/feat`} component={CharacterFeat} />
+                <Route path={`${path}/spell`} component={CharacterSpell} />
+                <Route path={`${path}/finish`} component={CharacterFinish} />
 
-              <Redirect to={`${url}/basic`} />
-            </Switch>
-          </Box>
-        </>
-      </UpgradeCharacterStoreContext.Provider>
+                <Redirect to={`${url}/basic`} />
+              </Switch>
+            </Box>
+          </>
+        </UpgradeCharacterStoreContext.Provider>
+      ) : null}
     </HistoryUnblockContext.Provider>
   );
 }

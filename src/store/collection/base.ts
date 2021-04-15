@@ -47,4 +47,8 @@ export class Collection<T extends Entity = Entity> {
 
     throw Error(`can not find ${this.type} with id ${id}`);
   }
+
+  getByIds(ids: string[]): T[] {
+    return ids.map((i) => this.getById(i));
+  }
 }

@@ -6,7 +6,7 @@
 // for vscode: json.d.ts for this folder, to declare json as any
 // for cra: add `as any` for all the json imports
 
-import { Race, Feat, Class, Skill, ArmorType } from '../../types/core';
+import { Skill, ArmorType } from '../../types/core';
 import { ArcaneSchool } from '../../types/arcaneSchool';
 
 import CORE_SKILL_DATA from '../../data/core-skills.json';
@@ -21,16 +21,19 @@ import ARCANE_SCHOOL_DATA from '../../data/arcane-schools.json';
 
 import { Collection } from './base';
 export * from './base';
+import ClassCollection from './class';
+import RaceCollection from './race';
+import FeatCollection from './feat';
 import SpellCollection from './spell';
 import WeaponTypeCollection from './weaponType';
 
 export const collections = {
   coreSkill: new Collection<Skill>('skill', CORE_SKILL_DATA as any),
   consolidatedSkill: new Collection<Skill>('skill', CONSOLIDATED_SKILL_DATA as any),
-  race: new Collection<Race>('race', RACE_DATA as any),
+  race: new RaceCollection(RACE_DATA as any),
   spell: new SpellCollection(SPELL_DATA as any),
-  feat: new Collection<Feat>('feat', FEAT_DATA as any),
-  class: new Collection<Class>('class', CLASS_DATA as any),
+  feat: new FeatCollection(FEAT_DATA as any),
+  class: new ClassCollection(CLASS_DATA as any),
   weaponType: new WeaponTypeCollection(WEAPON_TYPES_DATA as any),
   armorType: new Collection<ArmorType>('armorType', ARMOR_TYPES_DATA as any),
   arcaneSchool: new Collection<ArcaneSchool>('arcaneSchool', ARCANE_SCHOOL_DATA as any),

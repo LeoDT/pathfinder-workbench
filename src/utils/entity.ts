@@ -8,4 +8,6 @@ export const entityTypeTranslates = {
   weaponType: '武器',
   armorType: '护甲',
   arcaneSchool: '奥术学派',
+  racialTrait: '种族特性',
+  classFeat: '职业特性',
 };

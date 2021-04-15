@@ -1,5 +1,14 @@
-import { Effect, EffectGainFeat, EffectType } from '../types/effectType';
+import { EffectGainFeatArgs } from '../types/effectType';
+import { featTypeTranslates } from './feat';
 
-export function getBonusFeatEffect(effects: Array<Effect>): EffectGainFeat | undefined {
-  return effects.find((e): e is EffectGainFeat => e.type === EffectType.gainFeat);
+export function translateGainFeatEffectArgs(e: EffectGainFeatArgs): string {
+  if (e.forceFeat) {
+    return `固定专长`;
+  }
+
+  if (e.featType) {
+    return `${featTypeTranslates[e.featType]}专长`;
+  }
+
+  return '奖励专长';
 }

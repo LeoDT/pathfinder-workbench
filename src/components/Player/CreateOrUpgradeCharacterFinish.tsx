@@ -1,9 +1,9 @@
-import { VStack, Box, Text, Button, Heading } from '@chakra-ui/react';
 import { useHistory } from 'react-router';
+
+import { Box, Button, Heading, Text, VStack } from '@chakra-ui/react';
 
 import { useStore } from '../../store';
 import CreateCharacterStore, { InvalidReason } from '../../store/createCharacter';
-
 import { useHistoryUnblock } from './context';
 
 interface Props {
@@ -16,9 +16,10 @@ const validateTranslates: Record<InvalidReason, string> = {
   skillPoints: '有未使用的技能点数',
   feat: '未选择足够专长',
   spell: '未选择足够法术',
+  favoredClass: '未选择足够天赋职业',
 };
 
-export default function CreateCharacterFeat({ createOrUpgrade }: Props): JSX.Element {
+export default function CreateOrUpgradeCharacterFinish({ createOrUpgrade }: Props): JSX.Element {
   const store = useStore();
   const history = useHistory();
   const validateResults = createOrUpgrade.validate();

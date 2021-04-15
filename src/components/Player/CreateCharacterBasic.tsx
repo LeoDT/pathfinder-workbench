@@ -1,20 +1,20 @@
 import { isEmpty, without } from 'lodash-es';
 import { Observer } from 'mobx-react-lite';
-import { Button, Box, VStack, Text, HStack, Spacer, Input, Badge } from '@chakra-ui/react';
+
+import { Badge, Box, Button, HStack, Input, Spacer, Text, VStack } from '@chakra-ui/react';
 
 import { useStore } from '../../store';
 import { useCreateCharacterStore } from '../../store/createCharacter';
-import { ABILITY_TYPES, getScoreCost, abilityTranslates } from '../../utils/ability';
 import { SkillSystem } from '../../types/core';
-import { favoredClassBonusOptions } from '../../utils/upgrade';
-
-import AbilityInput from '../AbilityInput';
-import CollectionEntitySelect from '../CollectionEntitySelect';
-import { CollectionEntityPickerPopover } from '../CollectionEntityPicker';
-import Select from '../Select';
-import ClassSpecialityPickerToggler from '../ClassSpecialityPickerToggler';
-import ClassSpecialityDisplayer from '../ClassSpecialityDisplayer';
+import { ABILITY_TYPES, abilityTranslates, getScoreCost } from '../../utils/ability';
 import { alignmentOptions } from '../../utils/alignment';
+import { favoredClassBonusOptions } from '../../utils/upgrade';
+import AbilityInput from '../AbilityInput';
+import ClassSpecialityDisplayer from '../ClassSpecialityDisplayer';
+import ClassSpecialityPickerToggler from '../ClassSpecialityPickerToggler';
+import { CollectionEntityPickerPopover } from '../CollectionEntityPicker';
+import CollectionEntitySelect from '../CollectionEntitySelect';
+import Select from '../Select';
 
 export default function CreateCharacterBasic(): JSX.Element {
   const store = useStore();
@@ -106,9 +106,13 @@ export default function CreateCharacterBasic(): JSX.Element {
                   text="选择天赋职业"
                   collection={store.collections.class}
                   items={create.character.favoredClassIds}
-                  onPick={(c) => {
-                    create.character.favoredClassIds.push(c);
-                  }}
+                  onPick={
+                    create.character.favoredClassIds.length < create.character.maxFavoredClass
+                      ? (c) => {
+                          create.character.favoredClassIds.push(c);
+                        }
+                      : undefined
+                  }
                   onUnpick={(c) => {
                     create.character.favoredClassIds = without(create.character.favoredClassIds, c);
                   }}
