@@ -12,6 +12,7 @@ import { CharacterUpgrade } from '../types/characterUpgrade';
 import { collections } from './collection';
 import Character from './character';
 import Spellbook from './spellbook';
+import { constraintAppliedAlignmentOptions } from '../utils/alignment';
 
 export interface GainFeatReason extends EffectGainFeatArgs {
   reason: 'race' | 'class' | 'level';
@@ -143,6 +144,17 @@ export default class CreateCharacterStore {
       this.character.favoredClassIds = [cId];
     } else {
       this.upgrade.hp = this.class.hd / 2 + 1;
+    }
+
+    const alignmentOptions = constraintAppliedAlignmentOptions(this.class.alignment);
+    if (alignmentOptions.find((o) => o.value === this.character.alignment)?.disabled === true) {
+      const a = alignmentOptions.find((o) => !o.disabled)?.value;
+
+      if (a) {
+        this.character.alignment = a;
+      } else {
+        throw new Error(`can not decide alignment for class ${this.class.id}`);
+      }
     }
 
     this.resetUpgradeFeats();

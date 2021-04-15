@@ -163,6 +163,7 @@ export interface ClassLevel {
 export interface Class extends Entity {
   _type: 'class';
   hd: number;
+  alignment: Alignment[];
   classSkills: Array<string>;
   skillPoints: number;
   proficiencies: ClassProficiencies;

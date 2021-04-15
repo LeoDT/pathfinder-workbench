@@ -7,7 +7,7 @@ import { useStore } from '../../store';
 import { useCreateCharacterStore } from '../../store/createCharacter';
 import { SkillSystem } from '../../types/core';
 import { ABILITY_TYPES, abilityTranslates, getScoreCost } from '../../utils/ability';
-import { alignmentOptions } from '../../utils/alignment';
+import { constraintAppliedAlignmentOptions } from '../../utils/alignment';
 import { favoredClassBonusOptions } from '../../utils/upgrade';
 import AbilityInput from '../AbilityInput';
 import ClassSpecialityDisplayer from '../ClassSpecialityDisplayer';
@@ -135,7 +135,7 @@ export default function CreateCharacterBasic(): JSX.Element {
               <Text fontSize="lg">阵营</Text>
               <Spacer />
               <Select
-                options={alignmentOptions}
+                options={constraintAppliedAlignmentOptions(create.class.alignment)}
                 value={character.alignment}
                 onChange={(v) => {
                   character.alignment = v;

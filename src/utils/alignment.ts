@@ -16,3 +16,13 @@ export const alignmentTranslates: Record<Alignment, string> = {
 export const alignmentOptions: SelectOptions<Alignment> = Object.entries(
   alignmentTranslates
 ).map(([value, text]) => ({ value: value as Alignment, text }));
+
+export function constraintAppliedAlignmentOptions(
+  constraint: Alignment[]
+): SelectOptions<Alignment> {
+  return alignmentOptions.map((o) => {
+    const disabled = constraint.length !== 0 && !constraint.includes(o.value);
+
+    return { ...o, disabled };
+  });
+}

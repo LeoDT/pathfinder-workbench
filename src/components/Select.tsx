@@ -1,19 +1,22 @@
+import { FaCheck, FaChevronDown } from 'react-icons/fa';
+
 import {
+  BoxProps,
   Button,
+  ButtonProps,
+  HStack,
+  Icon,
   Menu,
   MenuButton,
   MenuItem,
   MenuList,
-  Icon,
-  HStack,
   Text,
-  BoxProps,
-  ButtonProps,
 } from '@chakra-ui/react';
-import { FaCheck, FaChevronDown } from 'react-icons/fa';
+
+import { SelectOptions } from '../types/misc';
 
 interface Props<T = string> {
-  options: Array<{ text: string; value: T; key?: string }>;
+  options: SelectOptions<T>;
   onChange: (v: T) => void;
   value: T | null;
   placeholder?: string;
@@ -51,6 +54,7 @@ export default function Select<T>({
               onChange(o.value);
             }}
             icon={o.value === value ? <Icon as={FaCheck} /> : undefined}
+            isDisabled={o.disabled}
           >
             {o.text}
           </MenuItem>
