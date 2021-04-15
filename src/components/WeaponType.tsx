@@ -19,6 +19,7 @@ interface Props {
   showName?: boolean;
   showDescription?: boolean;
   showMeta?: boolean;
+  showId?: boolean;
 }
 
 function WeaponTypeMeta({ weaponType }: { weaponType: WeaponTypeType }): JSX.Element {
@@ -66,6 +67,7 @@ export function WeaponType({
   showName = true,
   showMeta = true,
   showDescription = true,
+  showId = false,
 }: Props): JSX.Element {
   return (
     <Box className="weapon-type">
@@ -73,7 +75,8 @@ export function WeaponType({
         <HStack direction="row" align="center">
           <Badge>{weaponCategoryTranslates[weaponType.meta.category]}</Badge>
           <Heading as="h4" fontSize="lg" color={ENTITY_COLORS.weaponType}>
-            {weaponType.name} <small style={{ fontWeight: 'normal' }}>({weaponType.id})</small>
+            {weaponType.name}{' '}
+            {showId ? <small style={{ fontWeight: 'normal' }}>({weaponType.id})</small> : null}
           </Heading>
         </HStack>
       ) : null}

@@ -266,7 +266,7 @@ export default function CharacterDetailBasic(): JSX.Element {
               <Heading as="h4" fontSize="xl" mb="4">
                 种族特性
               </Heading>
-              {character.race.racialTrait.map((rt) => (
+              {character.racialTraits.map((rt) => (
                 <Box
                   key={rt.id}
                   mb="3"

@@ -15,7 +15,7 @@ import {
 
 import { SelectOptions } from '../types/misc';
 
-interface Props<T = string> {
+export interface Props<T = string> {
   options: SelectOptions<T>;
   onChange: (v: T) => void;
   value: T | null;

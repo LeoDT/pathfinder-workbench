@@ -13,6 +13,7 @@ interface Props {
   showBrief?: boolean;
   showMeta?: boolean;
   showDescription?: boolean;
+  showId?: boolean;
 }
 
 function FeatMeta({ feat }: { feat: FeatType }) {
@@ -38,6 +39,7 @@ export function Feat({
   showBrief = true,
   showMeta = true,
   showDescription = true,
+  showId = false,
 }: Props): JSX.Element {
   return (
     <Box className="feat">
@@ -45,7 +47,8 @@ export function Feat({
         <HStack direction="row" align="center">
           <Badge>{feat.book.toUpperCase()}</Badge>
           <Heading as="h4" fontSize="lg" color={ENTITY_COLORS.feat}>
-            {feat.name} <small style={{ fontWeight: 'normal' }}>({feat.id})</small>
+            {feat.name}{' '}
+            {showId ? <small style={{ fontWeight: 'normal' }}>({feat.id})</small> : null}
           </Heading>
         </HStack>
       ) : null}

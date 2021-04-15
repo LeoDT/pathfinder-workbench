@@ -4,6 +4,8 @@ import {
   DrawerContent,
   DrawerCloseButton,
   DrawerBody,
+  Box,
+  Heading,
   Text,
   Icon,
 } from '@chakra-ui/react';
@@ -18,28 +20,48 @@ import {
   Spell as SpellEntity,
   WeaponType as WeaponTypeType,
   ArmorType as ArmorTypeType,
+  SpecialFeat,
 } from '../types/core';
 
 import Feat from './Feat';
 import Spell from './Spell';
 import WeaponType from './WeaponType';
 import ArmorType from './ArmorType';
+import { ENTITY_COLORS } from '../constant';
 
 export default function EntityQuickViewer(): JSX.Element {
   const { ui } = useStore();
   const onClose = useCallback(() => ui.closeQuickViewer(), []);
   const renderEntity = useCallback(() => {
-    switch (ui.quickViewerEntity?._type) {
+    const e = ui.quickViewerEntity;
+
+    if (!e) return null;
+
+    switch (e._type) {
       case 'feat':
-        return <Feat feat={ui.quickViewerEntity as FeatEntity} />;
+        return <Feat feat={e as FeatEntity} showId />;
       case 'spell':
-        return <Spell spell={ui.quickViewerEntity as SpellEntity} />;
+        return <Spell spell={e as SpellEntity} showId />;
       case 'weaponType':
-        return <WeaponType weaponType={ui.quickViewerEntity as WeaponTypeType} />;
+        return <WeaponType weaponType={e as WeaponTypeType} showId />;
       case 'armorType':
-        return <ArmorType armorType={ui.quickViewerEntity as ArmorTypeType} />;
+        return <ArmorType armorType={e as ArmorTypeType} showId />;
+      case 'classFeat':
+      case 'racialTrait': {
+        const feat = e as SpecialFeat;
+        return (
+          <Box>
+            <Heading as="h4" fontSize="lg" color={ENTITY_COLORS.feat}>
+              {feat.name} <small style={{ fontWeight: 'normal' }}>({feat.id})</small>
+            </Heading>
+            {feat.desc ? (
+              <Text pt="1" whiteSpace="pre-wrap" dangerouslySetInnerHTML={{ __html: feat.desc }} />
+            ) : null}
+          </Box>
+        );
+      }
       default:
-        return <Text>不能显示</Text>;
+        return <Text>无法显示</Text>;
     }
   }, []);
 

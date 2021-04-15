@@ -1,44 +1,17 @@
-import { Button, Menu, MenuButton, MenuItem, MenuList, Icon, Text, HStack } from '@chakra-ui/react';
-import { FaCheck, FaChevronDown } from 'react-icons/fa';
+import { useMemo } from 'react';
+
+import Select, { Props as SelectProps } from './Select';
 
 import { Collection } from '../store/collection';
 
-interface Props {
+interface Props extends Omit<SelectProps, 'options'> {
   collection: Collection;
-  onChange: (v: string) => void;
-  value: string | null;
-  placeholder?: string;
-  withArrow?: boolean;
 }
 
-export default function CollectionEntitySelect({
-  collection,
-  onChange,
-  value,
-  placeholder = 'Select',
-  withArrow = true,
-}: Props): JSX.Element {
-  return (
-    <Menu placement="bottom-start">
-      <MenuButton as={Button}>
-        <HStack>
-          <Text>{(value ? collection.getById(value).name : '') || placeholder}</Text>
-          {withArrow ? <Icon as={FaChevronDown} display="inine-block" /> : null}
-        </HStack>
-      </MenuButton>
-      <MenuList>
-        {collection.data.map((e) => (
-          <MenuItem
-            key={e.id}
-            onClick={() => {
-              onChange(e.id);
-            }}
-            icon={e.id === value ? <Icon as={FaCheck} /> : undefined}
-          >
-            {e.name}
-          </MenuItem>
-        ))}
-      </MenuList>
-    </Menu>
-  );
+export default function CollectionEntitySelect({ collection, ...props }: Props): JSX.Element {
+  const options = useMemo(() => collection.data.map((i) => ({ value: i.id, text: i.name })), [
+    collection,
+  ]);
+
+  return <Select options={options} {...props} />;
 }

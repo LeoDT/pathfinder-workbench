@@ -47,6 +47,7 @@ export interface Entity {
   _type: EntityType;
   id: string;
   name: string;
+  deprecated?: boolean;
 }
 
 export interface SpecialFeat extends Entity {

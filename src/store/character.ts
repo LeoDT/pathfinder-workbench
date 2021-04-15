@@ -35,6 +35,8 @@ interface OptionalCharacterParams {
   level?: number;
 
   raceId?: string;
+  alternateRaceTraitIds?: string[];
+
   upgrades?: CharacterUpgrade[];
 }
 
@@ -50,6 +52,7 @@ export default class Character {
   upgrades: IObservableArray<CharacterUpgrade>;
 
   raceId: string;
+  alternateRaceTraitIds: string[];
   favoredClassIds: string[];
   spellbooks: IObservableArray<Spellbook>;
 
@@ -66,6 +69,7 @@ export default class Character {
       baseAbility,
       bonusAbilityType = AbilityType.str,
       raceId = 'Human',
+      alternateRaceTraitIds,
       favoredClassIds,
       upgrades,
     }: OptionalCharacterParams = {}
@@ -82,6 +86,7 @@ export default class Character {
       bonusAbility: computed,
 
       raceId: observable,
+      alternateRaceTraitIds: observable,
       race: computed,
       setRace: action,
 
@@ -119,6 +124,7 @@ export default class Character {
     this.favoredClassIds = favoredClassIds || [];
 
     this.raceId = raceId;
+    this.alternateRaceTraitIds = alternateRaceTraitIds || [];
 
     this.spellbooks = observable.array([], { deep: false });
     this.status = new CharacterStatus(this);
@@ -135,12 +141,28 @@ export default class Character {
   get race(): Race {
     return collections.race.getById(this.raceId);
   }
-  setRace(raceId: string): void {
+  setRace(raceId: string, alternateRaceTraitIds?: string[]): void {
     this.raceId = raceId;
     this.bonusAbilityType = AbilityType.str;
+
+    if (alternateRaceTraitIds) {
+      this.alternateRaceTraitIds = alternateRaceTraitIds;
+    }
   }
   get racialTraits(): Array<RacialTrait> {
-    return this.race.racialTrait;
+    const traits = [...this.race.racialTrait];
+    const replaced: string[] = [];
+
+    this.alternateRaceTraitIds.forEach((id) => {
+      const alt = this.race.alternateRacialTrait.find((t) => t.id === id);
+
+      if (alt) {
+        traits.push(alt);
+        alt.replace?.forEach((r) => replaced.push(r));
+      }
+    });
+
+    return traits.filter((t) => !replaced.includes(t.id));
   }
 
   get ability(): Abilities {
@@ -363,6 +385,7 @@ export default class Character {
     'skillSystem',
     'alignment',
     'raceId',
+    'alternateRaceTraitIds',
     'baseAbility',
     'bonusAbilityType',
     'favoredClassIds',

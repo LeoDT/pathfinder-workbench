@@ -126,9 +126,10 @@ export default function ArcaneSchoolPicker({
       <Portal>
         <Modal
           isOpen={isOpen}
-          onClose={onClose}
-          closeOnOverlayClick={false}
-          closeOnEsc={false}
+          onClose={() => {
+            reset();
+            onClose();
+          }}
           scrollBehavior="inside"
         >
           <ModalOverlay />

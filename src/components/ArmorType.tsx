@@ -14,6 +14,7 @@ interface Props {
   showName?: boolean;
   showDescription?: boolean;
   showMeta?: boolean;
+  showId?: boolean;
 }
 
 function ArmorTypeMeta({ armorType }: { armorType: ArmorTypeType }): JSX.Element {
@@ -52,13 +53,15 @@ export function ArmorType({
   showName = true,
   showMeta = true,
   showDescription = true,
+  showId = false,
 }: Props): JSX.Element {
   return (
     <Box className="armor-type">
       {showName ? (
         <HStack direction="row" align="center">
           <Heading as="h4" fontSize="lg" color={ENTITY_COLORS.armorType}>
-            {armorType.name} <small style={{ fontWeight: 'normal' }}>({armorType.id})</small>
+            {armorType.name}{' '}
+            {showId ? <small style={{ fontWeight: 'normal' }}>({armorType.id})</small> : null}
           </Heading>
         </HStack>
       ) : null}

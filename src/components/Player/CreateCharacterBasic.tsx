@@ -15,6 +15,7 @@ import ClassSpecialityPickerToggler from '../ClassSpecialityPickerToggler';
 import { CollectionEntityPickerPopover } from '../CollectionEntityPicker';
 import CollectionEntitySelect from '../CollectionEntitySelect';
 import Select from '../Select';
+import RacePicker from '../RacePicker';
 
 export default function CreateCharacterBasic(): JSX.Element {
   const store = useStore();
@@ -60,13 +61,9 @@ export default function CreateCharacterBasic(): JSX.Element {
             <HStack w="full" spacing="0" pb="2" borderBottom="1px" borderColor="gray.200">
               <Text fontSize="lg">种族</Text>
               <Spacer />
-              <CollectionEntitySelect
-                collection={store.collections.race}
-                value={character.raceId}
-                onChange={(id) => {
-                  character.raceId = id;
-
-                  create.resetUpgradeFeats();
+              <RacePicker
+                onChange={({ raceId, alternateRaceTraitIds }) => {
+                  character.setRace(raceId, alternateRaceTraitIds);
                 }}
               />
             </HStack>

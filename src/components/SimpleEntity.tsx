@@ -1,31 +1,45 @@
-import { Heading, HStack, Spacer } from '@chakra-ui/react';
+import React from 'react';
 
+import { HStack, Heading, Spacer, StackProps } from '@chakra-ui/react';
+
+import { ENTITY_COLORS } from '../constant';
 import {
-  Entity,
-  Spell as SpellType,
-  Feat as FeatType,
-  WeaponType as WeaponTypeType,
   ArmorType as ArmorTypeType,
+  Entity,
+  Feat as FeatType,
+  Spell as SpellType,
+  WeaponType as WeaponTypeType,
 } from '../types/core';
-
-import { EntityQuickViewerToggler } from './EntityQuickViewer';
-
-import Spell from './Spell';
-import Feat from './Feat';
-import WeaponType from './WeaponType';
 import ArmorType from './ArmorType';
+import { EntityQuickViewerToggler } from './EntityQuickViewer';
+import Feat from './Feat';
+import Spell from './Spell';
+import WeaponType from './WeaponType';
 
-interface Props {
+interface Props extends StackProps {
   entity: Entity;
+  showId?: boolean;
   quickViewer?: boolean;
 }
 
-export default function SimpleEntity({ entity, quickViewer = true }: Props): JSX.Element {
+export default function SimpleEntity({
+  entity,
+  showId = false,
+  quickViewer = true,
+  ...props
+}: Props): JSX.Element {
   let child;
 
   switch (entity._type) {
     case 'spell': {
-      child = <Spell spell={entity as SpellType} showDescription={false} showMeta={false} />;
+      child = (
+        <Spell
+          spell={entity as SpellType}
+          showDescription={false}
+          showMeta={false}
+          showId={showId}
+        />
+      );
       break;
     }
 
@@ -36,6 +50,7 @@ export default function SimpleEntity({ entity, quickViewer = true }: Props): JSX
           showBrief={false}
           showMeta={false}
           showDescription={false}
+          showId={showId}
         />
       );
       break;
@@ -47,20 +62,42 @@ export default function SimpleEntity({ entity, quickViewer = true }: Props): JSX
           weaponType={entity as WeaponTypeType}
           showMeta={false}
           showDescription={false}
+          showId={showId}
         />
       );
       break;
 
     case 'armorType':
       child = (
-        <ArmorType armorType={entity as ArmorTypeType} showMeta={false} showDescription={false} />
+        <ArmorType
+          armorType={entity as ArmorTypeType}
+          showMeta={false}
+          showDescription={false}
+          showId={showId}
+        />
+      );
+      break;
+
+    case 'classFeat':
+    case 'racialTrait':
+      child = (
+        <Heading
+          as="h4"
+          fontSize="lg"
+          color={ENTITY_COLORS.feat}
+          textDecoration={entity.deprecated ? 'solid line-through 2px red' : ''}
+        >
+          {entity.name}{' '}
+          {showId ? <small style={{ fontWeight: 'normal' }}>({entity.id})</small> : null}
+        </Heading>
       );
       break;
 
     default:
       child = (
         <Heading as="h4" fontSize="lg">
-          {entity.name}({entity.id})
+          {entity.name}{' '}
+          {showId ? <small style={{ fontWeight: 'normal' }}>({entity.id})</small> : null}
         </Heading>
       );
   }
@@ -71,10 +108,11 @@ export default function SimpleEntity({ entity, quickViewer = true }: Props): JSX
       borderColor="gray.200"
       p="2"
       borderRadius="md"
-      minW="64"
+      minW="36"
       _hover={{
         borderColor: 'gray.300',
       }}
+      {...props}
     >
       {child}
       <Spacer />

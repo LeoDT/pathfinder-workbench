@@ -12,6 +12,7 @@ interface Props {
   showName?: boolean;
   showMeta?: boolean;
   showDescription?: boolean;
+  showId?: boolean;
 }
 
 export function SpellMeta({ spell }: Props): JSX.Element {
@@ -36,6 +37,7 @@ export function Spell({
   showName = true,
   showMeta = true,
   showDescription = true,
+  showId = false,
 }: Props): JSX.Element {
   return (
     <Box className="spell">
@@ -45,7 +47,8 @@ export function Spell({
             {spell.book.toUpperCase()}
           </Badge>
           <Heading as="h4" fontSize="lg" color={ENTITY_COLORS.spell}>
-            {spell.name} <small style={{ fontWeight: 'normal' }}>({spell.id})</small>
+            {spell.name}{' '}
+            {showId ? <small style={{ fontWeight: 'normal' }}>({spell.id})</small> : null}
           </Heading>
         </Stack>
       ) : null}
