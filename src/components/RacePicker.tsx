@@ -1,5 +1,5 @@
 import { without } from 'lodash-es';
-import { useCallback, useMemo, useState } from 'react';
+import { useCallback, useMemo, useState, useEffect } from 'react';
 
 import {
   Box,
@@ -23,15 +23,23 @@ import { Race, RacialTrait } from '../types/core';
 import CollectionEntitySelect from './CollectionEntitySelect';
 import SimpleEntity from './SimpleEntity';
 
-interface Props {
-  onChange: (v: { raceId: string; alternateRaceTraitIds: string[] }) => void;
+interface RacePickerValue {
+  raceId: string;
+  alternateRaceTraitIds: string[];
 }
 
-export default function RacePicker({ onChange }: Props): JSX.Element {
+interface Props {
+  value: RacePickerValue;
+  onChange: (v: RacePickerValue) => void;
+}
+
+export default function RacePicker({ onChange, value }: Props): JSX.Element {
   const { collections } = useStore();
   const { isOpen, onOpen, onClose } = useDisclosure();
-  const [raceId, setRaceId] = useState<string>('');
-  const [alternateRaceTraitIds, setAlternatRaceTraitIds] = useState<string[]>([]);
+  const [raceId, setRaceId] = useState<string>(value.raceId);
+  const [alternateRaceTraitIds, setAlternatRaceTraitIds] = useState<string[]>(
+    value.alternateRaceTraitIds
+  );
   const finished = useMemo(() => {
     return Boolean(raceId);
   }, [raceId]);
@@ -81,6 +89,15 @@ export default function RacePicker({ onChange }: Props): JSX.Element {
 
     return [];
   }, [race, alternateRaceTraitIds]);
+
+  useEffect(() => {
+    if (value) {
+      setRaceId(value.raceId);
+      setAlternatRaceTraitIds(value.alternateRaceTraitIds);
+    } else {
+      reset();
+    }
+  }, [value, isOpen]);
 
   return (
     <>

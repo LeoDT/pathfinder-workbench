@@ -61,11 +61,18 @@ export default function CreateCharacterBasic(): JSX.Element {
             <HStack w="full" spacing="0" pb="2" borderBottom="1px" borderColor="gray.200">
               <Text fontSize="lg">种族</Text>
               <Spacer />
-              <RacePicker
-                onChange={({ raceId, alternateRaceTraitIds }) => {
-                  character.setRace(raceId, alternateRaceTraitIds);
-                }}
-              />
+              <VStack alignItems="flex-end">
+                <RacePicker
+                  value={{
+                    raceId: character.raceId,
+                    alternateRaceTraitIds: character.alternateRaceTraitIds,
+                  }}
+                  onChange={({ raceId, alternateRaceTraitIds }) => {
+                    character.setRace(raceId, alternateRaceTraitIds);
+                  }}
+                />
+                <Badge colorScheme="blue">{character.race.name}</Badge>
+              </VStack>
             </HStack>
             {isEmpty(character.race.ability) ? (
               <HStack w="full" spacing="0" pb="2" borderBottom="1px" borderColor="gray.200">
