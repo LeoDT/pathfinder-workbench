@@ -153,7 +153,7 @@ export default function RacePicker({ onChange, value }: Props): JSX.Element {
                           key={t.id}
                           opacity={disabled ? 0.5 : 1}
                           cursor={disabled ? 'not-allowed' : 'pointer'}
-                          onClick={() => select(t)}
+                          onClick={disabled ? undefined : () => select(t)}
                         >
                           <SimpleEntity
                             entity={t}

@@ -2,7 +2,6 @@ import { Observer } from 'mobx-react-lite';
 
 import { Box, Divider, Heading, SimpleGrid } from '@chakra-ui/react';
 
-import { ENTITY_COLORS } from '../../constant';
 import { useStore } from '../../store';
 import CreateCharacterStore from '../../store/createCharacter';
 import { translateGainFeatEffectArgs } from '../../utils/effect';
@@ -10,6 +9,7 @@ import { gainFeatReasonTranslates } from '../../utils/upgrade';
 import { CollectionEntityPickerPopover } from '../CollectionEntityPicker';
 import { EntityPickerPopover, PopoverProps as EntityPickerProps } from '../EntityPicker';
 import Feat from '../Feat';
+import SimpleEntity from '../SimpleEntity';
 
 interface Props {
   createOrUpgrade: CreateCharacterStore;
@@ -91,11 +91,7 @@ export default function CreateOrUpgradeCharacterFeat({
         {() => (
           <SimpleGrid columns={[1, 3]} spacing="2" mb="4">
             {createOrUpgrade.newGainedClassFeats.map((f) => (
-              <Box key={f.id} border="1px" borderColor="gray.200" p="2" borderRadius="md">
-                <Heading as="h4" fontSize="lg" color={ENTITY_COLORS.feat}>
-                  {f.name} <small style={{ fontWeight: 'normal' }}>({f.id})</small>
-                </Heading>
-              </Box>
+              <SimpleEntity key={f.id} entity={f} />
             ))}
           </SimpleGrid>
         )}
@@ -108,12 +104,8 @@ export default function CreateOrUpgradeCharacterFeat({
           <Observer>
             {() => (
               <SimpleGrid columns={[1, 3]} spacing="2">
-                {createOrUpgrade.character.race.racialTrait.map((f) => (
-                  <Box key={f.id} border="1px" borderColor="gray.200" p="2" borderRadius="md">
-                    <Heading as="h4" fontSize="lg" color={ENTITY_COLORS.feat}>
-                      {f.name} <small style={{ fontWeight: 'normal' }}>({f.id})</small>
-                    </Heading>
-                  </Box>
+                {createOrUpgrade.character.racialTraits.map((f) => (
+                  <SimpleEntity key={f.id} entity={f} />
                 ))}
               </SimpleGrid>
             )}
