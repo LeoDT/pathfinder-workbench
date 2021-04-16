@@ -1,14 +1,16 @@
 import { without } from 'lodash-es';
-import { useState } from 'react';
 import { Observer } from 'mobx-react-lite';
-import { Button, Box, VStack, HStack, Text, Icon, Spacer } from '@chakra-ui/react';
+import { useState } from 'react';
 import { FaStar } from 'react-icons/fa';
+
+import { Box, Button, HStack, Icon, Spacer, Text, VStack } from '@chakra-ui/react';
 
 import { useStore } from '../../store';
 import CreateCharacterStore from '../../store/createCharacter';
-
-import SkillInput from '../SkillInput';
+import { SkillSystem } from '../../types/core';
 import AbilityIcon from '../AbilityIcon';
+import Select from '../Select';
+import SkillInput from '../SkillInput';
 
 interface Props {
   createOrUpgrade: CreateCharacterStore;
@@ -27,6 +29,26 @@ export default function CreateCharacterSkills({ createOrUpgrade }: Props): JSX.E
   return (
     <Box maxW="sm">
       <Observer>
+        {() => (
+          <HStack w="full" spacing="0" pb="2" borderBottom="1px" borderColor="gray.200">
+            <Text fontSize="lg">技能系统</Text>
+            <Spacer />
+            <Select
+              options={
+                [
+                  { text: '核心', value: 'core' },
+                  { text: '简化', value: 'consolidated' },
+                ] as Array<{ text: string; value: SkillSystem }>
+              }
+              value={character.skillSystem}
+              onChange={(v) => {
+                character.setSkillSystem(v);
+              }}
+            />
+          </HStack>
+        )}
+      </Observer>
+      <Observer>
         {() => {
           const skillCollection =
             character.skillSystem === 'core'
@@ -34,7 +56,7 @@ export default function CreateCharacterSkills({ createOrUpgrade }: Props): JSX.E
               : store.collections.consolidatedSkill;
 
           return (
-            <VStack align="start" w="full">
+            <VStack align="start" w="full" pt="2">
               <Text fontSize="lg">
                 技能点数: {createOrUpgrade.skillPointsRemain} / {createOrUpgrade.skillPoints}
               </Text>

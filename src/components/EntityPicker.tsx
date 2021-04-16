@@ -163,6 +163,7 @@ export function EntityPickerPopover({
       placement="bottom-start"
       isOpen={isOpen}
       onClose={onClose}
+      isLazy
     >
       <PopoverTrigger>
         <Button disabled={togglerDisabled} onClick={onToggle}>

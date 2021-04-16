@@ -30,7 +30,7 @@ interface OptionalCharacterParams {
   skillSystem?: SkillSystem;
   alignment?: Alignment;
   baseAbility?: Abilities;
-  bonusAbilityType?: AbilityType;
+  bonusAbilityType?: AbilityType[];
   favoredClassIds?: string[];
 
   level?: number;
@@ -47,7 +47,7 @@ export default class Character {
   skillSystem: SkillSystem;
   alignment: Alignment;
   baseAbility: Abilities;
-  bonusAbilityType: AbilityType;
+  bonusAbilityType: AbilityType[];
 
   pendingUpgrade: CharacterUpgrade | null;
   upgrades: IObservableArray<CharacterUpgrade>;
@@ -69,7 +69,7 @@ export default class Character {
       skillSystem = 'core',
       alignment = Alignment.N,
       baseAbility,
-      bonusAbilityType = AbilityType.str,
+      bonusAbilityType,
       raceId = 'Human',
       alternateRaceTraitIds,
       favoredClassIds,
@@ -84,6 +84,7 @@ export default class Character {
       baseAbility: observable,
       abilityModifier: computed,
 
+      maxBonusAbilityType: computed,
       bonusAbilityType: observable,
       bonusAbility: computed,
 
@@ -118,7 +119,7 @@ export default class Character {
     this.alignment = alignment;
 
     this.baseAbility = baseAbility ?? { str: 10, dex: 10, con: 10, int: 10, wis: 10, cha: 10 };
-    this.bonusAbilityType = bonusAbilityType ?? AbilityType.str;
+    this.bonusAbilityType = bonusAbilityType ?? [AbilityType.str];
 
     this.pendingUpgrade = null;
     this.upgrades = observable.array(upgrades || [], { deep: false });
@@ -146,7 +147,7 @@ export default class Character {
   }
   setRace(raceId: string, alternateRaceTraitIds?: string[]): void {
     this.raceId = raceId;
-    this.bonusAbilityType = AbilityType.str;
+    this.bonusAbilityType = [AbilityType.str];
 
     if (alternateRaceTraitIds) {
       this.alternateRaceTraitIds = alternateRaceTraitIds;
@@ -174,9 +175,25 @@ export default class Character {
   get abilityModifier(): Abilities {
     return getModifiers(this.ability);
   }
+  get maxBonusAbilityType(): number {
+    const effects = this.effect.getAbilityBonusEffects();
+    let amount = 0;
+
+    if (isEmpty(this.race.ability)) {
+      amount += 1;
+    }
+
+    return amount + effects.length;
+  }
   get bonusAbility(): Partial<Abilities> {
     if (isEmpty(this.race.ability)) {
-      return { [this.bonusAbilityType]: 2 };
+      const abilities: Partial<Abilities> = {};
+
+      this.bonusAbilityType.forEach((t) => {
+        abilities[t] = 2;
+      });
+
+      return abilities;
     }
 
     return this.race.ability;

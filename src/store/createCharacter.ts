@@ -20,6 +20,7 @@ export interface GainFeatReason extends EffectGainFeatArgs {
 }
 
 export type InvalidReason =
+  | 'abilityBonus'
   | 'classSpeciality'
   | 'abilityPoints'
   | 'skillPoints'
@@ -212,6 +213,12 @@ export default class CreateCharacterStore {
   validate(): InvalidReason[] {
     const validates: Array<[InvalidReason, boolean]> = [
       ['abilityPoints', this.abilityPointsRemain !== 0],
+      [
+        'abilityBonus',
+        this.character.maxBonusAbilityType > 0
+          ? this.character.bonusAbilityType.length !== this.character.maxBonusAbilityType
+          : false,
+      ],
       [
         'classSpeciality',
         this.newGainedClassSpeciality.length > 0 && !this.upgrade.classSpeciality,

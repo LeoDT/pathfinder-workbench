@@ -49,7 +49,7 @@ export default function DMPage(): JSX.Element {
         <Spacer />
         <ButtonGroup isAttached mb={[2, 0]}>
           <Button onClick={() => dm.rollAllInitiative()}>全员投先攻</Button>
-          <Menu placement="bottom-end">
+          <Menu placement="bottom-end" isLazy>
             <MenuButton as={IconButton} icon={<FaChevronDown />} aria-label="More Action" />
             <MenuList>
               <MenuItem onClick={() => dm.rollAllPerception()}>全员投察觉</MenuItem>

@@ -5,7 +5,6 @@ import { Badge, Box, Button, HStack, Input, Spacer, Text, VStack } from '@chakra
 
 import { useStore } from '../../store';
 import { useCreateCharacterStore } from '../../store/createCharacter';
-import { SkillSystem } from '../../types/core';
 import { ABILITY_TYPES, abilityTranslates, getScoreCost } from '../../utils/ability';
 import { constraintAppliedAlignmentOptions } from '../../utils/alignment';
 import { favoredClassBonusOptions } from '../../utils/upgrade';
@@ -14,7 +13,7 @@ import ClassSpecialityDisplayer from '../ClassSpecialityDisplayer';
 import ClassSpecialityPickerToggler from '../ClassSpecialityPickerToggler';
 import { CollectionEntityPickerPopover } from '../CollectionEntityPicker';
 import CollectionEntitySelect from '../CollectionEntitySelect';
-import Select from '../Select';
+import Select, { MultipleSelect } from '../Select';
 import RacePicker from '../RacePicker';
 
 export default function CreateCharacterBasic(): JSX.Element {
@@ -43,22 +42,6 @@ export default function CreateCharacterBasic(): JSX.Element {
               />
             </HStack>
             <HStack w="full" spacing="0" pb="2" borderBottom="1px" borderColor="gray.200">
-              <Text fontSize="lg">技能系统</Text>
-              <Spacer />
-              <Select
-                options={
-                  [
-                    { text: '核心', value: 'core' },
-                    { text: '简化', value: 'consolidated' },
-                  ] as Array<{ text: string; value: SkillSystem }>
-                }
-                value={character.skillSystem}
-                onChange={(v) => {
-                  character.setSkillSystem(v);
-                }}
-              />
-            </HStack>
-            <HStack w="full" spacing="0" pb="2" borderBottom="1px" borderColor="gray.200">
               <Text fontSize="lg">种族</Text>
               <Spacer />
               <VStack alignItems="flex-end">
@@ -71,14 +54,25 @@ export default function CreateCharacterBasic(): JSX.Element {
                     character.setRace(raceId, alternateRaceTraitIds);
                   }}
                 />
-                <Badge colorScheme="blue">{character.race.name}</Badge>
+                <HStack>
+                  <Badge colorScheme="blue">{character.race.name}</Badge>
+                  {character.alternateRaceTraitIds.map((id) => {
+                    const t = character.racialTraits.find((t) => t.id === id);
+
+                    return t ? (
+                      <Badge key={id} colorScheme="teal">
+                        {t.name}
+                      </Badge>
+                    ) : null;
+                  })}
+                </HStack>
               </VStack>
             </HStack>
             {isEmpty(character.race.ability) ? (
               <HStack w="full" spacing="0" pb="2" borderBottom="1px" borderColor="gray.200">
-                <Text fontSize="lg">能力奖励</Text>
+                <Text fontSize="lg">能力奖励({character.maxBonusAbilityType}项)</Text>
                 <Spacer />
-                <Select
+                <MultipleSelect
                   options={ABILITY_TYPES.map((t) => ({
                     text: abilityTranslates[t],
                     value: t,
@@ -88,6 +82,7 @@ export default function CreateCharacterBasic(): JSX.Element {
                   onChange={(v) => {
                     character.bonusAbilityType = v;
                   }}
+                  max={character.maxBonusAbilityType}
                 />
               </HStack>
             ) : null}

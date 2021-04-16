@@ -102,7 +102,7 @@ export default function QuickSearch(): JSX.Element {
         </InputGroup>
         {results && results?.length > 0 ? (
           isSmallerScreen ? (
-            <Menu matchWidth autoSelect={false}>
+            <Menu matchWidth autoSelect={false} isLazy>
               <MenuButton
                 mt="2"
                 as={Button}
