@@ -1,8 +1,8 @@
 import { makeObservable, computed } from 'mobx';
-import { Abilities } from '../types/core';
+import { Abilities } from '../../types/core';
 
-import { collections } from './collection';
-import Character from './character';
+import { collections } from '../collection';
+import Character from '.';
 
 export default class CharacterStatus {
   character: Character;

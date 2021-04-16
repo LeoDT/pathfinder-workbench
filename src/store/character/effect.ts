@@ -1,6 +1,6 @@
 import { computed, makeObservable } from 'mobx';
 
-import { ClassFeat, Feat, RacialTrait } from '../types/core';
+import { ClassFeat, Feat, RacialTrait } from '../../types/core';
 import {
   ArgsTypeForEffect,
   BaseEffect,
@@ -10,9 +10,10 @@ import {
   EffectGainFavoredClassAmount,
   EffectGainFeat,
   EffectGainSpellCasting,
+  EffectGainProficiency,
   EffectType,
-} from '../types/effectType';
-import Character from './character';
+} from '../../types/effectType';
+import Character from '.';
 
 export type EffectSource = RacialTrait | ClassFeat | Feat;
 export interface EffectAndSource<T = Effect> {
@@ -158,5 +159,9 @@ export default class CharacterEffect {
 
   getGainFavoredClassAmountEffects(): EffectAndSource<EffectGainFavoredClassAmount>[] {
     return this.getEffectsByType<EffectGainFavoredClassAmount>(EffectType.gainFavoredClassAmount);
+  }
+
+  getGainProficiencyEffects(): EffectAndSource<EffectGainProficiency>[] {
+    return this.getEffectsByType<EffectGainProficiency>(EffectType.gainProficiency);
   }
 }

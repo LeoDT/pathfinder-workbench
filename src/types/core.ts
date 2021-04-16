@@ -146,11 +146,6 @@ export interface ClassFeat extends SpecialFeat {
   original?: ClassFeat;
 }
 
-export interface ClassProficiencies {
-  weapon: Array<'simple' | 'martial' | string>;
-  armor?: Array<'light' | 'medium' | 'heavy' | 'shield' | string>;
-}
-
 export interface ClassLevel {
   level: number;
   bab: Array<number>;
@@ -167,7 +162,6 @@ export interface Class extends Entity {
   alignment: Alignment[];
   classSkills: Array<string>;
   skillPoints: number;
-  proficiencies: ClassProficiencies;
   feats: Array<ClassFeat>;
   levels: Array<ClassLevel>;
 }

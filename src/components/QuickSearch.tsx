@@ -35,16 +35,16 @@ function QuickSearchResultItem({ item }: { item: Entity }) {
 
   switch (item._type) {
     case 'spell':
-      el = <Spell spell={item as SpellType} />;
+      el = <Spell spell={item as SpellType} showId />;
       break;
     case 'feat':
-      el = <Feat feat={item as FeatType} />;
+      el = <Feat feat={item as FeatType} showId />;
       break;
     case 'weaponType':
-      el = <WeaponType weaponType={item as WeaponTypeType} />;
+      el = <WeaponType weaponType={item as WeaponTypeType} showId />;
       break;
     case 'armorType':
-      el = <ArmorType armorType={item as ArmorTypeType} />;
+      el = <ArmorType armorType={item as ArmorTypeType} showId />;
       break;
     default:
       break;

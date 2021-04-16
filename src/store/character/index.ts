@@ -2,7 +2,7 @@ import { compact, intersection, isEmpty, last, pick, range, uniq } from 'lodash-
 import { IObservableArray, action, computed, makeObservable, observable } from 'mobx';
 import shortid from 'shortid';
 
-import { CharacterUpgrade } from '../types/characterUpgrade';
+import { CharacterUpgrade } from '../../types/characterUpgrade';
 import {
   Abilities,
   AbilityType,
@@ -15,14 +15,15 @@ import {
   RacialTrait,
   Skill,
   SkillSystem,
-} from '../types/core';
-import { addBonusScores, getModifiers } from '../utils/ability';
-import { getClassFeatByLevel, getClassLevel } from '../utils/class';
-import CharacterEffect from './characterEffect';
-import CharacterEquip from './characterEquip';
-import CharacterStatus from './characterStatus';
-import { collections } from './collection';
-import Spellbook from './spellbook';
+} from '../../types/core';
+import { addBonusScores, getModifiers } from '../../utils/ability';
+import { getClassFeatByLevel, getClassLevel } from '../../utils/class';
+import { collections } from '../collection';
+import Spellbook from '../spellbook';
+import CharacterEffect from './effect';
+import CharacterEquip from './equip';
+import { CharacterProficiency } from './proficiency';
+import CharacterStatus from './status';
 
 interface OptionalCharacterParams {
   id?: string;
@@ -59,6 +60,7 @@ export default class Character {
   status: CharacterStatus;
   equipment: CharacterEquip;
   effect: CharacterEffect;
+  proficiency: CharacterProficiency;
 
   constructor(
     name: string,
@@ -130,6 +132,7 @@ export default class Character {
     this.status = new CharacterStatus(this);
     this.equipment = new CharacterEquip(this);
     this.effect = new CharacterEffect(this);
+    this.proficiency = new CharacterProficiency(this);
 
     this.ensureSpellbooks();
   }

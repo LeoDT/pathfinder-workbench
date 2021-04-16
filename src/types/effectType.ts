@@ -1,4 +1,4 @@
-import { AbilityType, FeatType, SpellCastingType } from './core';
+import { AbilityType, ArmorCategory, FeatType, SpellCastingType, WeaponTraining } from './core';
 import { Condition } from './condition';
 
 export enum EffectType {
@@ -7,6 +7,7 @@ export enum EffectType {
   gainArcaneSchool = 'gainArcaneSchool',
   gainSpellCasting = 'gainSpellCasting',
   gainFavoredClassAmount = 'gainFavoredClassAmount',
+  gainProficiency = 'gainProficiency',
 }
 
 export interface BaseEffect<TYPE extends EffectType, ARGS> {
@@ -55,12 +56,26 @@ export type EffectGainFavoredClassAmount = BaseEffect<
   EffectGainFavoredClassAmountArgs
 >;
 
+export interface EffectGainProficiencyArgs {
+  weaponTraining?: WeaponTraining[];
+  armorTraining?: ArmorCategory[];
+  shieldTraining?: 'normal'[];
+  weapon?: string[];
+  armor?: string[];
+  shield?: string[];
+}
+export type EffectGainProficiency = BaseEffect<
+  EffectType.gainProficiency,
+  EffectGainProficiencyArgs
+>;
+
 export type Effect =
-  | EffectGainFeat
   | EffectAbilityBonus
   | EffectGainArcaneSchool
+  | EffectGainFeat
   | EffectGainSpellCasting
-  | EffectGainFavoredClassAmount;
+  | EffectGainFavoredClassAmount
+  | EffectGainProficiency;
 
 export type EffectGainClassSpeciality = EffectGainArcaneSchool;
 
