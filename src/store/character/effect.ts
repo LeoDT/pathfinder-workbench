@@ -12,6 +12,7 @@ import {
   EffectGainSpellCasting,
   EffectGainProficiency,
   EffectGainSelectedWeaponProficiency,
+  EffectGainSkill,
   EffectType,
   EffectNeadInput,
   effectTypesNeedInput,
@@ -176,5 +177,9 @@ export default class CharacterEffect {
     return this.getEffectsByType<EffectGainSelectedWeaponProficiency>(
       EffectType.gainSelectedWeaponProficiency
     );
+  }
+
+  getGainSkillEffects(): EffectAndSource<EffectGainSkill>[] {
+    return this.getEffectsByType<EffectGainSkill>(EffectType.gainSkill);
   }
 }

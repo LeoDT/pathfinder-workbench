@@ -32,6 +32,7 @@ interface Props {
   rank: number;
   total: number;
   modifier: number;
+  fromEffect: number;
   isClassSkill: boolean;
   max: number;
   min: number;
@@ -45,6 +46,7 @@ export default function SkillInput({
   rank,
   modifier,
   total,
+  fromEffect,
   isClassSkill,
   max,
   min,
@@ -58,6 +60,7 @@ export default function SkillInput({
       <Spacer />
       <StatNumber number={rank} text="rank" />
       <StatNumber number={modifier} text="mod" />
+      <StatNumber number={fromEffect} text="misc" />
       <StatNumber number={total} text="total" />
 
       <ButtonGroup isAttached>

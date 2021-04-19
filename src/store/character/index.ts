@@ -18,6 +18,7 @@ import {
 } from '../../types/core';
 import { addBonusScores, getModifiers } from '../../utils/ability';
 import { getClassFeatByLevel, getClassLevel } from '../../utils/class';
+import { coreToConsolidated } from '../../utils/skill';
 import { collections } from '../collection';
 import Spellbook from '../spellbook';
 import CharacterEffect from './effect';
@@ -329,6 +330,18 @@ export default class Character {
 
     return this.classSkills.includes(s.id);
   }
+  get skillRanksFromEffects(): Map<string, number> {
+    const ranks = new Map<string, number>();
+
+    this.effect.getGainSkillEffects().forEach(({ effect }) => {
+      const skill = collections.coreSkill.getById(effect.args.skillId);
+      const realSkill = this.skillSystem === 'consolidated' ? coreToConsolidated(skill) : skill;
+
+      ranks.set(realSkill.id, effect.args.rank);
+    });
+
+    return ranks;
+  }
   get skillRanks(): Map<string, number> {
     const ranks = new Map<string, number>();
 
@@ -353,13 +366,28 @@ export default class Character {
   }
   getSkillDetail(
     s: Skill
-  ): { rank: number; modifier: number; classBonus: number; isClassSkill: boolean; total: number } {
-    const rank = this.skillRanks.get(s.id) || 0;
+  ): {
+    rank: number;
+    modifier: number;
+    classBonus: number;
+    fromEffect: number;
+    isClassSkill: boolean;
+    total: number;
+  } {
+    const rank = this.skillRanks.get(s.id) ?? 0;
     const modifier = this.abilityModifier[s.ability];
     const isClassSkill = this.isClassSkill(s);
     const classBonus = rank > 0 && isClassSkill ? 3 : 0;
+    const fromEffect = this.skillRanksFromEffects.get(s.id) ?? 0;
 
-    return { rank, modifier, classBonus, isClassSkill, total: rank + modifier + classBonus };
+    return {
+      rank,
+      modifier,
+      classBonus,
+      isClassSkill,
+      fromEffect,
+      total: rank + modifier + classBonus + fromEffect,
+    };
   }
 
   get gainedFeats(): Feat[] {

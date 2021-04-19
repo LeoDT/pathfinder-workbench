@@ -9,6 +9,7 @@ export enum EffectType {
   gainFavoredClassAmount = 'gainFavoredClassAmount',
   gainProficiency = 'gainProficiency',
   gainSelectedWeaponProficiency = 'gainSelectedWeaponProficiency',
+  gainSkill = 'gainSkill',
 }
 
 export interface BaseEffect<TYPE extends EffectType, ARGS> {
@@ -78,6 +79,12 @@ export type EffectGainSelectedWeaponProficiency = BaseEffect<
   EffectGainSelectedWeaponProficiencyArgs
 >;
 
+export interface EffectGainSkillArgs {
+  skillId: string;
+  rank: number;
+}
+export type EffectGainSkill = BaseEffect<EffectType.gainSkill, EffectGainSkillArgs>;
+
 export type Effect =
   | EffectAbilityBonus
   | EffectGainArcaneSchool
@@ -85,7 +92,8 @@ export type Effect =
   | EffectGainSpellCasting
   | EffectGainFavoredClassAmount
   | EffectGainProficiency
-  | EffectGainSelectedWeaponProficiency;
+  | EffectGainSelectedWeaponProficiency
+  | EffectGainSkill;
 
 export type EffectGainClassSpeciality = EffectGainArcaneSchool;
 
