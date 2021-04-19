@@ -8,8 +8,8 @@ import { translateGainFeatEffectArgs } from '../../utils/effect';
 import { gainFeatReasonTranslates } from '../../utils/upgrade';
 import { CollectionEntityPickerPopover } from '../CollectionEntityPicker';
 import { EntityPickerPopover, PopoverProps as EntityPickerProps } from '../EntityPicker';
-import Feat from '../Feat';
 import SimpleEntity from '../SimpleEntity';
+import { EffectInput } from './EffectInput';
 
 interface Props {
   createOrUpgrade: CreateCharacterStore;
@@ -29,21 +29,28 @@ export default function CreateOrUpgradeCharacterFeat({
           <>
             {createOrUpgrade.gainFeatReasons.map((r, i) => {
               const fId = createOrUpgrade.upgrade.feats[r.index];
-              const feat = fId
-                ? collections.feat.getById(createOrUpgrade.upgrade.feats[r.index])
-                : null;
+              const feat = fId ? collections.feat.getById(fId) : null;
 
               const pickerProps: EntityPickerProps = {
                 text: '选择专长',
                 items: [createOrUpgrade.upgrade.feats[r.index]],
                 onPick: (fId) => {
                   createOrUpgrade.upgrade.feats[r.index] = fId;
+                  createOrUpgrade.deleteEffectInput('feat', fId, r.index.toString());
                 },
                 onUnpick: () => {
+                  createOrUpgrade.deleteEffectInput(
+                    'feat',
+                    createOrUpgrade.upgrade.feats[r.index],
+                    r.index.toString()
+                  );
                   createOrUpgrade.upgrade.feats[r.index] = '';
                 },
                 disabledEntityIds: createOrUpgrade.character.gainedFeats.map((f) => f.id),
               };
+
+              const effectsNeedInput = createOrUpgrade.character.effect.getEffectsNeedInput();
+              const es = effectsNeedInput.find(({ source }) => source === feat);
 
               return (
                 <Box key={`${r.reason}#${i}`} mb="4">
@@ -66,16 +73,26 @@ export default function CreateOrUpgradeCharacterFeat({
                     <CollectionEntityPickerPopover {...pickerProps} collection={collections.feat} />
                   )}
                   {feat ? (
-                    <SimpleGrid columns={[1, 3]} spacing="2" mb="4" mt="2">
-                      <Box border="1px" borderColor="gray.200" p="2" borderRadius="md" minW="64">
-                        <Feat
-                          feat={feat}
-                          showBrief={false}
-                          showMeta={false}
-                          showDescription={false}
+                    <Box mb="4" mt="2">
+                      <SimpleGrid columns={[1, 3]} spacing="2" mb="2">
+                        <SimpleEntity entity={feat} />
+                      </SimpleGrid>
+
+                      {es ? (
+                        <EffectInput
+                          effect={es.effect}
+                          createOrUpgrade={createOrUpgrade}
+                          value={createOrUpgrade.getEffectInput(
+                            'feat',
+                            feat.id,
+                            r.index.toString()
+                          )}
+                          onChange={(v) => {
+                            createOrUpgrade.setEffectInput('feat', feat.id, v, r.index.toString());
+                          }}
                         />
-                      </Box>
-                    </SimpleGrid>
+                      ) : null}
+                    </Box>
                   ) : null}
                 </Box>
               );

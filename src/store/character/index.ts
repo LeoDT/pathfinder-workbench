@@ -212,6 +212,7 @@ export default class Character {
       skills: new Map(),
       abilities: {},
       feats: [],
+      effectInputs: new Map(),
       spells: [],
       levelFeat,
       levelAbility,

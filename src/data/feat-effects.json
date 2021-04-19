@@ -1,0 +1,1 @@
+[{"id":"Exotic Weapon Proficiency","effects":[{"type":"gainSelectedWeaponProficiency","args":{"training":["exotic"]}}]},{"id":"Martial Weapon Proficiency","effects":[{"type":"gainSelectedWeaponProficiency","args":{"training":["martial"]}}]},{"id":"Simple Weapon Proficiency","effects":[{"type":"gainProficiency","args":{"weaponTraining":["simple"]}}]}]

@@ -5,7 +5,7 @@ import { Box, HStack, Badge, Heading, Table, Tbody, Tr, Td, Text } from '@chakra
 
 import { ENTITY_COLORS } from '../constant';
 import { Feat as FeatType, FeatMeta as FeatMetaType } from '../types/core';
-import { featTranslates } from '../utils/feat';
+import { featTranslates, featTypeTranslates } from '../utils/feat';
 
 interface Props {
   feat: FeatType;
@@ -17,9 +17,19 @@ interface Props {
 }
 
 function FeatMeta({ feat }: { feat: FeatType }) {
+  const type = feat.type.map((t) => featTypeTranslates[t]).join(', ');
+
   return (
     <Table size="sm" mt="2">
       <Tbody>
+        {type ? (
+          <Tr>
+            <Td pl="0" color="blue.500" width="8em">
+              类型
+            </Td>
+            <Td>{type}</Td>
+          </Tr>
+        ) : null}
         {(Object.keys(feat.meta) as Array<keyof FeatMetaType>).map((k) => (
           <Tr key={k}>
             <Td pl="0" color="blue.500" width="8em">
@@ -53,7 +63,7 @@ export function Feat({
         </HStack>
       ) : null}
 
-      {showBrief ? (
+      {showBrief && feat.brief ? (
         <Text mt="2" fontStyle="italic">
           {feat.brief}
         </Text>

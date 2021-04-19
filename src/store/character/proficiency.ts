@@ -13,13 +13,13 @@ export class CharacterProficiency {
 
   constructor(c: Character) {
     makeObservable(this, {
-      proficiencies: computed,
+      all: computed,
     });
 
     this.character = c;
   }
 
-  get proficiencies(): Proficiencies {
+  get all(): Proficiencies {
     const effects = this.character.effect.getGainProficiencyEffects();
     const p: Proficiencies = {
       weaponTraining: [],
@@ -57,10 +57,7 @@ export class CharacterProficiency {
 
     const { training } = weaponType.meta;
 
-    return (
-      this.proficiencies.weaponTraining.includes(training) ||
-      this.proficiencies.weapon.includes(weaponType.id)
-    );
+    return this.all.weaponTraining.includes(training) || this.all.weapon.includes(weaponType.id);
   }
 
   hasArmor(a: string | ArmorType): boolean {
@@ -68,22 +65,16 @@ export class CharacterProficiency {
 
     const { category } = armorType.meta;
 
-    return (
-      this.proficiencies.armorTraining.includes(category) ||
-      this.proficiencies.armor.includes(armorType.id)
-    );
+    return this.all.armorTraining.includes(category) || this.all.armor.includes(armorType.id);
   }
 
   hasShield(a: string | ArmorType): boolean {
     const armorType = typeof a === 'string' ? collections.armorType.getById(a) : a;
 
     if (armorType.id === 'Shield, tower') {
-      return this.proficiencies.shield.includes(armorType.id);
+      return this.all.shield.includes(armorType.id);
     }
 
-    return (
-      this.proficiencies.shieldTraining.includes('normal') ||
-      this.proficiencies.shield.includes(armorType.id)
-    );
+    return this.all.shieldTraining.includes('normal') || this.all.shield.includes(armorType.id);
   }
 }

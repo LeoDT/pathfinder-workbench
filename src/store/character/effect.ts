@@ -11,7 +11,10 @@ import {
   EffectGainFeat,
   EffectGainSpellCasting,
   EffectGainProficiency,
+  EffectGainSelectedWeaponProficiency,
   EffectType,
+  EffectNeadInput,
+  effectTypesNeedInput,
 } from '../../types/effectType';
 import Character from '.';
 
@@ -141,6 +144,10 @@ export default class CharacterEffect {
     return effects;
   }
 
+  getEffectsNeedInput(): EffectAndSource<EffectNeadInput>[] {
+    return effectTypesNeedInput.map((t) => this.getEffectsByType<EffectNeadInput>(t)).flat();
+  }
+
   getGainFeatEffects(fromEffects?: EffectAndSource[]): EffectAndSource<EffectGainFeat>[] {
     return this.getEffectsByType<EffectGainFeat>(EffectType.gainFeat, fromEffects);
   }
@@ -163,5 +170,11 @@ export default class CharacterEffect {
 
   getGainProficiencyEffects(): EffectAndSource<EffectGainProficiency>[] {
     return this.getEffectsByType<EffectGainProficiency>(EffectType.gainProficiency);
+  }
+
+  getGainSelectedWeaponProficiencyEffects(): EffectAndSource<EffectGainSelectedWeaponProficiency>[] {
+    return this.getEffectsByType<EffectGainSelectedWeaponProficiency>(
+      EffectType.gainSelectedWeaponProficiency
+    );
   }
 }

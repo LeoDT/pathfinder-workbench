@@ -45,6 +45,9 @@ export default class CreateCharacterStore {
       newGainedClassFeats: computed,
       newGainedClassSpeciality: computed,
 
+      setEffectInput: action,
+      deleteEffectInput: action,
+
       skillPoints: computed,
       skillPointsRemain: computed,
       skillPointsUsed: computed,
@@ -136,6 +139,22 @@ export default class CreateCharacterStore {
   }
   get newGainedClassFeats(): ClassFeat[] {
     return getClassFeatByLevel(this.class, this.character.levelDetail.get(this.class) || 1);
+  }
+
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  getEffectInput(type: 'feat' | 'class' | 'race', id: string, suffix?: string): any {
+    return this.upgrade.effectInputs.get(`${type}:${id}${suffix ? `:${suffix}` : ''}`);
+  }
+  setEffectInput(
+    type: 'feat' | 'class' | 'race',
+    id: string,
+    value: unknown,
+    suffix?: string
+  ): void {
+    this.upgrade.effectInputs.set(`${type}:${id}${suffix ? `:${suffix}` : ''}`, value);
+  }
+  deleteEffectInput(type: 'feat' | 'class' | 'race', id: string, suffix?: string): void {
+    this.upgrade.effectInputs.delete(`${type}:${id}${suffix ? `:${suffix}` : ''}`);
   }
 
   updateClass(cId: string): void {
