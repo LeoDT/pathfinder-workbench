@@ -1,4 +1,11 @@
-import { AbilityType, ArmorCategory, FeatType, SpellCastingType, WeaponTraining } from './core';
+import {
+  AbilityType,
+  ArmorCategory,
+  Bonus,
+  FeatType,
+  SpellCastingType,
+  WeaponTraining,
+} from './core';
 import { Condition } from './condition';
 
 export enum EffectType {
@@ -81,7 +88,7 @@ export type EffectGainSelectedWeaponProficiency = BaseEffect<
 
 export interface EffectGainSkillArgs {
   skillId: string;
-  rank: number;
+  bonus: Bonus;
 }
 export type EffectGainSkill = BaseEffect<EffectType.gainSkill, EffectGainSkillArgs>;
 

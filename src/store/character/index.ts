@@ -7,6 +7,7 @@ import {
   Abilities,
   AbilityType,
   Alignment,
+  Bonus,
   Class,
   ClassFeat,
   ClassLevel,
@@ -17,6 +18,7 @@ import {
   SkillSystem,
 } from '../../types/core';
 import { addBonusScores, getModifiers } from '../../utils/ability';
+import { aggregateBonusesAmount } from '../../utils/bonus';
 import { getClassFeatByLevel, getClassLevel } from '../../utils/class';
 import { coreToConsolidated } from '../../utils/skill';
 import { collections } from '../collection';
@@ -331,14 +333,22 @@ export default class Character {
     return this.classSkills.includes(s.id);
   }
   get skillRanksFromEffects(): Map<string, number> {
-    const ranks = new Map<string, number>();
+    const rankBonuses = new Map<string, Bonus[]>();
 
     this.effect.getGainSkillEffects().forEach(({ effect }) => {
       const skill = collections.coreSkill.getById(effect.args.skillId);
       const realSkill = this.skillSystem === 'consolidated' ? coreToConsolidated(skill) : skill;
 
-      ranks.set(realSkill.id, effect.args.rank);
+      const bonuses = rankBonuses.get(realSkill.id) ?? [];
+
+      rankBonuses.set(realSkill.id, [...bonuses, effect.args.bonus]);
     });
+
+    const ranks = new Map<string, number>();
+
+    for (const [sId, bonus] of rankBonuses) {
+      ranks.set(sId, aggregateBonusesAmount(bonus));
+    }
 
     return ranks;
   }

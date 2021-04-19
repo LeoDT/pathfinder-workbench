@@ -33,6 +33,7 @@ export interface Abilities {
 export type EntityType =
   | 'common'
   | 'skill'
+  | 'bonusType'
   | 'race'
   | 'class'
   | 'spell'
@@ -238,3 +239,14 @@ export interface Armor extends Entity {
 
 export type EquipmentType = 'weapon' | 'armor';
 export type Equipment = Weapon | Armor;
+
+export interface BonusType extends Entity {
+  stack: boolean;
+  flatFootedAC?: boolean;
+  touchAC?: boolean;
+}
+
+export interface Bonus {
+  amount: number;
+  type: string;
+}
