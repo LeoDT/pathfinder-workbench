@@ -17,7 +17,7 @@ import {
   Skill,
   SkillSystem,
 } from '../../types/core';
-import { addBonusScores, getModifiers } from '../../utils/ability';
+import { addBonusScores, getModifiers, makeAbilities, BASE_ABILITY } from '../../utils/ability';
 import { aggregateBonusesAmount } from '../../utils/bonus';
 import { getClassFeatByLevel, getClassLevel } from '../../utils/class';
 import { coreToConsolidated } from '../../utils/skill';
@@ -32,7 +32,6 @@ interface OptionalCharacterParams {
   id?: string;
   skillSystem?: SkillSystem;
   alignment?: Alignment;
-  baseAbility?: Abilities;
   bonusAbilityType?: AbilityType[];
   favoredClassIds?: string[];
 
@@ -49,7 +48,6 @@ export default class Character {
   name: string;
   skillSystem: SkillSystem;
   alignment: Alignment;
-  baseAbility: Abilities;
   bonusAbilityType: AbilityType[];
 
   pendingUpgrade: CharacterUpgrade | null;
@@ -71,7 +69,6 @@ export default class Character {
       id,
       skillSystem = 'core',
       alignment = Alignment.N,
-      baseAbility,
       bonusAbilityType,
       raceId = 'Human',
       alternateRaceTraitIds,
@@ -84,9 +81,10 @@ export default class Character {
       skillSystem: observable,
       alignment: observable,
       favoredClassIds: observable,
-      baseAbility: observable,
-      abilityModifier: computed,
 
+      baseAbility: computed,
+      ability: computed,
+      abilityModifier: computed,
       maxBonusAbilityType: computed,
       bonusAbilityType: observable,
       bonusAbility: computed,
@@ -121,7 +119,6 @@ export default class Character {
     this.skillSystem = skillSystem;
     this.alignment = alignment;
 
-    this.baseAbility = baseAbility ?? { str: 10, dex: 10, con: 10, int: 10, wis: 10, cha: 10 };
     this.bonusAbilityType = bonusAbilityType ?? [AbilityType.str];
 
     this.pendingUpgrade = null;
@@ -172,6 +169,12 @@ export default class Character {
     return traits.filter((t) => !replaced.includes(t.id));
   }
 
+  get baseAbility(): Abilities {
+    return this.upgradesWithPending.reduce(
+      (acc, u) => addBonusScores(acc, u.abilities),
+      makeAbilities(BASE_ABILITY)
+    );
+  }
   get ability(): Abilities {
     return addBonusScores(this.baseAbility, this.bonusAbility);
   }

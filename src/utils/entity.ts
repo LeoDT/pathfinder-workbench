@@ -1,4 +1,4 @@
-export const entityTypeTranslates = {
+export const entityTypeTranslates: Record<string, string> = {
   common: 'TODO',
   skill: '技能',
   race: '种族',

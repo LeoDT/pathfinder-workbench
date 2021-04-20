@@ -6,15 +6,18 @@ import {
   BaseEffect,
   Effect,
   EffectAbilityBonus,
+  EffectGainAC,
   EffectGainArcaneSchool,
   EffectGainFavoredClassAmount,
   EffectGainFeat,
-  EffectGainSpellCasting,
+  EffectGainInitiative,
   EffectGainProficiency,
+  EffectGainSave,
   EffectGainSelectedWeaponProficiency,
   EffectGainSkill,
-  EffectType,
+  EffectGainSpellCasting,
   EffectNeadInput,
+  EffectType,
   effectTypesNeedInput,
 } from '../../types/effectType';
 import Character from '.';
@@ -181,5 +184,17 @@ export default class CharacterEffect {
 
   getGainSkillEffects(): EffectAndSource<EffectGainSkill>[] {
     return this.getEffectsByType<EffectGainSkill>(EffectType.gainSkill);
+  }
+
+  getGainInitiativeEffects(): EffectAndSource<EffectGainInitiative>[] {
+    return this.getEffectsByType<EffectGainInitiative>(EffectType.gainInitiative);
+  }
+
+  getGainACEffects(): EffectAndSource<EffectGainAC>[] {
+    return this.getEffectsByType<EffectGainAC>(EffectType.gainAC);
+  }
+
+  getGainSaveEffects(): EffectAndSource<EffectGainSave>[] {
+    return this.getEffectsByType<EffectGainSave>(EffectType.gainSave);
   }
 }

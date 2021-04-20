@@ -20,6 +20,12 @@ export const abilityTranslates = {
   cha: '魅力',
 };
 
+export const BASE_ABILITY = 10;
+
+export function makeAbilities(s = 0): Abilities {
+  return { str: s, dex: s, con: s, int: s, wis: s, cha: s };
+}
+
 export function addBonusScores(base: Abilities, bonus: Partial<Abilities>): Abilities {
   return {
     str: base.str + (bonus.str ?? 0),

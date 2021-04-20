@@ -1,6 +1,6 @@
 import { computed, action, makeObservable } from 'mobx';
 
-import { Abilities, AbilityType } from '../types/core';
+import { AbilityType } from '../types/core';
 import { createContextNoNullCheck } from '../utils/react';
 
 import { collections } from './collection';
@@ -8,7 +8,6 @@ import Character from './character';
 import CreateCharacterStore, { GainFeatReason } from './createCharacter';
 
 export default class UpgradeCharacterStore extends CreateCharacterStore {
-  baseAbilityBefore: Abilities;
   upgradeAbilityBonus: AbilityType | null;
 
   constructor(c: Character) {
@@ -23,11 +22,6 @@ export default class UpgradeCharacterStore extends CreateCharacterStore {
     });
 
     this.upgradeAbilityBonus = null;
-    this.baseAbilityBefore = { ...this.character.baseAbility };
-  }
-
-  resetBaseAbility(): void {
-    this.character.baseAbility = { ...this.baseAbilityBefore };
   }
 
   get classOptions(): Array<{ text: string; value: string }> {
@@ -45,9 +39,13 @@ export default class UpgradeCharacterStore extends CreateCharacterStore {
   }
   useUpgradeAbilityBonus(abt: AbilityType): void {
     this.upgradeAbilityBonus = abt;
+    this.upgrade.abilities = {
+      [abt]: 1,
+    };
   }
   resetUpgradeAbilityBonus(): void {
     this.upgradeAbilityBonus = null;
+    this.upgrade.abilities = {};
   }
 
   get gainFeatReasons(): Array<GainFeatReason> {

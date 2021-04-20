@@ -17,6 +17,9 @@ export enum EffectType {
   gainProficiency = 'gainProficiency',
   gainSelectedWeaponProficiency = 'gainSelectedWeaponProficiency',
   gainSkill = 'gainSkill',
+  gainInitiative = 'gainInitiative',
+  gainAC = 'gainAC',
+  gainSave = 'gainSave',
 }
 
 export interface BaseEffect<TYPE extends EffectType, ARGS> {
@@ -92,6 +95,22 @@ export interface EffectGainSkillArgs {
 }
 export type EffectGainSkill = BaseEffect<EffectType.gainSkill, EffectGainSkillArgs>;
 
+export interface EffectGainInitiativeArgs {
+  bonus: Bonus;
+}
+export type EffectGainInitiative = BaseEffect<EffectType.gainInitiative, EffectGainInitiativeArgs>;
+
+export interface EffectGainACArgs {
+  bonus: Bonus;
+}
+export type EffectGainAC = BaseEffect<EffectType.gainAC, EffectGainACArgs>;
+
+export interface EffectGainSaveArgs {
+  saveType: 'fortitude' | 'will' | 'reflex' | 'all';
+  bonus: Bonus;
+}
+export type EffectGainSave = BaseEffect<EffectType.gainSave, EffectGainSaveArgs>;
+
 export type Effect =
   | EffectAbilityBonus
   | EffectGainArcaneSchool
@@ -100,7 +119,10 @@ export type Effect =
   | EffectGainFavoredClassAmount
   | EffectGainProficiency
   | EffectGainSelectedWeaponProficiency
-  | EffectGainSkill;
+  | EffectGainSkill
+  | EffectGainInitiative
+  | EffectGainAC
+  | EffectGainSave;
 
 export type EffectGainClassSpeciality = EffectGainArcaneSchool;
 

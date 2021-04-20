@@ -2,11 +2,7 @@ import { HStack, Spacer, IconButton, Text, ButtonGroup } from '@chakra-ui/react'
 import { FaPlus, FaMinus } from 'react-icons/fa';
 
 import { AbilityType } from '../types/core';
-import {
-  getModifierFromScore,
-  MAXIMUM_ABILITY_SCORE,
-  MINIMUM_ABILITY_SCORE,
-} from '../utils/ability';
+import { getModifierFromScore } from '../utils/ability';
 import { showModifier } from '../utils/modifier';
 
 import AbilityIcon from './AbilityIcon';
@@ -27,10 +23,11 @@ export default function AbilityInput({
   ability,
   score,
   onChange,
-  max = MAXIMUM_ABILITY_SCORE,
-  min = MINIMUM_ABILITY_SCORE,
+  max = Infinity,
+  min = 0,
   racial = 0,
   isIncreaseDisabled = false,
+  isDecreaseDisabled = false,
 }: Props): JSX.Element {
   return (
     <HStack w="full">
@@ -49,7 +46,7 @@ export default function AbilityInput({
           icon={<FaMinus />}
           onClick={() => onChange(score - 1)}
           size="sm"
-          isDisabled={score <= min}
+          isDisabled={score <= min || isDecreaseDisabled}
         />
         <IconButton
           aria-label="Increase Ability"

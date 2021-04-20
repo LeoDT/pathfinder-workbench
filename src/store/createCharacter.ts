@@ -2,7 +2,13 @@ import { compact } from 'lodash-es';
 import { makeObservable, computed, action, reaction } from 'mobx';
 
 import { createContextNoNullCheck } from '../utils/react';
-import { ABILITY_POINTS, getTotalScoreCosts } from '../utils/ability';
+import {
+  ABILITY_POINTS,
+  addBonusScores,
+  BASE_ABILITY,
+  getTotalScoreCosts,
+  makeAbilities,
+} from '../utils/ability';
 import { gainClassSpecialityEffectType, getClassFeatByLevel } from '../utils/class';
 
 import { Class, ClassFeat } from '../types/core';
@@ -34,7 +40,7 @@ export default class CreateCharacterStore {
   constructor(character?: Character) {
     makeObservable(this, {
       resetUpgradeFeats: action,
-      resetBaseAbility: action,
+      resetAbility: action,
 
       abilityPointsCost: computed,
       abilityPointsRemain: computed,
@@ -82,8 +88,8 @@ export default class CreateCharacterStore {
       }
     });
   }
-  resetBaseAbility(): void {
-    this.character.baseAbility = { str: 10, dex: 10, con: 10, int: 10, wis: 10, cha: 10 };
+  resetAbility(): void {
+    this.upgrade.abilities = makeAbilities(0);
   }
 
   get upgrade(): CharacterUpgrade {
@@ -91,7 +97,14 @@ export default class CreateCharacterStore {
   }
 
   get abilityPointsCost(): number {
-    return getTotalScoreCosts(this.character.baseAbility);
+    const firstUpgrade =
+      this.character.upgrades.length >= 1
+        ? this.character.upgrades[0]
+        : this.character.pendingUpgrade;
+
+    if (!firstUpgrade) return 0;
+
+    return getTotalScoreCosts(addBonusScores(makeAbilities(BASE_ABILITY), firstUpgrade.abilities));
   }
   get abilityPointsRemain(): number {
     return ABILITY_POINTS - this.abilityPointsCost;

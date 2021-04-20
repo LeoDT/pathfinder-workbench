@@ -15,6 +15,7 @@ import { CollectionEntityPickerPopover } from '../CollectionEntityPicker';
 import CollectionEntitySelect from '../CollectionEntitySelect';
 import Select, { MultipleSelect } from '../Select';
 import RacePicker from '../RacePicker';
+import { MAXIMUM_ABILITY_SCORE, MINIMUM_ABILITY_SCORE, BASE_ABILITY } from '../../utils/ability';
 
 export default function CreateCharacterBasic(): JSX.Element {
   const store = useStore();
@@ -188,13 +189,13 @@ export default function CreateCharacterBasic(): JSX.Element {
             <>
               <HStack my="2">
                 <Text fontSize="lg">点数: {create.abilityPointsRemain} / 25</Text>
-                <Button size="xs" onClick={() => create.resetBaseAbility()}>
+                <Button size="xs" onClick={() => create.resetAbility()}>
                   重置
                 </Button>
               </HStack>
               <VStack alignItems="start">
                 {ABILITY_TYPES.map((ab) => {
-                  const score = character.baseAbility[ab];
+                  const score = create.character.baseAbility[ab];
 
                   return (
                     <AbilityInput
@@ -203,12 +204,14 @@ export default function CreateCharacterBasic(): JSX.Element {
                       score={score}
                       racial={character.bonusAbility[ab]}
                       onChange={(v) => {
-                        character.baseAbility[ab] = v;
+                        create.upgrade.abilities[ab] = v - BASE_ABILITY;
                       }}
                       isIncreaseDisabled={
                         create.abilityPointsRemain <= 0 ||
                         getScoreCost(score + 1) - getScoreCost(score) > create.abilityPointsRemain
                       }
+                      min={MINIMUM_ABILITY_SCORE}
+                      max={MAXIMUM_ABILITY_SCORE}
                     />
                   );
                 })}

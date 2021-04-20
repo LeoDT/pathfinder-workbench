@@ -1,8 +1,10 @@
 import { makeObservable, computed } from 'mobx';
-import { Abilities } from '../../types/core';
+import { Abilities, Bonus } from '../../types/core';
 
 import { collections } from '../collection';
 import Character from '.';
+import { aggregateBonusesAmount } from '../../utils/bonus';
+import { EffectGainSaveArgs } from '../../types/effectType';
 
 export default class CharacterStatus {
   character: Character;
@@ -51,7 +53,21 @@ export default class CharacterStatus {
     return base;
   }
   get initiative(): number {
-    return this.modifier.dex;
+    return (
+      this.modifier.dex +
+      aggregateBonusesAmount(
+        this.character.effect.getGainInitiativeEffects().map((es) => es.effect.args.bonus)
+      )
+    );
+  }
+
+  getSaveBonuses(t: EffectGainSaveArgs['saveType']): Bonus[] {
+    const args = this.character.effect
+      .getGainSaveEffects()
+      .map((es) => es.effect.args)
+      .filter((a) => a.saveType === t || a.saveType === 'all');
+
+    return args.map((a) => a.bonus);
   }
 
   get fortitude(): number {
@@ -62,6 +78,7 @@ export default class CharacterStatus {
     });
 
     base += this.modifier.con;
+    base += aggregateBonusesAmount(this.getSaveBonuses('fortitude'));
 
     return base;
   }
@@ -73,6 +90,7 @@ export default class CharacterStatus {
     });
 
     base += this.modifier.dex;
+    base += aggregateBonusesAmount(this.getSaveBonuses('reflex'));
 
     return base;
   }
@@ -84,6 +102,7 @@ export default class CharacterStatus {
     });
 
     base += this.modifier.wis;
+    base += aggregateBonusesAmount(this.getSaveBonuses('will'));
 
     return base;
   }
@@ -113,16 +132,43 @@ export default class CharacterStatus {
   get cmd(): number {
     return 10 + this.maxBab + this.modifier.str + this.modifier.con;
   }
+
+  getBonusesForAC(t: 'ac' | 'flatFooted' | 'touch'): Bonus[] {
+    const bonuses = this.character.effect.getGainACEffects().map((es) => es.effect.args.bonus);
+
+    switch (t) {
+      case 'flatFooted':
+        return bonuses.filter(({ type }) => {
+          const bt = collections.bonusType.getById(type);
+
+          return bt.flatFootedAC;
+        });
+      case 'touch':
+        return bonuses.filter(({ type }) => {
+          const bt = collections.bonusType.getById(type);
+
+          return bt.touchAC;
+        });
+    }
+
+    return bonuses;
+  }
   get ac(): number {
-    return [10, this.modifier.dex, this.character.equipment.armorClassModifier].reduce(
+    const bonus = aggregateBonusesAmount(this.getBonusesForAC('ac'));
+
+    return [10, this.modifier.dex, this.character.equipment.armorClassModifier, bonus].reduce(
       (acc, i) => acc + i,
       0
     );
   }
   get flatFooted(): number {
-    return this.ac - this.modifier.dex;
+    const bonus = aggregateBonusesAmount(this.getBonusesForAC('flatFooted'));
+
+    return [10, this.character.equipment.armorClassModifier, bonus].reduce((acc, i) => acc + i, 0);
   }
   get touch(): number {
-    return this.ac - this.character.equipment.armorClassModifier;
+    const bonus = aggregateBonusesAmount(this.getBonusesForAC('touch'));
+
+    return [10, this.modifier.dex, bonus].reduce((acc, i) => acc + i, 0);
   }
 }

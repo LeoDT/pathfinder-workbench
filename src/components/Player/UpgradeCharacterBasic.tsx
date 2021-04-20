@@ -97,7 +97,7 @@ export default function CreateCharacterBasic(): JSX.Element {
                 <Button
                   size="xs"
                   onClick={() => {
-                    upgradeStore.resetBaseAbility();
+                    upgradeStore.resetAbility();
                     upgradeStore.resetUpgradeAbilityBonus();
                   }}
                 >
@@ -117,11 +117,12 @@ export default function CreateCharacterBasic(): JSX.Element {
                       onChange={(v) => {
                         if (v > score) {
                           upgradeStore.useUpgradeAbilityBonus(ab);
+                        } else {
+                          upgradeStore.resetUpgradeAbilityBonus();
                         }
-
-                        upgradeStore.resetUpgradeAbilityBonus();
                       }}
                       isIncreaseDisabled={Boolean(upgradeStore.upgradeAbilityBonus)}
+                      isDecreaseDisabled={upgradeStore.upgradeAbilityBonus !== ab}
                     />
                   );
                 })}
