@@ -1,7 +1,7 @@
 import { useCallback, useMemo } from 'react';
 import { useStore } from '../store';
 import { WeaponTraining } from '../types/core';
-import { EntityPickerPopover } from './EntityPicker';
+import EntityPicker from './EntityPicker';
 
 interface Props {
   value: string | null;
@@ -33,8 +33,7 @@ export default function WeaponProficiencyPicker({
   }, [items, onChange]);
 
   return (
-    <EntityPickerPopover
-      text="选择武器"
+    <EntityPicker
       entities={weapons}
       disabledEntityIds={had}
       items={items}

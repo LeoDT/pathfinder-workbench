@@ -71,7 +71,18 @@ export default class CreateCharacterStore {
     reaction(
       () => this.character.skillSystem,
       () => {
-        this.upgrade.skills = new Map();
+        this.upgrade.skills.clear();
+      }
+    );
+
+    reaction(
+      () => ({
+        cId: this.upgrade.classId,
+        rId: this.character.raceId,
+        traits: this.character.alternateRaceTraitIds,
+      }),
+      () => {
+        this.upgrade.effectInputs.clear();
       }
     );
 
@@ -155,18 +166,18 @@ export default class CreateCharacterStore {
   }
 
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  getEffectInput(type: 'feat' | 'class' | 'race', id: string, suffix?: string): any {
+  getEffectInput(type: 'feat' | 'classFeat' | 'racialTrait', id: string, suffix?: string): any {
     return this.upgrade.effectInputs.get(`${type}:${id}${suffix ? `:${suffix}` : ''}`);
   }
   setEffectInput(
-    type: 'feat' | 'class' | 'race',
+    type: 'feat' | 'classFeat' | 'racialTrait',
     id: string,
     value: unknown,
     suffix?: string
   ): void {
     this.upgrade.effectInputs.set(`${type}:${id}${suffix ? `:${suffix}` : ''}`, value);
   }
-  deleteEffectInput(type: 'feat' | 'class' | 'race', id: string, suffix?: string): void {
+  deleteEffectInput(type: 'feat' | 'classFeat' | 'racialTrait', id: string, suffix?: string): void {
     this.upgrade.effectInputs.delete(`${type}:${id}${suffix ? `:${suffix}` : ''}`);
   }
 

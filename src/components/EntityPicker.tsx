@@ -1,4 +1,4 @@
-import { useMemo, useState, MutableRefObject, useRef } from 'react';
+import { useMemo, useState, MutableRefObject, useRef, RefObject } from 'react';
 import Fuse from 'fuse.js';
 
 import {
@@ -24,6 +24,7 @@ import { FaSearch, FaCheck, FaTimesCircle } from 'react-icons/fa';
 import { Entity } from '../types/core';
 
 import { EntityQuickViewerToggler } from './EntityQuickViewer';
+import { createContextFailSafe } from '../utils/react';
 
 export interface Props {
   fuse?: Fuse<Entity>;
@@ -48,6 +49,8 @@ export default function EntityPicker({
   disabledEntityIds,
   listAll = false,
 }: Props): JSX.Element {
+  const inputRefFromContext = useEntityPickerInputRef();
+  const realInputRef = inputRef || inputRefFromContext;
   const [searchKey, setSearchKey] = useState('');
   const realFuse = useMemo(() => {
     if (fuse) return fuse;
@@ -79,7 +82,7 @@ export default function EntityPicker({
           <Icon as={FaSearch} color="gray.400" />
         </InputLeftElement>
         <Input
-          ref={inputRef}
+          ref={realInputRef}
           placeholder="Search"
           autoFocus
           value={searchKey}
@@ -179,3 +182,7 @@ export function EntityPickerPopover({
     </Popover>
   );
 }
+
+export const [useEntityPickerInputRef, EntityPickerInputRefContext] = createContextFailSafe<
+  RefObject<HTMLInputElement>
+>();

@@ -1,6 +1,5 @@
-import React from 'react';
-
-import { HStack, Heading, Spacer, StackProps } from '@chakra-ui/react';
+import { HStack, Heading, Spacer, StackProps, Box } from '@chakra-ui/react';
+import { ReactNode } from 'react';
 
 import { ENTITY_COLORS } from '../constant';
 import {
@@ -20,12 +19,14 @@ interface Props extends StackProps {
   entity: Entity;
   showId?: boolean;
   quickViewer?: boolean;
+  addon?: ReactNode;
 }
 
 export default function SimpleEntity({
   entity,
   showId = false,
   quickViewer = true,
+  addon,
   ...props
 }: Props): JSX.Element {
   let child;
@@ -104,19 +105,42 @@ export default function SimpleEntity({
 
   return (
     <HStack
+      spacing="0"
+      minW="36"
       border="1px"
       borderColor="gray.200"
-      p="2"
       borderRadius="md"
-      minW="36"
       _hover={{
         borderColor: 'gray.300',
       }}
+      alignItems="stretch"
       {...props}
     >
-      {child}
-      <Spacer />
-      {quickViewer ? <EntityQuickViewerToggler entity={entity} /> : null}
+      <HStack p="2" w="100%">
+        {child}
+        <Spacer />
+        {quickViewer ? <EntityQuickViewerToggler entity={entity} /> : null}
+      </HStack>
+      {addon}
     </HStack>
+  );
+}
+
+interface PropsWithChild extends Props {
+  child: ReactNode;
+}
+
+export function SimpleEntityWithChild({ child, ...props }: PropsWithChild): JSX.Element {
+  const entity = <SimpleEntity {...props} />;
+
+  return child ? (
+    <Box>
+      {entity}
+      <Box pl="4" pt="2">
+        {child}
+      </Box>
+    </Box>
+  ) : (
+    entity
   );
 }

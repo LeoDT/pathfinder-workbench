@@ -1,6 +1,6 @@
 import { computed, makeObservable } from 'mobx';
 
-import { ClassFeat, Feat, RacialTrait } from '../../types/core';
+import { Class, ClassFeat, Feat, RacialTrait } from '../../types/core';
 import {
   ArgsTypeForEffect,
   BaseEffect,
@@ -21,11 +21,15 @@ import {
   effectTypesNeedInput,
 } from '../../types/effectType';
 import Character from '.';
+import { makeEffectInputKey } from '../../utils/effect';
+import { collections } from '../collection';
+import { getClassFeatByLevel } from '../../utils/class';
 
 export type EffectSource = RacialTrait | ClassFeat | Feat;
 export interface EffectAndSource<T = Effect> {
   effect: T;
   source: EffectSource;
+  input?: unknown;
 }
 
 export default class CharacterEffect {
@@ -35,6 +39,7 @@ export default class CharacterEffect {
 
   constructor(character: Character) {
     makeObservable(this, {
+      gainedFeatsWithEffectInputs: computed,
       allEffects: computed,
     });
 
@@ -42,26 +47,74 @@ export default class CharacterEffect {
     this.growedEffectCache = new WeakMap();
   }
 
+  clearGrowedEffectCache(): void {
+    this.growedEffectCache = new WeakMap();
+  }
+
+  get gainedFeatsWithEffectInputs(): Array<{ feat: Feat; input: unknown }> {
+    return this.character.upgradesWithPending
+      .map((up) => {
+        return up.feats
+          .map((f, i) => {
+            if (!f) return null;
+
+            const feat = collections.feat.getById(f);
+            const inputKey = makeEffectInputKey(feat, i.toString());
+            const input = up.effectInputs.get(inputKey);
+
+            return { feat, input };
+          })
+          .filter((r): r is { feat: Feat; input: unknown } => Boolean(r));
+      })
+      .flat();
+  }
+
+  getEffectInputForRacialTrait(t: RacialTrait): unknown {
+    const upgrade = this.character.upgradesWithPending[0];
+
+    return upgrade?.effectInputs.get(makeEffectInputKey(t));
+  }
+
+  getEffectInputForClassFeat(clas: Class, f: ClassFeat): unknown {
+    const upgrade = this.character.upgradesWithPending
+      .filter((u) => u.classId === clas.id)
+      .find((u, i) => {
+        const classFeatsForLevel = getClassFeatByLevel(clas, i + 1);
+
+        return classFeatsForLevel.includes(f);
+      });
+
+    return upgrade?.effectInputs.get(makeEffectInputKey(f));
+  }
+
   get allEffects(): Array<EffectAndSource> {
     const effects: Array<EffectAndSource> = [];
 
     this.character.racialTraits.forEach((source) => {
       source.effects?.forEach((effect) => {
-        effects.push({ effect: this.growEffectArgs(effect, source), source });
-      });
-    });
-
-    this.character.gainedClassFeats.forEach((feats) => {
-      feats.forEach((source) => {
-        source.effects?.forEach((effect) => {
-          effects.push({ effect: this.growEffectArgs(effect, source), source });
+        effects.push({
+          effect: this.growEffectArgs(effect, source),
+          source,
+          input: this.getEffectInputForRacialTrait(source),
         });
       });
     });
 
-    this.character.gainedFeats.forEach((source) => {
+    this.character.gainedClassFeats.forEach((feats, clas) => {
+      feats.forEach((source) => {
+        source.effects?.forEach((effect) => {
+          effects.push({
+            effect: this.growEffectArgs(effect, source),
+            source,
+            input: this.getEffectInputForClassFeat(clas, source),
+          });
+        });
+      });
+    });
+
+    this.gainedFeatsWithEffectInputs.forEach(({ feat: source, input }) => {
       source.effects?.forEach((effect) => {
-        effects.push({ effect: this.growEffectArgs(effect, source), source });
+        effects.push({ effect: this.growEffectArgs(effect, source), source, input });
       });
     });
 

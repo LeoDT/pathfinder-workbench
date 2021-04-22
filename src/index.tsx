@@ -22,6 +22,9 @@ const theme = extendTheme({
   zIndices: {
     quickViewer: 3000,
   },
+  shadows: {
+    inner: 'inset 0 0 5px rgba(0,0,0,0.2)',
+  },
   components: {
     Container: {
       baseStyle: {

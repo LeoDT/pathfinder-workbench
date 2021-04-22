@@ -19,6 +19,18 @@ export function createContextNoNullCheck<T>(defaults?: T): [() => T, React.Conte
   return [use, context];
 }
 
+export function createContextFailSafe<T>(
+  defaults?: T
+): [() => T | undefined, React.Context<T | undefined>] {
+  const context = createContext<T | undefined>(defaults);
+
+  function use(): T | undefined {
+    return useContext(context);
+  }
+
+  return [use, context];
+}
+
 export function useIsSmallerScreen(): boolean {
   return useMediaQuery(`(max-width: ${CONTAINER_WIDTH - 1}px)`)[0];
 }

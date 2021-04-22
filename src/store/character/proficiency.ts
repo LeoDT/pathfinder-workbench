@@ -49,6 +49,14 @@ export class CharacterProficiency {
       extend(p.shield, args.shield);
     });
 
+    const weapons = this.character.effect.getGainSelectedWeaponProficiencyEffects();
+
+    weapons.forEach(({ input }) => {
+      if (typeof input === 'string') {
+        p.weapon.push(input);
+      }
+    });
+
     return p;
   }
 

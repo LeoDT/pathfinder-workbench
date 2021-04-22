@@ -70,7 +70,7 @@ export default class Character {
       skillSystem = 'core',
       alignment = Alignment.N,
       bonusAbilityType,
-      raceId = 'Human',
+      raceId = 'Half Elf',
       alternateRaceTraitIds,
       favoredClassIds,
       upgrades,
@@ -127,7 +127,7 @@ export default class Character {
     this.favoredClassIds = favoredClassIds || [];
 
     this.raceId = raceId;
-    this.alternateRaceTraitIds = alternateRaceTraitIds || [];
+    this.alternateRaceTraitIds = alternateRaceTraitIds || ['Ancestral Arms'];
 
     this.spellbooks = observable.array([], { deep: false });
     this.status = new CharacterStatus(this);
@@ -457,7 +457,11 @@ export default class Character {
     return JSON.stringify({
       id: c.id,
       name: c.name,
-      upgrades: c.upgrades.map((u) => ({ ...u, skills: Array.from(u.skills.entries()) })),
+      upgrades: c.upgrades.map((u) => ({
+        ...u,
+        skills: Array.from(u.skills.entries()),
+        effectInputs: Array.from(u.effectInputs.entries()),
+      })),
       equipment: CharacterEquip.stringify(c.equipment),
       ...pick(c, Character.serializableProps),
     });
@@ -468,7 +472,7 @@ export default class Character {
 
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     json.upgrades = json.upgrades.map((u: any) => {
-      return { ...u, skills: new Map(u.skills) };
+      return { ...u, skills: new Map(u.skills), effectInputs: new Map(u.effectInputs) };
     });
 
     const character = new Character(json.name, json);

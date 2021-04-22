@@ -1,6 +1,6 @@
 import { Observer } from 'mobx-react-lite';
 
-import { Box, Divider, Heading, SimpleGrid } from '@chakra-ui/react';
+import { Box, Divider, Heading } from '@chakra-ui/react';
 
 import { useStore } from '../../store';
 import CreateCharacterStore from '../../store/createCharacter';
@@ -8,8 +8,7 @@ import { translateGainFeatEffectArgs } from '../../utils/effect';
 import { gainFeatReasonTranslates } from '../../utils/upgrade';
 import { CollectionEntityPickerPopover } from '../CollectionEntityPicker';
 import { EntityPickerPopover, PopoverProps as EntityPickerProps } from '../EntityPicker';
-import SimpleEntity from '../SimpleEntity';
-import { EffectInput } from './EffectInput';
+import { FeatWithEffectInputGrid } from './FeatWithEffectInputGrid';
 
 interface Props {
   createOrUpgrade: CreateCharacterStore;
@@ -49,50 +48,37 @@ export default function CreateOrUpgradeCharacterFeat({
                 disabledEntityIds: createOrUpgrade.character.gainedFeats.map((f) => f.id),
               };
 
-              const effectsNeedInput = createOrUpgrade.character.effect.getEffectsNeedInput();
-              const es = effectsNeedInput.find(({ source }) => source === feat);
-
               return (
                 <Box key={`${r.reason}#${i}`} mb="4">
                   <Heading as="h3" fontSize="lg" mb="2">
                     {translateGainFeatEffectArgs(r)}({gainFeatReasonTranslates[r.reason]}
                     {r.ignorePrerequisites ? ', 忽略先决条件' : ''})
                   </Heading>
-                  {r.forceFeat ? null : r.feats ? (
-                    <EntityPickerPopover
-                      {...pickerProps}
-                      entities={collections.feat.getByIds(r.feats)}
-                      listAll
-                    />
-                  ) : r.featType ? (
-                    <EntityPickerPopover
-                      {...pickerProps}
-                      entities={collections.feat.getByType(r.featType)}
-                    />
-                  ) : (
-                    <CollectionEntityPickerPopover {...pickerProps} collection={collections.feat} />
-                  )}
+                  <Box mb="2">
+                    {r.forceFeat ? null : r.feats ? (
+                      <EntityPickerPopover
+                        {...pickerProps}
+                        entities={collections.feat.getByIds(r.feats)}
+                        listAll
+                      />
+                    ) : r.featType ? (
+                      <EntityPickerPopover
+                        {...pickerProps}
+                        entities={collections.feat.getByType(r.featType)}
+                      />
+                    ) : (
+                      <CollectionEntityPickerPopover
+                        {...pickerProps}
+                        collection={collections.feat}
+                      />
+                    )}
+                  </Box>
                   {feat ? (
-                    <Box mb="4" mt="2">
-                      <SimpleGrid columns={[1, 3]} spacing="2" mb="2">
-                        <SimpleEntity entity={feat} />
-                      </SimpleGrid>
-
-                      {es ? (
-                        <EffectInput
-                          effect={es.effect}
-                          createOrUpgrade={createOrUpgrade}
-                          value={createOrUpgrade.getEffectInput(
-                            'feat',
-                            feat.id,
-                            r.index.toString()
-                          )}
-                          onChange={(v) => {
-                            createOrUpgrade.setEffectInput('feat', feat.id, v, r.index.toString());
-                          }}
-                        />
-                      ) : null}
-                    </Box>
+                    <FeatWithEffectInputGrid
+                      entities={[feat]}
+                      effectInputSuffixes={[r.index.toString()]}
+                      createOrUpgrade={createOrUpgrade}
+                    />
                   ) : null}
                 </Box>
               );
@@ -106,25 +92,23 @@ export default function CreateOrUpgradeCharacterFeat({
       </Heading>
       <Observer>
         {() => (
-          <SimpleGrid columns={[1, 3]} spacing="2" mb="4">
-            {createOrUpgrade.newGainedClassFeats.map((f) => (
-              <SimpleEntity key={f.id} entity={f} />
-            ))}
-          </SimpleGrid>
+          <FeatWithEffectInputGrid
+            entities={createOrUpgrade.newGainedClassFeats}
+            createOrUpgrade={createOrUpgrade}
+          />
         )}
       </Observer>
       {showRaceTraits ? (
         <>
-          <Heading as="h3" fontSize="lg" mb="4">
+          <Heading as="h3" fontSize="lg" my="4">
             种族特性
           </Heading>
           <Observer>
             {() => (
-              <SimpleGrid columns={[1, 3]} spacing="2">
-                {createOrUpgrade.character.racialTraits.map((f) => (
-                  <SimpleEntity key={f.id} entity={f} />
-                ))}
-              </SimpleGrid>
+              <FeatWithEffectInputGrid
+                entities={createOrUpgrade.character.racialTraits}
+                createOrUpgrade={createOrUpgrade}
+              />
             )}
           </Observer>
         </>

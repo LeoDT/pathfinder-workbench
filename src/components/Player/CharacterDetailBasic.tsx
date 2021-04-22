@@ -1,34 +1,31 @@
 import { uniq } from 'lodash-es';
-import {
-  HStack,
-  VStack,
-  Stack,
-  Box,
-  Text,
-  Spacer,
-  StackProps,
-  Heading,
-  SimpleGrid,
-  Button,
-} from '@chakra-ui/react';
-import { Link } from 'react-router-dom';
 import { Observer } from 'mobx-react-lite';
+import { Link } from 'react-router-dom';
+
+import {
+  Box,
+  Button,
+  HStack,
+  Heading,
+  Spacer,
+  Stack,
+  StackProps,
+  Text,
+  VStack,
+} from '@chakra-ui/react';
 
 import { AbilityType } from '../../types/core';
-import { sizeTranslates } from '../../utils/race';
 import { abilityTranslates } from '../../utils/ability';
+import { alignmentTranslates } from '../../utils/alignment';
 import { showModifier } from '../../utils/modifier';
-
-import StatNumber from '../StatNumber';
+import { sizeTranslates } from '../../utils/race';
 import AbilityIcon from '../AbilityIcon';
-import TextWithLinebreaks from '../TextWithLinebreaks';
-import SimpleEntity from '../SimpleEntity';
-
-import { useCurrentCharacter } from './context';
-import { Block, VBlockItem, HBlockItem } from './CharacterBlock';
+import StatNumber from '../StatNumber';
+import { Block, HBlockItem, VBlockItem } from './CharacterBlock';
 import CharacterDetailEquip from './CharacterDetailEquip';
 import CharacterDetailStorage from './CharacterDetailStorage';
-import { alignmentTranslates } from '../../utils/alignment';
+import { CharacterDetailFeats } from './CharacterDetailFeats';
+import { useCurrentCharacter } from './context';
 
 const abilityStyle: StackProps = {
   flexBasis: [1 / 2, 1 / 3],
@@ -234,20 +231,12 @@ export default function CharacterDetailBasic(): JSX.Element {
                 <Heading as="h4" fontSize="xl" mb="4">
                   {clas.name} ({character.getLevelForClass(clas)}级)
                 </Heading>
-                {uniq(feats).map((cf) => (
-                  <Box
-                    key={cf.id}
-                    mb="4"
-                    borderBottom="1px"
-                    borderColor="gray.200"
-                    _last={{ mb: '0', borderBottom: '0px' }}
-                  >
-                    <Heading as="h6" fontSize="lg" fontWeight="bold" mb="3" color="teal">
-                      {cf.name} ({cf.id})
-                    </Heading>
-                    <TextWithLinebreaks text={cf.desc} textProps={{ mb: '2' }} />
-                  </Box>
-                ))}
+                <CharacterDetailFeats
+                  entitiesWithInput={uniq(feats).map((f) => ({
+                    entity: f,
+                    input: character.effect.getEffectInputForClassFeat(clas, f),
+                  }))}
+                />
               </Block>
             ))}
 
@@ -255,31 +244,24 @@ export default function CharacterDetailBasic(): JSX.Element {
               <Heading as="h4" fontSize="xl" mb="4">
                 专长背景
               </Heading>
-              <SimpleGrid columns={[1, 3]} spacing="2">
-                {character.gainedFeats.map((f) => (
-                  <SimpleEntity key={f.id} entity={f} />
-                ))}
-              </SimpleGrid>
+              <CharacterDetailFeats
+                entitiesWithInput={character.effect.gainedFeatsWithEffectInputs.map((fi) => ({
+                  entity: fi.feat,
+                  input: fi.input,
+                }))}
+              />
             </Block>
 
             <Block p="2">
               <Heading as="h4" fontSize="xl" mb="4">
                 种族特性
               </Heading>
-              {character.racialTraits.map((rt) => (
-                <Box
-                  key={rt.id}
-                  mb="3"
-                  borderBottom="1px"
-                  borderColor="gray.200"
-                  _last={{ mb: '0', borderBottom: '0px' }}
-                >
-                  <Heading as="h6" fontSize="lg" fontWeight="bold" mb="3" color="teal">
-                    {rt.name} ({rt.id})
-                  </Heading>
-                  <TextWithLinebreaks text={rt.desc} textProps={{ mb: '2' }} />
-                </Box>
-              ))}
+              <CharacterDetailFeats
+                entitiesWithInput={character.racialTraits.map((t) => ({
+                  entity: t,
+                  input: character.effect.getEffectInputForRacialTrait(t),
+                }))}
+              />
             </Block>
           </VStack>
         )}
