@@ -1,13 +1,12 @@
 import { Observer } from 'mobx-react-lite';
-import { Box, HStack, Text, IconButton, Icon } from '@chakra-ui/react';
+import { Box, HStack, Text, IconButton, Icon, SimpleGrid } from '@chakra-ui/react';
 import { FaTrash } from 'react-icons/fa';
 
 import { useCurrentCharacter } from './context';
 
-import { Block, HBlockItem } from './CharacterBlock';
 import Select from '../Select';
-import { showModifier } from '../../utils/modifier';
 import { EQUIPMENT_COLOR_SCHEME } from '../../constant';
+import { showEquipment } from '../../utils/equipment';
 
 export default function CharacterDetailEquip(): JSX.Element {
   const character = useCurrentCharacter();
@@ -17,8 +16,8 @@ export default function CharacterDetailEquip(): JSX.Element {
     <Box>
       <Observer>
         {() => (
-          <>
-            <HStack mb="2">
+          <SimpleGrid columns={[1, 2]} spacing="2">
+            <HStack>
               <Select
                 options={equip.handOptions}
                 value={equip.mainHand || null}
@@ -32,37 +31,23 @@ export default function CharacterDetailEquip(): JSX.Element {
                   colorScheme: EQUIPMENT_COLOR_SCHEME.weapon,
                 }}
               />
-              {equip.mainHand ? <Text>{equip.mainHand.name}</Text> : <Text>赤手空拳</Text>}
-              <IconButton
-                size="sm"
-                icon={<Icon as={FaTrash} />}
-                aria-label="脱下"
-                colorScheme="red"
-                variant="ghost"
-                onClick={() => equip.unhold('main')}
-              />
+              {equip.mainHand ? (
+                <Text>{showEquipment(equip.mainHand)}</Text>
+              ) : (
+                <Text>赤手空拳</Text>
+              )}
+              {equip.mainHand ? (
+                <IconButton
+                  size="sm"
+                  icon={<Icon as={FaTrash} />}
+                  aria-label="脱下"
+                  colorScheme="red"
+                  variant="ghost"
+                  onClick={() => equip.unhold('main')}
+                />
+              ) : null}
             </HStack>
-            <Block>
-              <HStack spacing="0">
-                <HBlockItem label="攻击" flexBasis={1 / 3} flexGrow={1}>
-                  {showModifier(equip.mainHandAttack)}
-                </HBlockItem>
-                <HBlockItem label="伤害" flexBasis={1 / 3} flexGrow={1}>
-                  {equip.mainHand?.type.meta.damage}
-                  {showModifier(equip.mainHandDamageModifier)}
-                </HBlockItem>
-                <HBlockItem label="暴击" flexBasis={1 / 3} flexGrow={1}>
-                  {equip.mainHand?.type.meta.critical}
-                </HBlockItem>
-              </HStack>
-            </Block>
-          </>
-        )}
-      </Observer>
-      <Observer>
-        {() => (
-          <>
-            <HStack my="2">
+            <HStack>
               <Select
                 options={equip.handOptions}
                 value={equip.offHand || null}
@@ -74,66 +59,22 @@ export default function CharacterDetailEquip(): JSX.Element {
                   children: '副手',
                   size: 'sm',
                   colorScheme: EQUIPMENT_COLOR_SCHEME.weapon,
-                  isDisabled: equip.isHoldingTwoHand,
+                  isDisabled: equip.isHoldingTwoHandWeapon,
                 }}
               />
-              {equip.offHand ? <Text>{equip.offHand.name}</Text> : <Text>赤手空拳</Text>}
-              <IconButton
-                size="sm"
-                icon={<Icon as={FaTrash} />}
-                aria-label="脱下"
-                colorScheme="red"
-                variant="ghost"
-                onClick={() => equip.unhold('off')}
-              />
+              {equip.offHand ? <Text>{showEquipment(equip.offHand)}</Text> : <Text>赤手空拳</Text>}
+              {equip.offHand ? (
+                <IconButton
+                  size="sm"
+                  icon={<Icon as={FaTrash} />}
+                  aria-label="脱下"
+                  colorScheme="red"
+                  variant="ghost"
+                  onClick={() => equip.unhold('off')}
+                />
+              ) : null}
             </HStack>
-            {(() => {
-              if (equip.isHoldingTwoHand) return null;
-              if (!equip.offHand) return null;
-
-              switch (equip.offHand.equipmentType) {
-                case 'weapon':
-                  return (
-                    <Block>
-                      <HStack spacing="0">
-                        <HBlockItem label="攻击" flexBasis={1 / 3} flexGrow={1}>
-                          {showModifier(equip.offHandAttack)}
-                        </HBlockItem>
-                        <HBlockItem label="伤害" flexBasis={1 / 3} flexGrow={1}>
-                          {equip.offHand?.type.meta.damage}
-                          {showModifier(equip.offHandDamageModifier)}
-                        </HBlockItem>
-                        <HBlockItem label="暴击" flexBasis={1 / 3} flexGrow={1}>
-                          {equip.offHand?.type.meta.critical}
-                        </HBlockItem>
-                      </HStack>
-                    </Block>
-                  );
-                case 'armor':
-                  return (
-                    <Block>
-                      <HStack spacing="0">
-                        <HBlockItem label="AC" flexBasis={1 / 3} flexGrow={1}>
-                          {showModifier(equip.offHand.type.meta.ac)}
-                        </HBlockItem>
-                        <HBlockItem label="检定减值" flexBasis={1 / 3} flexGrow={1}>
-                          {equip.offHand.type.meta.penalty}
-                        </HBlockItem>
-                        <HBlockItem label="奥术失败" flexBasis={1 / 3} flexGrow={1}>
-                          {equip.offHand.type.meta.arcaneFailureChance}
-                        </HBlockItem>
-                      </HStack>
-                    </Block>
-                  );
-              }
-            })()}
-          </>
-        )}
-      </Observer>
-      <Observer>
-        {() => (
-          <>
-            <HStack my="2">
+            <HStack>
               <Select
                 options={equip.armorOptions}
                 value={equip.armor || null}
@@ -147,32 +88,45 @@ export default function CharacterDetailEquip(): JSX.Element {
                   colorScheme: EQUIPMENT_COLOR_SCHEME.armor,
                 }}
               />
-              {equip.armor ? <Text>{equip.armor.name}</Text> : <Text>赤身裸体</Text>}
-              <IconButton
-                size="sm"
-                icon={<Icon as={FaTrash} />}
-                aria-label="脱下"
-                colorScheme="red"
-                variant="ghost"
-                onClick={() => equip.unwear()}
-              />
+              {equip.armor ? <Text>{showEquipment(equip.armor)}</Text> : <Text>赤身裸体</Text>}
+              {equip.armor ? (
+                <IconButton
+                  size="sm"
+                  icon={<Icon as={FaTrash} />}
+                  aria-label="脱下"
+                  colorScheme="red"
+                  variant="ghost"
+                  onClick={() => equip.unwear()}
+                />
+              ) : null}
             </HStack>
-            {equip.armor ? (
-              <Block>
-                <HStack spacing="0">
-                  <HBlockItem label="AC" flexBasis={1 / 3} flexGrow={1}>
-                    {showModifier(equip.armor.type.meta.ac)}
-                  </HBlockItem>
-                  <HBlockItem label="检定减值" flexBasis={1 / 3} flexGrow={1}>
-                    {equip.armor.type.meta.penalty}
-                  </HBlockItem>
-                  <HBlockItem label="奥术失败" flexBasis={1 / 3} flexGrow={1}>
-                    {equip.armor.type.meta.arcaneFailureChance}
-                  </HBlockItem>
-                </HStack>
-              </Block>
-            ) : null}
-          </>
+            <HStack>
+              <Select
+                options={equip.bucklerOptions}
+                value={equip.buckler || null}
+                onChange={(v) => {
+                  equip.hold(v);
+                }}
+                withArrow={false}
+                buttonProps={{
+                  children: '小圆盾',
+                  size: 'sm',
+                  colorScheme: EQUIPMENT_COLOR_SCHEME.armor,
+                }}
+              />
+              {equip.buckler ? <Text>{showEquipment(equip.buckler)}</Text> : <Text>无</Text>}
+              {equip.buckler ? (
+                <IconButton
+                  size="sm"
+                  icon={<Icon as={FaTrash} />}
+                  aria-label="脱下"
+                  colorScheme="red"
+                  variant="ghost"
+                  onClick={() => equip.unwear()}
+                />
+              ) : null}
+            </HStack>
+          </SimpleGrid>
         )}
       </Observer>
     </Box>

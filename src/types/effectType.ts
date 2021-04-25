@@ -20,6 +20,7 @@ export enum EffectType {
   gainInitiative = 'gainInitiative',
   gainAC = 'gainAC',
   gainSave = 'gainSave',
+  gainTwoWeaponFighting = 'gainTwoWeaponFighting',
 }
 
 export interface BaseEffect<TYPE extends EffectType, ARGS> {
@@ -111,6 +112,8 @@ export interface EffectGainSaveArgs {
 }
 export type EffectGainSave = BaseEffect<EffectType.gainSave, EffectGainSaveArgs>;
 
+export type EffectGainTwoWeaponFighting = BaseEffect<EffectType.gainTwoWeaponFighting, void>;
+
 export type Effect =
   | EffectAbilityBonus
   | EffectGainArcaneSchool
@@ -122,7 +125,8 @@ export type Effect =
   | EffectGainSkill
   | EffectGainInitiative
   | EffectGainAC
-  | EffectGainSave;
+  | EffectGainSave
+  | EffectGainTwoWeaponFighting;
 
 export type EffectGainClassSpeciality = EffectGainArcaneSchool;
 

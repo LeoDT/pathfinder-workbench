@@ -8,16 +8,17 @@ import {
   GiAerialSignal,
   GiFlyingFlag,
 } from 'react-icons/gi';
+import { ABILITY_COLORS } from '../constant';
 
 import { AbilityType } from '../types/core';
 
 const icons = {
-  str: { icon: GiFist, color: 'orange.500' },
-  dex: { icon: GiBullseye, color: 'green.500' },
-  con: { icon: GiShield, color: 'red.500' },
-  int: { icon: GiBrain, color: 'yellow.500' },
-  wis: { icon: GiAerialSignal, color: 'cyan.500' },
-  cha: { icon: GiFlyingFlag, color: 'pink.500' },
+  str: { icon: GiFist, color: ABILITY_COLORS.str },
+  dex: { icon: GiBullseye, color: ABILITY_COLORS.dex },
+  con: { icon: GiShield, color: ABILITY_COLORS.con },
+  int: { icon: GiBrain, color: ABILITY_COLORS.int },
+  wis: { icon: GiAerialSignal, color: ABILITY_COLORS.wis },
+  cha: { icon: GiFlyingFlag, color: ABILITY_COLORS.cha },
 };
 
 interface Props {

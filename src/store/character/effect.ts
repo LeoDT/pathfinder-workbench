@@ -16,14 +16,15 @@ import {
   EffectGainSelectedWeaponProficiency,
   EffectGainSkill,
   EffectGainSpellCasting,
+  EffectGainTwoWeaponFighting,
   EffectNeadInput,
   EffectType,
   effectTypesNeedInput,
 } from '../../types/effectType';
-import Character from '.';
+import { getClassFeatByLevel } from '../../utils/class';
 import { makeEffectInputKey } from '../../utils/effect';
 import { collections } from '../collection';
-import { getClassFeatByLevel } from '../../utils/class';
+import Character from '.';
 
 export type EffectSource = RacialTrait | ClassFeat | Feat;
 export interface EffectAndSource<T = Effect> {
@@ -249,5 +250,9 @@ export default class CharacterEffect {
 
   getGainSaveEffects(): EffectAndSource<EffectGainSave>[] {
     return this.getEffectsByType<EffectGainSave>(EffectType.gainSave);
+  }
+
+  getGainTwoWeaponFightingEffects(): EffectAndSource<EffectGainTwoWeaponFighting>[] {
+    return this.getEffectsByType<EffectGainTwoWeaponFighting>(EffectType.gainTwoWeaponFighting);
   }
 }

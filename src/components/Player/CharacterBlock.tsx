@@ -1,7 +1,20 @@
-import { Box, BoxProps, HStack, Text, StackProps, Spacer } from '@chakra-ui/react';
+import {
+  Box,
+  BoxProps,
+  HStack,
+  Text,
+  StackProps,
+  Spacer,
+  Heading,
+  HeadingProps,
+} from '@chakra-ui/react';
 
 export function Block(props: BoxProps): JSX.Element {
   return <Box border="1px" borderColor="gray.200" borderRadius="md" {...props} />;
+}
+
+export function BlockHeading(props: HeadingProps): JSX.Element {
+  return <Heading as="h4" fontSize="xl" mb="4" {...props} />;
 }
 
 interface BlockItemProps extends StackProps {

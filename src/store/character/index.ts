@@ -17,12 +17,13 @@ import {
   Skill,
   SkillSystem,
 } from '../../types/core';
-import { addBonusScores, getModifiers, makeAbilities, BASE_ABILITY } from '../../utils/ability';
+import { BASE_ABILITY, addBonusScores, getModifiers, makeAbilities } from '../../utils/ability';
 import { aggregateBonusesAmount } from '../../utils/bonus';
 import { getClassFeatByLevel, getClassLevel } from '../../utils/class';
 import { coreToConsolidated } from '../../utils/skill';
 import { collections } from '../collection';
 import Spellbook from '../spellbook';
+import { CharacterAttack } from './attack';
 import CharacterEffect from './effect';
 import CharacterEquip from './equip';
 import { CharacterProficiency } from './proficiency';
@@ -62,6 +63,7 @@ export default class Character {
   equipment: CharacterEquip;
   effect: CharacterEffect;
   proficiency: CharacterProficiency;
+  attack: CharacterAttack;
 
   constructor(
     name: string,
@@ -134,6 +136,7 @@ export default class Character {
     this.equipment = new CharacterEquip(this);
     this.effect = new CharacterEffect(this);
     this.proficiency = new CharacterProficiency(this);
+    this.attack = new CharacterAttack(this);
 
     this.ensureSpellbooks();
   }

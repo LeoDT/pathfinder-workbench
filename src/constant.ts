@@ -1,5 +1,23 @@
 export const CONTAINER_WIDTH = 1024;
 
+export const ABILITY_COLORS: Record<string, string> = {
+  str: 'orange.500',
+  dex: 'green.500',
+  con: 'red.500',
+  int: 'yellow.500',
+  wis: 'cyan.500',
+  cha: 'pink.500',
+};
+
+export const ABILITY_COLORS_SCHEME: Record<string, string> = {
+  str: 'orange',
+  dex: 'green',
+  con: 'red',
+  int: 'yellow',
+  wis: 'cyan',
+  cha: 'pink',
+};
+
 export const ENTITY_COLORS: Record<string, string> = {
   spell: 'purple.600',
   feat: 'teal.600',

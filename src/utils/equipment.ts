@@ -167,3 +167,27 @@ export function showEquipment(e: Equipment): string {
 
   return n.join('');
 }
+
+export function getWeaponModifier(w: Weapon): number {
+  let mod = 0;
+
+  if (w.enchantment) {
+    mod += w.enchantment;
+  }
+
+  if (w.masterwork && !w.enchantment) {
+    mod += 1;
+  }
+
+  return mod;
+}
+
+export function getWeaponDamageModifier(w: Weapon): number {
+  let mod = 0;
+
+  if (w.enchantment) {
+    mod += w.enchantment;
+  }
+
+  return mod;
+}

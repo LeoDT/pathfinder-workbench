@@ -2,17 +2,7 @@ import { uniq } from 'lodash-es';
 import { Observer } from 'mobx-react-lite';
 import { Link } from 'react-router-dom';
 
-import {
-  Box,
-  Button,
-  HStack,
-  Heading,
-  Spacer,
-  Stack,
-  StackProps,
-  Text,
-  VStack,
-} from '@chakra-ui/react';
+import { Box, Button, HStack, Spacer, Stack, StackProps, Text, VStack } from '@chakra-ui/react';
 
 import { AbilityType } from '../../types/core';
 import { abilityTranslates } from '../../utils/ability';
@@ -21,10 +11,12 @@ import { showModifier } from '../../utils/modifier';
 import { sizeTranslates } from '../../utils/race';
 import AbilityIcon from '../AbilityIcon';
 import StatNumber from '../StatNumber';
-import { Block, HBlockItem, VBlockItem } from './CharacterBlock';
+import { Block, BlockHeading, HBlockItem, VBlockItem } from './CharacterBlock';
+import { CharacterDetailAttackOptions } from './CharacterDetailAttackOptions';
 import CharacterDetailEquip from './CharacterDetailEquip';
-import CharacterDetailStorage from './CharacterDetailStorage';
 import { CharacterDetailFeats } from './CharacterDetailFeats';
+import { CharacterDetailSkills } from './CharacterDetailSkills';
+import CharacterDetailStorage from './CharacterDetailStorage';
 import { useCurrentCharacter } from './context';
 
 const abilityStyle: StackProps = {
@@ -207,20 +199,31 @@ export default function CharacterDetailBasic(): JSX.Element {
               </Box>
             </Stack>
 
+            <Stack direction={['column', 'row']}>
+              <Block flexBasis={['50%', '100%']}>
+                <Box p="2">
+                  <BlockHeading>攻击</BlockHeading>
+                  <CharacterDetailAttackOptions />
+                </Box>
+              </Block>
+              <Block flexBasis={['50%', '100%']}>
+                <Box p="2">
+                  <BlockHeading>技能</BlockHeading>
+                  <CharacterDetailSkills />
+                </Box>
+              </Block>
+            </Stack>
+
             <Stack direction={['column', 'row']} alignItems={['flex-start', 'stretch']}>
               <Box flexBasis={['50%', '100%']}>
                 <Block p="2" h="full">
-                  <Heading as="h4" fontSize="xl" mb="4">
-                    装备
-                  </Heading>
+                  <BlockHeading>装备</BlockHeading>
                   <CharacterDetailEquip />
                 </Block>
               </Box>
               <Box flexBasis={['50%', '100%']}>
                 <Block p="2" h="full">
-                  <Heading as="h4" fontSize="xl" mb="4">
-                    仓库
-                  </Heading>
+                  <BlockHeading>仓库</BlockHeading>
                   <CharacterDetailStorage />
                 </Block>
               </Box>
@@ -228,9 +231,9 @@ export default function CharacterDetailBasic(): JSX.Element {
 
             {Array.from(character.gainedClassFeats.entries()).map(([clas, feats]) => (
               <Block p="2" key={clas.id}>
-                <Heading as="h4" fontSize="xl" mb="4">
+                <BlockHeading>
                   {clas.name} ({character.getLevelForClass(clas)}级)
-                </Heading>
+                </BlockHeading>
                 <CharacterDetailFeats
                   entitiesWithInput={uniq(feats).map((f) => ({
                     entity: f,
@@ -241,9 +244,7 @@ export default function CharacterDetailBasic(): JSX.Element {
             ))}
 
             <Block p="2">
-              <Heading as="h4" fontSize="xl" mb="4">
-                专长背景
-              </Heading>
+              <BlockHeading>专长背景</BlockHeading>
               <CharacterDetailFeats
                 entitiesWithInput={character.effect.gainedFeatsWithEffectInputs.map((fi) => ({
                   entity: fi.feat,
@@ -253,9 +254,7 @@ export default function CharacterDetailBasic(): JSX.Element {
             </Block>
 
             <Block p="2">
-              <Heading as="h4" fontSize="xl" mb="4">
-                种族特性
-              </Heading>
+              <BlockHeading>种族特性</BlockHeading>
               <CharacterDetailFeats
                 entitiesWithInput={character.racialTraits.map((t) => ({
                   entity: t,

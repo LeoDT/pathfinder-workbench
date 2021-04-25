@@ -39,14 +39,10 @@ export default class CharacterEquip {
 
       mainHandId: observable,
       mainHand: computed,
-      mainHandAttack: computed,
-      mainHandDamageModifier: computed,
-
       offHandId: observable,
       offHand: computed,
-      offHandAttack: computed,
-      offHandDamageModifier: computed,
 
+      isHoldingTwoHandWeapon: computed,
       isHoldingTwoHand: computed,
       isTwoWeapon: computed,
 
@@ -136,66 +132,6 @@ export default class CharacterEquip {
     return this.storage.find((e): e is Armor => e.id === this.armorId);
   }
 
-  get mainHandAttack(): number {
-    let modifier = 0;
-    switch (this.mainHand?.type.meta.category) {
-      case 'light':
-      case 'one-handed':
-      case 'two-handed':
-        modifier = this.character.abilityModifier.str;
-        break;
-
-      case 'ranged':
-        modifier = this.character.abilityModifier.dex;
-    }
-
-    return this.character.status.maxBab + modifier;
-  }
-
-  get mainHandDamageModifier(): number {
-    let modifier = 0;
-    switch (this.mainHand?.type.meta.category) {
-      case 'light':
-      case 'one-handed':
-        modifier = this.character.abilityModifier.str;
-        break;
-      case 'two-handed':
-        modifier = Math.floor(this.character.abilityModifier.str * 1.5);
-    }
-
-    return modifier;
-  }
-
-  get offHandAttack(): number {
-    let modifier = 0;
-    switch (this.offHand?.type.meta.category) {
-      case 'light':
-      case 'one-handed':
-      case 'two-handed':
-        modifier = this.character.abilityModifier.str;
-        break;
-
-      case 'ranged':
-        modifier = this.character.abilityModifier.dex;
-    }
-
-    return this.character.status.maxBab + modifier;
-  }
-
-  get offHandDamageModifier(): number {
-    let modifier = 0;
-    switch (this.offHand?.type.meta.category) {
-      case 'light':
-      case 'one-handed':
-        modifier = this.character.abilityModifier.str;
-        break;
-      case 'two-handed':
-        modifier = Math.floor(this.character.abilityModifier.str * 1.5);
-    }
-
-    return modifier;
-  }
-
   get armorClassModifier(): number {
     let mod = 0;
 
@@ -214,17 +150,22 @@ export default class CharacterEquip {
     return mod;
   }
 
-  get isHoldingTwoHand(): boolean {
+  get isHoldingTwoHandWeapon(): boolean {
     return Boolean(
-      this.mainHand === this.offHand &&
-        this.mainHand &&
-        this.mainHand.type.meta.category === 'two-handed'
+      this.mainHand &&
+        (this.mainHand.type.meta.category === 'two-handed' || this.mainHand.type.meta.bothHand)
     );
+  }
+  get isHoldingTwoHand(): boolean {
+    return Boolean(this.mainHand && this.offHand && this.mainHand === this.offHand);
   }
   get isTwoWeapon(): boolean {
     return Boolean(
       this.mainHand !== this.offHand && this.mainHand && this.offHand?.equipmentType === 'weapon'
     );
+  }
+  get isOffHandHoldingShield(): boolean {
+    return Boolean(this.offHand && this.offHand.type.meta.category === 'shield');
   }
 
   hold(e: Equipment, hand?: Hand): void {

@@ -15,6 +15,10 @@ export default class WeaponTypeCollection extends Collection<WeaponType> {
     this.unarmedStrike = this.getById('Unarmed strike');
   }
 
+  getUnarmedWeaponType(): WeaponType {
+    return this.getById('Unarmed strike');
+  }
+
   getDamageForSize(w: WeaponType, size: WeaponSize): string {
     const { damage } = w.meta;
 
@@ -22,7 +26,11 @@ export default class WeaponTypeCollection extends Collection<WeaponType> {
       return '0';
     }
 
-    const damages = WeaponTypeCollection.sizeDamage.find((s) => s.medium === damage);
+    const damages = WeaponTypeCollection.sizeDamage.find((s) => {
+      const d = damage.indexOf('/') !== -1 ? damage.split('/')[0] : damage;
+
+      return d === s.medium;
+    });
 
     if (damages && damages[size]) {
       return damages[size];
