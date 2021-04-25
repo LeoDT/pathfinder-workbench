@@ -20,6 +20,7 @@ export const weaponTrainingTranslates: Record<WeaponTraining, string> = {
 };
 
 export const weaponCategoryTranslates: Record<WeaponCategory, string> = {
+  'unarmed attacks': '徒手',
   light: '轻型武器',
   'one-handed': '单手武器',
   'two-handed': '双手武器',

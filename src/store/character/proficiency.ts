@@ -63,6 +63,10 @@ export class CharacterProficiency {
   hasWeapon(w: string | WeaponType): boolean {
     const weaponType = typeof w === 'string' ? collections.weaponType.getById(w) : w;
 
+    if (weaponType.meta.category === 'unarmed attacks') {
+      return true;
+    }
+
     const { training } = weaponType.meta;
 
     return this.all.weaponTraining.includes(training) || this.all.weapon.includes(weaponType.id);

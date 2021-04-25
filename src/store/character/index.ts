@@ -129,7 +129,7 @@ export default class Character {
     this.favoredClassIds = favoredClassIds || [];
 
     this.raceId = raceId;
-    this.alternateRaceTraitIds = alternateRaceTraitIds || ['Ancestral Arms'];
+    this.alternateRaceTraitIds = alternateRaceTraitIds || [];
 
     this.spellbooks = observable.array([], { deep: false });
     this.status = new CharacterStatus(this);
@@ -210,7 +210,7 @@ export default class Character {
 
   startUpgrade(): void {
     const lastUpgrade = last(this.upgrades);
-    const lastUpgradeClass = lastUpgrade ? lastUpgrade.classId : 'Barbarian';
+    const lastUpgradeClass = lastUpgrade ? lastUpgrade.classId : 'Wizard';
     const levelFeat = (this.level + 1) % 2 === 1;
     const levelAbility = (this.level + 1) % 4 === 1;
 

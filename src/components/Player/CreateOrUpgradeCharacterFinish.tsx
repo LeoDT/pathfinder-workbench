@@ -45,6 +45,7 @@ export default function CreateOrUpgradeCharacterFinish({ createOrUpgrade }: Prop
         size="lg"
         onClick={() => {
           if (!invalid) {
+            createOrUpgrade.dispose();
             createOrUpgrade.character.finishUpgrade();
             store.characters.push(createOrUpgrade.character);
 

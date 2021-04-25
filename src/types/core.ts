@@ -168,7 +168,7 @@ export interface Class extends Entity {
 }
 
 export type WeaponTraining = 'simple' | 'martial' | 'exotic';
-export type WeaponCategory = 'light' | 'one-handed' | 'two-handed' | 'ranged';
+export type WeaponCategory = 'light' | 'one-handed' | 'two-handed' | 'ranged' | 'unarmed attacks';
 export type WeaponDamageType = 'P' | 'B' | 'S' | 'P or S' | 'B or S' | 'B and P' | 'P and S';
 
 export interface WeaponTypeMeta {

@@ -36,6 +36,7 @@ export type InvalidReason =
 
 export default class CreateCharacterStore {
   character: Character;
+  disposes: Array<() => void>;
 
   constructor(character?: Character) {
     makeObservable(this, {
@@ -61,6 +62,8 @@ export default class CreateCharacterStore {
       spellbook: computed,
     });
 
+    this.disposes = [];
+
     this.character = character || new Character('新角色');
     this.character.startUpgrade();
     this.updateClass(this.upgrade.classId);
@@ -68,26 +71,34 @@ export default class CreateCharacterStore {
 
     this.resetUpgradeFeats();
 
-    reaction(
-      () => this.character.skillSystem,
-      () => {
-        this.upgrade.skills.clear();
-      }
+    this.disposes.push(
+      reaction(
+        () => this.character.skillSystem,
+        () => {
+          this.upgrade.skills.clear();
+        }
+      )
     );
 
-    reaction(
-      () => ({
-        cId: this.upgrade.classId,
-        rId: this.character.raceId,
-        traits: this.character.alternateRaceTraitIds,
-      }),
-      () => {
-        this.upgrade.effectInputs.clear();
-      }
+    this.disposes.push(
+      reaction(
+        () => ({
+          cId: this.upgrade.classId,
+          rId: this.character.raceId,
+          traits: this.character.alternateRaceTraitIds,
+        }),
+        () => {
+          this.upgrade.effectInputs.clear();
+        }
+      )
     );
 
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     (window as any).create = this;
+  }
+
+  dispose(): void {
+    this.disposes.forEach((d) => d());
   }
 
   resetUpgradeFeats(): void {
