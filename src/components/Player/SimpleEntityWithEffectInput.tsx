@@ -20,6 +20,7 @@ import { EffectNeadInput, EffectType } from '../../types/effectType';
 import { EffectInputDisplayer } from '../EffectInputDisplayer';
 import { EntityPickerInputRefContext } from '../EntityPicker';
 import { SimpleEntityWithChild } from '../SimpleEntity';
+import { ArcaneSchoolPicker } from '../ArcaneSchoolPicker';
 import WeaponProficiencyPicker from '../WeaponProficiencyPicker';
 
 interface Props {
@@ -28,6 +29,8 @@ interface Props {
 
   value: any;
   onChange: (v: any) => void;
+
+  onClose: () => void;
 }
 
 export function EffectInput({
@@ -35,8 +38,21 @@ export function EffectInput({
   value,
   onChange,
   effect,
+  onClose,
 }: Props): JSX.Element | null {
   switch (effect.type) {
+    case EffectType.gainArcaneSchool: {
+      return (
+        <ArcaneSchoolPicker
+          value={value}
+          onChange={(...args) => {
+            onChange(...args);
+            onClose();
+          }}
+          standardForbidden={effect.args.standardForbidden}
+        />
+      );
+    }
     case EffectType.gainSelectedWeaponProficiency: {
       return (
         <WeaponProficiencyPicker
@@ -55,7 +71,7 @@ export function EffectInput({
   }
 }
 
-interface PropsWithEntity extends Props {
+interface PropsWithEntity extends Omit<Props, 'onClose'> {
   entity: Entity;
 }
 
@@ -87,9 +103,9 @@ export function SimpleEntityWithEffectInput({ entity, ...props }: PropsWithEntit
                   onClick={onToggle}
                 />
               </PopoverTrigger>
-              <PopoverContent>
-                <PopoverBody>
-                  <EffectInput {...props} />
+              <PopoverContent w="auto" minW="xs">
+                <PopoverBody maxH="50vh" w="" overflowY="auto">
+                  {isOpen ? <EffectInput onClose={onClose} {...props} /> : null}
                 </PopoverBody>
               </PopoverContent>
             </Popover>

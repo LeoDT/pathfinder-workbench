@@ -40,3 +40,5 @@ export const collections = {
   armorType: new Collection<ArmorType>('armorType', ARMOR_TYPES_DATA as any),
   arcaneSchool: new Collection<ArcaneSchool>('arcaneSchool', ARCANE_SCHOOL_DATA as any),
 };
+
+(window as any).collections = collections;

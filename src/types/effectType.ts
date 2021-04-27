@@ -12,6 +12,7 @@ export enum EffectType {
   gainFeat = 'gainFeat',
   abilityBonus = 'abilityBonus',
   gainArcaneSchool = 'gainArcaneSchool',
+  gainArcaneSchoolPrepareSlot = 'gainArcaneSchoolPrepareSlot',
   gainSpellCasting = 'gainSpellCasting',
   gainFavoredClassAmount = 'gainFavoredClassAmount',
   gainProficiency = 'gainProficiency',
@@ -50,6 +51,20 @@ export interface EffectGainArcaneSchoolArgs {
 export type EffectGainArcaneSchool = BaseEffect<
   EffectType.gainArcaneSchool,
   EffectGainArcaneSchoolArgs
+>;
+export interface EffectGainArcaneSchoolInput {
+  school: string;
+  focused?: string;
+  forbiddenSchool: Array<string>;
+}
+
+export interface EffectGainArcaneSchoolPrepareSlotArgs {
+  amount?: number;
+  school: string;
+}
+export type EffectGainArcaneSchoolPrepareSlot = BaseEffect<
+  EffectType.gainArcaneSchoolPrepareSlot,
+  EffectGainArcaneSchoolPrepareSlotArgs
 >;
 
 export interface EffectGainSpellCastingArgs {
@@ -128,9 +143,10 @@ export type Effect =
   | EffectGainSave
   | EffectGainTwoWeaponFighting;
 
-export type EffectGainClassSpeciality = EffectGainArcaneSchool;
-
 export type ArgsTypeForEffect<T extends Effect> = T['args'];
 
-export type EffectNeadInput = EffectGainSelectedWeaponProficiency;
-export const effectTypesNeedInput: Array<EffectType> = [EffectType.gainSelectedWeaponProficiency];
+export type EffectNeadInput = EffectGainArcaneSchool | EffectGainSelectedWeaponProficiency;
+export const effectTypesNeedInput: Array<EffectType> = [
+  EffectType.gainArcaneSchool,
+  EffectType.gainSelectedWeaponProficiency,
+];

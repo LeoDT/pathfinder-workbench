@@ -16,8 +16,9 @@ import {
 import { useMemo, useState } from 'react';
 
 import { useStore } from '../store';
+import { Collection } from '../store/collection/base';
 
-import { EntityType, EquipmentType, Equipment, RaceSize } from '../types/core';
+import { Entity, EntityType, EquipmentType, Equipment, RaceSize } from '../types/core';
 import { equipmentTypeTranslates } from '../utils/equipment';
 
 import Select from './Select';
@@ -78,7 +79,7 @@ export default function CreateEquipment({ onCreate, onCancel, characterSize }: P
         </WrapItem>
         <WrapItem>
           <CollectionEntityPickerPopover
-            collection={collection}
+            collection={collection as Collection<Entity>}
             items={equipment ? [equipment.id] : []}
             onPick={(id) => {
               setEquipment({ id, type: equipmentType });

@@ -3,7 +3,7 @@ import { useCallback } from 'react';
 import { Observer } from 'mobx-react-lite';
 import { Box, SimpleGrid, Text, Heading } from '@chakra-ui/react';
 
-import Spellbook from '../../store/spellbook';
+import { CharacterSpellbook } from '../../store/character/spellbook';
 import { useStore } from '../../store';
 
 import SimpleEntity from '../SimpleEntity';
@@ -11,7 +11,7 @@ import { EntityPickerPopover } from '../EntityPicker';
 import CreateCharacterStore from '../../store/createCharacter';
 
 interface SpellsForLevelProps {
-  spellbook: Spellbook;
+  spellbook: CharacterSpellbook;
   level: number;
   perday: number;
   createOrUpgrade: CreateCharacterStore;

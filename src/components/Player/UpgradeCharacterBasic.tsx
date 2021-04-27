@@ -8,8 +8,6 @@ import { useUpgradeCharacterStore } from '../../store/upgradeCharacter';
 
 import AbilityInput from '../AbilityInput';
 import Select from '../Select';
-import ClassSpecialityPickerToggler from '../ClassSpecialityPickerToggler';
-import ClassSpecialityDisplayer from '../ClassSpecialityDisplayer';
 
 export default function CreateCharacterBasic(): JSX.Element {
   const upgradeStore = useUpgradeCharacterStore();
@@ -30,33 +28,6 @@ export default function CreateCharacterBasic(): JSX.Element {
                 }}
               />
             </HStack>
-            {upgradeStore.newGainedClassSpeciality.map((e) => (
-              <HStack
-                key={e.type}
-                w="full"
-                spacing="0"
-                pb="2"
-                borderBottom="1px"
-                borderColor="gray.200"
-              >
-                <Text fontSize="lg">职业特性</Text>
-                <Spacer />
-                <VStack alignItems="flex-end">
-                  <ClassSpecialityPickerToggler
-                    effect={e}
-                    value={upgradeStore.upgrade.classSpeciality}
-                    onChange={(v) => {
-                      upgradeStore.upgrade.classSpeciality = v;
-                    }}
-                  />
-                  {upgradeStore.upgrade.classSpeciality ? (
-                    <ClassSpecialityDisplayer
-                      classSpeciality={upgradeStore.upgrade.classSpeciality}
-                    />
-                  ) : null}
-                </VStack>
-              </HStack>
-            ))}
             {upgradeStore.character.favoredClassIds.includes(upgradeStore.upgrade.classId) ? (
               <HStack w="full" spacing="0" pb="2" borderBottom="1px" borderColor="gray.200">
                 <Text fontSize="lg">天赋职业奖励</Text>

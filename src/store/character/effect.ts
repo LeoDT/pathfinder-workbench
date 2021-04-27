@@ -1,33 +1,16 @@
 import { computed, makeObservable } from 'mobx';
 
+import { ArcaneSchool } from '../../types/arcaneSchool';
 import { Class, ClassFeat, Feat, RacialTrait } from '../../types/core';
-import {
-  ArgsTypeForEffect,
-  BaseEffect,
-  Effect,
-  EffectAbilityBonus,
-  EffectGainAC,
-  EffectGainArcaneSchool,
-  EffectGainFavoredClassAmount,
-  EffectGainFeat,
-  EffectGainInitiative,
-  EffectGainProficiency,
-  EffectGainSave,
-  EffectGainSelectedWeaponProficiency,
-  EffectGainSkill,
-  EffectGainSpellCasting,
-  EffectGainTwoWeaponFighting,
-  EffectNeadInput,
-  EffectType,
-  effectTypesNeedInput,
-} from '../../types/effectType';
+import * as Effects from '../../types/effectType';
 import { getClassFeatByLevel } from '../../utils/class';
-import { makeEffectInputKey } from '../../utils/effect';
+import { makeEffectInputKey, validateGainArcaneSchoolEffectInput } from '../../utils/effect';
 import { collections } from '../collection';
 import Character from '.';
 
-export type EffectSource = RacialTrait | ClassFeat | Feat;
-export interface EffectAndSource<T = Effect> {
+export type EntityTypesValidForEffectSource = 'racialTrait' | 'classFeat' | 'feat' | 'arcaneSchool';
+export type EffectSource = RacialTrait | ClassFeat | Feat | ArcaneSchool;
+export interface EffectAndSource<T = Effects.Effect> {
   effect: T;
   source: EffectSource;
   input?: unknown;
@@ -36,7 +19,7 @@ export interface EffectAndSource<T = Effect> {
 export default class CharacterEffect {
   character: Character;
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  growedEffectCache: WeakMap<any, Effect>;
+  growedEffectCache: WeakMap<any, Effects.Effect>;
 
   constructor(character: Character) {
     makeObservable(this, {
@@ -88,6 +71,24 @@ export default class CharacterEffect {
     return upgrade?.effectInputs.get(makeEffectInputKey(f));
   }
 
+  extendEffect(es: EffectAndSource): EffectAndSource | EffectAndSource[] {
+    const { effect, input } = es;
+    switch (effect.type) {
+      case Effects.EffectType.gainArcaneSchool: {
+        if (!input) return es;
+
+        const realInput = validateGainArcaneSchoolEffectInput(input);
+        const school = collections.arcaneSchool.getById(realInput.school);
+        const newES = school.effects?.map((effect) => ({ effect, source: school })) ?? [];
+
+        return [es, ...newES];
+      }
+
+      default:
+        return es;
+    }
+  }
+
   get allEffects(): Array<EffectAndSource> {
     const effects: Array<EffectAndSource> = [];
 
@@ -119,12 +120,12 @@ export default class CharacterEffect {
       });
     });
 
-    return effects;
+    return effects.map((e) => this.extendEffect(e)).flat();
   }
 
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  private getEffectsByType<T extends BaseEffect<any, any>>(
-    t: EffectType,
+  private getEffectsByType<T extends Effects.BaseEffect<any, any>>(
+    t: Effects.EffectType,
     fromEffects?: Array<EffectAndSource>
   ): EffectAndSource<T>[] {
     return (fromEffects ?? this.allEffects).filter(
@@ -132,9 +133,9 @@ export default class CharacterEffect {
     );
   }
 
-  private makeGrowedEffect<T extends Effect>(
+  private makeGrowedEffect<T extends Effects.Effect>(
     e: T,
-    g: { level: number; args: ArgsTypeForEffect<T> }
+    g: { level: number; args: Effects.ArgsTypeForEffect<T> }
   ): T {
     const hit = this.growedEffectCache.get(g);
 
@@ -153,15 +154,11 @@ export default class CharacterEffect {
     return growed;
   }
 
-  private growEffectArgs<T extends Effect>(e: T, source: EffectSource): T {
+  private growEffectArgs<T extends Effects.Effect>(e: T, source: EffectSource): T {
     if (!e.growArgs) return e;
 
     let level = 0;
     switch (source._type) {
-      case 'racialTrait':
-      case 'feat':
-        level = this.character.level;
-        break;
       case 'classFeat': {
         let clas = null;
         for (const [c, feats] of this.character.gainedClassFeats.entries()) {
@@ -175,6 +172,9 @@ export default class CharacterEffect {
         }
         break;
       }
+      default:
+        level = this.character.level;
+        break;
     }
 
     if (level > 0) {
@@ -202,57 +202,73 @@ export default class CharacterEffect {
     return effects;
   }
 
-  getEffectsNeedInput(): EffectAndSource<EffectNeadInput>[] {
-    return effectTypesNeedInput.map((t) => this.getEffectsByType<EffectNeadInput>(t)).flat();
+  getEffectsNeedInput(): EffectAndSource<Effects.EffectNeadInput>[] {
+    return Effects.effectTypesNeedInput
+      .map((t) => this.getEffectsByType<Effects.EffectNeadInput>(t))
+      .flat();
   }
 
-  getGainFeatEffects(fromEffects?: EffectAndSource[]): EffectAndSource<EffectGainFeat>[] {
-    return this.getEffectsByType<EffectGainFeat>(EffectType.gainFeat, fromEffects);
+  getGainFeatEffects(fromEffects?: EffectAndSource[]): EffectAndSource<Effects.EffectGainFeat>[] {
+    return this.getEffectsByType<Effects.EffectGainFeat>(Effects.EffectType.gainFeat, fromEffects);
   }
 
-  getGainArcaneSchoolEffects(): EffectAndSource<EffectGainArcaneSchool>[] {
-    return this.getEffectsByType<EffectGainArcaneSchool>(EffectType.gainArcaneSchool);
-  }
-
-  getAbilityBonusEffects(): EffectAndSource<EffectAbilityBonus>[] {
-    return this.getEffectsByType<EffectAbilityBonus>(EffectType.abilityBonus);
-  }
-
-  getGainSpellCastingEffects(): EffectAndSource<EffectGainSpellCasting>[] {
-    return this.getEffectsByType<EffectGainSpellCasting>(EffectType.gainSpellCasting);
-  }
-
-  getGainFavoredClassAmountEffects(): EffectAndSource<EffectGainFavoredClassAmount>[] {
-    return this.getEffectsByType<EffectGainFavoredClassAmount>(EffectType.gainFavoredClassAmount);
-  }
-
-  getGainProficiencyEffects(): EffectAndSource<EffectGainProficiency>[] {
-    return this.getEffectsByType<EffectGainProficiency>(EffectType.gainProficiency);
-  }
-
-  getGainSelectedWeaponProficiencyEffects(): EffectAndSource<EffectGainSelectedWeaponProficiency>[] {
-    return this.getEffectsByType<EffectGainSelectedWeaponProficiency>(
-      EffectType.gainSelectedWeaponProficiency
+  getGainArcaneSchoolEffects(): EffectAndSource<Effects.EffectGainArcaneSchool>[] {
+    return this.getEffectsByType<Effects.EffectGainArcaneSchool>(
+      Effects.EffectType.gainArcaneSchool
     );
   }
 
-  getGainSkillEffects(): EffectAndSource<EffectGainSkill>[] {
-    return this.getEffectsByType<EffectGainSkill>(EffectType.gainSkill);
+  getGainArcaneSchoolPrepareSlotEffects(): EffectAndSource<Effects.EffectGainArcaneSchoolPrepareSlot>[] {
+    return this.getEffectsByType<Effects.EffectGainArcaneSchoolPrepareSlot>(
+      Effects.EffectType.gainArcaneSchoolPrepareSlot
+    );
   }
 
-  getGainInitiativeEffects(): EffectAndSource<EffectGainInitiative>[] {
-    return this.getEffectsByType<EffectGainInitiative>(EffectType.gainInitiative);
+  getAbilityBonusEffects(): EffectAndSource<Effects.EffectAbilityBonus>[] {
+    return this.getEffectsByType<Effects.EffectAbilityBonus>(Effects.EffectType.abilityBonus);
   }
 
-  getGainACEffects(): EffectAndSource<EffectGainAC>[] {
-    return this.getEffectsByType<EffectGainAC>(EffectType.gainAC);
+  getGainSpellCastingEffects(): EffectAndSource<Effects.EffectGainSpellCasting>[] {
+    return this.getEffectsByType<Effects.EffectGainSpellCasting>(
+      Effects.EffectType.gainSpellCasting
+    );
   }
 
-  getGainSaveEffects(): EffectAndSource<EffectGainSave>[] {
-    return this.getEffectsByType<EffectGainSave>(EffectType.gainSave);
+  getGainFavoredClassAmountEffects(): EffectAndSource<Effects.EffectGainFavoredClassAmount>[] {
+    return this.getEffectsByType<Effects.EffectGainFavoredClassAmount>(
+      Effects.EffectType.gainFavoredClassAmount
+    );
   }
 
-  getGainTwoWeaponFightingEffects(): EffectAndSource<EffectGainTwoWeaponFighting>[] {
-    return this.getEffectsByType<EffectGainTwoWeaponFighting>(EffectType.gainTwoWeaponFighting);
+  getGainProficiencyEffects(): EffectAndSource<Effects.EffectGainProficiency>[] {
+    return this.getEffectsByType<Effects.EffectGainProficiency>(Effects.EffectType.gainProficiency);
+  }
+
+  getGainSelectedWeaponProficiencyEffects(): EffectAndSource<Effects.EffectGainSelectedWeaponProficiency>[] {
+    return this.getEffectsByType<Effects.EffectGainSelectedWeaponProficiency>(
+      Effects.EffectType.gainSelectedWeaponProficiency
+    );
+  }
+
+  getGainSkillEffects(): EffectAndSource<Effects.EffectGainSkill>[] {
+    return this.getEffectsByType<Effects.EffectGainSkill>(Effects.EffectType.gainSkill);
+  }
+
+  getGainInitiativeEffects(): EffectAndSource<Effects.EffectGainInitiative>[] {
+    return this.getEffectsByType<Effects.EffectGainInitiative>(Effects.EffectType.gainInitiative);
+  }
+
+  getGainACEffects(): EffectAndSource<Effects.EffectGainAC>[] {
+    return this.getEffectsByType<Effects.EffectGainAC>(Effects.EffectType.gainAC);
+  }
+
+  getGainSaveEffects(): EffectAndSource<Effects.EffectGainSave>[] {
+    return this.getEffectsByType<Effects.EffectGainSave>(Effects.EffectType.gainSave);
+  }
+
+  getGainTwoWeaponFightingEffects(): EffectAndSource<Effects.EffectGainTwoWeaponFighting>[] {
+    return this.getEffectsByType<Effects.EffectGainTwoWeaponFighting>(
+      Effects.EffectType.gainTwoWeaponFighting
+    );
   }
 }

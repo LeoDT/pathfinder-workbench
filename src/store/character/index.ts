@@ -22,12 +22,13 @@ import { aggregateBonusesAmount } from '../../utils/bonus';
 import { getClassFeatByLevel, getClassLevel } from '../../utils/class';
 import { coreToConsolidated } from '../../utils/skill';
 import { collections } from '../collection';
-import Spellbook from '../spellbook';
 import { CharacterAttack } from './attack';
 import CharacterEffect from './effect';
 import CharacterEquip from './equip';
 import { CharacterProficiency } from './proficiency';
+import { CharacterSpellbook } from './spellbook';
 import CharacterStatus from './status';
+import { CharacterTracker } from './tracker';
 
 interface OptionalCharacterParams {
   id?: string;
@@ -40,6 +41,9 @@ interface OptionalCharacterParams {
 
   raceId?: string;
   alternateRaceTraitIds?: string[];
+
+  preparedSpellIds?: Map<string, string[]>;
+  preparedSpecialSpellIds?: Map<string, string[]>;
 
   upgrades?: CharacterUpgrade[];
 }
@@ -57,13 +61,16 @@ export default class Character {
   raceId: string;
   alternateRaceTraitIds: string[];
   favoredClassIds: string[];
-  spellbooks: IObservableArray<Spellbook>;
+  preparedSpellIds: Map<string, string[]>;
+  preparedSpecialSpellIds: Map<string, string[]>; // for domain or arcane school
+  spellbooks: IObservableArray<CharacterSpellbook>;
 
   status: CharacterStatus;
   equipment: CharacterEquip;
   effect: CharacterEffect;
   proficiency: CharacterProficiency;
   attack: CharacterAttack;
+  tracker: CharacterTracker;
 
   constructor(
     name: string,
@@ -74,6 +81,8 @@ export default class Character {
       bonusAbilityType,
       raceId = 'Half Elf',
       alternateRaceTraitIds,
+      preparedSpellIds,
+      preparedSpecialSpellIds,
       favoredClassIds,
       upgrades,
     }: OptionalCharacterParams = {}
@@ -113,6 +122,9 @@ export default class Character {
       skillRanks: computed,
       skillRanksWithoutPending: computed,
 
+      preparedSpellIds: observable,
+      preparedSpecialSpellIds: observable,
+
       gainedFeats: computed,
     });
 
@@ -131,13 +143,17 @@ export default class Character {
     this.raceId = raceId;
     this.alternateRaceTraitIds = alternateRaceTraitIds || [];
 
-    this.spellbooks = observable.array([], { deep: false });
+    this.preparedSpellIds = preparedSpellIds || new Map();
+    this.preparedSpecialSpellIds = preparedSpecialSpellIds || new Map();
+
+    this.effect = new CharacterEffect(this);
     this.status = new CharacterStatus(this);
     this.equipment = new CharacterEquip(this);
-    this.effect = new CharacterEffect(this);
     this.proficiency = new CharacterProficiency(this);
     this.attack = new CharacterAttack(this);
+    this.tracker = new CharacterTracker(this);
 
+    this.spellbooks = observable.array([], { deep: false });
     this.ensureSpellbooks();
   }
 
@@ -225,7 +241,6 @@ export default class Character {
       spells: [],
       levelFeat,
       levelAbility,
-      classSpeciality: null,
     };
   }
   cancelUpgrade(): void {
@@ -413,7 +428,7 @@ export default class Character {
   }
 
   ensureSpellbooks(): void {
-    const books: Array<Spellbook> = [];
+    const books: Array<CharacterSpellbook> = [];
 
     const effects = this.effect.getGainSpellCastingEffects();
 
@@ -432,7 +447,7 @@ export default class Character {
         if (existedSpellbook) {
           books.push(existedSpellbook);
         } else {
-          const newSpellbook = new Spellbook(
+          const newSpellbook = new CharacterSpellbook(
             this,
             clas,
             effect.args.castingType,
@@ -466,6 +481,9 @@ export default class Character {
         effectInputs: Array.from(u.effectInputs.entries()),
       })),
       equipment: CharacterEquip.stringify(c.equipment),
+      tracker: CharacterTracker.stringify(c.tracker),
+      preparedSpellIds: Array.from(c.preparedSpellIds.entries()),
+      preparedSpecialSpellIds: Array.from(c.preparedSpecialSpellIds.entries()),
       ...pick(c, Character.serializableProps),
     });
   }
@@ -478,10 +496,17 @@ export default class Character {
       return { ...u, skills: new Map(u.skills), effectInputs: new Map(u.effectInputs) };
     });
 
+    json.preparedSpellIds = new Map(json.preparedSpellIds);
+    json.preparedSpecialSpellIds = new Map(json.preparedSpecialSpellIds);
+
     const character = new Character(json.name, json);
 
     if (json.equipment) {
       character.equipment = CharacterEquip.parse(json.equipment, character);
+    }
+
+    if (json.tracker) {
+      character.tracker = CharacterTracker.parse(json.tracker, character);
     }
 
     return character;

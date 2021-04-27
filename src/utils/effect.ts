@@ -1,5 +1,5 @@
-import { ClassFeat, RacialTrait, Feat } from '../types/core';
-import { EffectGainFeatArgs } from '../types/effectType';
+import { ClassFeat, Feat, RacialTrait } from '../types/core';
+import { EffectGainArcaneSchoolInput, EffectGainFeatArgs } from '../types/effectType';
 import { featTypeTranslates } from './feat';
 
 export function translateGainFeatEffectArgs(e: EffectGainFeatArgs): string {
@@ -16,4 +16,8 @@ export function translateGainFeatEffectArgs(e: EffectGainFeatArgs): string {
 
 export function makeEffectInputKey(source: ClassFeat | RacialTrait | Feat, suffix = ''): string {
   return `${source._type}:${source.id}${suffix ? `:${suffix}` : ''}`;
+}
+
+export function validateGainArcaneSchoolEffectInput(i: unknown): EffectGainArcaneSchoolInput {
+  return i as EffectGainArcaneSchoolInput;
 }

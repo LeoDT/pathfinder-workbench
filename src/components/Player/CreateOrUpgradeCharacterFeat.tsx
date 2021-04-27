@@ -4,6 +4,7 @@ import { Box, Divider, Heading } from '@chakra-ui/react';
 
 import { useStore } from '../../store';
 import CreateCharacterStore from '../../store/createCharacter';
+import { Feat } from '../../types/core';
 import { translateGainFeatEffectArgs } from '../../utils/effect';
 import { gainFeatReasonTranslates } from '../../utils/upgrade';
 import { CollectionEntityPickerPopover } from '../CollectionEntityPicker';
@@ -30,7 +31,7 @@ export default function CreateOrUpgradeCharacterFeat({
               const fId = createOrUpgrade.upgrade.feats[r.index];
               const feat = fId ? collections.feat.getById(fId) : null;
 
-              const pickerProps: EntityPickerProps = {
+              const pickerProps: EntityPickerProps<Feat> = {
                 text: '选择专长',
                 items: [createOrUpgrade.upgrade.feats[r.index]],
                 onPick: (fId) => {

@@ -1,5 +1,5 @@
 import { Observer } from 'mobx-react-lite';
-import { Box, HStack, Tag, Text } from '@chakra-ui/react';
+import { Box, Wrap, WrapItem, Tag, Text } from '@chakra-ui/react';
 
 import { useCurrentCharacter } from './context';
 
@@ -12,7 +12,7 @@ export default function CharacterDetailStorage(): JSX.Element {
 
   return (
     <Box position="relative">
-      <Box position="absolute" right="0" top="-10">
+      <Box position="absolute" right="0" top="-9">
         <CreateEquipmentToggler
           buttonProps={{ size: 'sm' }}
           characterSize={character.race.size}
@@ -26,18 +26,19 @@ export default function CharacterDetailStorage(): JSX.Element {
         {() =>
           character.equipment.storageWithCostWeight.length ? (
             <Box>
-              <HStack maxH={200} spacing="2" flexWrap="wrap" overflowY="auto" overflowX="hidden">
+              <Wrap maxH={200} spacing="2">
                 {character.equipment.storageWithCostWeight.map(({ e }) => (
-                  <Tag
-                    key={e.id}
-                    variant="outline"
-                    colorScheme={EQUIPMENT_COLOR_SCHEME[e.equipmentType]}
-                    cursor="default"
-                  >
-                    {showEquipment(e)}
-                  </Tag>
+                  <WrapItem key={e.id}>
+                    <Tag
+                      variant="outline"
+                      colorScheme={EQUIPMENT_COLOR_SCHEME[e.equipmentType]}
+                      cursor="default"
+                    >
+                      {showEquipment(e)}
+                    </Tag>
+                  </WrapItem>
                 ))}
-              </HStack>
+              </Wrap>
             </Box>
           ) : (
             <Text color="gray">空无一物</Text>

@@ -83,7 +83,8 @@ export interface Race extends Entity {
 }
 
 export interface SpellMeta {
-  school?: string;
+  school: string;
+  subschool?: string;
   level?: string;
   castingTime?: string;
   components?: string;

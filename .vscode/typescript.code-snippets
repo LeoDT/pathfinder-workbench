@@ -13,8 +13,8 @@
     "scope": "typescript",
 		"prefix": "efmget",
 		"body": [
-			"get$1Effects(): EffectAndSource<Effect$1>[] {",
-      "  return this.getEffectsByType<Effect$1>(EffectType.$2);",
+			"get$1Effects(): EffectAndSource<Effects.Effect$1>[] {",
+      "  return this.getEffectsByType<Effects.Effect$1>(Effects.EffectType.$2);",
       "}"
 		]
 	},

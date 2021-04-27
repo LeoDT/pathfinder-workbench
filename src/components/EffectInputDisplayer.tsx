@@ -1,5 +1,8 @@
+import { HStack, Badge } from '@chakra-ui/react';
+
 import { useStore } from '../store';
 import { EffectNeadInput, EffectType } from '../types/effectType';
+import { validateGainArcaneSchoolEffectInput } from '../utils/effect';
 import SimpleEntity from './SimpleEntity';
 
 interface Props {
@@ -14,6 +17,32 @@ export function EffectInputDisplayer({ input, effect }: Props): JSX.Element | nu
   if (!input) return null;
 
   switch (effect.type) {
+    case EffectType.gainArcaneSchool:
+      {
+        const realInput = validateGainArcaneSchoolEffectInput(input);
+
+        const school = collections.arcaneSchool.getById(realInput.school);
+        const forbidden = realInput.forbiddenSchool.map((s) => collections.arcaneSchool.getById(s));
+        const focused =
+          school.type === 'standard' && realInput.focused
+            ? school.focused.find((f) => f.id === realInput.focused)
+            : undefined;
+
+        child = (
+          <HStack>
+            <Badge fontSize="md" colorScheme="blue">
+              {focused ? `${focused.name}(${school.name})` : school.name}
+            </Badge>
+            {forbidden.map((s) => (
+              <Badge fontSize="md" key={s.id} colorScheme="red">
+                {s.name}
+              </Badge>
+            ))}
+          </HStack>
+        );
+      }
+      break;
+
     case EffectType.gainSelectedWeaponProficiency:
       {
         if (typeof input !== 'string') return null;

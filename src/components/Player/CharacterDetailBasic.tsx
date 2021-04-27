@@ -18,6 +18,7 @@ import { CharacterDetailFeats } from './CharacterDetailFeats';
 import { CharacterDetailSkills } from './CharacterDetailSkills';
 import CharacterDetailStorage from './CharacterDetailStorage';
 import { useCurrentCharacter } from './context';
+import { CharacterDetailSpells } from './CharacterDetailSpells';
 
 const abilityStyle: StackProps = {
   flexBasis: [1 / 2, 1 / 3],
@@ -214,7 +215,7 @@ export default function CharacterDetailBasic(): JSX.Element {
               </Block>
             </Stack>
 
-            <Stack direction={['column', 'row']} alignItems={['flex-start', 'stretch']}>
+            <Stack direction={['column', 'row']}>
               <Box flexBasis={['50%', '100%']}>
                 <Block p="2" h="full">
                   <BlockHeading>装备</BlockHeading>
@@ -228,6 +229,22 @@ export default function CharacterDetailBasic(): JSX.Element {
                 </Block>
               </Box>
             </Stack>
+
+            {character.spellbooks.map((b) => (
+              <Stack direction={['column', 'row']} key={b.class.id}>
+                <Box flexBasis={['50%', '100%']}>
+                  <Block p="2" h="full">
+                    <BlockHeading>法术</BlockHeading>
+                    <CharacterDetailSpells spellbook={b} />
+                  </Block>
+                </Box>
+                <Box flexBasis={['50%', '100%']}>
+                  <Block p="2" h="full">
+                    <BlockHeading>Trackers</BlockHeading>
+                  </Block>
+                </Box>
+              </Stack>
+            ))}
 
             {Array.from(character.gainedClassFeats.entries()).map(([clas, feats]) => (
               <Block p="2" key={clas.id}>

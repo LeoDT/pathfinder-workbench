@@ -1,24 +1,23 @@
 import { compact } from 'lodash-es';
-import { makeObservable, computed, action, reaction } from 'mobx';
+import { action, computed, makeObservable, reaction } from 'mobx';
 
-import { createContextNoNullCheck } from '../utils/react';
+import { CharacterUpgrade } from '../types/characterUpgrade';
+import { Class, ClassFeat } from '../types/core';
+import { EffectGainFeatArgs } from '../types/effectType';
 import {
   ABILITY_POINTS,
-  addBonusScores,
   BASE_ABILITY,
+  addBonusScores,
   getTotalScoreCosts,
   makeAbilities,
 } from '../utils/ability';
-import { gainClassSpecialityEffectType, getClassFeatByLevel } from '../utils/class';
-
-import { Class, ClassFeat } from '../types/core';
-import { EffectGainClassSpeciality, EffectGainFeatArgs } from '../types/effectType';
-import { CharacterUpgrade } from '../types/characterUpgrade';
-
-import { collections } from './collection';
-import Character from './character';
-import Spellbook from './spellbook';
 import { constraintAppliedAlignmentOptions } from '../utils/alignment';
+import { getClassFeatByLevel } from '../utils/class';
+import { createContextNoNullCheck } from '../utils/react';
+import Character from './character';
+import { EntityTypesValidForEffectSource } from './character/effect';
+import { CharacterSpellbook } from './character/spellbook';
+import { collections } from './collection';
 
 export interface GainFeatReason extends EffectGainFeatArgs {
   reason: 'race' | 'class' | 'level';
@@ -27,7 +26,6 @@ export interface GainFeatReason extends EffectGainFeatArgs {
 
 export type InvalidReason =
   | 'abilityBonus'
-  | 'classSpeciality'
   | 'abilityPoints'
   | 'skillPoints'
   | 'feat'
@@ -50,7 +48,6 @@ export default class CreateCharacterStore {
       updateClass: action,
       gainFeatReasons: computed,
       newGainedClassFeats: computed,
-      newGainedClassSpeciality: computed,
 
       setEffectInput: action,
       deleteEffectInput: action,
@@ -177,18 +174,18 @@ export default class CreateCharacterStore {
   }
 
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  getEffectInput(type: 'feat' | 'classFeat' | 'racialTrait', id: string, suffix?: string): any {
+  getEffectInput(type: EntityTypesValidForEffectSource, id: string, suffix?: string): any {
     return this.upgrade.effectInputs.get(`${type}:${id}${suffix ? `:${suffix}` : ''}`);
   }
   setEffectInput(
-    type: 'feat' | 'classFeat' | 'racialTrait',
+    type: EntityTypesValidForEffectSource,
     id: string,
     value: unknown,
     suffix?: string
   ): void {
     this.upgrade.effectInputs.set(`${type}:${id}${suffix ? `:${suffix}` : ''}`, value);
   }
-  deleteEffectInput(type: 'feat' | 'classFeat' | 'racialTrait', id: string, suffix?: string): void {
+  deleteEffectInput(type: EntityTypesValidForEffectSource, id: string, suffix?: string): void {
     this.upgrade.effectInputs.delete(`${type}:${id}${suffix ? `:${suffix}` : ''}`);
   }
 
@@ -213,24 +210,10 @@ export default class CreateCharacterStore {
     }
 
     this.resetUpgradeFeats();
-    this.upgrade.classSpeciality = null;
     this.character.ensureSpellbooks();
   }
   get class(): Class {
     return collections.class.getById(this.upgrade.classId);
-  }
-
-  get newGainedClassSpeciality(): Array<EffectGainClassSpeciality> {
-    // TODO: there should be only one speciality
-    return compact(
-      this.newGainedClassFeats
-        .map((cf) =>
-          cf.effects?.filter((e): e is EffectGainClassSpeciality =>
-            gainClassSpecialityEffectType.includes(e.type)
-          )
-        )
-        .flat()
-    );
   }
 
   get skillPoints(): number {
@@ -248,7 +231,7 @@ export default class CreateCharacterStore {
     return this.skillPoints - this.skillPointsUsed;
   }
 
-  get spellbook(): Spellbook | undefined {
+  get spellbook(): CharacterSpellbook | undefined {
     return this.character.spellbooks.find((sb) => sb.class.id === this.upgrade.classId);
   }
 
@@ -272,10 +255,6 @@ export default class CreateCharacterStore {
         this.character.maxBonusAbilityType > 0
           ? this.character.bonusAbilityType.length !== this.character.maxBonusAbilityType
           : false,
-      ],
-      [
-        'classSpeciality',
-        this.newGainedClassSpeciality.length > 0 && !this.upgrade.classSpeciality,
       ],
       ['skillPoints', this.skillPointsRemain !== 0],
       ['feat', this.gainFeatReasons.length !== compact(this.upgrade.feats).length],

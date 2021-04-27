@@ -9,8 +9,6 @@ import { ABILITY_TYPES, abilityTranslates, getScoreCost } from '../../utils/abil
 import { constraintAppliedAlignmentOptions } from '../../utils/alignment';
 import { favoredClassBonusOptions } from '../../utils/upgrade';
 import AbilityInput from '../AbilityInput';
-import ClassSpecialityDisplayer from '../ClassSpecialityDisplayer';
-import ClassSpecialityPickerToggler from '../ClassSpecialityPickerToggler';
 import { CollectionEntityPickerPopover } from '../CollectionEntityPicker';
 import CollectionEntitySelect from '../CollectionEntitySelect';
 import Select, { MultipleSelect } from '../Select';
@@ -155,31 +153,6 @@ export default function CreateCharacterBasic(): JSX.Element {
                 />
               </HStack>
             ) : null}
-            {create.newGainedClassSpeciality.map((e) => (
-              <HStack
-                key={e.type}
-                w="full"
-                spacing="0"
-                pb="2"
-                borderBottom="1px"
-                borderColor="gray.200"
-              >
-                <Text fontSize="lg">职业特性</Text>
-                <Spacer />
-                <VStack alignItems="flex-end">
-                  <ClassSpecialityPickerToggler
-                    effect={e}
-                    value={create.upgrade.classSpeciality}
-                    onChange={(v) => {
-                      create.upgrade.classSpeciality = v;
-                    }}
-                  />
-                  {create.upgrade.classSpeciality ? (
-                    <ClassSpecialityDisplayer classSpeciality={create.upgrade.classSpeciality} />
-                  ) : null}
-                </VStack>
-              </HStack>
-            ))}
           </VStack>
         )}
       </Observer>

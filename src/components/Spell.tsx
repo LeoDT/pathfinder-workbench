@@ -5,7 +5,7 @@ import { Box, Heading, Badge, Text, Stack, Table, Tbody, Tr, Td } from '@chakra-
 
 import { ENTITY_COLORS } from '../constant';
 import { Spell as SpellType, SpellMeta as SpellMetaType } from '../types/core';
-import { translates as spellTranslates } from '../utils/spell';
+import { schoolTranslates, translates as spellTranslates } from '../utils/spell';
 
 interface Props {
   spell: SpellType;
@@ -44,7 +44,7 @@ export function Spell({
       {showName ? (
         <Stack direction="row" align="center">
           <Badge minW="3em" textAlign="center" px="0">
-            {spell.book.toUpperCase()}
+            {schoolTranslates[spell.meta.school].slice(0, 2)}
           </Badge>
           <Heading as="h4" fontSize="lg" color={ENTITY_COLORS.spell}>
             {spell.name}{' '}
@@ -68,3 +68,16 @@ export function Spell({
 }
 
 export default memo(Spell);
+
+export function spellAsLabelRenderer(spell: SpellType): JSX.Element {
+  return (
+    <>
+      <Badge minW="3em" textAlign="center" px="0">
+        {schoolTranslates[spell.meta.school].slice(0, 2)}
+      </Badge>
+      <Text pl="2" display="inline">
+        {spell.name}
+      </Text>
+    </>
+  );
+}

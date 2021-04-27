@@ -1,4 +1,4 @@
-import { useMemo, useState, MutableRefObject, useRef, RefObject } from 'react';
+import { useMemo, useState, MutableRefObject, useRef, RefObject, ReactNode } from 'react';
 import Fuse from 'fuse.js';
 
 import {
@@ -25,20 +25,26 @@ import { Entity } from '../types/core';
 
 import { EntityQuickViewerToggler } from './EntityQuickViewer';
 import { createContextFailSafe } from '../utils/react';
+import { spellAsLabelRenderer } from './Spell';
 
-export interface Props {
-  fuse?: Fuse<Entity>;
+export interface Props<T extends Entity> {
+  fuse?: Fuse<T>;
   onPick?: (id: string) => void;
   onUnpick?: (id: string) => void;
   items?: Array<string>;
   inputRef?: MutableRefObject<HTMLInputElement | null>;
   quickViewer?: boolean;
-  entities?: Array<Entity>;
+  entities?: Array<T>;
   disabledEntityIds?: string[];
   listAll?: boolean;
 }
 
-export default function EntityPicker({
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+const labelRenderers: Record<string, (...args: any) => ReactNode> = {
+  spell: spellAsLabelRenderer,
+};
+
+export default function EntityPicker<T extends Entity>({
   inputRef,
   onPick,
   onUnpick,
@@ -48,7 +54,7 @@ export default function EntityPicker({
   entities,
   disabledEntityIds,
   listAll = false,
-}: Props): JSX.Element {
+}: Props<T>): JSX.Element {
   const inputRefFromContext = useEntityPickerInputRef();
   const realInputRef = inputRef || inputRefFromContext;
   const [searchKey, setSearchKey] = useState('');
@@ -67,7 +73,7 @@ export default function EntityPicker({
   const searchResult = useMemo(() => {
     return realFuse.search(searchKey) || [];
   }, [realFuse, searchKey]);
-  const results = useMemo(() => {
+  const results: T[] = useMemo(() => {
     if (listAll && entities && !searchKey) {
       return entities;
     }
@@ -134,7 +140,7 @@ export default function EntityPicker({
               >
                 {picked ? <Icon as={FaCheck} /> : null}
                 <Text>
-                  {item.name} ({item.id})
+                  {labelRenderers[item._type] ? labelRenderers[item._type](item) : `${item.name}`}
                 </Text>
                 <Spacer />
                 {quickViewer ? <EntityQuickViewerToggler entity={item} /> : null}
@@ -147,16 +153,16 @@ export default function EntityPicker({
   );
 }
 
-export interface PopoverProps extends Props {
+export interface PopoverProps<T extends Entity> extends Props<T> {
   text: string;
   togglerDisabled?: boolean;
 }
 
-export function EntityPickerPopover({
+export function EntityPickerPopover<T extends Entity>({
   text,
   togglerDisabled,
   ...props
-}: PopoverProps): JSX.Element {
+}: PopoverProps<T>): JSX.Element {
   const { isOpen, onClose, onToggle } = useDisclosure();
   const initialFocusRef = useRef<HTMLInputElement>(null);
 

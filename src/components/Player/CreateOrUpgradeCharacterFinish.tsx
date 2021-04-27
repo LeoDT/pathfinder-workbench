@@ -13,7 +13,6 @@ interface Props {
 const validateTranslates: Record<InvalidReason, string> = {
   abilityBonus: '未选择足够能力奖励',
   abilityPoints: '有未使用的能力点数',
-  classSpeciality: '未选择职业特性',
   skillPoints: '有未使用的技能点数',
   feat: '未选择足够专长',
   spell: '未选择足够法术',
