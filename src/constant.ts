@@ -25,6 +25,13 @@ export const ENTITY_COLORS: Record<string, string> = {
   armorType: 'red.600',
 };
 
+export const ENTITY_COLOR_SCHEME: Record<string, string> = {
+  spell: 'purple',
+  feat: 'teal',
+  weaponType: 'orange',
+  armorType: 'red',
+};
+
 export const EQUIPMENT_COLOR_SCHEME = {
   weapon: 'orange',
   armor: 'red',

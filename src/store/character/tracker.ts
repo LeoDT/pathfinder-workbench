@@ -10,7 +10,7 @@ interface Tracker {
 }
 
 interface RawCharacterTracker {
-  spellTracker?: Map<string, string[]>;
+  spellTracker?: Array<[string, string[]]>;
   trackers?: Tracker[];
 }
 
@@ -28,7 +28,7 @@ export class CharacterTracker {
 
     this.character = c;
 
-    this.spellTracker = raw?.spellTracker ?? new Map();
+    this.spellTracker = new Map(raw?.spellTracker);
     this.trackers = raw?.trackers ?? [];
   }
 
@@ -36,6 +36,9 @@ export class CharacterTracker {
     const spells = this.spellTracker.get(spellbook.class.id) ?? [];
 
     this.spellTracker.set(spellbook.class.id, [...spells, spell.id]);
+  }
+  resetSpellTracker(spellbook: CharacterSpellbook): void {
+    this.spellTracker.set(spellbook.class.id, []);
   }
 
   static stringify(c: CharacterTracker): string {

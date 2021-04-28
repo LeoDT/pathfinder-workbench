@@ -139,9 +139,13 @@ export default function EntityPicker<T extends Entity>({
                 cursor={disabled ? 'not-allowed' : 'pointer'}
               >
                 {picked ? <Icon as={FaCheck} /> : null}
-                <Text>
-                  {labelRenderers[item._type] ? labelRenderers[item._type](item) : `${item.name}`}
-                </Text>
+
+                {labelRenderers[item._type] ? (
+                  labelRenderers[item._type](item)
+                ) : (
+                  <Text>{item.name}</Text>
+                )}
+
                 <Spacer />
                 {quickViewer ? <EntityQuickViewerToggler entity={item} /> : null}
               </HStack>

@@ -16,7 +16,7 @@ export default function CharacterDetailEquip(): JSX.Element {
     <Box>
       <Observer>
         {() => (
-          <SimpleGrid columns={[1, 2]} spacing="2">
+          <SimpleGrid columns={2} spacing="2">
             <HStack>
               <Select
                 options={equip.handOptions}

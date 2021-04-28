@@ -11,7 +11,7 @@ export default function PlayerPage(): JSX.Element {
 
   return (
     <BreadcrumbManagerContext.Provider value={breadcrumbs}>
-      <Container pt="4" px={['2', '0']}>
+      <Container py="4" px={['2', '0']}>
         <Switch>
           <Route path="/player/list" component={CharacterList} />
           <Route path="/player/create" component={CreateCharacter} />

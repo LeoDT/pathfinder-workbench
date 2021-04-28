@@ -1,6 +1,6 @@
 import { partition } from 'lodash-es';
 
-import { SimpleGrid } from '@chakra-ui/react';
+import { SimpleGrid, Text } from '@chakra-ui/react';
 
 import { ClassFeat, Feat, RacialTrait } from '../../types/core';
 import { EffectInputDisplayer } from '../EffectInputDisplayer';
@@ -43,6 +43,7 @@ export function CharacterDetailFeats({ entitiesWithInput }: Props): JSX.Element 
           ))}
         </SimpleGrid>
       ) : null}
+      {entitiesWithInput.length === 0 ? <Text color="grey">学而不专</Text> : null}
     </>
   );
 }
