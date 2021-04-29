@@ -11,14 +11,14 @@ import { showModifier } from '../../utils/modifier';
 import { sizeTranslates } from '../../utils/race';
 import AbilityIcon from '../AbilityIcon';
 import StatNumber from '../StatNumber';
-import { Block, BlockHeading, HBlockItem, VBlockItem } from './CharacterBlock';
+import { Block, BlockHeading, HBlockItem, VBlockItem, HBlockItemForBonus } from './CharacterBlock';
 import { CharacterDetailAttackOptions } from './CharacterDetailAttackOptions';
 import CharacterDetailEquip from './CharacterDetailEquip';
 import { CharacterDetailFeats } from './CharacterDetailFeats';
 import { CharacterDetailSkills } from './CharacterDetailSkills';
+import { CharacterDetailSpells } from './CharacterDetailSpells';
 import CharacterDetailStorage from './CharacterDetailStorage';
 import { useCurrentCharacter } from './context';
-import { CharacterDetailSpells } from './CharacterDetailSpells';
 
 const abilityStyle: StackProps = {
   flexBasis: [1 / 2, 1 / 3],
@@ -26,6 +26,12 @@ const abilityStyle: StackProps = {
   borderRight: '1px',
   borderBottom: '1px',
   borderColor: 'gray.200',
+};
+
+const hStackForBonusStyle = {
+  w: 'full',
+  justifyContent: 'stretch',
+  spacing: '0',
 };
 
 export default function CharacterDetailBasic(): JSX.Element {
@@ -135,32 +141,36 @@ export default function CharacterDetailBasic(): JSX.Element {
             <Stack direction={['column', 'row']}>
               <Box w={['full', '50%']} flex="1">
                 <Block>
-                  <HStack w="full" justifyContent="stretch">
-                    <HBlockItem label="HP" flexBasis={1 / 3} flexGrow={1}>
+                  <HStack {...hStackForBonusStyle}>
+                    <HBlockItemForBonus label="HP" bonuses={character.status.hpBonuses}>
                       {character.status.hp}
-                    </HBlockItem>
-                    <HBlockItem label="先攻" flexBasis={1 / 3} flexGrow={1}>
+                    </HBlockItemForBonus>
+
+                    <HBlockItemForBonus label="先攻" bonuses={character.status.initiativeBonuses}>
                       {showModifier(character.status.initiative)}
-                    </HBlockItem>
-                    <HBlockItem label="察觉" flexBasis={1 / 3} flexGrow={1}>
-                      {showModifier(character.skillRanks.get('perception') || 0)}
-                    </HBlockItem>
+                    </HBlockItemForBonus>
+
+                    <Box flexBasis={1 / 3} flexGrow={1}>
+                      <HBlockItem label="察觉" borderRight="0">
+                        {showModifier(character.skillRanks.get('perception') || 0)}
+                      </HBlockItem>
+                    </Box>
                   </HStack>
                 </Block>
               </Box>
 
               <Box w={['full', '50%']} flex="1">
                 <Block>
-                  <HStack w="full" justifyContent="stretch">
-                    <HBlockItem label="强韧" flexBasis={1 / 3} flexGrow={1}>
+                  <HStack {...hStackForBonusStyle}>
+                    <HBlockItemForBonus label="强韧" bonuses={character.status.fortitudeBonuses}>
                       {showModifier(character.status.fortitude)}
-                    </HBlockItem>
-                    <HBlockItem label="反射" flexBasis={1 / 3} flexGrow={1}>
+                    </HBlockItemForBonus>
+                    <HBlockItemForBonus label="反射" bonuses={character.status.reflexBonuses}>
                       {showModifier(character.status.reflex)}
-                    </HBlockItem>
-                    <HBlockItem label="意志" flexBasis={1 / 3} flexGrow={1}>
+                    </HBlockItemForBonus>
+                    <HBlockItemForBonus label="意志" bonuses={character.status.willBonuses}>
                       {showModifier(character.status.will)}
-                    </HBlockItem>
+                    </HBlockItemForBonus>
                   </HStack>
                 </Block>
               </Box>
@@ -169,32 +179,37 @@ export default function CharacterDetailBasic(): JSX.Element {
             <Stack direction={['column', 'row']}>
               <Box w={['full', '50%']} flex="1">
                 <Block>
-                  <HStack w="full" justifyContent="stretch">
-                    <HBlockItem label="BAB" flexBasis={1 / 3} flexGrow={1}>
-                      {character.status.bab.map((b) => showModifier(b)).join('/')}
-                    </HBlockItem>
-                    <HBlockItem label="CMB" flexBasis={1 / 3} flexGrow={1}>
+                  <HStack {...hStackForBonusStyle}>
+                    <Box flexBasis={1 / 3} flexGrow={1}>
+                      <HBlockItem label="BAB">
+                        {character.status.bab.map((b) => showModifier(b)).join('/')}
+                      </HBlockItem>
+                    </Box>
+                    <HBlockItemForBonus label="CMB" bonuses={character.status.cmbBonuses}>
                       {showModifier(character.status.cmb)}
-                    </HBlockItem>
-                    <HBlockItem label="CMD" flexBasis={1 / 3} flexGrow={1}>
-                      {character.status.cmd}
-                    </HBlockItem>
+                    </HBlockItemForBonus>
+                    <HBlockItemForBonus label="CMD" bonuses={character.status.cmdBonuses}>
+                      {showModifier(character.status.cmd)}
+                    </HBlockItemForBonus>
                   </HStack>
                 </Block>
               </Box>
 
               <Box w={['full', '50%']} flex="1">
                 <Block>
-                  <HStack w="full" justifyContent="stretch">
-                    <HBlockItem label="AC" flexBasis={1 / 3} flexGrow={1}>
+                  <HStack {...hStackForBonusStyle}>
+                    <HBlockItemForBonus label="AC" bonuses={character.status.acBonuses}>
                       {character.status.ac}
-                    </HBlockItem>
-                    <HBlockItem label="措手不及" flexBasis={1 / 3} flexGrow={1}>
+                    </HBlockItemForBonus>
+                    <HBlockItemForBonus
+                      label="措手不及"
+                      bonuses={character.status.flatFootedBonuses}
+                    >
                       {character.status.flatFooted}
-                    </HBlockItem>
-                    <HBlockItem label="接触" flexBasis={1 / 3} flexGrow={1}>
+                    </HBlockItemForBonus>
+                    <HBlockItemForBonus label="接触" bonuses={character.status.touchBonuses}>
                       {character.status.touch}
-                    </HBlockItem>
+                    </HBlockItemForBonus>
                   </HStack>
                 </Block>
               </Box>

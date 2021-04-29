@@ -1,9 +1,9 @@
 import { makeObservable, computed } from 'mobx';
-import { Abilities, Bonus } from '../../types/core';
+import { Abilities, NamedBonus } from '../../types/core';
 
 import { collections } from '../collection';
 import Character from '.';
-import { aggregateBonusesAmount } from '../../utils/bonus';
+import { aggregateNamedBonusesAmount } from '../../utils/bonus';
 import { EffectGainSaveArgs } from '../../types/effectType';
 
 export default class CharacterStatus {
@@ -11,17 +11,31 @@ export default class CharacterStatus {
 
   constructor(c: Character) {
     makeObservable(this, {
+      hpBonuses: computed,
       hp: computed,
+
+      initiativeBonuses: computed,
       initiative: computed,
+
+      fortitudeBonuses: computed,
       fortitude: computed,
+      reflexBonuses: computed,
       reflex: computed,
+      willBonuses: computed,
       will: computed,
+
       bab: computed,
+      cmbBonuses: computed,
       cmb: computed,
+      cmdBonuses: computed,
       cmd: computed,
+
+      acBonuses: computed,
       ac: computed,
+      flatFootedBonuses: computed,
       flatFooted: computed,
       touch: computed,
+      touchBonuses: computed,
     });
 
     this.character = c;
@@ -31,7 +45,7 @@ export default class CharacterStatus {
     return this.character.abilityModifier;
   }
 
-  get hp(): number {
+  get hpBonuses(): NamedBonus[] {
     let base = 0;
 
     this.character.upgradesWithPending.forEach((u, level) => {
@@ -48,63 +62,90 @@ export default class CharacterStatus {
       }
     });
 
-    base += this.character.level * this.modifier.con;
+    const con = this.character.level * this.modifier.con;
 
-    return base;
+    return [
+      { name: '基础', bonus: { amount: base, type: 'untyped' } },
+      { name: '体质', bonus: { amount: con, type: 'untyped' } },
+    ];
+  }
+  get hp(): number {
+    return aggregateNamedBonusesAmount(this.hpBonuses);
+  }
+
+  get initiativeBonuses(): NamedBonus[] {
+    return [
+      { name: '敏捷', bonus: { amount: this.modifier.dex, type: 'untyped' } },
+      ...this.character.effect.getGainInitiativeEffects().map((es) => ({
+        name: es.source.name,
+        bonus: es.effect.args.bonus,
+      })),
+    ];
   }
   get initiative(): number {
-    return (
-      this.modifier.dex +
-      aggregateBonusesAmount(
-        this.character.effect.getGainInitiativeEffects().map((es) => es.effect.args.bonus)
-      )
-    );
+    return aggregateNamedBonusesAmount(this.initiativeBonuses);
   }
 
-  getSaveBonuses(t: EffectGainSaveArgs['saveType']): Bonus[] {
+  getSaveBonuses(t: EffectGainSaveArgs['saveType']): NamedBonus[] {
     const args = this.character.effect
       .getGainSaveEffects()
-      .map((es) => es.effect.args)
-      .filter((a) => a.saveType === t || a.saveType === 'all');
+      .filter((es) => es.effect.args.saveType === t || es.effect.args.saveType === 'all');
 
-    return args.map((a) => a.bonus);
+    return args.map((es) => ({
+      name: es.source.name,
+      bonus: es.effect.args.bonus,
+    }));
   }
 
-  get fortitude(): number {
+  get fortitudeBonuses(): NamedBonus[] {
     let base = 0;
 
     this.character.classLevelDetail.forEach((cl) => {
       base += cl.fortitude;
     });
 
-    base += this.modifier.con;
-    base += aggregateBonusesAmount(this.getSaveBonuses('fortitude'));
-
-    return base;
+    return [
+      { name: '基础', bonus: { amount: base, type: 'untyped' } },
+      { name: '体质', bonus: { amount: this.modifier.con, type: 'untyped' } },
+      ...this.getSaveBonuses('fortitude'),
+    ];
   }
-  get reflex(): number {
+  get fortitude(): number {
+    return aggregateNamedBonusesAmount(this.fortitudeBonuses);
+  }
+
+  get reflexBonuses(): NamedBonus[] {
     let base = 0;
 
     this.character.classLevelDetail.forEach((cl) => {
       base += cl.reflex;
     });
 
-    base += this.modifier.dex;
-    base += aggregateBonusesAmount(this.getSaveBonuses('reflex'));
-
-    return base;
+    return [
+      { name: '基础', bonus: { amount: base, type: 'untyped' } },
+      { name: '敏捷', bonus: { amount: this.modifier.dex, type: 'untyped' } },
+      ...this.getSaveBonuses('reflex'),
+    ];
   }
-  get will(): number {
+  get reflex(): number {
+    return aggregateNamedBonusesAmount(this.reflexBonuses);
+  }
+
+  get willBonuses(): NamedBonus[] {
     let base = 0;
 
     this.character.classLevelDetail.forEach((cl) => {
       base += cl.will;
     });
 
-    base += this.modifier.wis;
-    base += aggregateBonusesAmount(this.getSaveBonuses('will'));
-
-    return base;
+    return [
+      { name: '基础', bonus: { amount: base, type: 'untyped' } },
+      { name: '感知', bonus: { amount: this.modifier.wis, type: 'untyped' } },
+      ...this.getSaveBonuses('will'),
+    ];
+  }
+  get will(): number {
+    return aggregateNamedBonusesAmount(this.willBonuses);
   }
 
   get bab(): number[] {
@@ -126,26 +167,44 @@ export default class CharacterStatus {
     return Math.max(...this.bab);
   }
 
-  get cmb(): number {
-    return this.maxBab + this.modifier.str;
+  get cmbBonuses(): NamedBonus[] {
+    return [
+      { name: 'BAB', bonus: { amount: this.maxBab, type: 'untyped' } },
+      { name: '力量', bonus: { amount: this.modifier.str, type: 'untyped' } },
+    ];
   }
-  get cmd(): number {
-    return 10 + this.maxBab + this.modifier.str + this.modifier.con;
+  get cmb(): number {
+    return aggregateNamedBonusesAmount(this.cmbBonuses);
   }
 
-  getBonusesForAC(t: 'ac' | 'flatFooted' | 'touch'): Bonus[] {
-    const bonuses = this.character.effect.getGainACEffects().map((es) => es.effect.args.bonus);
+  get cmdBonuses(): NamedBonus[] {
+    return [
+      { name: '基础', bonus: { amount: 10, type: 'untyped' } },
+      { name: 'BAB', bonus: { amount: this.maxBab, type: 'untyped' } },
+      { name: '力量', bonus: { amount: this.modifier.str, type: 'untyped' } },
+      { name: '敏捷', bonus: { amount: this.modifier.dex, type: 'untyped' } },
+    ];
+  }
+  get cmd(): number {
+    return aggregateNamedBonusesAmount(this.cmdBonuses);
+  }
+
+  getBonusesForAC(t: 'ac' | 'flatFooted' | 'touch'): NamedBonus[] {
+    const bonuses = this.character.effect.getGainACEffects().map((es) => ({
+      name: es.source.name,
+      bonus: es.effect.args.bonus,
+    }));
 
     switch (t) {
       case 'flatFooted':
-        return bonuses.filter(({ type }) => {
-          const bt = collections.bonusType.getById(type);
+        return bonuses.filter(({ bonus }) => {
+          const bt = collections.bonusType.getById(bonus.type);
 
           return bt.flatFootedAC;
         });
       case 'touch':
-        return bonuses.filter(({ type }) => {
-          const bt = collections.bonusType.getById(type);
+        return bonuses.filter(({ bonus }) => {
+          const bt = collections.bonusType.getById(bonus.type);
 
           return bt.touchAC;
         });
@@ -153,22 +212,43 @@ export default class CharacterStatus {
 
     return bonuses;
   }
+  get acBonuses(): NamedBonus[] {
+    return [
+      { name: '基础', bonus: { amount: 10, type: 'untyped' } },
+      { name: '敏捷', bonus: { amount: this.modifier.dex, type: 'untyped' } },
+      {
+        name: '护甲',
+        bonus: { amount: this.character.equipment.armorClassModifier, type: 'untyped' },
+      },
+      ...this.getBonusesForAC('ac'),
+    ];
+  }
   get ac(): number {
-    const bonus = aggregateBonusesAmount(this.getBonusesForAC('ac'));
+    return aggregateNamedBonusesAmount(this.acBonuses);
+  }
 
-    return [10, this.modifier.dex, this.character.equipment.armorClassModifier, bonus].reduce(
-      (acc, i) => acc + i,
-      0
-    );
+  get flatFootedBonuses(): NamedBonus[] {
+    return [
+      { name: '基础', bonus: { amount: 10, type: 'untyped' } },
+      {
+        name: '护甲',
+        bonus: { amount: this.character.equipment.armorClassModifier, type: 'untyped' },
+      },
+      ...this.getBonusesForAC('flatFooted'),
+    ];
   }
   get flatFooted(): number {
-    const bonus = aggregateBonusesAmount(this.getBonusesForAC('flatFooted'));
+    return aggregateNamedBonusesAmount(this.flatFootedBonuses);
+  }
 
-    return [10, this.character.equipment.armorClassModifier, bonus].reduce((acc, i) => acc + i, 0);
+  get touchBonuses(): NamedBonus[] {
+    return [
+      { name: '基础', bonus: { amount: 10, type: 'untyped' } },
+      { name: '敏捷', bonus: { amount: this.modifier.dex, type: 'untyped' } },
+      ...this.getBonusesForAC('touch'),
+    ];
   }
   get touch(): number {
-    const bonus = aggregateBonusesAmount(this.getBonusesForAC('touch'));
-
-    return [10, this.modifier.dex, bonus].reduce((acc, i) => acc + i, 0);
+    return aggregateNamedBonusesAmount(this.touchBonuses);
   }
 }

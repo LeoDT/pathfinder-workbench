@@ -251,3 +251,8 @@ export interface Bonus {
   amount: number;
   type: string;
 }
+
+export interface NamedBonus {
+  name: string;
+  bonus: Bonus;
+}

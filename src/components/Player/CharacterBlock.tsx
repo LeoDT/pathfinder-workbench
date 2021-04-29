@@ -1,13 +1,18 @@
+import React, { ReactNode } from 'react';
+
 import {
   Box,
   BoxProps,
   HStack,
-  Text,
-  StackProps,
-  Spacer,
   Heading,
   HeadingProps,
+  Spacer,
+  StackProps,
+  Text,
 } from '@chakra-ui/react';
+
+import { NamedBonus } from '../../types/core';
+import { NamedBonusPopover } from '../NamedBonusPopover';
 
 export function Block(props: BoxProps): JSX.Element {
   return <Box border="1px" borderColor="gray.200" borderRadius="md" {...props} />;
@@ -48,14 +53,7 @@ export function VBlockItem({ label, children, ...props }: BlockItemProps): JSX.E
 
 export function HBlockItem({ label, children, ...props }: BlockItemProps): JSX.Element {
   return (
-    <HStack
-      p="2"
-      borderRight="1px"
-      borderColor="gray.200"
-      _last={{ borderRight: '0' }}
-      role="group"
-      {...props}
-    >
+    <HStack p="2" borderRight="1px" borderColor="gray.200" role="group" {...props}>
       <Text
         color="gray.500"
         _groupHover={{ color: 'gray.700' }}
@@ -67,5 +65,23 @@ export function HBlockItem({ label, children, ...props }: BlockItemProps): JSX.E
       <Spacer />
       <Box>{children}</Box>
     </HStack>
+  );
+}
+
+export function HBlockItemForBonus({
+  bonuses,
+  children,
+  label,
+}: {
+  bonuses: NamedBonus[];
+  children: ReactNode;
+  label: ReactNode;
+}): JSX.Element {
+  return (
+    <Box flexBasis={1 / 3} flexGrow={1}>
+      <NamedBonusPopover bonuses={bonuses}>
+        <HBlockItem label={label}>{children}</HBlockItem>
+      </NamedBonusPopover>
+    </Box>
   );
 }

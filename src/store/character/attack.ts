@@ -1,9 +1,11 @@
 import { computed, makeObservable } from 'mobx';
 
-import { AbilityType } from '../../types/core';
+import { AbilityType, NamedBonus } from '../../types/core';
 import { getWeaponModifier, getWeaponDamageModifier, showEquipment } from '../../utils/equipment';
 import { collections } from '../collection';
 import Character from '.';
+import { aggregateNamedBonusesAmount } from '../../utils/bonus';
+import { abilityTranslates } from '../../utils/ability';
 
 interface AttackOption {
   name: string;
@@ -12,13 +14,17 @@ interface AttackOption {
   critical?: string;
   damageAbility?: AbilityType;
   damageMultiplier?: number;
-  attackModifier?: number;
-  damageModifier?: number;
+  attackBonuses: NamedBonus[];
+  attackModifier: number;
+  damageBonuses: NamedBonus[];
+  damageModifier: number;
 }
 
 interface Attack {
   option: AttackOption;
+  attackBonuses: NamedBonus[];
   attackModifier: number;
+  damageBonuses: NamedBonus[];
   damageModifier: number;
 }
 
@@ -60,6 +66,8 @@ export class CharacterAttack {
     const weapon = c.equipment.mainHand;
     const unarmedWeaponType = collections.weaponType.getUnarmedWeaponType();
     const weaponType = weapon?.type || unarmedWeaponType;
+    const attackBonuses: NamedBonus[] = [];
+    const damageBonuses: NamedBonus[] = [];
 
     let ability = AbilityType.str;
     let damageAbility: AbilityType | undefined = AbilityType.str;
@@ -69,48 +77,63 @@ export class CharacterAttack {
         damageAbility = undefined;
     }
 
-    let attackModifier = weapon ? getWeaponModifier(weapon) : 0;
+    attackBonuses.push({
+      name: '武器品质',
+      bonus: { type: 'untyped', amount: weapon ? getWeaponModifier(weapon) : 0 },
+    });
+    damageBonuses.push({
+      name: '武器品质',
+      bonus: {
+        type: 'untyped',
+        amount: weapon ? getWeaponDamageModifier(weapon) : 0,
+      },
+    });
 
     if (!c.proficiency.hasWeapon(weaponType)) {
-      attackModifier -= 4;
+      attackBonuses.push({ name: '非擅长武器', bonus: { type: 'untyped', amount: -4 } });
     }
 
     if (c.equipment.isTwoWeapon) {
-      let mod = -6;
+      attackBonuses.push({ name: '双武器', bonus: { type: 'untyped', amount: -6 } });
 
       if (this.isTwoWeaponFighter) {
-        mod += 2;
+        attackBonuses.push({ name: '双武器格斗', bonus: { type: 'untyped', amount: 2 } });
       }
       if (this.isOffHandHoldingLightWeapon) {
-        mod += 2;
+        attackBonuses.push({ name: '副手轻武器', bonus: { type: 'untyped', amount: 2 } });
       }
-
-      attackModifier += mod;
     }
 
     const { offHand } = c.equipment;
     if (offHand && offHand.type._type === 'armorType' && offHand.type.meta.category === 'shield') {
       if (!c.proficiency.hasShield(offHand.type.id)) {
-        attackModifier += offHand.type.meta.penalty;
+        attackBonuses.push({
+          name: '非擅长盾牌',
+          bonus: { type: 'untyped', amount: offHand.type.meta.penalty },
+        });
       }
     }
 
     return {
       name: weapon ? showEquipment(weapon) : weaponType.name,
       ability,
+      attackBonuses,
       damage: collections.weaponType.getDamageForSize(weaponType, c.race.size),
       critical: weaponType.meta.critical,
       damageAbility,
       damageMultiplier: c.equipment.isHoldingTwoHand ? 1.5 : 1,
-      attackModifier,
-      damageModifier: weapon ? getWeaponDamageModifier(weapon) : 0,
+      attackModifier: aggregateNamedBonusesAmount(attackBonuses),
+      damageBonuses,
+      damageModifier: aggregateNamedBonusesAmount(damageBonuses),
     };
   }
 
   get offHandAttackOption(): AttackOption | null {
     const weapon = this.character.equipment.offHand;
+    const attackBonuses: NamedBonus[] = [];
+    const damageBonuses: NamedBonus[] = [];
 
-    if (!weapon || weapon.equipmentType !== 'weapon') {
+    if (!weapon || weapon.equipmentType !== 'weapon' || this.character.equipment.isHoldingTwoHand) {
       return null;
     }
 
@@ -124,23 +147,31 @@ export class CharacterAttack {
         damageAbility = undefined;
     }
 
-    let attackModifier = getWeaponModifier(weapon);
+    attackBonuses.push({
+      name: '武器品质',
+      bonus: { type: 'untyped', amount: getWeaponModifier(weapon) },
+    });
+    damageBonuses.push({
+      name: '武器品质',
+      bonus: {
+        type: 'untyped',
+        amount: getWeaponDamageModifier(weapon),
+      },
+    });
 
     if (!this.character.proficiency.hasWeapon(weaponType)) {
-      attackModifier -= 4;
+      attackBonuses.push({ name: '非擅长武器', bonus: { type: 'untyped', amount: -4 } });
     }
 
     if (this.character.equipment.isTwoWeapon) {
-      let mod = -10;
+      attackBonuses.push({ name: '双武器', bonus: { type: 'untyped', amount: -10 } });
 
       if (this.isTwoWeaponFighter) {
-        mod += 6;
+        attackBonuses.push({ name: '双武器格斗', bonus: { type: 'untyped', amount: 6 } });
       }
       if (this.isOffHandHoldingLightWeapon) {
-        mod += 2;
+        attackBonuses.push({ name: '副手轻武器', bonus: { type: 'untyped', amount: 2 } });
       }
-
-      attackModifier += mod;
     }
 
     return {
@@ -149,7 +180,9 @@ export class CharacterAttack {
       damage: collections.weaponType.getDamageForSize(weaponType, this.character.race.size),
       critical: weaponType.meta.critical,
       damageAbility,
-      attackModifier,
+      attackBonuses,
+      attackModifier: aggregateNamedBonusesAmount(attackBonuses),
+      damageBonuses,
       damageModifier: getWeaponDamageModifier(weapon),
     };
   }
@@ -169,24 +202,36 @@ export class CharacterAttack {
 
   get attacks(): Attack[] {
     return this.attackOptions.map((o) => {
-      const modifier = this.character.abilityModifier[o.ability];
-      let attackModifier = this.character.status.maxBab + modifier;
-      let damageModifier = o.damageAbility
-        ? this.character.abilityModifier[o.damageAbility] * (o.damageMultiplier || 1)
-        : 0;
+      const attackBonuses: NamedBonus[] = [
+        { name: 'BAB', bonus: { amount: this.character.status.maxBab, type: 'untyped' } },
+        {
+          name: abilityTranslates[o.ability],
+          bonus: { amount: this.character.abilityModifier[o.ability], type: 'untyped' },
+        },
+        ...o.attackBonuses,
+      ];
+      const damageBonuses: NamedBonus[] = [...o.damageBonuses];
 
-      if (o.attackModifier) {
-        attackModifier += o.attackModifier;
-      }
-
-      if (o.damageModifier) {
-        damageModifier += o.damageModifier;
+      if (o.damageAbility) {
+        const name = abilityTranslates[o.ability];
+        damageBonuses.unshift({
+          name:
+            o.damageMultiplier && o.damageMultiplier > 1
+              ? `${name}(${o.damageMultiplier * 100}%)`
+              : name,
+          bonus: {
+            amount: this.character.abilityModifier[o.damageAbility] * (o.damageMultiplier || 1),
+            type: 'untyped',
+          },
+        });
       }
 
       return {
         option: o,
-        attackModifier,
-        damageModifier,
+        attackBonuses,
+        attackModifier: aggregateNamedBonusesAmount(attackBonuses),
+        damageBonuses,
+        damageModifier: aggregateNamedBonusesAmount(damageBonuses),
       };
     });
   }

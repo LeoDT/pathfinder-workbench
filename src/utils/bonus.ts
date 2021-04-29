@@ -1,4 +1,4 @@
-import { Bonus } from '../types/core';
+import { Bonus, NamedBonus } from '../types/core';
 
 import { collections } from '../store/collection';
 
@@ -26,4 +26,8 @@ export function aggregateBonuses(bonuses: Bonus[]): Bonus[] {
 
 export function aggregateBonusesAmount(bonuses: Bonus[]): number {
   return aggregateBonuses(bonuses).reduce((acc, b) => acc + b.amount, 0);
+}
+
+export function aggregateNamedBonusesAmount(bonuses: NamedBonus[]): number {
+  return aggregateBonusesAmount(bonuses.map((n) => n.bonus));
 }
