@@ -249,7 +249,9 @@ export interface BonusType extends Entity {
 
 export interface Bonus {
   amount: number;
+  amountFormula?: string;
   type: string;
+  ignored?: boolean;
 }
 
 export interface NamedBonus {

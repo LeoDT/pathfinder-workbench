@@ -73,7 +73,7 @@ export default function CharacterList(): JSX.Element {
                     cursor="pointer"
                     onClick={() => {
                       if (confirm('角色删除无法恢复, 确认删除吗?')) {
-                        store.characters.remove(c);
+                        store.removeCharacter(c);
                       }
                     }}
                   />

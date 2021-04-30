@@ -1,33 +1,34 @@
-import { Bonus, NamedBonus } from '../types/core';
+import { groupBy } from 'lodash-es';
+
+import { NamedBonus } from '../types/core';
 
 import { collections } from '../store/collection';
 
-export function aggregateBonuses(bonuses: Bonus[]): Bonus[] {
-  const bonusMap = new Map<string, number>();
+export function markUnstackableBonus(bonuses: NamedBonus[]): NamedBonus[] {
+  const result: NamedBonus[] = [];
+  const groups = groupBy(bonuses, (b) => b.bonus.type);
 
-  for (const b of bonuses) {
-    const { stack } = collections.bonusType.getById(b.type);
-    const existed = bonusMap.get(b.type) ?? 0;
+  Object.keys(groups).forEach((k) => {
+    const bonusesForType = groups[k];
+    const { stack } = collections.bonusType.getById(k);
 
     if (stack) {
-      bonusMap.set(b.type, existed + b.amount);
+      for (const b of bonusesForType) {
+        result.push({ ...b, bonus: { ...b.bonus, ignored: false } });
+      }
     } else {
-      bonusMap.set(b.type, Math.max(existed, b.amount));
-    }
-  }
+      let max = bonusesForType[0];
+      for (const b of bonusesForType) {
+        if (b.bonus.amount > max.bonus.amount) {
+          max = b;
+        }
+      }
 
-  const result: Bonus[] = [];
-  for (const [type, amount] of bonusMap.entries()) {
-    result.push({ type, amount });
-  }
+      for (const b of bonusesForType) {
+        result.push({ ...b, bonus: { ...b.bonus, ignored: b === max } });
+      }
+    }
+  });
 
   return result;
-}
-
-export function aggregateBonusesAmount(bonuses: Bonus[]): number {
-  return aggregateBonuses(bonuses).reduce((acc, b) => acc + b.amount, 0);
-}
-
-export function aggregateNamedBonusesAmount(bonuses: NamedBonus[]): number {
-  return aggregateBonusesAmount(bonuses.map((n) => n.bonus));
 }

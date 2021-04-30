@@ -5,6 +5,7 @@ import { Box, Button, Heading, Text, VStack } from '@chakra-ui/react';
 import { useStore } from '../../store';
 import CreateCharacterStore, { InvalidReason } from '../../store/createCharacter';
 import { useHistoryUnblock } from './context';
+import { useEffect } from 'react';
 
 interface Props {
   createOrUpgrade: CreateCharacterStore;
@@ -25,6 +26,12 @@ export default function CreateOrUpgradeCharacterFinish({ createOrUpgrade }: Prop
   const validateResults = createOrUpgrade.validate();
   const invalid = validateResults.length > 0;
   const unblock = useHistoryUnblock();
+
+  useEffect(() => {
+    return () => {
+      createOrUpgrade.dispose();
+    };
+  }, []);
 
   return (
     <VStack alignItems="flex-start" maxW="sm">

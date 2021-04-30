@@ -1,6 +1,7 @@
 import { compact, intersection, isEmpty, last, pick, range, uniq } from 'lodash-es';
-import { IObservableArray, action, computed, makeObservable, observable } from 'mobx';
+import { IObservableArray, action, computed, makeObservable, observable, autorun } from 'mobx';
 import shortid from 'shortid';
+import { Parser as FormulaParser } from 'hot-formula-parser';
 
 import { CharacterUpgrade } from '../../types/characterUpgrade';
 import {
@@ -12,13 +13,14 @@ import {
   ClassFeat,
   ClassLevel,
   Feat,
+  NamedBonus,
   Race,
   RacialTrait,
   Skill,
   SkillSystem,
 } from '../../types/core';
 import { BASE_ABILITY, addBonusScores, getModifiers, makeAbilities } from '../../utils/ability';
-import { aggregateBonusesAmount } from '../../utils/bonus';
+import { markUnstackableBonus } from '../../utils/bonus';
 import { getClassFeatByLevel, getClassLevel } from '../../utils/class';
 import { coreToConsolidated } from '../../utils/skill';
 import { collections } from '../collection';
@@ -71,6 +73,10 @@ export default class Character {
   proficiency: CharacterProficiency;
   attack: CharacterAttack;
   tracker: CharacterTracker;
+
+  formulaParser: FormulaParser;
+
+  disposes: Array<() => void>;
 
   constructor(
     name: string,
@@ -128,6 +134,8 @@ export default class Character {
       gainedFeats: computed,
     });
 
+    this.disposes = [];
+
     this.id = id ?? shortid.generate();
     this.name = name;
     this.skillSystem = skillSystem;
@@ -155,6 +163,13 @@ export default class Character {
 
     this.spellbooks = observable.array([], { deep: false });
     this.ensureSpellbooks();
+
+    this.formulaParser = new FormulaParser();
+    this.initFormulaParser();
+  }
+
+  dispose(): void {
+    this.disposes.forEach((d) => d());
   }
 
   setSkillSystem(s: SkillSystem): void {
@@ -368,7 +383,7 @@ export default class Character {
     const ranks = new Map<string, number>();
 
     for (const [sId, bonus] of rankBonuses) {
-      ranks.set(sId, aggregateBonusesAmount(bonus));
+      ranks.set(sId, this.aggregateBonusesAmount(bonus));
     }
 
     return ranks;
@@ -459,6 +474,43 @@ export default class Character {
     });
 
     this.spellbooks.replace(books);
+  }
+
+  initFormulaParser(): void {
+    const p = this.formulaParser;
+
+    this.disposes.push(
+      autorun(() => {
+        p.setVariable('level', this.level);
+      })
+    );
+  }
+  parseFormula(form: string): number {
+    const { error, result } = this.formulaParser.parse(form);
+
+    if (error || !result) {
+      throw new Error(`formula parse error: ${error}, formula: ${form}`);
+    }
+
+    return result;
+  }
+
+  makeNamedBonuses(bonuses: NamedBonus[]): NamedBonus[] {
+    return markUnstackableBonus(
+      bonuses.map((b) => {
+        if (b.bonus.amountFormula) {
+          return { ...b, bonus: { ...b.bonus, amount: this.parseFormula(b.bonus.amountFormula) } };
+        }
+
+        return b;
+      })
+    );
+  }
+  aggregateBonusesAmount(bonuses: Bonus[]): number {
+    return bonuses.reduce((acc, b) => acc + (b.ignored ? 0 : b.amount), 0);
+  }
+  aggregateNamedBonusesAmount(bonuses: NamedBonus[]): number {
+    return this.aggregateBonusesAmount(bonuses.map((n) => n.bonus));
   }
 
   static serializableProps = [

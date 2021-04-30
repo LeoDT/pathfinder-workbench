@@ -21,6 +21,7 @@ export enum EffectType {
   gainInitiative = 'gainInitiative',
   gainAC = 'gainAC',
   gainSave = 'gainSave',
+  gainHP = 'gainHP',
   gainTwoWeaponFighting = 'gainTwoWeaponFighting',
 }
 
@@ -127,6 +128,11 @@ export interface EffectGainSaveArgs {
 }
 export type EffectGainSave = BaseEffect<EffectType.gainSave, EffectGainSaveArgs>;
 
+export interface EffectGainHPArgs {
+  bonus: Bonus;
+}
+export type EffectGainHP = BaseEffect<EffectType.gainHP, EffectGainHPArgs>;
+
 export type EffectGainTwoWeaponFighting = BaseEffect<EffectType.gainTwoWeaponFighting, void>;
 
 export type Effect =
@@ -141,6 +147,7 @@ export type Effect =
   | EffectGainInitiative
   | EffectGainAC
   | EffectGainSave
+  | EffectGainHP
   | EffectGainTwoWeaponFighting;
 
 export type ArgsTypeForEffect<T extends Effect> = T['args'];

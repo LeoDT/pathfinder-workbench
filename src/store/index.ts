@@ -49,6 +49,12 @@ export class Store {
     ]);
   }
 
+  removeCharacter(c: Character): void {
+    this.characters.remove(c);
+
+    c.dispose();
+  }
+
   persist(): void {
     autorun(() => {
       this.characters.forEach((c) => {

@@ -3,7 +3,6 @@ import { Abilities, NamedBonus } from '../../types/core';
 
 import { collections } from '../collection';
 import Character from '.';
-import { aggregateNamedBonusesAmount } from '../../utils/bonus';
 import { EffectGainSaveArgs } from '../../types/effectType';
 
 export default class CharacterStatus {
@@ -64,26 +63,30 @@ export default class CharacterStatus {
 
     const con = this.character.level * this.modifier.con;
 
-    return [
+    return this.character.makeNamedBonuses([
       { name: '基础', bonus: { amount: base, type: 'untyped' } },
       { name: '体质', bonus: { amount: con, type: 'untyped' } },
-    ];
+      ...this.character.effect.getGainHPEffects().map((es) => ({
+        name: es.source.name,
+        bonus: es.effect.args.bonus,
+      })),
+    ]);
   }
   get hp(): number {
-    return aggregateNamedBonusesAmount(this.hpBonuses);
+    return this.character.aggregateNamedBonusesAmount(this.hpBonuses);
   }
 
   get initiativeBonuses(): NamedBonus[] {
-    return [
+    return this.character.makeNamedBonuses([
       { name: '敏捷', bonus: { amount: this.modifier.dex, type: 'untyped' } },
       ...this.character.effect.getGainInitiativeEffects().map((es) => ({
         name: es.source.name,
         bonus: es.effect.args.bonus,
       })),
-    ];
+    ]);
   }
   get initiative(): number {
-    return aggregateNamedBonusesAmount(this.initiativeBonuses);
+    return this.character.aggregateNamedBonusesAmount(this.initiativeBonuses);
   }
 
   getSaveBonuses(t: EffectGainSaveArgs['saveType']): NamedBonus[] {
@@ -104,14 +107,14 @@ export default class CharacterStatus {
       base += cl.fortitude;
     });
 
-    return [
+    return this.character.makeNamedBonuses([
       { name: '基础', bonus: { amount: base, type: 'untyped' } },
       { name: '体质', bonus: { amount: this.modifier.con, type: 'untyped' } },
       ...this.getSaveBonuses('fortitude'),
-    ];
+    ]);
   }
   get fortitude(): number {
-    return aggregateNamedBonusesAmount(this.fortitudeBonuses);
+    return this.character.aggregateNamedBonusesAmount(this.fortitudeBonuses);
   }
 
   get reflexBonuses(): NamedBonus[] {
@@ -121,14 +124,14 @@ export default class CharacterStatus {
       base += cl.reflex;
     });
 
-    return [
+    return this.character.makeNamedBonuses([
       { name: '基础', bonus: { amount: base, type: 'untyped' } },
       { name: '敏捷', bonus: { amount: this.modifier.dex, type: 'untyped' } },
       ...this.getSaveBonuses('reflex'),
-    ];
+    ]);
   }
   get reflex(): number {
-    return aggregateNamedBonusesAmount(this.reflexBonuses);
+    return this.character.aggregateNamedBonusesAmount(this.reflexBonuses);
   }
 
   get willBonuses(): NamedBonus[] {
@@ -138,14 +141,14 @@ export default class CharacterStatus {
       base += cl.will;
     });
 
-    return [
+    return this.character.makeNamedBonuses([
       { name: '基础', bonus: { amount: base, type: 'untyped' } },
       { name: '感知', bonus: { amount: this.modifier.wis, type: 'untyped' } },
       ...this.getSaveBonuses('will'),
-    ];
+    ]);
   }
   get will(): number {
-    return aggregateNamedBonusesAmount(this.willBonuses);
+    return this.character.aggregateNamedBonusesAmount(this.willBonuses);
   }
 
   get bab(): number[] {
@@ -168,25 +171,25 @@ export default class CharacterStatus {
   }
 
   get cmbBonuses(): NamedBonus[] {
-    return [
+    return this.character.makeNamedBonuses([
       { name: 'BAB', bonus: { amount: this.maxBab, type: 'untyped' } },
       { name: '力量', bonus: { amount: this.modifier.str, type: 'untyped' } },
-    ];
+    ]);
   }
   get cmb(): number {
-    return aggregateNamedBonusesAmount(this.cmbBonuses);
+    return this.character.aggregateNamedBonusesAmount(this.cmbBonuses);
   }
 
   get cmdBonuses(): NamedBonus[] {
-    return [
+    return this.character.makeNamedBonuses([
       { name: '基础', bonus: { amount: 10, type: 'untyped' } },
       { name: 'BAB', bonus: { amount: this.maxBab, type: 'untyped' } },
       { name: '力量', bonus: { amount: this.modifier.str, type: 'untyped' } },
       { name: '敏捷', bonus: { amount: this.modifier.dex, type: 'untyped' } },
-    ];
+    ]);
   }
   get cmd(): number {
-    return aggregateNamedBonusesAmount(this.cmdBonuses);
+    return this.character.aggregateNamedBonusesAmount(this.cmdBonuses);
   }
 
   getBonusesForAC(t: 'ac' | 'flatFooted' | 'touch'): NamedBonus[] {
@@ -213,7 +216,7 @@ export default class CharacterStatus {
     return bonuses;
   }
   get acBonuses(): NamedBonus[] {
-    return [
+    return this.character.makeNamedBonuses([
       { name: '基础', bonus: { amount: 10, type: 'untyped' } },
       { name: '敏捷', bonus: { amount: this.modifier.dex, type: 'untyped' } },
       {
@@ -221,34 +224,34 @@ export default class CharacterStatus {
         bonus: { amount: this.character.equipment.armorClassModifier, type: 'untyped' },
       },
       ...this.getBonusesForAC('ac'),
-    ];
+    ]);
   }
   get ac(): number {
-    return aggregateNamedBonusesAmount(this.acBonuses);
+    return this.character.aggregateNamedBonusesAmount(this.acBonuses);
   }
 
   get flatFootedBonuses(): NamedBonus[] {
-    return [
+    return this.character.makeNamedBonuses([
       { name: '基础', bonus: { amount: 10, type: 'untyped' } },
       {
         name: '护甲',
         bonus: { amount: this.character.equipment.armorClassModifier, type: 'untyped' },
       },
       ...this.getBonusesForAC('flatFooted'),
-    ];
+    ]);
   }
   get flatFooted(): number {
-    return aggregateNamedBonusesAmount(this.flatFootedBonuses);
+    return this.character.aggregateNamedBonusesAmount(this.flatFootedBonuses);
   }
 
   get touchBonuses(): NamedBonus[] {
-    return [
+    return this.character.makeNamedBonuses([
       { name: '基础', bonus: { amount: 10, type: 'untyped' } },
       { name: '敏捷', bonus: { amount: this.modifier.dex, type: 'untyped' } },
       ...this.getBonusesForAC('touch'),
-    ];
+    ]);
   }
   get touch(): number {
-    return aggregateNamedBonusesAmount(this.touchBonuses);
+    return this.character.aggregateNamedBonusesAmount(this.touchBonuses);
   }
 }

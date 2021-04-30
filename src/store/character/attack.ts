@@ -1,11 +1,10 @@
 import { computed, makeObservable } from 'mobx';
 
 import { AbilityType, NamedBonus } from '../../types/core';
-import { getWeaponModifier, getWeaponDamageModifier, showEquipment } from '../../utils/equipment';
+import { abilityTranslates } from '../../utils/ability';
+import { getWeaponDamageModifier, getWeaponModifier, showEquipment } from '../../utils/equipment';
 import { collections } from '../collection';
 import Character from '.';
-import { aggregateNamedBonusesAmount } from '../../utils/bonus';
-import { abilityTranslates } from '../../utils/ability';
 
 interface AttackOption {
   name: string;
@@ -122,9 +121,9 @@ export class CharacterAttack {
       critical: weaponType.meta.critical,
       damageAbility,
       damageMultiplier: c.equipment.isHoldingTwoHand ? 1.5 : 1,
-      attackModifier: aggregateNamedBonusesAmount(attackBonuses),
+      attackModifier: this.character.aggregateNamedBonusesAmount(attackBonuses),
       damageBonuses,
-      damageModifier: aggregateNamedBonusesAmount(damageBonuses),
+      damageModifier: this.character.aggregateNamedBonusesAmount(damageBonuses),
     };
   }
 
@@ -181,7 +180,7 @@ export class CharacterAttack {
       critical: weaponType.meta.critical,
       damageAbility,
       attackBonuses,
-      attackModifier: aggregateNamedBonusesAmount(attackBonuses),
+      attackModifier: this.character.aggregateNamedBonusesAmount(attackBonuses),
       damageBonuses,
       damageModifier: getWeaponDamageModifier(weapon),
     };
@@ -202,15 +201,15 @@ export class CharacterAttack {
 
   get attacks(): Attack[] {
     return this.attackOptions.map((o) => {
-      const attackBonuses: NamedBonus[] = [
+      const attackBonuses: NamedBonus[] = this.character.makeNamedBonuses([
         { name: 'BAB', bonus: { amount: this.character.status.maxBab, type: 'untyped' } },
         {
           name: abilityTranslates[o.ability],
           bonus: { amount: this.character.abilityModifier[o.ability], type: 'untyped' },
         },
         ...o.attackBonuses,
-      ];
-      const damageBonuses: NamedBonus[] = [...o.damageBonuses];
+      ]);
+      let damageBonuses: NamedBonus[] = [...o.damageBonuses];
 
       if (o.damageAbility) {
         const name = abilityTranslates[o.ability];
@@ -225,13 +224,14 @@ export class CharacterAttack {
           },
         });
       }
+      damageBonuses = this.character.makeNamedBonuses(damageBonuses);
 
       return {
         option: o,
         attackBonuses,
-        attackModifier: aggregateNamedBonusesAmount(attackBonuses),
+        attackModifier: this.character.aggregateNamedBonusesAmount(attackBonuses),
         damageBonuses,
-        damageModifier: aggregateNamedBonusesAmount(damageBonuses),
+        damageModifier: this.character.aggregateNamedBonusesAmount(damageBonuses),
       };
     });
   }
