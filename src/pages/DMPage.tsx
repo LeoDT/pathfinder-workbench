@@ -12,6 +12,17 @@ import {
   SimpleGrid,
   HStack,
   Spacer,
+  useDisclosure,
+  Modal,
+  ModalOverlay,
+  ModalContent,
+  ModalHeader,
+  ModalBody,
+  ModalCloseButton,
+  ModalFooter,
+  Text,
+  OrderedList,
+  ListItem,
 } from '@chakra-ui/react';
 import { FaChevronDown } from 'react-icons/fa';
 
@@ -21,10 +32,18 @@ import { useIsSmallerScreen } from '../utils/react';
 import DMCharacter from '../components/DM/Character';
 import ButtonSwitch from '../components/ButtonSwitch';
 
+type Rolling = 'perception' | 'will';
+const rollingTranslates = {
+  perception: '察觉',
+  will: '意志',
+};
+
 export default function DMPage(): JSX.Element {
   const { dm } = useStore();
   const [order, setOrder] = useState('normal');
   const isSmallerScreen = useIsSmallerScreen();
+  const { isOpen, onOpen, onClose } = useDisclosure();
+  const [rolling, setRolling] = useState<Rolling | null>(null);
 
   return (
     <Container pt="2">
@@ -52,9 +71,24 @@ export default function DMPage(): JSX.Element {
           <Menu placement="bottom-end" isLazy>
             <MenuButton as={IconButton} icon={<FaChevronDown />} aria-label="More Action" />
             <MenuList>
-              <MenuItem onClick={() => dm.rollAllPerception()}>全员投察觉</MenuItem>
-              <MenuItem onClick={() => dm.rollAllSenseMotive()}>全员投察言观色</MenuItem>
-              <MenuItem onClick={() => dm.rollAllWillSave()}>全员投意志</MenuItem>
+              <MenuItem
+                onClick={() => {
+                  dm.rollAllPerception();
+                  setRolling('perception');
+                  onOpen();
+                }}
+              >
+                全员投察觉
+              </MenuItem>
+              <MenuItem
+                onClick={() => {
+                  dm.rollAllWillSave();
+                  setRolling('will');
+                  onOpen();
+                }}
+              >
+                全员投意志
+              </MenuItem>
               <MenuItem onClick={() => dm.healAll()}>全员恢复</MenuItem>
               <MenuItem onClick={() => dm.recoverAllTracker()}>全员恢复Tracker</MenuItem>
               <MenuItem onClick={() => dm.recoverAllAttunment()}>全员恢复消耗品同调</MenuItem>
@@ -80,6 +114,82 @@ export default function DMPage(): JSX.Element {
           </SimpleGrid>
         )}
       </Observer>
+
+      {rolling ? (
+        <Modal isOpen={isOpen} onClose={onClose} size="2xl">
+          <ModalOverlay />
+          <ModalContent>
+            <ModalHeader>投{rollingTranslates[rolling]}</ModalHeader>
+            <ModalCloseButton />
+            <ModalBody>
+              <Observer>
+                {() => (
+                  <OrderedList fontSize="lg">
+                    {[...dm.characters]
+                      .sort((a, b) => {
+                        let aa = 0;
+                        let bb = 0;
+                        switch (rolling) {
+                          case 'perception':
+                            aa = dm.getFinalPerception(a);
+                            bb = dm.getFinalPerception(b);
+                            break;
+                          case 'will':
+                            aa = dm.getFinalWillSave(a);
+                            bb = dm.getFinalWillSave(b);
+                            break;
+                        }
+
+                        return bb - aa;
+                      })
+                      .map((c) => {
+                        let value = 0;
+                        let o = '0';
+                        let r = 0;
+
+                        switch (rolling) {
+                          case 'perception':
+                            value = dm.getFinalPerception(c);
+                            o = c.perception;
+                            r = c.rolledPerception;
+                            break;
+                          case 'will':
+                            value = dm.getFinalWillSave(c);
+                            o = c.willSave;
+                            r = c.rolledWillSave;
+                            break;
+                        }
+
+                        return (
+                          <ListItem key={c.id}>
+                            <Text>
+                              {c.name}: {value}({o} + {r})
+                            </Text>
+                          </ListItem>
+                        );
+                      })}
+                  </OrderedList>
+                )}
+              </Observer>
+            </ModalBody>
+            <ModalFooter>
+              <Button
+                onClick={() => {
+                  switch (rolling) {
+                    case 'perception':
+                      dm.rollAllPerception();
+                      break;
+                    case 'will':
+                      dm.rollAllWillSave();
+                  }
+                }}
+              >
+                重投
+              </Button>
+            </ModalFooter>
+          </ModalContent>
+        </Modal>
+      ) : null}
     </Container>
   );
 }

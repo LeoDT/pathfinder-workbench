@@ -91,12 +91,18 @@ export default class DMStore {
   rollAllInitiative(): void {
     this.characters.forEach((c) => this.rollInitiative(c));
   }
+  getFinalInitiative(c: DMCharacter): number {
+    return parseInt(c.initiative) + c.rolledInitiative;
+  }
 
   rollPerception(c: DMCharacter): void {
     c.rolledPerception = Math.ceil(Math.random() * 20);
   }
   rollAllPerception(): void {
     this.characters.forEach((c) => this.rollPerception(c));
+  }
+  getFinalPerception(c: DMCharacter): number {
+    return parseInt(c.perception) + c.rolledPerception;
   }
 
   rollSenseMotive(c: DMCharacter): void {
@@ -111,6 +117,9 @@ export default class DMStore {
   }
   rollAllWillSave(): void {
     this.characters.forEach((c) => this.rollWillSave(c));
+  }
+  getFinalWillSave(c: DMCharacter): number {
+    return parseInt(c.willSave) + c.rolledWillSave;
   }
 
   heal(c: DMCharacter): void {

@@ -71,10 +71,6 @@ export default function Character({ character: c }: Props): JSX.Element {
                 {c.rolledPerception})
               </Text>
               <Text fontSize="xs">
-                察言观色: {parseInt(c.senseMotive) + c.rolledSenseMotive}({c.senseMotive} +{' '}
-                {c.rolledSenseMotive})
-              </Text>
-              <Text fontSize="xs">
                 意志: {parseInt(c.willSave) + c.rolledWillSave}({c.willSave} + {c.rolledWillSave})
               </Text>
             </Box>
