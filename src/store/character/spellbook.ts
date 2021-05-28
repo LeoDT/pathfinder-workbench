@@ -8,6 +8,7 @@ import { partitionSpellsByLevel, spellsPerDayByAbilityModifier } from '../../uti
 import { collections } from '../collection';
 import Character from '.';
 import { EffectGainArcaneSchoolPrepareSlotArgs } from '../../types/effectType';
+import { getClassLevel } from '../../utils/class';
 
 export class CharacterSpellbook {
   character: Character;
@@ -185,6 +186,29 @@ export class CharacterSpellbook {
     }
 
     return 2;
+  }
+
+  getSorcererNewSpellSlotsForLevel(spellLevel: number): number {
+    const level = this.character.getLevelForClass(this.class);
+    const currentLevel = getClassLevel(this.class, level);
+
+    if (currentLevel.spellsKnown) {
+      const currentLevelSpellsKnown = currentLevel.spellsKnown[spellLevel];
+
+      if (level === 1) {
+        return currentLevelSpellsKnown;
+      } else {
+        const lastLevel = getClassLevel(this.class, level - 1);
+
+        if (lastLevel.spellsKnown) {
+          return currentLevelSpellsKnown - lastLevel.spellsKnown[spellLevel];
+        } else {
+          throw new Error(`no spells known for class ${this.class.name} at level ${level}`);
+        }
+      }
+    } else {
+      throw new Error(`no spells known for class ${this.class.name} at level ${level}`);
+    }
   }
 
   getSlotUsageForSpell(s: Spell): number {

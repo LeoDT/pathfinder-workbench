@@ -21,7 +21,9 @@ import CharacterDetailStorage from './CharacterDetailStorage';
 import { useCurrentCharacter } from './context';
 
 const abilityStyle: StackProps = {
-  flexBasis: [1 / 2, 1 / 3],
+  flexBasis: ['50%', '33%'],
+  flexGrow: 1,
+  flexShrink: 1,
   p: '2',
   borderRight: '1px',
   borderBottom: '1px',
@@ -105,32 +107,24 @@ export default function CharacterDetailBasic(): JSX.Element {
               <Box flex="1" w={['full', 'auto']}>
                 <Block>
                   <HStack spacing="0" flexWrap="wrap">
-                    <HStack {...abilityStyle} flexGrow={1}>
-                      {showAbility(AbilityType.str)}
-                    </HStack>
-                    <HStack {...abilityStyle} borderRightWidth={['0px', '1px']} flexGrow={1}>
+                    <HStack {...abilityStyle}>{showAbility(AbilityType.str)}</HStack>
+                    <HStack {...abilityStyle} borderRightWidth={['0px', '1px']}>
                       {showAbility(AbilityType.dex)}
                     </HStack>
-                    <HStack {...abilityStyle} borderRightWidth={['1px', '0px']} flexGrow={1}>
+                    <HStack {...abilityStyle} borderRightWidth={['1px', '0px']}>
                       {showAbility(AbilityType.con)}
                     </HStack>
                     <HStack
                       {...abilityStyle}
                       borderRightWidth={['0px', '1px']}
                       borderBottomWidth={['1px', '0px']}
-                      flexGrow={1}
                     >
                       {showAbility(AbilityType.int)}
                     </HStack>
-                    <HStack {...abilityStyle} borderBottomWidth="0px" flexGrow={1}>
+                    <HStack {...abilityStyle} borderBottomWidth="0px">
                       {showAbility(AbilityType.wis)}
                     </HStack>
-                    <HStack
-                      {...abilityStyle}
-                      borderRightWidth="0px"
-                      borderBottomWidth="0px"
-                      flexGrow={1}
-                    >
+                    <HStack {...abilityStyle} borderRightWidth="0px" borderBottomWidth="0px">
                       {showAbility(AbilityType.cha)}
                     </HStack>
                   </HStack>

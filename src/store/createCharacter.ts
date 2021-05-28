@@ -1,4 +1,4 @@
-import { compact } from 'lodash-es';
+import { compact, range } from 'lodash-es';
 import { action, computed, makeObservable, reaction } from 'mobx';
 
 import { CharacterUpgrade } from '../types/characterUpgrade';
@@ -14,6 +14,7 @@ import {
 import { constraintAppliedAlignmentOptions } from '../utils/alignment';
 import { getClassFeatByLevel } from '../utils/class';
 import { createContextNoNullCheck } from '../utils/react';
+import { partitionSpellsByLevel } from '../utils/spell';
 import Character from './character';
 import { EntityTypesValidForEffectSource } from './character/effect';
 import { CharacterSpellbook } from './character/spellbook';
@@ -241,6 +242,21 @@ export default class CreateCharacterStore {
     switch (this.spellbook.castingType) {
       case 'wizard-like':
         return this.upgrade.spells.length === this.spellbook.wizardNewSpellSlots;
+      case 'sorcerer-like': {
+        const spells = partitionSpellsByLevel(
+          collections.spell.getByIds(this.upgrade.spells),
+          this.class
+        );
+        const slotsForLevel = range(0, 10).map((l) =>
+          this.spellbook?.getSorcererNewSpellSlotsForLevel(l)
+        );
+
+        return slotsForLevel.every((slots, level) => {
+          if (slots === 0) return true;
+
+          return spells[level]?.length === slots;
+        });
+      }
 
       default:
         return false;

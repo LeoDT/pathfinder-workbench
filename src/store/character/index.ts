@@ -241,7 +241,7 @@ export default class Character {
 
   startUpgrade(): void {
     const lastUpgrade = last(this.upgrades);
-    const lastUpgradeClass = lastUpgrade ? lastUpgrade.classId : 'Wizard';
+    const lastUpgradeClass = lastUpgrade ? lastUpgrade.classId : 'Sorcerer';
     const levelFeat = (this.level + 1) % 2 === 1;
     const levelAbility = (this.level + 1) % 4 === 1;
 

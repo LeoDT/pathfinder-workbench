@@ -55,6 +55,35 @@ export function CharacterDetailSpells({ spellbook }: Props): JSX.Element {
         }
         break;
 
+      case 'sorcerer-like': {
+        spellbook.knownSpells.forEach((spells, level) => {
+          const perday = spellbook.spellsPerDay[level];
+          const castedByLevel: number[] = [];
+
+          for (const c of casted) {
+            const level = collections.spell.getSpellLevelForClass(c, spellbook.class);
+
+            if (!castedByLevel[level]) {
+              castedByLevel[level] = 0;
+            }
+
+            castedByLevel[level] += 1;
+          }
+
+          spells.forEach((s) => {
+            const level = collections.spell.getSpellLevelForClass(s, spellbook.class);
+
+            if (level === 0) {
+              result.set(s, -1);
+            } else {
+              result.set(s, perday - (castedByLevel[level] ?? 0));
+            }
+          });
+        });
+
+        break;
+      }
+
       default:
         break;
     }
@@ -83,7 +112,9 @@ export function CharacterDetailSpells({ spellbook }: Props): JSX.Element {
         >
           恢复
         </Button>
-        <SpellbookManagerToggler spellbook={spellbook} buttonProps={{ size: 'sm' }} />
+        {spellbook.castingType === 'sorcerer-like' ? null : (
+          <SpellbookManagerToggler spellbook={spellbook} buttonProps={{ size: 'sm' }} />
+        )}
       </HStack>
 
       <Observer>
