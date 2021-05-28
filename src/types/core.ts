@@ -156,6 +156,7 @@ export interface ClassLevel {
   will: number;
   special?: Array<string>;
   spellsPerDay?: Array<number>;
+  spellsKnown?: Array<number>;
 }
 
 export interface Class extends Entity {
