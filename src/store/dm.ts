@@ -1,5 +1,5 @@
 import { cloneDeep } from 'lodash-es';
-import { observable, IObservableArray, makeObservable, action, computed } from 'mobx';
+import { observable, IObservableArray, makeObservable, action, computed, toJS } from 'mobx';
 import shortid from 'shortid';
 
 export interface Tracker {
@@ -83,6 +83,21 @@ export default class DMStore {
 
   removeCharacter(c: DMCharacter): void {
     this.characters.remove(c);
+  }
+
+  copyCharacter(c: DMCharacter): void {
+    let name = c.name;
+    if (c.name.search(/\s(\d+)$/) !== -1) {
+      name = c.name.replace(/\s(\d+)$/, '');
+    }
+
+    name = this.getNonConflictName(name);
+
+    this.characters.push({
+      ...cloneDeep(toJS(c)),
+      id: shortid(),
+      name,
+    });
   }
 
   rollInitiative(c: DMCharacter): void {

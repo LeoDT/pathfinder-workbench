@@ -91,7 +91,6 @@ export default function DMPage(): JSX.Element {
               </MenuItem>
               <MenuItem onClick={() => dm.healAll()}>全员恢复</MenuItem>
               <MenuItem onClick={() => dm.recoverAllTracker()}>全员恢复Tracker</MenuItem>
-              <MenuItem onClick={() => dm.recoverAllAttunment()}>全员恢复消耗品同调</MenuItem>
             </MenuList>
           </Menu>
         </ButtonGroup>

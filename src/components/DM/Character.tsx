@@ -6,12 +6,15 @@ import {
   Box,
   Text,
   Button,
+  ButtonGroup,
   Menu,
   MenuButton,
   MenuList,
   MenuItem,
   Portal,
+  Icon,
 } from '@chakra-ui/react';
+import { FaTrashAlt, FaCopy } from 'react-icons/fa';
 
 import { useStore } from '../../store';
 import { DMCharacter } from '../../store/dm';
@@ -103,19 +106,6 @@ export default function Character({ character: c }: Props): JSX.Element {
                 type="number"
               />
             </Box>
-            <Box p="2">
-              <Text fontSize="xx-small" color="gray.400">
-                消耗品同调
-              </Text>
-              <Input
-                value={c.attunement}
-                onChange={(e) => {
-                  c.attunement = e.target.value;
-                }}
-                variant="unstyled"
-                type="number"
-              />
-            </Box>
           </HStack>
           <HStack spacing={0} borderBottom="1px" borderColor="gray.200">
             <Box p="2" borderRight="1px" borderColor="gray.200">
@@ -139,19 +129,6 @@ export default function Character({ character: c }: Props): JSX.Element {
                 value={c.perception}
                 onChange={(e) => {
                   c.perception = e.target.value;
-                }}
-                variant="unstyled"
-                type="number"
-              />
-            </Box>
-            <Box p="2" borderRight="1px" borderColor="gray.200">
-              <Text fontSize="xx-small" color="gray.400">
-                察言观色
-              </Text>
-              <Input
-                value={c.senseMotive}
-                onChange={(e) => {
-                  c.senseMotive = e.target.value;
                 }}
                 variant="unstyled"
                 type="number"
@@ -189,17 +166,28 @@ export default function Character({ character: c }: Props): JSX.Element {
             <Button size="sm" onClick={() => dm.heal(c)}>
               恢复
             </Button>
-            <Button
-              colorScheme="red"
-              size="sm"
-              onClick={() => {
-                if (confirm('确定移除此人物?')) {
-                  dm.removeCharacter(c);
-                }
-              }}
-            >
-              删除
-            </Button>
+
+            <ButtonGroup isAttached style={{ marginLeft: 'auto' }}>
+              <Button
+                size="sm"
+                onClick={() => {
+                  dm.copyCharacter(c);
+                }}
+              >
+                <Icon as={FaCopy} />
+              </Button>
+              <Button
+                colorScheme="red"
+                size="sm"
+                onClick={() => {
+                  if (confirm('确定移除此人物?')) {
+                    dm.removeCharacter(c);
+                  }
+                }}
+              >
+                <Icon as={FaTrashAlt} />
+              </Button>
+            </ButtonGroup>
           </HStack>
         </VStack>
       )}
