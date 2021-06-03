@@ -75,6 +75,7 @@ export default class Character {
   tracker: CharacterTracker;
 
   formulaParser: FormulaParser;
+  formulaParserReady: boolean;
 
   disposes: Array<() => void>;
 
@@ -85,7 +86,7 @@ export default class Character {
       skillSystem = 'core',
       alignment = Alignment.N,
       bonusAbilityType,
-      raceId = 'Half Elf',
+      raceId = 'Elf',
       alternateRaceTraitIds,
       preparedSpellIds,
       preparedSpecialSpellIds,
@@ -153,6 +154,8 @@ export default class Character {
 
     this.preparedSpellIds = preparedSpellIds || new Map();
     this.preparedSpecialSpellIds = preparedSpecialSpellIds || new Map();
+
+    this.formulaParserReady = false;
 
     this.effect = new CharacterEffect(this);
     this.status = new CharacterStatus(this);
@@ -241,7 +244,7 @@ export default class Character {
 
   startUpgrade(): void {
     const lastUpgrade = last(this.upgrades);
-    const lastUpgradeClass = lastUpgrade ? lastUpgrade.classId : 'Sorcerer';
+    const lastUpgradeClass = lastUpgrade ? lastUpgrade.classId : 'Monk(Unchained)';
     const levelFeat = (this.level + 1) % 2 === 1;
     const levelAbility = (this.level + 1) % 4 === 1;
 
@@ -383,7 +386,7 @@ export default class Character {
     const ranks = new Map<string, number>();
 
     for (const [sId, bonus] of rankBonuses) {
-      ranks.set(sId, this.aggregateBonusesAmount(bonus));
+      ranks.set(sId, this.aggregateBonusesMaxAmount(bonus));
     }
 
     return ranks;
@@ -482,34 +485,107 @@ export default class Character {
     this.disposes.push(
       autorun(() => {
         p.setVariable('level', this.level);
+        p.setVariable('carryLoad', this.status.carryLoad);
+        p.setVariable('armor', this.equipment.armor?.name || 'none');
+        p.setVariable('buckler', this.equipment.buckler?.name || 'none');
+        p.setVariable('mainHand', this.equipment.mainHand?.name || 'none');
+        p.setVariable('mainHandCategory', this.equipment.mainHand?.type.meta.category || 'none');
+        p.setVariable('offHand', this.equipment.offHand?.name || 'none');
+        p.setVariable('offHandCategory', this.equipment.offHand?.type.meta.category || 'none');
+        p.setVariable('maxBab', this.status.maxBab);
+
+        [
+          AbilityType.str,
+          AbilityType.dex,
+          AbilityType.con,
+          AbilityType.int,
+          AbilityType.wis,
+          AbilityType.cha,
+        ].forEach((s) => {
+          p.setVariable(s, this.abilityModifier[s]);
+        });
+
+        this.formulaParserReady = true;
       })
     );
   }
-  parseFormula(form: string): number {
+  parseFormula(form: string): number | boolean {
     const { error, result } = this.formulaParser.parse(form);
 
-    if (error || !result) {
+    if (error || typeof result === 'undefined' || result === null) {
       throw new Error(`formula parse error: ${error}, formula: ${form}`);
     }
 
     return result;
+  }
+  parseFormulaBoolean(form: string): boolean {
+    const r = this.parseFormula(form);
+
+    if (typeof r === 'boolean') {
+      return r;
+    }
+
+    throw new Error(`expect formula ${form} to result in a boolean, got ${r}`);
+  }
+  parseFormulaNumber(form: string): number {
+    const r = this.parseFormula(form);
+
+    if (typeof r === 'number') {
+      return r;
+    }
+
+    throw new Error(`expect formula ${form} to result in a number, got ${r}`);
   }
 
   makeNamedBonuses(bonuses: NamedBonus[]): NamedBonus[] {
     return markUnstackableBonus(
       bonuses.map((b) => {
         if (b.bonus.amountFormula) {
-          return { ...b, bonus: { ...b.bonus, amount: this.parseFormula(b.bonus.amountFormula) } };
+          const amount = Array.isArray(b.bonus.amountFormula)
+            ? b.bonus.amountFormula.map((f) => this.parseFormulaNumber(f))
+            : this.parseFormulaNumber(b.bonus.amountFormula);
+
+          return {
+            ...b,
+            bonus: { ...b.bonus, amount },
+          };
         }
 
         return b;
       })
     );
   }
-  aggregateBonusesAmount(bonuses: Bonus[]): number {
-    return bonuses.reduce((acc, b) => acc + (b.ignored ? 0 : b.amount), 0);
+  aggregateBonusesMaxAmount(bonuses: Bonus[]): number {
+    return bonuses.reduce((acc, b) => {
+      if (b.ignored) return acc;
+
+      const amount = Array.isArray(b.amount) ? Math.max(...b.amount) : b.amount;
+
+      return acc + amount;
+    }, 0);
   }
-  aggregateNamedBonusesAmount(bonuses: NamedBonus[]): number {
+  aggregateBonusesAmount(bonuses: Bonus[]): number[] {
+    const accLength = Math.max(
+      ...bonuses.map((b) => (Array.isArray(b.amount) ? b.amount.length : 1))
+    );
+    const acc = Array(accLength).fill(0);
+
+    return bonuses.reduce<number[]>((acc, b) => {
+      if (b.ignored) return acc;
+
+      return acc.map((a, i) => {
+        if (Array.isArray(b.amount)) {
+          return a + (b.amount[i] || 0);
+        } else {
+          return a + b.amount;
+        }
+      });
+    }, acc);
+  }
+  aggregateNamedBonusesMaxAmount(bonuses: NamedBonus[]): number {
+    return this.aggregateBonusesMaxAmount(bonuses.map((n) => n.bonus));
+  }
+  aggregateNamedBonusesAmount(bonuses: NamedBonus[]): number[] {
     return this.aggregateBonusesAmount(bonuses.map((n) => n.bonus));
   }
 

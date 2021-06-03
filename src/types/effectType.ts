@@ -3,10 +3,10 @@ import {
   ArmorCategory,
   Bonus,
   FeatType,
+  NamedBonus,
   SpellCastingType,
   WeaponTraining,
 } from './core';
-import { Condition } from './condition';
 
 export enum EffectType {
   gainFeat = 'gainFeat',
@@ -20,14 +20,19 @@ export enum EffectType {
   gainSkill = 'gainSkill',
   gainInitiative = 'gainInitiative',
   gainAC = 'gainAC',
+  gainCMD = 'gainCMD',
   gainSave = 'gainSave',
   gainHP = 'gainHP',
   gainTwoWeaponFighting = 'gainTwoWeaponFighting',
+  gainSpeed = 'gainSpeed',
+
+  enchantUnarmedStrike = 'enchantUnarmedStrike',
+  addAttackOption = 'addAttackOption',
 }
 
 export interface BaseEffect<TYPE extends EffectType, ARGS> {
   type: TYPE;
-  when?: Condition;
+  when?: string;
   args: ARGS;
   growArgs?: Array<{ level: number; args: ARGS }>;
   original?: Effect;
@@ -122,6 +127,11 @@ export interface EffectGainACArgs {
 }
 export type EffectGainAC = BaseEffect<EffectType.gainAC, EffectGainACArgs>;
 
+export interface EffectGainCMDArgs {
+  bonus: Bonus;
+}
+export type EffectGainCMD = BaseEffect<EffectType.gainCMD, EffectGainCMDArgs>;
+
 export interface EffectGainSaveArgs {
   saveType: 'fortitude' | 'will' | 'reflex' | 'all';
   bonus: Bonus;
@@ -135,6 +145,36 @@ export type EffectGainHP = BaseEffect<EffectType.gainHP, EffectGainHPArgs>;
 
 export type EffectGainTwoWeaponFighting = BaseEffect<EffectType.gainTwoWeaponFighting, void>;
 
+export interface EffectGainSpeedArgs {
+  bonus: Bonus;
+}
+export type EffectGainSpeed = BaseEffect<EffectType.gainSpeed, EffectGainSpeedArgs>;
+
+export interface EffectEnchantUnarmedStrikeArgs {
+  damage: string;
+}
+export type EffectEnchantUnarmedStrike = BaseEffect<
+  EffectType.enchantUnarmedStrike,
+  EffectEnchantUnarmedStrikeArgs
+>;
+
+export interface EffectAddAttackOptionArgs {
+  extraAttack?: {
+    by: 'maxBab';
+    amount: number;
+  };
+  ignoreTwoWeapon?: boolean;
+  attackBonuses?: NamedBonus[];
+  damageBonuses?: Array<{
+    applyMultiplier: AbilityType;
+    bonus: NamedBonus;
+  }>;
+}
+export type EffectAddAttackOption = BaseEffect<
+  EffectType.addAttackOption,
+  EffectAddAttackOptionArgs
+>;
+
 export type Effect =
   | EffectAbilityBonus
   | EffectGainArcaneSchool
@@ -146,9 +186,12 @@ export type Effect =
   | EffectGainSkill
   | EffectGainInitiative
   | EffectGainAC
+  | EffectGainCMD
   | EffectGainSave
   | EffectGainHP
-  | EffectGainTwoWeaponFighting;
+  | EffectGainTwoWeaponFighting
+  | EffectEnchantUnarmedStrike
+  | EffectAddAttackOption;
 
 export type ArgsTypeForEffect<T extends Effect> = T['args'];
 

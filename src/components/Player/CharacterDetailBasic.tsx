@@ -11,7 +11,14 @@ import { showModifier } from '../../utils/modifier';
 import { sizeTranslates } from '../../utils/race';
 import AbilityIcon from '../AbilityIcon';
 import StatNumber from '../StatNumber';
-import { Block, BlockHeading, HBlockItem, VBlockItem, HBlockItemForBonus } from './CharacterBlock';
+import {
+  Block,
+  BlockHeading,
+  HBlockItem,
+  VBlockItem,
+  HBlockItemForBonus,
+  VBlockItemForBonus,
+} from './CharacterBlock';
 import { CharacterDetailAttackOptions } from './CharacterDetailAttackOptions';
 import CharacterDetailEquip from './CharacterDetailEquip';
 import { CharacterDetailFeats } from './CharacterDetailFeats';
@@ -88,7 +95,9 @@ export default function CharacterDetailBasic(): JSX.Element {
                   <Block>
                     <VBlockItem label="种族">{character.race.name}</VBlockItem>
                     <VBlockItem label="体型">{sizeTranslates[character.race.size]}</VBlockItem>
-                    <VBlockItem label="速度">{character.race.speed}尺</VBlockItem>
+                    <VBlockItemForBonus label="速度" bonuses={character.status.speedBonuses}>
+                      {character.status.speed}
+                    </VBlockItemForBonus>
                   </Block>
                 </Box>
                 <Box w="50%">

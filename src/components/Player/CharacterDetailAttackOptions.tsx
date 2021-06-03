@@ -1,7 +1,7 @@
 import { Box, Text, HStack } from '@chakra-ui/react';
 import { Observer } from 'mobx-react-lite';
 
-import { showModifier } from '../../utils/modifier';
+import { showModifier, showModifiers } from '../../utils/modifier';
 import { HBlockItem, Block, HBlockItemForBonus } from './CharacterBlock';
 import { useCurrentCharacter } from './context';
 
@@ -19,7 +19,7 @@ export function CharacterDetailAttackOptions(): JSX.Element {
                 <Block>
                   <HStack>
                     <HBlockItemForBonus label="加值" bonuses={a.attackBonuses}>
-                      {showModifier(a.attackModifier)}
+                      {showModifiers(a.attackModifier)}
                     </HBlockItemForBonus>
                     <HBlockItemForBonus label="伤害" bonuses={a.damageBonuses}>
                       {a.option.damage}

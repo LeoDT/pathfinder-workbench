@@ -19,13 +19,20 @@ export function markUnstackableBonus(bonuses: NamedBonus[]): NamedBonus[] {
     } else {
       let max = bonusesForType[0];
       for (const b of bonusesForType) {
-        if (b.bonus.amount > max.bonus.amount) {
+        const currentAmount = Array.isArray(b.bonus.amount)
+          ? Math.max(...b.bonus.amount)
+          : b.bonus.amount;
+        const maxAmount = Array.isArray(max.bonus.amount)
+          ? Math.max(...max.bonus.amount)
+          : max.bonus.amount;
+
+        if (currentAmount > maxAmount) {
           max = b;
         }
       }
 
       for (const b of bonusesForType) {
-        result.push({ ...b, bonus: { ...b.bonus, ignored: b === max } });
+        result.push({ ...b, bonus: { ...b.bonus, ignored: b !== max } });
       }
     }
   });

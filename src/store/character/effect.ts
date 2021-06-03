@@ -91,10 +91,27 @@ export default class CharacterEffect {
 
   get allEffects(): Array<EffectAndSource> {
     const effects: Array<EffectAndSource> = [];
+    const add = (es: EffectAndSource) => {
+      if (es.effect.when && this.character.formulaParserReady) {
+        const result = this.character.parseFormula(es.effect.when);
+
+        if (result) {
+          effects.push(es);
+        }
+
+        if (typeof result !== 'boolean') {
+          console.warn(
+            `got a non boolean value for effect's when, effect ${es.effect.type} from ${es.source.name}`
+          );
+        }
+      } else {
+        effects.push(es);
+      }
+    };
 
     this.character.racialTraits.forEach((source) => {
       source.effects?.forEach((effect) => {
-        effects.push({
+        add({
           effect: this.growEffectArgs(effect, source),
           source,
           input: this.getEffectInputForRacialTrait(source),
@@ -105,7 +122,7 @@ export default class CharacterEffect {
     this.character.gainedClassFeats.forEach((feats, clas) => {
       feats.forEach((source) => {
         source.effects?.forEach((effect) => {
-          effects.push({
+          add({
             effect: this.growEffectArgs(effect, source),
             source,
             input: this.getEffectInputForClassFeat(clas, source),
@@ -116,7 +133,7 @@ export default class CharacterEffect {
 
     this.gainedFeatsWithEffectInputs.forEach(({ feat: source, input }) => {
       source.effects?.forEach((effect) => {
-        effects.push({ effect: this.growEffectArgs(effect, source), source, input });
+        add({ effect: this.growEffectArgs(effect, source), source, input });
       });
     });
 
@@ -178,7 +195,7 @@ export default class CharacterEffect {
     }
 
     if (level > 0) {
-      for (let i = e.growArgs.length - 1; i > 0; i--) {
+      for (let i = e.growArgs.length - 1; i >= 0; i--) {
         const g = e.growArgs[i];
 
         if (g.level <= level) {
@@ -274,5 +291,19 @@ export default class CharacterEffect {
     return this.getEffectsByType<Effects.EffectGainTwoWeaponFighting>(
       Effects.EffectType.gainTwoWeaponFighting
     );
+  }
+
+  getGainSpeedEffects(): EffectAndSource<Effects.EffectGainSpeed>[] {
+    return this.getEffectsByType<Effects.EffectGainSpeed>(Effects.EffectType.gainSpeed);
+  }
+
+  getEnchantUnarmedStrikeEffects(): EffectAndSource<Effects.EffectEnchantUnarmedStrike>[] {
+    return this.getEffectsByType<Effects.EffectEnchantUnarmedStrike>(
+      Effects.EffectType.enchantUnarmedStrike
+    );
+  }
+
+  getAddAttackOptionEffects(): EffectAndSource<Effects.EffectAddAttackOption>[] {
+    return this.getEffectsByType<Effects.EffectAddAttackOption>(Effects.EffectType.addAttackOption);
   }
 }

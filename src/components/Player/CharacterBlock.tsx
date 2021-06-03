@@ -42,11 +42,12 @@ export function VBlockItem({ label, children, ...props }: BlockItemProps): JSX.E
         color="gray.500"
         _groupHover={{ color: 'gray.700' }}
         transition="color .15s ease-in-out"
+        whiteSpace="nowrap"
       >
         {label}
       </Text>
       <Spacer />
-      <Box>{children}</Box>
+      <Box whiteSpace="nowrap">{children}</Box>
     </HStack>
   );
 }
@@ -81,6 +82,24 @@ export function HBlockItemForBonus({
     <Box flexBasis={1 / 3} flexGrow={1}>
       <NamedBonusPopover bonuses={bonuses}>
         <HBlockItem label={label}>{children}</HBlockItem>
+      </NamedBonusPopover>
+    </Box>
+  );
+}
+
+export function VBlockItemForBonus({
+  bonuses,
+  children,
+  label,
+}: {
+  bonuses: NamedBonus[];
+  children: ReactNode;
+  label: ReactNode;
+}): JSX.Element {
+  return (
+    <Box flexBasis={1 / 3} flexGrow={1}>
+      <NamedBonusPopover bonuses={bonuses}>
+        <VBlockItem label={label}>{children}</VBlockItem>
       </NamedBonusPopover>
     </Box>
   );

@@ -4,6 +4,7 @@ import { Abilities, NamedBonus } from '../../types/core';
 import { collections } from '../collection';
 import Character from '.';
 import { EffectGainSaveArgs } from '../../types/effectType';
+import { CarryLoad, getCarryLoad } from '../../utils/weight';
 
 export default class CharacterStatus {
   character: Character;
@@ -35,6 +36,8 @@ export default class CharacterStatus {
       flatFooted: computed,
       touch: computed,
       touchBonuses: computed,
+
+      carryLoad: computed,
     });
 
     this.character = c;
@@ -42,6 +45,20 @@ export default class CharacterStatus {
 
   get modifier(): Abilities {
     return this.character.abilityModifier;
+  }
+
+  get speedBonuses(): NamedBonus[] {
+    return [
+      { name: '基础', bonus: { amount: this.character.race.speed, type: 'untyped' } },
+      ...this.character.effect.getGainSpeedEffects().map((es) => ({
+        name: es.source.name,
+        bonus: es.effect.args.bonus,
+      })),
+    ];
+  }
+
+  get speed(): number {
+    return this.character.aggregateNamedBonusesAmount(this.speedBonuses);
   }
 
   get hpBonuses(): NamedBonus[] {
@@ -253,5 +270,14 @@ export default class CharacterStatus {
   }
   get touch(): number {
     return this.character.aggregateNamedBonusesAmount(this.touchBonuses);
+  }
+
+  get carryLoad(): CarryLoad {
+    const weight = this.character.equipment.storageWithCostWeight.reduce(
+      (acc, { weight }) => acc + weight,
+      0
+    );
+
+    return getCarryLoad(this.character.ability.str, weight);
   }
 }

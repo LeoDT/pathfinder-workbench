@@ -79,7 +79,7 @@ export interface Race extends Entity {
   alternateRacialTrait: Array<RacialTrait>;
   desc: Record<string, string>;
   size: RaceSize;
-  speed: string;
+  speed: number;
 }
 
 export interface SpellMeta {
@@ -249,8 +249,8 @@ export interface BonusType extends Entity {
 }
 
 export interface Bonus {
-  amount: number;
-  amountFormula?: string;
+  amount: number | number[];
+  amountFormula?: string | string[];
   type: string;
   ignored?: boolean;
 }

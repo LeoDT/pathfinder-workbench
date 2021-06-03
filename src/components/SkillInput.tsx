@@ -19,7 +19,7 @@ export function SkillIcon({
   return (
     <>
       <AbilityIcon ability={ability} />
-      <Text fontSize="large">
+      <Text fontSize="lg">
         {name} {isClassSkill ? <Icon as={FaStar} color="gray.600" /> : null}
       </Text>
     </>

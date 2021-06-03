@@ -31,9 +31,13 @@ export function NamedBonusPopover({ bonuses, children, ...props }: Props): JSX.E
         <PopoverContent width="48">
           <PopoverBody>
             {bonuses.map(({ name, bonus }, i) => (
-              <HStack key={i} justifyContent="space-between">
+              <HStack
+                key={i}
+                justifyContent="space-between"
+                textDecoration={bonus.ignored ? 'line-through' : ''}
+              >
                 <Text>{name}</Text>
-                <Text>{bonus.amount}</Text>
+                <Text>{Array.isArray(bonus.amount) ? bonus.amount.join('/') : bonus.amount}</Text>
               </HStack>
             ))}
           </PopoverBody>
