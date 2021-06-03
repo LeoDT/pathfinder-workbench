@@ -203,6 +203,10 @@ export default class CharacterStatus {
       { name: 'BAB', bonus: { amount: this.maxBab, type: 'untyped' } },
       { name: '力量', bonus: { amount: this.modifier.str, type: 'untyped' } },
       { name: '敏捷', bonus: { amount: this.modifier.dex, type: 'untyped' } },
+      ...this.character.effect.getGainCMDEffects().map((es) => ({
+        name: es.source.name,
+        bonus: es.effect.args.bonus,
+      })),
     ]);
   }
   get cmd(): number {

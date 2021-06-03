@@ -278,6 +278,9 @@ export default class CharacterEffect {
   getGainACEffects(): EffectAndSource<Effects.EffectGainAC>[] {
     return this.getEffectsByType<Effects.EffectGainAC>(Effects.EffectType.gainAC);
   }
+  getGainCMDEffects(): EffectAndSource<Effects.EffectGainCMD>[] {
+    return this.getEffectsByType<Effects.EffectGainCMD>(Effects.EffectType.gainCMD);
+  }
 
   getGainHPEffects(): EffectAndSource<Effects.EffectGainHP>[] {
     return this.getEffectsByType<Effects.EffectGainHP>(Effects.EffectType.gainHP);
