@@ -306,4 +306,8 @@ export default class CharacterEffect {
   getAddAttackOptionEffects(): EffectAndSource<Effects.EffectAddAttackOption>[] {
     return this.getEffectsByType<Effects.EffectAddAttackOption>(Effects.EffectType.addAttackOption);
   }
+
+  getAddTrackerEffects(): EffectAndSource<Effects.EffectAddTracker>[] {
+    return this.getEffectsByType<Effects.EffectAddTracker>(Effects.EffectType.addTracker);
+  }
 }

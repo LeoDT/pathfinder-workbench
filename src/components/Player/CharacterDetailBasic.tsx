@@ -26,6 +26,7 @@ import { CharacterDetailSkills } from './CharacterDetailSkills';
 import { CharacterDetailSpells } from './CharacterDetailSpells';
 import CharacterDetailStorage from './CharacterDetailStorage';
 import { useCurrentCharacter } from './context';
+import { CharacterDetailTrackers } from './CharacterDetailTrackers';
 
 const abilityStyle: StackProps = {
   flexBasis: ['50%', '33%'],
@@ -219,18 +220,18 @@ export default function CharacterDetailBasic(): JSX.Element {
             </Stack>
 
             <Stack direction={['column', 'row']}>
-              <Block flexBasis={['50%', '100%']}>
-                <Box p="2">
+              <Box flexBasis={['50%', '100%']}>
+                <Block p="2" h="full">
                   <BlockHeading>攻击</BlockHeading>
                   <CharacterDetailAttackOptions />
-                </Box>
-              </Block>
-              <Block flexBasis={['50%', '100%']}>
-                <Box p="2">
+                </Block>
+              </Box>
+              <Box flexBasis={['50%', '100%']}>
+                <Block p="2" h="full">
                   <BlockHeading>技能</BlockHeading>
                   <CharacterDetailSkills />
-                </Box>
-              </Block>
+                </Block>
+              </Box>
             </Stack>
 
             <Stack direction={['column', 'row']}>
@@ -256,13 +257,19 @@ export default function CharacterDetailBasic(): JSX.Element {
                     <CharacterDetailSpells spellbook={b} />
                   </Block>
                 </Box>
+              </Stack>
+            ))}
+
+            {character.tracker.trackers.length > 0 ? (
+              <Stack direction={['column', 'row']}>
                 <Box flexBasis={['50%', '100%']}>
                   <Block p="2" h="full">
                     <BlockHeading>Trackers</BlockHeading>
+                    <CharacterDetailTrackers />
                   </Block>
                 </Box>
               </Stack>
-            ))}
+            ) : null}
 
             {Array.from(character.gainedClassFeats.entries()).map(([clas, feats]) => (
               <Block p="2" key={clas.id}>

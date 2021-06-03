@@ -58,7 +58,7 @@ export default class CharacterStatus {
   }
 
   get speed(): number {
-    return this.character.aggregateNamedBonusesAmount(this.speedBonuses);
+    return this.character.aggregateNamedBonusesMaxAmount(this.speedBonuses);
   }
 
   get hpBonuses(): NamedBonus[] {
@@ -90,7 +90,7 @@ export default class CharacterStatus {
     ]);
   }
   get hp(): number {
-    return this.character.aggregateNamedBonusesAmount(this.hpBonuses);
+    return this.character.aggregateNamedBonusesMaxAmount(this.hpBonuses);
   }
 
   get initiativeBonuses(): NamedBonus[] {
@@ -103,7 +103,7 @@ export default class CharacterStatus {
     ]);
   }
   get initiative(): number {
-    return this.character.aggregateNamedBonusesAmount(this.initiativeBonuses);
+    return this.character.aggregateNamedBonusesMaxAmount(this.initiativeBonuses);
   }
 
   getSaveBonuses(t: EffectGainSaveArgs['saveType']): NamedBonus[] {
@@ -131,7 +131,7 @@ export default class CharacterStatus {
     ]);
   }
   get fortitude(): number {
-    return this.character.aggregateNamedBonusesAmount(this.fortitudeBonuses);
+    return this.character.aggregateNamedBonusesMaxAmount(this.fortitudeBonuses);
   }
 
   get reflexBonuses(): NamedBonus[] {
@@ -148,7 +148,7 @@ export default class CharacterStatus {
     ]);
   }
   get reflex(): number {
-    return this.character.aggregateNamedBonusesAmount(this.reflexBonuses);
+    return this.character.aggregateNamedBonusesMaxAmount(this.reflexBonuses);
   }
 
   get willBonuses(): NamedBonus[] {
@@ -165,7 +165,7 @@ export default class CharacterStatus {
     ]);
   }
   get will(): number {
-    return this.character.aggregateNamedBonusesAmount(this.willBonuses);
+    return this.character.aggregateNamedBonusesMaxAmount(this.willBonuses);
   }
 
   get bab(): number[] {
@@ -194,7 +194,7 @@ export default class CharacterStatus {
     ]);
   }
   get cmb(): number {
-    return this.character.aggregateNamedBonusesAmount(this.cmbBonuses);
+    return this.character.aggregateNamedBonusesMaxAmount(this.cmbBonuses);
   }
 
   get cmdBonuses(): NamedBonus[] {
@@ -206,7 +206,7 @@ export default class CharacterStatus {
     ]);
   }
   get cmd(): number {
-    return this.character.aggregateNamedBonusesAmount(this.cmdBonuses);
+    return this.character.aggregateNamedBonusesMaxAmount(this.cmdBonuses);
   }
 
   getBonusesForAC(t: 'ac' | 'flatFooted' | 'touch'): NamedBonus[] {
@@ -244,7 +244,7 @@ export default class CharacterStatus {
     ]);
   }
   get ac(): number {
-    return this.character.aggregateNamedBonusesAmount(this.acBonuses);
+    return this.character.aggregateNamedBonusesMaxAmount(this.acBonuses);
   }
 
   get flatFootedBonuses(): NamedBonus[] {
@@ -258,7 +258,7 @@ export default class CharacterStatus {
     ]);
   }
   get flatFooted(): number {
-    return this.character.aggregateNamedBonusesAmount(this.flatFootedBonuses);
+    return this.character.aggregateNamedBonusesMaxAmount(this.flatFootedBonuses);
   }
 
   get touchBonuses(): NamedBonus[] {
@@ -269,7 +269,7 @@ export default class CharacterStatus {
     ]);
   }
   get touch(): number {
-    return this.character.aggregateNamedBonusesAmount(this.touchBonuses);
+    return this.character.aggregateNamedBonusesMaxAmount(this.touchBonuses);
   }
 
   get carryLoad(): CarryLoad {

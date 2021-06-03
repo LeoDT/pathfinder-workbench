@@ -28,6 +28,7 @@ export enum EffectType {
 
   enchantUnarmedStrike = 'enchantUnarmedStrike',
   addAttackOption = 'addAttackOption',
+  addTracker = 'addTracker',
 }
 
 export interface BaseEffect<TYPE extends EffectType, ARGS> {
@@ -174,6 +175,14 @@ export type EffectAddAttackOption = BaseEffect<
   EffectType.addAttackOption,
   EffectAddAttackOptionArgs
 >;
+
+export interface EffectAddTrackerArgs {
+  id?: string;
+  name?: string;
+  max?: number;
+  maxFormula?: string;
+}
+export type EffectAddTracker = BaseEffect<EffectType.addTracker, EffectAddTrackerArgs>;
 
 export type Effect =
   | EffectAbilityBonus

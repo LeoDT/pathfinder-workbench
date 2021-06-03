@@ -48,6 +48,11 @@ interface OptionalCharacterParams {
   preparedSpecialSpellIds?: Map<string, string[]>;
 
   upgrades?: CharacterUpgrade[];
+
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  equipment?: any;
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  tracker?: any;
 }
 
 export default class Character {
@@ -92,6 +97,8 @@ export default class Character {
       preparedSpecialSpellIds,
       favoredClassIds,
       upgrades,
+      equipment,
+      tracker,
     }: OptionalCharacterParams = {}
   ) {
     makeObservable(this, {
@@ -133,6 +140,8 @@ export default class Character {
       preparedSpecialSpellIds: observable,
 
       gainedFeats: computed,
+
+      formulaParserReady: observable,
     });
 
     this.disposes = [];
@@ -159,10 +168,10 @@ export default class Character {
 
     this.effect = new CharacterEffect(this);
     this.status = new CharacterStatus(this);
-    this.equipment = new CharacterEquip(this);
+    this.equipment = equipment ? CharacterEquip.parse(equipment, this) : new CharacterEquip(this);
     this.proficiency = new CharacterProficiency(this);
     this.attack = new CharacterAttack(this);
-    this.tracker = new CharacterTracker(this);
+    this.tracker = tracker ? CharacterTracker.parse(tracker, this) : new CharacterTracker(this);
 
     this.spellbooks = observable.array([], { deep: false });
     this.ensureSpellbooks();
@@ -485,6 +494,11 @@ export default class Character {
     this.disposes.push(
       autorun(() => {
         p.setVariable('level', this.level);
+
+        this.levelDetail.forEach((level, clas) => {
+          p.setVariable(`${clas.id.toLowerCase().replace(/[()]/g, '')}Level`, level);
+        });
+
         p.setVariable('carryLoad', this.status.carryLoad);
         p.setVariable('armor', this.equipment.armor?.name || 'none');
         p.setVariable('buckler', this.equipment.buckler?.name || 'none');
@@ -627,16 +641,6 @@ export default class Character {
     json.preparedSpellIds = new Map(json.preparedSpellIds);
     json.preparedSpecialSpellIds = new Map(json.preparedSpecialSpellIds);
 
-    const character = new Character(json.name, json);
-
-    if (json.equipment) {
-      character.equipment = CharacterEquip.parse(json.equipment, character);
-    }
-
-    if (json.tracker) {
-      character.tracker = CharacterTracker.parse(json.tracker, character);
-    }
-
-    return character;
+    return new Character(json.name, json);
   }
 }
