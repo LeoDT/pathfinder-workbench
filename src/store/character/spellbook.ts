@@ -193,7 +193,7 @@ export class CharacterSpellbook {
     const currentLevel = getClassLevel(this.class, level);
 
     if (currentLevel.spellsKnown) {
-      const currentLevelSpellsKnown = currentLevel.spellsKnown[spellLevel];
+      const currentLevelSpellsKnown = currentLevel.spellsKnown[spellLevel] || 0;
 
       if (level === 1) {
         return currentLevelSpellsKnown;
@@ -201,7 +201,7 @@ export class CharacterSpellbook {
         const lastLevel = getClassLevel(this.class, level - 1);
 
         if (lastLevel.spellsKnown) {
-          return currentLevelSpellsKnown - lastLevel.spellsKnown[spellLevel];
+          return currentLevelSpellsKnown - (lastLevel.spellsKnown[spellLevel] || 0);
         } else {
           throw new Error(`no spells known for class ${this.class.name} at level ${level}`);
         }

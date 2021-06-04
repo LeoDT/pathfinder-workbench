@@ -1,4 +1,3 @@
-import { uniq } from 'lodash-es';
 import { Observer } from 'mobx-react-lite';
 import { Link } from 'react-router-dom';
 
@@ -8,6 +7,7 @@ import { AbilityType } from '../../types/core';
 import { abilityTranslates } from '../../utils/ability';
 import { alignmentTranslates } from '../../utils/alignment';
 import { showModifier } from '../../utils/modifier';
+import { uniqByLast } from '../../utils/misc';
 import { sizeTranslates } from '../../utils/race';
 import AbilityIcon from '../AbilityIcon';
 import StatNumber from '../StatNumber';
@@ -277,10 +277,12 @@ export default function CharacterDetailBasic(): JSX.Element {
                   {clas.name} ({character.getLevelForClass(clas)}级)
                 </BlockHeading>
                 <CharacterDetailFeats
-                  entitiesWithInput={uniq(feats).map((f) => ({
-                    entity: f,
-                    input: character.effect.getEffectInputForClassFeat(clas, f),
-                  }))}
+                  entitiesWithInput={uniqByLast(feats, (f) => (f.original ? f.original : f)).map(
+                    (f) => ({
+                      entity: f,
+                      input: character.effect.getEffectInputForClassFeat(clas, f),
+                    })
+                  )}
                 />
               </Block>
             ))}

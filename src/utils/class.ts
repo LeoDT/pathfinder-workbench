@@ -26,7 +26,7 @@ export function getClassFeatByLevel(clas: Class, l: number): Array<ClassFeat> {
           if (g) {
             hit = collections.class.getGrowedClassFeat(f, g);
 
-            return false;
+            return;
           }
         }
 

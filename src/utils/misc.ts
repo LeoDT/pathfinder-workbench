@@ -20,3 +20,15 @@ export function showDistance(d: number): string {
 export function showWeight(w: number): string {
   return `${w} 磅`;
 }
+
+export function uniqByLast<T>(arr: Array<T>, iter: (v: T) => unknown): Array<T> {
+  const map = new Map<unknown, T>();
+
+  for (const item of arr) {
+    const i = iter(item);
+
+    map.set(i, item);
+  }
+
+  return Array.from(map.values());
+}
