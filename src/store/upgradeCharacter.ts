@@ -1,10 +1,9 @@
-import { computed, action, makeObservable } from 'mobx';
+import { action, computed, makeObservable } from 'mobx';
 
 import { AbilityType } from '../types/core';
 import { createContextNoNullCheck } from '../utils/react';
-
-import { collections } from './collection';
 import Character from './character';
+import { collections } from './collection';
 import CreateCharacterStore, { GainFeatReason } from './createCharacter';
 
 export default class UpgradeCharacterStore extends CreateCharacterStore {

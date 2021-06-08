@@ -6,8 +6,8 @@ import { Box, Button, HStack, Spacer, Stack, StackProps, Text, VStack } from '@c
 import { AbilityType } from '../../types/core';
 import { abilityTranslates } from '../../utils/ability';
 import { alignmentTranslates } from '../../utils/alignment';
-import { showModifier } from '../../utils/modifier';
 import { uniqByLast } from '../../utils/misc';
+import { showModifier } from '../../utils/modifier';
 import { sizeTranslates } from '../../utils/race';
 import AbilityIcon from '../AbilityIcon';
 import StatNumber from '../StatNumber';
@@ -15,8 +15,8 @@ import {
   Block,
   BlockHeading,
   HBlockItem,
-  VBlockItem,
   HBlockItemForBonus,
+  VBlockItem,
   VBlockItemForBonus,
 } from './CharacterBlock';
 import { CharacterDetailAttackOptions } from './CharacterDetailAttackOptions';
@@ -25,8 +25,8 @@ import { CharacterDetailFeats } from './CharacterDetailFeats';
 import { CharacterDetailSkills } from './CharacterDetailSkills';
 import { CharacterDetailSpells } from './CharacterDetailSpells';
 import CharacterDetailStorage from './CharacterDetailStorage';
-import { useCurrentCharacter } from './context';
 import { CharacterDetailTrackers } from './CharacterDetailTrackers';
+import { useCurrentCharacter } from './context';
 
 const abilityStyle: StackProps = {
   flexBasis: ['50%', '33%'],
@@ -271,21 +271,29 @@ export default function CharacterDetailBasic(): JSX.Element {
               </Stack>
             ) : null}
 
-            {Array.from(character.gainedClassFeats.entries()).map(([clas, feats]) => (
-              <Block p="2" key={clas.id}>
-                <BlockHeading>
-                  {clas.name} ({character.getLevelForClass(clas)}级)
-                </BlockHeading>
-                <CharacterDetailFeats
-                  entitiesWithInput={uniqByLast(feats, (f) => (f.original ? f.original : f)).map(
-                    (f) => ({
-                      entity: f,
-                      input: character.effect.getEffectInputForClassFeat(clas, f),
-                    })
-                  )}
-                />
-              </Block>
-            ))}
+            {Array.from(character.gainedClassFeats.entries()).map(([clas, feats]) => {
+              const archetypes: string = character
+                .getArchetypesForClass(clas)
+                .map((a) => a.name)
+                .join(', ');
+
+              return (
+                <Block p="2" key={clas.id}>
+                  <BlockHeading>
+                    {character.getLevelForClass(clas)}级{clas.name}
+                    {archetypes ? <small>({archetypes})</small> : ''}
+                  </BlockHeading>
+                  <CharacterDetailFeats
+                    entitiesWithInput={uniqByLast(feats, (f) => (f.original ? f.original : f)).map(
+                      (f) => ({
+                        entity: f,
+                        input: character.effect.getEffectInputForClassFeat(clas, f),
+                      })
+                    )}
+                  />
+                </Block>
+              );
+            })}
 
             <Block p="2">
               <BlockHeading>专长背景</BlockHeading>

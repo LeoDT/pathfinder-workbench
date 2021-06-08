@@ -1,10 +1,9 @@
 import { Collection } from '../store/collection';
 import { Entity } from '../types/core';
-
 import EntityPicker, {
   EntityPickerPopover,
-  Props as EntityPickerProps,
   PopoverProps as EntityPickerPopoverProps,
+  Props as EntityPickerProps,
 } from './EntityPicker';
 
 interface Props<T extends Entity> extends Omit<EntityPickerProps<T>, 'fuse'> {

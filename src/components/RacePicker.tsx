@@ -20,7 +20,7 @@ import {
 import { ENTITY_COLORS } from '../constant';
 import { useStore } from '../store';
 import { Race, RacialTrait } from '../types/core';
-import CollectionEntitySelect from './CollectionEntitySelect';
+import { CollectionEntitySelect } from './CollectionEntitySelect';
 import SimpleEntity from './SimpleEntity';
 
 interface RacePickerValue {

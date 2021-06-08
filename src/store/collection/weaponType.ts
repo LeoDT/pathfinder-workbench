@@ -1,10 +1,8 @@
-import { WeaponType, WeaponSize } from '../../types/core';
-
 import WEAPON_SIZE_DATA from '../../data/weapon-size.json';
-
+import { WeaponSize, WeaponType } from '../../types/core';
 import { Collection, CollectionOptions } from './base';
 
-export default class WeaponTypeCollection extends Collection<WeaponType> {
+export class WeaponTypeCollection extends Collection<WeaponType> {
   static sizeDamage = WEAPON_SIZE_DATA as Array<Record<WeaponSize, string>>;
 
   unarmedStrike: WeaponType;

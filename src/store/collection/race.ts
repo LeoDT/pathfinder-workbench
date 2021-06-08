@@ -1,8 +1,7 @@
 import { Race } from '../../types/core';
-
 import { Collection, CollectionOptions } from './base';
 
-export default class RaceCollection extends Collection<Race> {
+export class RaceCollection extends Collection<Race> {
   constructor(data: Array<Race>, options?: CollectionOptions) {
     super('race', data, options);
 

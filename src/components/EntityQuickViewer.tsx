@@ -1,33 +1,33 @@
-import {
-  Drawer,
-  DrawerOverlay,
-  DrawerContent,
-  DrawerCloseButton,
-  DrawerBody,
-  Box,
-  Heading,
-  Text,
-  Icon,
-} from '@chakra-ui/react';
 import { Observer } from 'mobx-react-lite';
 import { useCallback } from 'react';
 import { FaInfoCircle } from 'react-icons/fa';
 
+import {
+  Box,
+  Drawer,
+  DrawerBody,
+  DrawerCloseButton,
+  DrawerContent,
+  DrawerOverlay,
+  Heading,
+  Icon,
+  Text,
+} from '@chakra-ui/react';
+
+import { ENTITY_COLORS } from '../constant';
 import { useStore } from '../store';
 import {
+  ArmorType as ArmorTypeType,
   Entity,
   Feat as FeatEntity,
+  SpecialFeat,
   Spell as SpellEntity,
   WeaponType as WeaponTypeType,
-  ArmorType as ArmorTypeType,
-  SpecialFeat,
 } from '../types/core';
-
+import ArmorType from './ArmorType';
 import Feat from './Feat';
 import Spell from './Spell';
 import WeaponType from './WeaponType';
-import ArmorType from './ArmorType';
-import { ENTITY_COLORS } from '../constant';
 
 export default function EntityQuickViewer(): JSX.Element {
   const { ui } = useStore();

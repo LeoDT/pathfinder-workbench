@@ -1,13 +1,14 @@
-import { compact, intersection, isEmpty, last, pick, range, uniq } from 'lodash-es';
-import { IObservableArray, action, computed, makeObservable, observable, autorun } from 'mobx';
-import shortid from 'shortid';
 import { Parser as FormulaParser } from 'hot-formula-parser';
+import { compact, intersection, isEmpty, last, pick, range, uniq } from 'lodash-es';
+import { IObservableArray, action, autorun, computed, makeObservable, observable } from 'mobx';
+import shortid from 'shortid';
 
 import { CharacterUpgrade } from '../../types/characterUpgrade';
 import {
   Abilities,
   AbilityType,
   Alignment,
+  Archetype,
   Bonus,
   Class,
   ClassFeat,
@@ -21,7 +22,7 @@ import {
 } from '../../types/core';
 import { BASE_ABILITY, addBonusScores, getModifiers, makeAbilities } from '../../utils/ability';
 import { markUnstackableBonus } from '../../utils/bonus';
-import { getClassFeatByLevel, getClassLevel } from '../../utils/class';
+import { getClassLevel } from '../../utils/class';
 import { coreToConsolidated } from '../../utils/skill';
 import { collections } from '../collection';
 import { CharacterAttack } from './attack';
@@ -131,6 +132,9 @@ export default class Character {
       classLevelDetail: computed,
       gainedClassFeats: computed,
       classes: computed,
+
+      archetypes: computed,
+      archetypesWithoutPending: computed,
 
       classSkills: computed,
       skillRanks: computed,
@@ -253,12 +257,13 @@ export default class Character {
 
   startUpgrade(): void {
     const lastUpgrade = last(this.upgrades);
-    const lastUpgradeClass = lastUpgrade ? lastUpgrade.classId : 'Monk(Unchained)';
+    const lastUpgradeClass = lastUpgrade ? lastUpgrade.classId : 'Bard';
     const levelFeat = (this.level + 1) % 2 === 1;
     const levelAbility = (this.level + 1) % 4 === 1;
 
     this.pendingUpgrade = {
       classId: lastUpgradeClass,
+      archetypeIds: null,
       favoredClassBonus: 'hp',
       hp: 0,
       skills: new Map(),
@@ -336,6 +341,21 @@ export default class Character {
     return classLevels;
   }
 
+  get archetypes(): Archetype[] {
+    const ids = uniq(this.upgradesWithPending.map((u) => u.archetypeIds || []).flat());
+
+    return collections.archetype.getByIds(ids);
+  }
+  get archetypesWithoutPending(): Archetype[] {
+    const ids = uniq(this.upgrades.map((u) => u.archetypeIds || []).flat());
+
+    return collections.archetype.getByIds(ids);
+  }
+
+  getArchetypesForClass(clas: Class): Archetype[] {
+    return this.archetypes.filter((a) => a.class === clas.id);
+  }
+
   getLevelForClass(clas: Class): number {
     const l = this.levelDetail.get(clas);
 
@@ -353,7 +373,9 @@ export default class Character {
       result.set(
         clas,
         range(level)
-          .map((l) => getClassFeatByLevel(clas, l + 1))
+          .map((l) =>
+            collections.class.getClassFeatsByLevel(clas, l + 1, this.getArchetypesForClass(clas))
+          )
           .flat()
       );
     });

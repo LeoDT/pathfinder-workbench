@@ -1,21 +1,21 @@
+import { Observer } from 'mobx-react-lite';
+import { FaRegTrashAlt } from 'react-icons/fa';
+import { Link } from 'react-router-dom';
+
 import {
   Box,
-  LinkBox,
-  Heading,
   Button,
   Divider,
-  LinkOverlay,
-  Text,
   HStack,
-  Spacer,
+  Heading,
   Icon,
+  LinkBox,
+  LinkOverlay,
+  Spacer,
+  Text,
 } from '@chakra-ui/react';
-import { Observer } from 'mobx-react-lite';
-import { Link } from 'react-router-dom';
-import { FaRegTrashAlt } from 'react-icons/fa';
 
 import { useStore } from '../../store';
-
 import Bread, { useBreadcrumb } from './Bread';
 
 export default function CharacterList(): JSX.Element {

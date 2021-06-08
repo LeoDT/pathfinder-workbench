@@ -1,15 +1,18 @@
 import { range } from 'lodash-es';
 import { Observer } from 'mobx-react-lite';
-import { Button, Box, VStack, Text, HStack, Spacer } from '@chakra-ui/react';
 
+import { Badge, Box, Button, HStack, Spacer, Text, VStack } from '@chakra-ui/react';
+
+import { useStore } from '../../store';
+import { useUpgradeCharacterStore } from '../../store/upgradeCharacter';
 import { ABILITY_TYPES } from '../../utils/ability';
 import { favoredClassBonusOptions } from '../../utils/upgrade';
-import { useUpgradeCharacterStore } from '../../store/upgradeCharacter';
-
 import AbilityInput from '../AbilityInput';
+import { ClassPicker } from '../ClassPicker';
 import Select from '../Select';
 
 export default function CreateCharacterBasic(): JSX.Element {
+  const { collections } = useStore();
   const upgradeStore = useUpgradeCharacterStore();
 
   return (
@@ -20,13 +23,36 @@ export default function CreateCharacterBasic(): JSX.Element {
             <HStack w="full" spacing="0" pb="2" borderBottom="1px" borderColor="gray.200">
               <Text fontSize="lg">升级职业</Text>
               <Spacer />
-              <Select
-                options={upgradeStore.classOptions}
-                value={upgradeStore.upgrade.classId}
-                onChange={(id) => {
-                  upgradeStore.updateClass(id);
-                }}
-              />
+
+              <VStack alignItems="flex-end">
+                <ClassPicker
+                  levels={upgradeStore.character.levelDetail}
+                  value={{
+                    classId: upgradeStore.upgrade.classId,
+                    archetypeIds: upgradeStore.upgrade.archetypeIds,
+                  }}
+                  onChange={({ classId, archetypeIds }) => {
+                    upgradeStore.updateClass(classId, archetypeIds);
+                  }}
+                  excludedArchetypes={upgradeStore.character.archetypesWithoutPending}
+                />
+                <HStack>
+                  <Badge colorScheme="blue">
+                    {collections.class.getById(upgradeStore.upgrade.classId).name}
+                  </Badge>
+                  <>
+                    {upgradeStore.upgrade.archetypeIds
+                      ? collections.archetype
+                          .getByIds(upgradeStore.upgrade.archetypeIds)
+                          .map((a) => (
+                            <Badge colorScheme="teal" key={a.id}>
+                              {a.name}
+                            </Badge>
+                          ))
+                      : null}
+                  </>
+                </HStack>
+              </VStack>
             </HStack>
             {upgradeStore.character.favoredClassIds.includes(upgradeStore.upgrade.classId) ? (
               <HStack w="full" spacing="0" pb="2" borderBottom="1px" borderColor="gray.200">

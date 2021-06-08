@@ -4,6 +4,7 @@ export type FavoredClassBonus = 'hp' | 'skill' | 'custom';
 
 export interface CharacterUpgrade {
   classId: string;
+  archetypeIds: Array<string> | null;
   favoredClassBonus: FavoredClassBonus;
   skills: Map<string, number>;
   abilities: Partial<Abilities>;

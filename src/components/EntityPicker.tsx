@@ -1,35 +1,35 @@
-import { useMemo, useState, MutableRefObject, useRef, RefObject, ReactNode } from 'react';
 import Fuse from 'fuse.js';
+import { MutableRefObject, ReactNode, RefObject, useMemo, useRef, useState } from 'react';
+import { FaCheck, FaChevronDown, FaSearch, FaTimesCircle } from 'react-icons/fa';
 
 import {
   Box,
   Button,
-  InputGroup,
+  HStack,
+  Icon,
   Input,
+  InputGroup,
   InputLeftElement,
   InputRightElement,
-  Icon,
-  Text,
-  HStack,
-  Spacer,
-  PopoverTrigger,
   Popover,
-  PopoverContent,
-  PopoverBody,
   PopoverArrow,
+  PopoverBody,
+  PopoverContent,
+  PopoverTrigger,
+  Spacer,
+  Text,
   useDisclosure,
 } from '@chakra-ui/react';
-import { FaSearch, FaCheck, FaTimesCircle } from 'react-icons/fa';
 
 import { Entity } from '../types/core';
-
-import { EntityQuickViewerToggler } from './EntityQuickViewer';
 import { createContextFailSafe } from '../utils/react';
+import { EntityQuickViewerToggler } from './EntityQuickViewer';
 import { spellAsLabelRenderer } from './Spell';
 
 export interface Props<T extends Entity> {
   fuse?: Fuse<T>;
   onPick?: (id: string) => void;
+  afterPick?: () => void;
   onUnpick?: (id: string) => void;
   items?: Array<string>;
   inputRef?: MutableRefObject<HTMLInputElement | null>;
@@ -37,6 +37,7 @@ export interface Props<T extends Entity> {
   entities?: Array<T>;
   disabledEntityIds?: string[];
   listAll?: boolean;
+  labelRenderer?: (e: T) => ReactNode;
 }
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -47,6 +48,7 @@ const labelRenderers: Record<string, (...args: any) => ReactNode> = {
 export default function EntityPicker<T extends Entity>({
   inputRef,
   onPick,
+  afterPick,
   onUnpick,
   items,
   quickViewer = true,
@@ -54,6 +56,7 @@ export default function EntityPicker<T extends Entity>({
   entities,
   disabledEntityIds,
   listAll = false,
+  labelRenderer,
 }: Props<T>): JSX.Element {
   const inputRefFromContext = useEntityPickerInputRef();
   const realInputRef = inputRef || inputRefFromContext;
@@ -127,6 +130,10 @@ export default function EntityPicker<T extends Entity>({
                     }
                   } else if (onPick) {
                     onPick(item.id);
+
+                    if (afterPick) {
+                      afterPick();
+                    }
                   }
                 }}
                 p="2"
@@ -140,7 +147,9 @@ export default function EntityPicker<T extends Entity>({
               >
                 {picked ? <Icon as={FaCheck} /> : null}
 
-                {labelRenderers[item._type] ? (
+                {labelRenderer ? (
+                  labelRenderer(item)
+                ) : labelRenderers[item._type] ? (
                   labelRenderers[item._type](item)
                 ) : (
                   <Text>{item.name}</Text>
@@ -159,12 +168,16 @@ export default function EntityPicker<T extends Entity>({
 
 export interface PopoverProps<T extends Entity> extends Props<T> {
   text: string;
+  textWithArrow?: boolean;
   togglerDisabled?: boolean;
+  closeOnPick?: boolean;
 }
 
 export function EntityPickerPopover<T extends Entity>({
   text,
+  textWithArrow,
   togglerDisabled,
+  closeOnPick,
   ...props
 }: PopoverProps<T>): JSX.Element {
   const { isOpen, onClose, onToggle } = useDisclosure();
@@ -180,13 +193,24 @@ export function EntityPickerPopover<T extends Entity>({
     >
       <PopoverTrigger>
         <Button disabled={togglerDisabled} onClick={onToggle}>
-          {text}
+          <HStack>
+            {typeof text === 'string' ? <Text>{text}</Text> : text}
+            {textWithArrow ? <Icon as={FaChevronDown} display="inine-block" /> : null}
+          </HStack>
         </Button>
       </PopoverTrigger>
       <PopoverContent>
         <PopoverArrow />
         <PopoverBody>
-          <EntityPicker inputRef={initialFocusRef} {...props} />
+          <EntityPicker
+            inputRef={initialFocusRef}
+            afterPick={() => {
+              if (closeOnPick) {
+                onClose();
+              }
+            }}
+            {...props}
+          />
         </PopoverBody>
       </PopoverContent>
     </Popover>

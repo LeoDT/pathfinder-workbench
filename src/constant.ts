@@ -19,6 +19,7 @@ export const ABILITY_COLORS_SCHEME: Record<string, string> = {
 };
 
 export const ENTITY_COLORS: Record<string, string> = {
+  class: 'green.600',
   spell: 'purple.600',
   feat: 'teal.600',
   weaponType: 'orange.600',
@@ -26,6 +27,7 @@ export const ENTITY_COLORS: Record<string, string> = {
 };
 
 export const ENTITY_COLOR_SCHEME: Record<string, string> = {
+  class: 'green.600',
   spell: 'purple',
   feat: 'teal',
   weaponType: 'orange',

@@ -1,10 +1,8 @@
-import { Class, Spell } from '../../types/core';
-
 import SPELL_BY_CLASS_LEVEL from '../../data/spell-by-class-level.json';
-
+import { Class, Spell } from '../../types/core';
 import { Collection, CollectionOptions } from './base';
 
-export default class SpellCollection extends Collection<Spell> {
+export class SpellCollection extends Collection<Spell> {
   static spellByClassLevel = SPELL_BY_CLASS_LEVEL as Record<string, string[][]>;
 
   constructor(data: Array<Spell>, options?: CollectionOptions) {

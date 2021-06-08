@@ -3,7 +3,6 @@ import { computed, makeObservable } from 'mobx';
 import { ArcaneSchool } from '../../types/arcaneSchool';
 import { Class, ClassFeat, Feat, RacialTrait } from '../../types/core';
 import * as Effects from '../../types/effectType';
-import { getClassFeatByLevel } from '../../utils/class';
 import { makeEffectInputKey, validateGainArcaneSchoolEffectInput } from '../../utils/effect';
 import { collections } from '../collection';
 import Character from '.';
@@ -63,7 +62,11 @@ export default class CharacterEffect {
     const upgrade = this.character.upgradesWithPending
       .filter((u) => u.classId === clas.id)
       .find((u, i) => {
-        const classFeatsForLevel = getClassFeatByLevel(clas, i + 1);
+        const classFeatsForLevel = collections.class.getClassFeatsByLevel(
+          clas,
+          i + 1,
+          this.character.getArchetypesForClass(clas)
+        );
 
         return classFeatsForLevel.includes(f);
       });

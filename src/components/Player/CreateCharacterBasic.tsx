@@ -6,14 +6,14 @@ import { Badge, Box, Button, HStack, Input, Spacer, Text, VStack } from '@chakra
 import { useStore } from '../../store';
 import { useCreateCharacterStore } from '../../store/createCharacter';
 import { ABILITY_TYPES, abilityTranslates, getScoreCost } from '../../utils/ability';
+import { BASE_ABILITY, MAXIMUM_ABILITY_SCORE, MINIMUM_ABILITY_SCORE } from '../../utils/ability';
 import { constraintAppliedAlignmentOptions } from '../../utils/alignment';
 import { favoredClassBonusOptions } from '../../utils/upgrade';
 import AbilityInput from '../AbilityInput';
+import { ClassPicker } from '../ClassPicker';
 import { CollectionEntityPickerPopover } from '../CollectionEntityPicker';
-import CollectionEntitySelect from '../CollectionEntitySelect';
-import Select, { MultipleSelect } from '../Select';
 import RacePicker from '../RacePicker';
-import { MAXIMUM_ABILITY_SCORE, MINIMUM_ABILITY_SCORE, BASE_ABILITY } from '../../utils/ability';
+import Select, { MultipleSelect } from '../Select';
 
 export default function CreateCharacterBasic(): JSX.Element {
   const store = useStore();
@@ -88,13 +88,33 @@ export default function CreateCharacterBasic(): JSX.Element {
             <HStack w="full" spacing="0" pb="2" borderBottom="1px" borderColor="gray.200">
               <Text fontSize="lg">职业</Text>
               <Spacer />
-              <CollectionEntitySelect
-                collection={store.collections.class}
-                value={create.upgrade.classId}
-                onChange={(id) => {
-                  create.updateClass(id);
-                }}
-              />
+              <VStack alignItems="flex-end">
+                <ClassPicker
+                  value={{
+                    classId: create.upgrade.classId,
+                    archetypeIds: create.upgrade.archetypeIds,
+                  }}
+                  onChange={({ classId, archetypeIds: archetypeId }) => {
+                    create.updateClass(classId, archetypeId);
+                  }}
+                />
+                <HStack>
+                  <Badge colorScheme="blue">
+                    {store.collections.class.getById(create.upgrade.classId).name}
+                  </Badge>
+                  <>
+                    {create.upgrade.archetypeIds
+                      ? store.collections.archetype
+                          .getByIds(create.upgrade.archetypeIds)
+                          .map((a) => (
+                            <Badge colorScheme="teal" key={a.id}>
+                              {a.name}
+                            </Badge>
+                          ))
+                      : null}
+                  </>
+                </HStack>
+              </VStack>
             </HStack>
             <HStack w="full" spacing="0" pb="2" borderBottom="1px" borderColor="gray.200">
               <Text fontSize="lg">天赋职业</Text>

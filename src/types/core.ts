@@ -36,6 +36,7 @@ export type EntityType =
   | 'bonusType'
   | 'race'
   | 'class'
+  | 'archetype'
   | 'spell'
   | 'feat'
   | 'racialTrait'
@@ -167,6 +168,14 @@ export interface Class extends Entity {
   skillPoints: number;
   feats: Array<ClassFeat>;
   levels: Array<ClassLevel>;
+}
+
+export interface Archetype extends Entity {
+  _type: 'archetype';
+  class: string;
+  book: string;
+  desc: Record<string, string>;
+  feats: Array<ClassFeat>;
 }
 
 export type WeaponTraining = 'simple' | 'martial' | 'exotic';

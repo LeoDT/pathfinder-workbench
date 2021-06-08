@@ -1,3 +1,4 @@
 {
-  "editor.semanticHighlighting.enabled": false
+  "editor.semanticHighlighting.enabled": false,
+  "sort-imports.on-save": true
 }

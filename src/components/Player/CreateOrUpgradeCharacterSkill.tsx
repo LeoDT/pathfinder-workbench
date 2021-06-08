@@ -34,6 +34,9 @@ export default function CreateCharacterSkills({ createOrUpgrade }: Props): JSX.E
             <Text fontSize="lg">技能系统</Text>
             <Spacer />
             <Select
+              buttonProps={{
+                isDisabled: character.level > 1,
+              }}
               options={
                 [
                   { text: '核心', value: 'core' },

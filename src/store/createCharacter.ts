@@ -12,7 +12,6 @@ import {
   makeAbilities,
 } from '../utils/ability';
 import { constraintAppliedAlignmentOptions } from '../utils/alignment';
-import { getClassFeatByLevel } from '../utils/class';
 import { createContextNoNullCheck } from '../utils/react';
 import { partitionSpellsByLevel } from '../utils/spell';
 import Character from './character';
@@ -64,7 +63,7 @@ export default class CreateCharacterStore {
 
     this.character = character || new Character('新角色');
     this.character.startUpgrade();
-    this.updateClass(this.upgrade.classId);
+    this.updateClass(this.upgrade.classId, this.upgrade.archetypeIds);
     this.character.ensureSpellbooks();
 
     this.resetUpgradeFeats();
@@ -82,6 +81,7 @@ export default class CreateCharacterStore {
       reaction(
         () => ({
           cId: this.upgrade.classId,
+          aIds: this.upgrade.archetypeIds,
           rId: this.character.raceId,
           traits: this.character.alternateRaceTraitIds,
         }),
@@ -171,7 +171,11 @@ export default class CreateCharacterStore {
     return this.getGainFeatReasons(true);
   }
   get newGainedClassFeats(): ClassFeat[] {
-    return getClassFeatByLevel(this.class, this.character.levelDetail.get(this.class) || 1);
+    return collections.class.getClassFeatsByLevel(
+      this.class,
+      this.character.levelDetail.get(this.class) || 1,
+      this.character.getArchetypesForClass(this.class)
+    );
   }
 
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -190,8 +194,9 @@ export default class CreateCharacterStore {
     this.upgrade.effectInputs.delete(`${type}:${id}${suffix ? `:${suffix}` : ''}`);
   }
 
-  updateClass(cId: string): void {
+  updateClass(cId: string, aId: string[] | null): void {
     this.upgrade.classId = cId;
+    this.upgrade.archetypeIds = aId?.length === 0 || !aId ? null : aId;
 
     if (this.character.level === 1) {
       this.character.favoredClassIds = [cId];

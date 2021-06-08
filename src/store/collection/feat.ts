@@ -1,8 +1,7 @@
 import { Feat, FeatType } from '../../types/core';
-
 import { Collection, CollectionOptions } from './base';
 
-export default class FeatCollection extends Collection<Feat> {
+export class FeatCollection extends Collection<Feat> {
   indexByType: Map<FeatType, Feat[]>;
 
   constructor(data: Array<Feat>, options?: CollectionOptions) {

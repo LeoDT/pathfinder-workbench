@@ -1,5 +1,6 @@
-import { HStack, Heading, Spacer, StackProps, Box } from '@chakra-ui/react';
 import { ReactNode } from 'react';
+
+import { Box, HStack, Heading, Spacer, StackProps } from '@chakra-ui/react';
 
 import { ENTITY_COLORS } from '../constant';
 import {
@@ -88,6 +89,16 @@ export default function SimpleEntity({
           color={ENTITY_COLORS.feat}
           textDecoration={entity.deprecated ? 'solid line-through 2px red' : ''}
         >
+          {entity.name}{' '}
+          {showId ? <small style={{ fontWeight: 'normal' }}>({entity.id})</small> : null}
+        </Heading>
+      );
+      break;
+
+    case 'class':
+    case 'archetype':
+      child = (
+        <Heading as="h4" fontSize="lg" color={ENTITY_COLORS.class}>
           {entity.name}{' '}
           {showId ? <small style={{ fontWeight: 'normal' }}>({entity.id})</small> : null}
         </Heading>
