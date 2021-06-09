@@ -1,3 +1,4 @@
+import { useEffect } from 'react';
 import { useHistory } from 'react-router';
 
 import { Box, Button, Heading, Text, VStack } from '@chakra-ui/react';
@@ -5,7 +6,6 @@ import { Box, Button, Heading, Text, VStack } from '@chakra-ui/react';
 import { useStore } from '../../store';
 import CreateCharacterStore, { InvalidReason } from '../../store/createCharacter';
 import { useHistoryUnblock } from './context';
-import { useEffect } from 'react';
 
 interface Props {
   createOrUpgrade: CreateCharacterStore;
@@ -53,7 +53,10 @@ export default function CreateOrUpgradeCharacterFinish({ createOrUpgrade }: Prop
           if (!invalid) {
             createOrUpgrade.dispose();
             createOrUpgrade.character.finishUpgrade();
-            store.characters.push(createOrUpgrade.character);
+
+            if (!store.characters.includes(createOrUpgrade.character)) {
+              store.characters.push(createOrUpgrade.character);
+            }
 
             if (unblock && unblock.current) {
               unblock.current();

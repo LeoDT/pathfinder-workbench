@@ -1,10 +1,9 @@
-import { BrowserRouter as Router, Route, Switch, Redirect } from 'react-router-dom';
+import { Redirect, Route, BrowserRouter as Router, Switch } from 'react-router-dom';
 
-import Navbar from './components/Navbar';
 import EntityQuickViewer from './components/EntityQuickViewer';
-
-import PlayerPage from './pages/PlayerPage';
+import Navbar from './components/Navbar';
 import DMPage from './pages/DMPage';
+import PlayerPage from './pages/PlayerPage';
 
 function App(): JSX.Element {
   return (

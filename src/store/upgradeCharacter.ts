@@ -3,7 +3,6 @@ import { action, computed, makeObservable } from 'mobx';
 import { AbilityType } from '../types/core';
 import { createContextNoNullCheck } from '../utils/react';
 import Character from './character';
-import { collections } from './collection';
 import CreateCharacterStore, { GainFeatReason } from './createCharacter';
 
 export default class UpgradeCharacterStore extends CreateCharacterStore {
@@ -13,24 +12,12 @@ export default class UpgradeCharacterStore extends CreateCharacterStore {
     super(c);
 
     makeObservable(this, {
-      classOptions: computed,
-
       gainUpgradeAbilityBonus: computed,
       useUpgradeAbilityBonus: action,
       resetUpgradeAbilityBonus: action,
     });
 
     this.upgradeAbilityBonus = null;
-  }
-
-  get classOptions(): Array<{ text: string; value: string }> {
-    return collections.class.data.map((c) => {
-      const hasLevel = this.character.levelDetailWithoutPending.get(c) || 0;
-      const text = `${c.name} Lv.${hasLevel + 1}`;
-      const value = c.id;
-
-      return { text, value };
-    });
   }
 
   get gainUpgradeAbilityBonus(): boolean {

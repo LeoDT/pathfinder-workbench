@@ -70,6 +70,17 @@ export default class CreateCharacterStore {
 
     this.disposes.push(
       reaction(
+        () => this.character.pendingUpgrade,
+        () => {
+          if (!this.character.pendingUpgrade) {
+            this.dispose();
+          }
+        }
+      )
+    );
+
+    this.disposes.push(
+      reaction(
         () => this.character.skillSystem,
         () => {
           this.upgrade.skills.clear();

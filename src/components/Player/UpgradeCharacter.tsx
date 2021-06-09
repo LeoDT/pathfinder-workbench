@@ -1,20 +1,18 @@
-import { useEffect, useRef, useState } from 'react';
-import { Switch, Route, Redirect, useRouteMatch, useHistory } from 'react-router-dom';
-import { Box, Icon } from '@chakra-ui/react';
+import { useCallback, useEffect, useRef, useState } from 'react';
 import { FaChevronLeft } from 'react-icons/fa';
+import { Prompt, Redirect, Route, Switch, useHistory, useRouteMatch } from 'react-router-dom';
+
+import { Box, Icon } from '@chakra-ui/react';
 
 import UpgradeCharacterStore, { UpgradeCharacterStoreContext } from '../../store/upgradeCharacter';
-
-import { useCurrentCharacter, HistoryUnblockContext } from './context';
-
 import { HStackNav, HStackNavItem } from '../HStackNav';
 import { useBreadcrumb } from './Bread';
-
 import CharacterBasic from './UpgradeCharacterBasic';
-import CharacterSkill from './UpgradeCharacterSkill';
 import CharacterFeat from './UpgradeCharacterFeat';
-import CharacterSpell from './UpgradeCharacterSpell';
 import CharacterFinish from './UpgradeCharacterFinish';
+import CharacterSkill from './UpgradeCharacterSkill';
+import CharacterSpell from './UpgradeCharacterSpell';
+import { HistoryUnblockContext, useCurrentCharacter } from './context';
 
 export default function UpgradeCharacter(): JSX.Element {
   const character = useCurrentCharacter();
@@ -22,35 +20,41 @@ export default function UpgradeCharacter(): JSX.Element {
   const [upgrade, setUpgrade] = useState<UpgradeCharacterStore | null>(null);
   const historyUnblock = useRef<null | (() => void)>(null);
   const { url, path } = useRouteMatch();
-  const history = useHistory();
+  const blocking = useRef(true);
+  const promptMessage = useCallback(
+    (location) => {
+      if (location.pathname.includes('upgrade') || !blocking.current) {
+        return true;
+      }
+
+      return '确定取消升级吗?';
+    },
+    [blocking]
+  );
 
   useBreadcrumb('升级', url);
 
   useEffect(() => {
     setUpgrade(new UpgradeCharacterStore(character));
-  }, [character]);
-
-  useEffect(() => {
-    const unblock = history.block((location) => {
-      if (!location.pathname.includes('upgrade')) {
-        return '确定取消升级吗?';
-      }
-    });
-
-    historyUnblock.current = unblock;
 
     return () => {
-      unblock();
-
       character.cancelUpgrade();
     };
   }, [character]);
+
+  useEffect(() => {
+    historyUnblock.current = () => {
+      blocking.current = false;
+    };
+  }, []);
 
   return (
     <HistoryUnblockContext.Provider value={historyUnblock}>
       {upgrade ? (
         <UpgradeCharacterStoreContext.Provider value={upgrade}>
           <>
+            <Prompt message={promptMessage} />
+
             <HStackNav mb="6">
               <HStackNavItem
                 backgroundColor="red.500"

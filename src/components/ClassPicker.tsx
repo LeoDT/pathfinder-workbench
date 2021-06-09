@@ -53,6 +53,15 @@ export function ClassPicker({ value, onChange, levels, excludedArchetypes }: Pro
         : allArchetypes,
     [archetypeIds, allArchetypes, clas, excludedArchetypes]
   );
+  const levelLimitArchetypes = useMemo(() => {
+    if (!levels) return [];
+
+    const level = levels.get(clas) || 1;
+
+    return allArchetypes.filter((a) => {
+      return level > collections.class.getHighestLevelForAchetype(clas, a);
+    });
+  }, [allArchetypes, clas, levels]);
   const finished = useMemo(() => Boolean(classId), [classId]);
   const classPickerItems = useMemo(() => [classId], [classId]);
   const pickerLabelRenderer = useCallback(
@@ -78,8 +87,6 @@ export function ClassPicker({ value, onChange, levels, excludedArchetypes }: Pro
     }
   }, [isOpen]);
 
-  console.log(noConflictArchetypes);
-
   return (
     <>
       <Button onClick={() => onOpen()}>选择职业</Button>
@@ -97,7 +104,7 @@ export function ClassPicker({ value, onChange, levels, excludedArchetypes }: Pro
             <ModalHeader>职业</ModalHeader>
             <ModalBody>
               <CollectionEntityPickerPopover
-                text={clas.name}
+                text={levels ? `${clas.name} Lv.${levels.get(clas) || 1}` : clas.name}
                 collection={collections.class}
                 items={classPickerItems}
                 onPick={(v) => {
@@ -118,7 +125,9 @@ export function ClassPicker({ value, onChange, levels, excludedArchetypes }: Pro
                 <SimpleGrid spacing="2" columns={[1, 2]}>
                   {allArchetypes.map((a) => {
                     const selected = archetypeIds?.includes(a.id);
-                    const disabled = !noConflictArchetypes.includes(a) && !selected;
+                    const disabled =
+                      (!noConflictArchetypes.includes(a) && !selected) ||
+                      levelLimitArchetypes.includes(a);
 
                     return (
                       <Box

@@ -1,3 +1,5 @@
+import { intersection, range } from 'lodash-es';
+
 import { Archetype, Class, ClassFeat, ClassFeatGrow } from '../../types/core';
 import { getClassLevel } from '../../utils/class';
 import { Collection, CollectionOptions } from './base';
@@ -52,7 +54,7 @@ export class ClassCollection extends Collection<Class> {
     return feats;
   }
 
-  getClassFeatsByLevel(clas: Class, l: number, archetypes: Archetype[]): ClassFeat[] {
+  getClassFeatsByLevel(clas: Class, l: number, archetypes: Archetype[] = []): ClassFeat[] {
     const level = getClassLevel(clas, l);
     const archetypeFeats = archetypes.map((a) => a.feats).flat();
 
@@ -75,5 +77,26 @@ export class ClassCollection extends Collection<Class> {
     });
 
     return feats || [];
+  }
+
+  getHighestLevelForAchetype(clas: Class, archetype: Archetype): number {
+    const replaces = archetype.feats.map((f) => f.replace || []).flat();
+
+    let highest = 99;
+
+    if (!replaces) {
+      return highest;
+    }
+
+    for (const l of range(1, clas.levels.length + 1)) {
+      const featIds = this.getClassFeatsByLevel(clas, l).map((f) => f.original?.id ?? f.id);
+
+      if (intersection(featIds, replaces).length > 0) {
+        highest = l;
+        break;
+      }
+    }
+
+    return highest;
   }
 }

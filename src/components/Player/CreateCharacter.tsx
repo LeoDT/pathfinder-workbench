@@ -1,37 +1,39 @@
-import { useState, useEffect, useRef } from 'react';
-import { Box, Icon } from '@chakra-ui/react';
+import { useCallback, useEffect, useRef, useState } from 'react';
 import { FaChevronLeft } from 'react-icons/fa';
-import { Route, Switch, Redirect, useHistory } from 'react-router-dom';
+import { Prompt, Redirect, Route, Switch } from 'react-router-dom';
+
+import { Box, Icon } from '@chakra-ui/react';
 
 import CreateCharacterStore, { CreateCharacterStoreContext } from '../../store/createCharacter';
-
 import { HStackNav, HStackNavItem } from '../HStackNav';
 import Bread, { useBreadcrumb } from './Bread';
 import CharacterBasic from './CreateCharacterBasic';
-import CharacterSkill from './CreateCharacterSkill';
 import CharacterFeat from './CreateCharacterFeat';
-import CharacterSpell from './CreateCharacterSpell';
 import CharacterFinish from './CreateCharacterFinish';
+import CharacterSkill from './CreateCharacterSkill';
+import CharacterSpell from './CreateCharacterSpell';
 import { HistoryUnblockContext } from './context';
 
 export default function CreateCharacter(): JSX.Element {
   const [create] = useState(() => new CreateCharacterStore());
   const historyUnblock = useRef<null | (() => void)>(null);
-  const history = useHistory();
+  const blocking = useRef(true);
+  const promptMessage = useCallback(
+    (location) => {
+      if (location.pathname.includes('create') || !blocking.current) {
+        return true;
+      }
+
+      return '确定取消新角色吗?';
+    },
+    [blocking]
+  );
 
   useBreadcrumb('新建角色', '/player/create');
 
   useEffect(() => {
-    const unblock = history.block((location) => {
-      if (!location.pathname.includes('create')) {
-        return '确定取消吗?';
-      }
-    });
-
-    historyUnblock.current = unblock;
-
-    return () => {
-      unblock();
+    historyUnblock.current = () => {
+      blocking.current = false;
     };
   }, []);
 
@@ -39,6 +41,8 @@ export default function CreateCharacter(): JSX.Element {
     <HistoryUnblockContext.Provider value={historyUnblock}>
       <CreateCharacterStoreContext.Provider value={create}>
         <>
+          <Prompt message={promptMessage} />
+
           <Bread mb="2" />
 
           <HStackNav mb="6">
