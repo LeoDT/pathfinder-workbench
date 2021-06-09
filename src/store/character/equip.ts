@@ -1,13 +1,12 @@
-import { pick, omit } from 'lodash-es';
-import { makeObservable, action, observable, IObservableArray, computed } from 'mobx';
+import { omit, pick } from 'lodash-es';
+import { IObservableArray, action, computed, makeObservable, observable } from 'mobx';
 
 import { Armor, Equipment, Weapon } from '../../types/core';
 import { SelectOptions } from '../../types/misc';
 import { Coin } from '../../utils/coin';
 import { equipmentCostWeight, showEquipment } from '../../utils/equipment';
-
-import Character from '.';
 import { collections } from '../collection';
+import Character from '.';
 
 export type Hand = 'main' | 'off';
 export type BodyPart = 'armor' | 'head';

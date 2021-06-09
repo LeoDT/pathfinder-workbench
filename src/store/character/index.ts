@@ -522,12 +522,18 @@ export default class Character {
         });
 
         p.setVariable('carryLoad', this.status.carryLoad);
-        p.setVariable('armor', this.equipment.armor?.name || 'none');
-        p.setVariable('buckler', this.equipment.buckler?.name || 'none');
-        p.setVariable('mainHand', this.equipment.mainHand?.name || 'none');
-        p.setVariable('mainHandCategory', this.equipment.mainHand?.type.meta.category || 'none');
-        p.setVariable('offHand', this.equipment.offHand?.name || 'none');
-        p.setVariable('offHandCategory', this.equipment.offHand?.type.meta.category || 'none');
+        p.setVariable('armor', this.equipment.armor?.id || 'none');
+        p.setVariable('buckler', this.equipment.buckler?.id || 'none');
+        p.setVariable('mainHand', this.equipment.mainHand?.type.id || 'none');
+        p.setVariable(
+          'mainHandCategory',
+          this.equipment.mainHand?.type.meta.category || 'unarmed strike'
+        );
+        p.setVariable('offHand', this.equipment.offHand?.type.id || 'none');
+        p.setVariable(
+          'offHandCategory',
+          this.equipment.offHand?.type.meta.category || 'unarmed strike'
+        );
         p.setVariable('maxBab', this.status.maxBab);
 
         [

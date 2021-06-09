@@ -1,6 +1,6 @@
 import { computed, makeObservable } from 'mobx';
 
-import { AbilityType, NamedBonus, WeaponType, Weapon } from '../../types/core';
+import { AbilityType, NamedBonus, Weapon, WeaponType } from '../../types/core';
 import { abilityTranslates } from '../../utils/ability';
 import { getWeaponDamageModifier, getWeaponModifier, showEquipment } from '../../utils/equipment';
 import { collections } from '../collection';
@@ -109,10 +109,17 @@ export class CharacterAttack {
 
     let ability = AbilityType.str;
     let damageAbility: AbilityType | undefined = AbilityType.str;
-    switch (weaponType.meta.category) {
-      case 'ranged':
-        ability = AbilityType.dex;
-        damageAbility = undefined;
+
+    if (weaponType.meta.category === 'ranged') {
+      ability = AbilityType.dex;
+      damageAbility = undefined;
+    }
+
+    const meleeAttackAbilityEffects = this.character.effect.getMeleeAttackAbilityEffects();
+    if (meleeAttackAbilityEffects.length > 0) {
+      const { effect } = meleeAttackAbilityEffects[0];
+
+      ability = effect.args.ability;
     }
 
     let bab = this.character.status.bab;

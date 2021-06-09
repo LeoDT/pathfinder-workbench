@@ -28,6 +28,7 @@ export enum EffectType {
 
   enchantUnarmedStrike = 'enchantUnarmedStrike',
   addAttackOption = 'addAttackOption',
+  meleeAttackAbility = 'meleeAttackAbility',
   addTracker = 'addTracker',
 }
 
@@ -176,6 +177,14 @@ export type EffectAddAttackOption = BaseEffect<
   EffectAddAttackOptionArgs
 >;
 
+export interface EffectMeleeAttackAbilityArgs {
+  ability: AbilityType;
+}
+export type EffectMeleeAttackAbility = BaseEffect<
+  EffectType.meleeAttackAbility,
+  EffectMeleeAttackAbilityArgs
+>;
+
 export interface EffectAddTrackerArgs {
   id?: string;
   name?: string;
@@ -200,7 +209,8 @@ export type Effect =
   | EffectGainHP
   | EffectGainTwoWeaponFighting
   | EffectEnchantUnarmedStrike
-  | EffectAddAttackOption;
+  | EffectAddAttackOption
+  | EffectMeleeAttackAbility;
 
 export type ArgsTypeForEffect<T extends Effect> = T['args'];
 

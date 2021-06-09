@@ -96,7 +96,7 @@ export default class CharacterEffect {
     const effects: Array<EffectAndSource> = [];
     const add = (es: EffectAndSource) => {
       if (es.effect.when && this.character.formulaParserReady) {
-        const result = this.character.parseFormula(es.effect.when);
+        const result = this.character.parseFormulaBoolean(es.effect.when);
 
         if (result) {
           effects.push(es);
@@ -139,6 +139,10 @@ export default class CharacterEffect {
         add({ effect: this.growEffectArgs(effect, source), source, input });
       });
     });
+
+    // read equip so that equip changing can trigger effects recalculation
+    const { equipment } = this.character;
+    [equipment.mainHand, equipment.offHand, equipment.buckler, equipment.armor].reverse();
 
     return effects.map((e) => this.extendEffect(e)).flat();
   }
@@ -315,5 +319,11 @@ export default class CharacterEffect {
 
   getAddTrackerEffects(): EffectAndSource<Effects.EffectAddTracker>[] {
     return this.getEffectsByType<Effects.EffectAddTracker>(Effects.EffectType.addTracker);
+  }
+
+  getMeleeAttackAbilityEffects(): EffectAndSource<Effects.EffectMeleeAttackAbility>[] {
+    return this.getEffectsByType<Effects.EffectMeleeAttackAbility>(
+      Effects.EffectType.meleeAttackAbility
+    );
   }
 }
