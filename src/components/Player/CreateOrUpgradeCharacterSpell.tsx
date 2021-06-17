@@ -1,14 +1,14 @@
 import { without } from 'lodash-es';
-import { useCallback } from 'react';
 import { Observer } from 'mobx-react-lite';
-import { Box, SimpleGrid, Text, Heading } from '@chakra-ui/react';
+import { useCallback } from 'react';
 
-import { CharacterSpellbook } from '../../store/character/spellbook';
+import { Box, Heading, SimpleGrid, Text } from '@chakra-ui/react';
+
 import { useStore } from '../../store';
-
-import SimpleEntity from '../SimpleEntity';
-import { EntityPickerPopover } from '../EntityPicker';
+import { CharacterSpellbook } from '../../store/character/spellbook';
 import CreateCharacterStore from '../../store/createCharacter';
+import { EntityPickerPopover } from '../EntityPicker';
+import SimpleEntity from '../SimpleEntity';
 
 interface SpellsForLevelProps {
   spellbook: CharacterSpellbook;
@@ -31,8 +31,7 @@ function SpellsForLevel({ createOrUpgrade, spellbook, level, perday }: SpellsFor
     <Observer>
       {() => {
         const spells = createOrUpgrade.upgrade.spells.filter(
-          (s) =>
-            collections.spell.getSpellLevelForClass(s, createOrUpgrade.upgrade.classId) === level
+          (s) => spellbook.getSpellLevel(s) === level
         );
         // knownSpells will include pendingUpgrade, filter them out
         const knownSpells =

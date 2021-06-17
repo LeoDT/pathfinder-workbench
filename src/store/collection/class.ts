@@ -22,10 +22,10 @@ export class ClassCollection extends Collection<Class> {
     if (cached) return cached;
 
     const f: ClassFeat = {
+      ...feat,
       ...grow,
       _type: 'classFeat',
-      desc: feat.desc,
-      original: feat,
+      origin: feat,
     };
 
     this.growedClassFeatCache.set(grow, f);
@@ -63,7 +63,7 @@ export class ClassCollection extends Collection<Class> {
 
       if (feat) {
         const replace = archetypeFeats.find((af) => {
-          const f = feat?.original ?? feat;
+          const f = feat?.origin ?? feat;
 
           return af.replace?.includes(f.id);
         });
@@ -89,7 +89,7 @@ export class ClassCollection extends Collection<Class> {
     }
 
     for (const l of range(1, clas.levels.length + 1)) {
-      const featIds = this.getClassFeatsByLevel(clas, l).map((f) => f.original?.id ?? f.id);
+      const featIds = this.getClassFeatsByLevel(clas, l).map((f) => f.origin?.id ?? f.id);
 
       if (intersection(featIds, replaces).length > 0) {
         highest = l;

@@ -30,11 +30,16 @@ export class SpellCollection extends Collection<Spell> {
     return spells[level];
   }
 
-  getSpellLevelForClass(spell: Spell | string, clas: Class | string): number {
+  getSpellLevelForClass(
+    spell: Spell | string,
+    clas: Class | string,
+    spellLevels?: Record<string, number>
+  ): number {
     const allSpells = this.getByClass(clas);
     const sId = typeof spell === 'string' ? spell : spell.id;
 
-    const level = allSpells.findIndex((spells) => spells.find((s) => s === sId));
+    const level =
+      spellLevels?.[sId] ?? allSpells.findIndex((spells) => spells.find((s) => s === sId));
 
     if (level === -1) {
       throw new Error(
@@ -43,5 +48,25 @@ export class SpellCollection extends Collection<Spell> {
     }
 
     return level;
+  }
+
+  partitionSpellsByLevel(
+    spells: Spell[],
+    clas: Class,
+    spellLevels?: Record<string, number>
+  ): Array<Spell[]> {
+    const result: Array<Spell[]> = [];
+
+    spells.forEach((spell) => {
+      const level = this.getSpellLevelForClass(spell, clas, spellLevels);
+
+      if (!result[level]) {
+        result[level] = [];
+      }
+
+      result[level].push(spell);
+    });
+
+    return result;
   }
 }

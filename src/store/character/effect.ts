@@ -1,18 +1,22 @@
 import { computed, makeObservable } from 'mobx';
 
-import { ArcaneSchool } from '../../types/arcaneSchool';
 import { Class, ClassFeat, Feat, RacialTrait } from '../../types/core';
 import * as Effects from '../../types/effectType';
-import { makeEffectInputKey, validateGainArcaneSchoolEffectInput } from '../../utils/effect';
+import {
+  makeEffectInputKey,
+  validateGainArcaneSchoolEffectInput,
+  validateGainBloodlineEffectInput,
+} from '../../utils/effect';
 import { collections } from '../collection';
 import Character from '.';
 
-export type EntityTypesValidForEffectSource = 'racialTrait' | 'classFeat' | 'feat' | 'arcaneSchool';
-export type EffectSource = RacialTrait | ClassFeat | Feat | ArcaneSchool;
+export type EntityTypesValidForEffectSource = 'racialTrait' | 'classFeat' | 'feat';
+export type EffectSource = RacialTrait | ClassFeat | Feat;
 export interface EffectAndSource<T = Effects.Effect> {
   effect: T;
   source: EffectSource;
   input?: unknown;
+  extendedFrom?: EffectAndSource;
 }
 
 export default class CharacterEffect {
@@ -24,6 +28,7 @@ export default class CharacterEffect {
     makeObservable(this, {
       gainedFeatsWithEffectInputs: computed,
       allEffects: computed,
+      effectsNeedInput: computed,
     });
 
     this.character = character;
@@ -81,8 +86,35 @@ export default class CharacterEffect {
         if (!input) return es;
 
         const realInput = validateGainArcaneSchoolEffectInput(input);
-        const school = collections.arcaneSchool.getById(realInput.school);
-        const newES = school.effects?.map((effect) => ({ effect, source: school })) ?? [];
+        const powers = collections.arcaneSchool.getArcaneSchoolPowers(
+          realInput.school,
+          realInput.focused
+        );
+        const newES = powers
+          .map(
+            (p) =>
+              p.effects
+                ?.map((effect): EffectAndSource => ({ effect, source: p, extendedFrom: es }))
+                .flat() ?? []
+          )
+          .flat();
+
+        return [es, ...newES];
+      }
+
+      case Effects.EffectType.gainBloodline: {
+        if (!input) return es;
+
+        const realInput = validateGainBloodlineEffectInput(input);
+        const bloodline = collections.sorcererBloodline.getById(realInput.bloodline);
+        const newES = bloodline.powers
+          .map(
+            (p) =>
+              p.effects
+                ?.map((effect): EffectAndSource => ({ effect, source: p, extendedFrom: es }))
+                .flat() ?? []
+          )
+          .flat();
 
         return [es, ...newES];
       }
@@ -94,49 +126,61 @@ export default class CharacterEffect {
 
   get allEffects(): Array<EffectAndSource> {
     const effects: Array<EffectAndSource> = [];
-    const add = (es: EffectAndSource) => {
-      if (es.effect.when && this.character.formulaParserReady) {
-        const result = this.character.parseFormulaBoolean(es.effect.when);
+    const add = (effectAndSources: EffectAndSource | EffectAndSource[]) => {
+      [effectAndSources].flat().forEach((es) => {
+        if ((es.effect.when || es.source.effectsWhen) && this.character.formulaParserReady) {
+          let result = false;
 
-        if (result) {
+          if (es.effect.when) {
+            result = this.character.parseFormulaBoolean(es.effect.when);
+          } else if (es.source.effectsWhen) {
+            result = this.character.parseFormulaBoolean(es.source.effectsWhen);
+          }
+
+          if (result) {
+            effects.push(es);
+          }
+
+          if (typeof result !== 'boolean') {
+            console.warn(
+              `got a non boolean value for effect's when, effect ${es.effect.type} from ${es.source.name}`
+            );
+          }
+        } else {
           effects.push(es);
         }
-
-        if (typeof result !== 'boolean') {
-          console.warn(
-            `got a non boolean value for effect's when, effect ${es.effect.type} from ${es.source.name}`
-          );
-        }
-      } else {
-        effects.push(es);
-      }
+      });
     };
 
     this.character.racialTraits.forEach((source) => {
       source.effects?.forEach((effect) => {
-        add({
-          effect: this.growEffectArgs(effect, source),
-          source,
-          input: this.getEffectInputForRacialTrait(source),
-        });
+        add(
+          this.extendEffect({
+            effect: this.growEffectArgs(effect, source),
+            source,
+            input: this.getEffectInputForRacialTrait(source),
+          })
+        );
       });
     });
 
     this.character.gainedClassFeats.forEach((feats, clas) => {
       feats.forEach((source) => {
         source.effects?.forEach((effect) => {
-          add({
-            effect: this.growEffectArgs(effect, source),
-            source,
-            input: this.getEffectInputForClassFeat(clas, source),
-          });
+          add(
+            this.extendEffect({
+              effect: this.growEffectArgs(effect, source),
+              source,
+              input: this.getEffectInputForClassFeat(clas, source),
+            })
+          );
         });
       });
     });
 
     this.gainedFeatsWithEffectInputs.forEach(({ feat: source, input }) => {
       source.effects?.forEach((effect) => {
-        add({ effect: this.growEffectArgs(effect, source), source, input });
+        add(this.extendEffect({ effect: this.growEffectArgs(effect, source), source, input }));
       });
     });
 
@@ -144,7 +188,13 @@ export default class CharacterEffect {
     const { equipment } = this.character;
     [equipment.mainHand, equipment.offHand, equipment.buckler, equipment.armor].reverse();
 
-    return effects.map((e) => this.extendEffect(e)).flat();
+    return effects;
+  }
+
+  get effectsNeedInput(): EffectAndSource<Effects.EffectNeedInput>[] {
+    return Effects.effectTypesNeedInput
+      .map((t) => this.getEffectsByType<Effects.EffectNeedInput>(t))
+      .flat();
   }
 
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -171,7 +221,7 @@ export default class CharacterEffect {
         ...e.args,
         ...g.args,
       },
-      original: e,
+      origin: e,
     };
     this.growedEffectCache.set(g, growed);
 
@@ -214,6 +264,14 @@ export default class CharacterEffect {
     return e;
   }
 
+  getRootEffectSource(es: EffectAndSource): EffectSource {
+    if (es.extendedFrom) {
+      return this.getRootEffectSource(es.extendedFrom);
+    }
+
+    return es.source;
+  }
+
   getEffectsFromClassFeats(feats: ClassFeat[]): Array<EffectAndSource> {
     const effects: Array<EffectAndSource> = [];
 
@@ -226,12 +284,6 @@ export default class CharacterEffect {
     return effects;
   }
 
-  getEffectsNeedInput(): EffectAndSource<Effects.EffectNeadInput>[] {
-    return Effects.effectTypesNeedInput
-      .map((t) => this.getEffectsByType<Effects.EffectNeadInput>(t))
-      .flat();
-  }
-
   getGainFeatEffects(fromEffects?: EffectAndSource[]): EffectAndSource<Effects.EffectGainFeat>[] {
     return this.getEffectsByType<Effects.EffectGainFeat>(Effects.EffectType.gainFeat, fromEffects);
   }
@@ -239,12 +291,6 @@ export default class CharacterEffect {
   getGainArcaneSchoolEffects(): EffectAndSource<Effects.EffectGainArcaneSchool>[] {
     return this.getEffectsByType<Effects.EffectGainArcaneSchool>(
       Effects.EffectType.gainArcaneSchool
-    );
-  }
-
-  getGainArcaneSchoolPrepareSlotEffects(): EffectAndSource<Effects.EffectGainArcaneSchoolPrepareSlot>[] {
-    return this.getEffectsByType<Effects.EffectGainArcaneSchoolPrepareSlot>(
-      Effects.EffectType.gainArcaneSchoolPrepareSlot
     );
   }
 
@@ -307,6 +353,15 @@ export default class CharacterEffect {
     return this.getEffectsByType<Effects.EffectGainSpeed>(Effects.EffectType.gainSpeed);
   }
 
+  getClassFeatSourceEffects(): EffectAndSource<Effects.EffectClassFeatSource>[] {
+    return this.getEffectsByType<Effects.EffectClassFeatSource>(Effects.EffectType.classFeatSource);
+  }
+  getClassFeatPlaceholderEffects(): EffectAndSource<Effects.EffectClassFeatPlaceholder>[] {
+    return this.getEffectsByType<Effects.EffectClassFeatPlaceholder>(
+      Effects.EffectType.classFeatPlaceholder
+    );
+  }
+
   getEnchantUnarmedStrikeEffects(): EffectAndSource<Effects.EffectEnchantUnarmedStrike>[] {
     return this.getEffectsByType<Effects.EffectEnchantUnarmedStrike>(
       Effects.EffectType.enchantUnarmedStrike
@@ -325,5 +380,9 @@ export default class CharacterEffect {
     return this.getEffectsByType<Effects.EffectMeleeAttackAbility>(
       Effects.EffectType.meleeAttackAbility
     );
+  }
+
+  getGainBloodlineEffects(): EffectAndSource<Effects.EffectGainBloodline>[] {
+    return this.getEffectsByType<Effects.EffectGainBloodline>(Effects.EffectType.gainBloodline);
   }
 }

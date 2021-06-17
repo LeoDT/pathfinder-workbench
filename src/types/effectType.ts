@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-empty-interface */
 import {
   AbilityType,
   ArmorCategory,
@@ -11,8 +12,6 @@ import {
 export enum EffectType {
   gainFeat = 'gainFeat',
   abilityBonus = 'abilityBonus',
-  gainArcaneSchool = 'gainArcaneSchool',
-  gainArcaneSchoolPrepareSlot = 'gainArcaneSchoolPrepareSlot',
   gainSpellCasting = 'gainSpellCasting',
   gainFavoredClassAmount = 'gainFavoredClassAmount',
   gainProficiency = 'gainProficiency',
@@ -26,10 +25,17 @@ export enum EffectType {
   gainTwoWeaponFighting = 'gainTwoWeaponFighting',
   gainSpeed = 'gainSpeed',
 
+  classFeatSource = 'classFeatSource',
+  classFeatPlaceholder = 'classFeatPlaceholder',
+
   enchantUnarmedStrike = 'enchantUnarmedStrike',
   addAttackOption = 'addAttackOption',
   meleeAttackAbility = 'meleeAttackAbility',
   addTracker = 'addTracker',
+
+  gainArcaneSchool = 'gainArcaneSchool',
+
+  gainBloodline = 'gainBloodline',
 }
 
 export interface BaseEffect<TYPE extends EffectType, ARGS> {
@@ -37,13 +43,14 @@ export interface BaseEffect<TYPE extends EffectType, ARGS> {
   when?: string;
   args: ARGS;
   growArgs?: Array<{ level: number; args: ARGS }>;
-  original?: Effect;
+  origin?: Effect;
 }
 
 export interface EffectGainFeatArgs {
   ignorePrerequisites?: boolean;
   featType?: FeatType;
   feats?: string[]; // override above
+  bloodlineFeat?: boolean; // override above
   forceFeat?: string; // override above
 }
 export type EffectGainFeat = BaseEffect<EffectType.gainFeat, EffectGainFeatArgs | null>;
@@ -65,15 +72,6 @@ export interface EffectGainArcaneSchoolInput {
   focused?: string;
   forbiddenSchool: Array<string>;
 }
-
-export interface EffectGainArcaneSchoolPrepareSlotArgs {
-  amount?: number;
-  school: string;
-}
-export type EffectGainArcaneSchoolPrepareSlot = BaseEffect<
-  EffectType.gainArcaneSchoolPrepareSlot,
-  EffectGainArcaneSchoolPrepareSlotArgs
->;
 
 export interface EffectGainSpellCastingArgs {
   castingType: SpellCastingType;
@@ -114,7 +112,7 @@ export type EffectGainSelectedWeaponProficiency = BaseEffect<
 >;
 
 export interface EffectGainSkillArgs {
-  skillId: string;
+  skillId?: string;
   bonus: Bonus;
 }
 export type EffectGainSkill = BaseEffect<EffectType.gainSkill, EffectGainSkillArgs>;
@@ -151,6 +149,16 @@ export interface EffectGainSpeedArgs {
   bonus: Bonus;
 }
 export type EffectGainSpeed = BaseEffect<EffectType.gainSpeed, EffectGainSpeedArgs>;
+
+export interface EffectClassFeatSourceArgs {
+  source?: string;
+}
+export type EffectClassFeatSource = BaseEffect<
+  EffectType.classFeatSource,
+  EffectClassFeatSourceArgs
+>;
+
+export type EffectClassFeatPlaceholder = BaseEffect<EffectType.classFeatPlaceholder, null>;
 
 export interface EffectEnchantUnarmedStrikeArgs {
   damage: string;
@@ -193,6 +201,15 @@ export interface EffectAddTrackerArgs {
 }
 export type EffectAddTracker = BaseEffect<EffectType.addTracker, EffectAddTrackerArgs>;
 
+export interface EffectGainBloodlineArgs {
+  bloodline: string;
+}
+export type EffectGainBloodline = BaseEffect<EffectType.gainBloodline, EffectGainBloodlineArgs>;
+
+export interface EffectGainBloodlineInput {
+  bloodline: string;
+}
+
 export type Effect =
   | EffectAbilityBonus
   | EffectGainArcaneSchool
@@ -208,14 +225,26 @@ export type Effect =
   | EffectGainSave
   | EffectGainHP
   | EffectGainTwoWeaponFighting
+  | EffectClassFeatSource
   | EffectEnchantUnarmedStrike
   | EffectAddAttackOption
-  | EffectMeleeAttackAbility;
+  | EffectMeleeAttackAbility
+  | EffectAddTracker
+  | EffectGainBloodline;
 
 export type ArgsTypeForEffect<T extends Effect> = T['args'];
 
-export type EffectNeadInput = EffectGainArcaneSchool | EffectGainSelectedWeaponProficiency;
+export type EffectNeedInput =
+  | EffectGainSkill
+  | EffectGainArcaneSchool
+  | EffectGainSelectedWeaponProficiency
+  | EffectGainBloodline;
+
 export const effectTypesNeedInput: Array<EffectType> = [
+  EffectType.gainSkill,
+
   EffectType.gainArcaneSchool,
   EffectType.gainSelectedWeaponProficiency,
+
+  EffectType.gainBloodline,
 ];

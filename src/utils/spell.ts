@@ -1,5 +1,4 @@
 import { collections } from '../store/collection';
-import { Spell, Class } from '../types/core';
 
 export const translates = {
   school: '学派',
@@ -43,19 +42,3 @@ export const spellsPerDayByAbilityModifier: Record<number, number[]> = {
   16: [4, 4, 4, 4, 3, 3, 3, 3, 2],
   17: [5, 4, 4, 4, 4, 3, 3, 3, 3],
 };
-
-export function partitionSpellsByLevel(spells: Spell[], clas: Class): Array<Spell[]> {
-  const result: Array<Spell[]> = [];
-
-  spells.forEach((spell) => {
-    const level = collections.spell.getSpellLevelForClass(spell, clas);
-
-    if (!result[level]) {
-      result[level] = [];
-    }
-
-    result[level].push(spell);
-  });
-
-  return result;
-}

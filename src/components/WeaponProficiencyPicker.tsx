@@ -1,4 +1,5 @@
 import { useCallback, useMemo } from 'react';
+
 import { useStore } from '../store';
 import { WeaponTraining } from '../types/core';
 import EntityPicker from './EntityPicker';
@@ -10,12 +11,7 @@ interface Props {
   had?: string[];
 }
 
-export default function WeaponProficiencyPicker({
-  value,
-  onChange,
-  training,
-  had,
-}: Props): JSX.Element {
+export function WeaponProficiencyPicker({ value, onChange, training, had }: Props): JSX.Element {
   const { collections } = useStore();
   const weapons = useMemo(
     () => collections.weaponType.data.filter((w) => training.includes(w.meta.training)),

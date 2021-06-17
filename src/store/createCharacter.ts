@@ -13,7 +13,6 @@ import {
 } from '../utils/ability';
 import { constraintAppliedAlignmentOptions } from '../utils/alignment';
 import { createContextNoNullCheck } from '../utils/react';
-import { partitionSpellsByLevel } from '../utils/spell';
 import Character from './character';
 import { EntityTypesValidForEffectSource } from './character/effect';
 import { CharacterSpellbook } from './character/spellbook';
@@ -48,6 +47,8 @@ export default class CreateCharacterStore {
       updateClass: action,
       gainFeatReasons: computed,
       newGainedClassFeats: computed,
+      newGainedClassFeatsFromFeatSource: computed,
+      allNewGainedClassFeats: computed,
 
       setEffectInput: action,
       deleteEffectInput: action,
@@ -188,6 +189,39 @@ export default class CreateCharacterStore {
       this.character.getArchetypesForClass(this.class)
     );
   }
+  get newGainedClassFeatsFromFeatSource(): ClassFeat[] {
+    return this.character.effect
+      .getClassFeatSourceEffects()
+      .map(({ effect, source, extendedFrom }) => {
+        if (source._type === 'classFeat') {
+          let rootSource = null;
+
+          if (effect.args.source) {
+            rootSource = this.newGainedClassFeats.find((f) => f.id === effect.args.source);
+          }
+
+          if (!rootSource && extendedFrom) {
+            rootSource = this.character.effect.getRootEffectSource(extendedFrom);
+          }
+
+          if (!rootSource) {
+            rootSource = source;
+          }
+
+          if (rootSource._type === 'classFeat' && this.newGainedClassFeats.includes(rootSource)) {
+            return source;
+          }
+        }
+
+        return null;
+      })
+      .filter((f): f is ClassFeat => Boolean(f));
+  }
+  get allNewGainedClassFeats(): ClassFeat[] {
+    return [...this.newGainedClassFeats, ...this.newGainedClassFeatsFromFeatSource].filter(
+      (f) => !f.placeholder
+    );
+  }
 
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   getEffectInput(type: EntityTypesValidForEffectSource, id: string, suffix?: string): any {
@@ -259,7 +293,7 @@ export default class CreateCharacterStore {
       case 'wizard-like':
         return this.upgrade.spells.length === this.spellbook.wizardNewSpellSlots;
       case 'sorcerer-like': {
-        const spells = partitionSpellsByLevel(
+        const spells = collections.spell.partitionSpellsByLevel(
           collections.spell.getByIds(this.upgrade.spells),
           this.class
         );

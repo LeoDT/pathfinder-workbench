@@ -152,7 +152,7 @@ export default function EntityPicker<T extends Entity>({
                 ) : labelRenderers[item._type] ? (
                   labelRenderers[item._type](item)
                 ) : (
-                  <Text>{item.name}</Text>
+                  <Text>{item.name || item.id}</Text>
                 )}
 
                 <Spacer />
@@ -217,6 +217,5 @@ export function EntityPickerPopover<T extends Entity>({
   );
 }
 
-export const [useEntityPickerInputRef, EntityPickerInputRefContext] = createContextFailSafe<
-  RefObject<HTMLInputElement>
->();
+export const [useEntityPickerInputRef, EntityPickerInputRefContext] =
+  createContextFailSafe<RefObject<HTMLInputElement>>();

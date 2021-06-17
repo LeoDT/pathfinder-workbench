@@ -31,12 +31,32 @@ export default function CreateOrUpgradeCharacterFeat({
               const fId = createOrUpgrade.upgrade.feats[r.index];
               const feat = fId ? collections.feat.getById(fId) : null;
 
+              const { bloodline } = createOrUpgrade.character;
+              if (r.bloodlineFeat && !bloodline) {
+                throw new Error('gain bloodline feat need character has a bloodline');
+              }
+              const maybeFeatIdsWithInput =
+                r.bloodlineFeat && bloodline ? bloodline.feats : r.feats;
+              const maybeFeatsWithInput = maybeFeatIdsWithInput
+                ? collections.feat.getByIdsWithInputs(maybeFeatIdsWithInput)
+                : undefined;
+
               const pickerProps: EntityPickerProps<Feat> = {
                 text: '选择专长',
                 items: [createOrUpgrade.upgrade.feats[r.index]],
                 onPick: (fId) => {
                   createOrUpgrade.upgrade.feats[r.index] = fId;
                   createOrUpgrade.deleteEffectInput('feat', fId, r.index.toString());
+
+                  const withInput = maybeFeatsWithInput?.find((f) => f.input && f.feat.id === fId);
+                  if (withInput) {
+                    createOrUpgrade.setEffectInput(
+                      'feat',
+                      fId,
+                      withInput.input,
+                      r.index.toString()
+                    );
+                  }
                 },
                 onUnpick: () => {
                   createOrUpgrade.deleteEffectInput(
@@ -56,10 +76,10 @@ export default function CreateOrUpgradeCharacterFeat({
                     {r.ignorePrerequisites ? ', 忽略先决条件' : ''})
                   </Heading>
                   <Box mb="2">
-                    {r.forceFeat ? null : r.feats ? (
+                    {r.forceFeat ? null : maybeFeatsWithInput ? (
                       <EntityPickerPopover
                         {...pickerProps}
-                        entities={collections.feat.getByIds(r.feats)}
+                        entities={maybeFeatsWithInput.map(({ feat }) => feat)}
                         listAll
                       />
                     ) : r.featType ? (
@@ -79,6 +99,9 @@ export default function CreateOrUpgradeCharacterFeat({
                       entities={[feat]}
                       effectInputSuffixes={[r.index.toString()]}
                       createOrUpgrade={createOrUpgrade}
+                      isReadonly={(feat) =>
+                        Boolean(maybeFeatsWithInput?.find((f) => f.input && f.feat === feat))
+                      }
                     />
                   ) : null}
                 </Box>
@@ -94,7 +117,7 @@ export default function CreateOrUpgradeCharacterFeat({
       <Observer>
         {() => (
           <FeatWithEffectInputGrid
-            entities={createOrUpgrade.newGainedClassFeats}
+            entities={createOrUpgrade.allNewGainedClassFeats}
             createOrUpgrade={createOrUpgrade}
           />
         )}

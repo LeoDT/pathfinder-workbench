@@ -16,15 +16,16 @@ import {
 
 import CreateCharacterStore from '../../store/createCharacter';
 import { Entity } from '../../types/core';
-import { EffectNeadInput, EffectType } from '../../types/effectType';
+import { EffectNeedInput, EffectType } from '../../types/effectType';
+import { ArcaneSchoolPicker } from '../ArcaneSchoolPicker';
+import { BloodlinePicker } from '../BloodlinePicker';
 import { EffectInputDisplayer } from '../EffectInputDisplayer';
 import { EntityPickerInputRefContext } from '../EntityPicker';
 import { SimpleEntityWithChild } from '../SimpleEntity';
-import { ArcaneSchoolPicker } from '../ArcaneSchoolPicker';
-import WeaponProficiencyPicker from '../WeaponProficiencyPicker';
+import { WeaponProficiencyPicker } from '../WeaponProficiencyPicker';
 
 interface Props {
-  effect: EffectNeadInput;
+  effect: EffectNeedInput;
   createOrUpgrade: CreateCharacterStore;
 
   value: any;
@@ -41,6 +42,14 @@ export function EffectInput({
   onClose,
 }: Props): JSX.Element | null {
   switch (effect.type) {
+    case EffectType.gainSkill: {
+      if (effect.args.skillId) {
+        return null;
+      }
+
+      return <div>123</div>;
+    }
+
     case EffectType.gainArcaneSchool: {
       return (
         <ArcaneSchoolPicker
@@ -66,6 +75,16 @@ export function EffectInput({
       );
     }
 
+    case EffectType.gainBloodline: {
+      return (
+        <BloodlinePicker
+          value={value}
+          onChange={onChange}
+          type={createOrUpgrade.upgrade.classId === 'Sorcerer' ? 'Sorcerer' : 'Sorcerer'}
+        />
+      );
+    }
+
     default:
       return null;
   }
@@ -73,9 +92,14 @@ export function EffectInput({
 
 interface PropsWithEntity extends Omit<Props, 'onClose'> {
   entity: Entity;
+  readonly?: boolean;
 }
 
-export function SimpleEntityWithEffectInput({ entity, ...props }: PropsWithEntity): JSX.Element {
+export function SimpleEntityWithEffectInput({
+  entity,
+  readonly = false,
+  ...props
+}: PropsWithEntity): JSX.Element {
   const { isOpen, onToggle, onClose } = useDisclosure();
   const initialFocusRef = useRef<HTMLInputElement>(null);
 
@@ -101,6 +125,7 @@ export function SimpleEntityWithEffectInput({ entity, ...props }: PropsWithEntit
                   colorScheme="teal"
                   borderLeftRadius="0"
                   onClick={onToggle}
+                  isDisabled={readonly}
                 />
               </PopoverTrigger>
               <PopoverContent w="auto" minW="xs">

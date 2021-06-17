@@ -12,17 +12,20 @@ interface Props {
   entities: Array<Feat | ClassFeat | RacialTrait>;
   effectInputSuffixes?: Array<string>;
   createOrUpgrade: CreateCharacterStore;
+
+  isReadonly?: (f: Feat | ClassFeat | RacialTrait) => boolean;
 }
 
 export function FeatWithEffectInputGrid({
   entities,
   effectInputSuffixes,
   createOrUpgrade,
+  isReadonly,
 }: Props): JSX.Element {
   return (
     <Observer>
       {() => {
-        const effectsNeedInput = createOrUpgrade.character.effect.getEffectsNeedInput();
+        const effectsNeedInput = createOrUpgrade.character.effect.effectsNeedInput;
         const [withEffect, other] = partition(entities, (e) =>
           effectsNeedInput.find(({ source }) => source === e)
         );
@@ -56,6 +59,7 @@ export function FeatWithEffectInputGrid({
                             effectInputSuffix
                           );
                         }}
+                        readonly={isReadonly ? isReadonly(e) : false}
                       />
                     );
                   }

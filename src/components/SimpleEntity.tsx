@@ -1,6 +1,6 @@
 import { ReactNode } from 'react';
 
-import { Box, HStack, Heading, Spacer, StackProps } from '@chakra-ui/react';
+import { Badge, BadgeProps, Box, HStack, Heading, Spacer, StackProps } from '@chakra-ui/react';
 
 import { ENTITY_COLORS } from '../constant';
 import {
@@ -16,10 +16,13 @@ import Feat from './Feat';
 import Spell from './Spell';
 import WeaponType from './WeaponType';
 
-interface Props extends StackProps {
+interface BaseProps {
   entity: Entity;
   showId?: boolean;
   quickViewer?: boolean;
+}
+
+interface Props extends BaseProps, StackProps {
   addon?: ReactNode;
 }
 
@@ -134,6 +137,22 @@ export default function SimpleEntity({
       </HStack>
       {addon}
     </HStack>
+  );
+}
+
+interface PropsForBadge extends BaseProps, BadgeProps {}
+
+export function SimpleEntityBadge({
+  entity,
+  showId = false,
+  quickViewer = false,
+}: PropsForBadge): JSX.Element {
+  return (
+    <Badge fontSize="md" verticalAlign="top" colorScheme="blue">
+      {entity.name}
+      {showId ? <small style={{ fontWeight: 'normal' }}>({entity.id})</small> : null}
+      {quickViewer ? <EntityQuickViewerToggler entity={entity} /> : null}
+    </Badge>
   );
 }
 

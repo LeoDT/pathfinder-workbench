@@ -21,9 +21,9 @@ export function CharacterDetailFeats({ entitiesWithInput }: Props): JSX.Element 
         <SimpleGrid columns={[1, 3]} spacing="2">
           {withInput.map(({ entity, input }, i) => {
             const es = input
-              ? character.effect
-                  .getEffectsNeedInput()
-                  .find((es) => es.source === entity && es.input === input)
+              ? character.effect.effectsNeedInput.find(
+                  (es) => es.source === entity && es.input === input
+                )
               : null;
 
             return es ? (

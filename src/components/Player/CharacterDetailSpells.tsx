@@ -2,7 +2,7 @@ import { autorun } from 'mobx';
 import { Observer } from 'mobx-react-lite';
 import { useCallback, useEffect, useState } from 'react';
 
-import { Box, HStack, Tag, Wrap, WrapItem, Button, Text } from '@chakra-ui/react';
+import { Box, Button, HStack, Tag, Text, Wrap, WrapItem } from '@chakra-ui/react';
 
 import { ENTITY_COLOR_SCHEME } from '../../constant';
 import { useStore } from '../../store';
@@ -35,7 +35,7 @@ export function CharacterDetailSpells({ spellbook }: Props): JSX.Element {
           ]);
 
           for (const spell of preparedSpells) {
-            const level = collections.spell.getSpellLevelForClass(spell, spellbook.class);
+            const level = spellbook.getSpellLevel(spell);
 
             if (level === 0) {
               result.set(spell, -1);
@@ -61,7 +61,7 @@ export function CharacterDetailSpells({ spellbook }: Props): JSX.Element {
           const castedByLevel: number[] = [];
 
           for (const c of casted) {
-            const level = collections.spell.getSpellLevelForClass(c, spellbook.class);
+            const level = spellbook.getSpellLevel(c);
 
             if (!castedByLevel[level]) {
               castedByLevel[level] = 0;
@@ -71,7 +71,7 @@ export function CharacterDetailSpells({ spellbook }: Props): JSX.Element {
           }
 
           spells.forEach((s) => {
-            const level = collections.spell.getSpellLevelForClass(s, spellbook.class);
+            const level = spellbook.getSpellLevel(s);
 
             if (level === 0) {
               result.set(s, -1);

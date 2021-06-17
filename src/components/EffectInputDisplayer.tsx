@@ -1,13 +1,17 @@
-import { HStack, Badge } from '@chakra-ui/react';
+import { Badge, HStack } from '@chakra-ui/react';
 
 import { useStore } from '../store';
-import { EffectNeadInput, EffectType } from '../types/effectType';
-import { validateGainArcaneSchoolEffectInput } from '../utils/effect';
-import SimpleEntity from './SimpleEntity';
+import { EffectNeedInput, EffectType } from '../types/effectType';
+import {
+  validateGainArcaneSchoolEffectInput,
+  validateGainBloodlineEffectInput,
+  validateGainSkillEffectInput,
+} from '../utils/effect';
+import SimpleEntity, { SimpleEntityBadge } from './SimpleEntity';
 
 interface Props {
   input: unknown;
-  effect: EffectNeadInput;
+  effect: EffectNeedInput;
 }
 
 export function EffectInputDisplayer({ input, effect }: Props): JSX.Element | null {
@@ -17,6 +21,16 @@ export function EffectInputDisplayer({ input, effect }: Props): JSX.Element | nu
   if (!input) return null;
 
   switch (effect.type) {
+    case EffectType.gainSkill:
+      {
+        const realInput = validateGainSkillEffectInput(input);
+
+        const skill = collections.coreSkill.getById(realInput);
+
+        child = <SimpleEntityBadge entity={skill} />;
+      }
+      break;
+
     case EffectType.gainArcaneSchool:
       {
         const realInput = validateGainArcaneSchoolEffectInput(input);
@@ -50,6 +64,16 @@ export function EffectInputDisplayer({ input, effect }: Props): JSX.Element | nu
         const weaponType = collections.weaponType.getById(input);
 
         child = <SimpleEntity entity={weaponType} />;
+      }
+      break;
+
+    case EffectType.gainBloodline:
+      {
+        const realInput = validateGainBloodlineEffectInput(input);
+
+        const bloodline = collections.sorcererBloodline.getById(realInput.bloodline);
+
+        child = <SimpleEntityBadge entity={bloodline} />;
       }
       break;
 

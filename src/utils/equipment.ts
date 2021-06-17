@@ -1,15 +1,15 @@
 import { range } from 'lodash-es';
 import shortid from 'shortid';
+
 import {
+  Armor,
   ArmorSize,
   ArmorType,
-  WeaponSize,
-  WeaponType,
   Equipment,
   Weapon,
-  Armor,
+  WeaponSize,
+  WeaponType,
 } from '../types/core';
-
 import { getArmorCostWeightInSize } from './armorType';
 import { Coin, makeCoin, makeCoinFromString } from './coin';
 
@@ -187,6 +187,20 @@ export function getWeaponDamageModifier(w: Weapon): number {
 
   if (w.enchantment) {
     mod += w.enchantment;
+  }
+
+  return mod;
+}
+
+export function getArmorPenalty(a: Armor): number {
+  let mod = a.type.meta.penalty;
+
+  if (a.enchantment) {
+    mod += 1;
+  }
+
+  if (a.masterwork && !a.enchantment) {
+    mod += 1;
   }
 
   return mod;

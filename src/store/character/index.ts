@@ -3,6 +3,7 @@ import { compact, intersection, isEmpty, last, pick, range, uniq } from 'lodash-
 import { IObservableArray, action, autorun, computed, makeObservable, observable } from 'mobx';
 import shortid from 'shortid';
 
+import { Bloodline } from '../../types/bloodline';
 import { CharacterUpgrade } from '../../types/characterUpgrade';
 import {
   Abilities,
@@ -20,9 +21,16 @@ import {
   Skill,
   SkillSystem,
 } from '../../types/core';
-import { BASE_ABILITY, addBonusScores, getModifiers, makeAbilities } from '../../utils/ability';
+import {
+  BASE_ABILITY,
+  abilityTranslates,
+  addBonusScores,
+  getModifiers,
+  makeAbilities,
+} from '../../utils/ability';
 import { markUnstackableBonus } from '../../utils/bonus';
 import { getClassLevel } from '../../utils/class';
+import { validateGainBloodlineEffectInput, validateGainSkillEffectInput } from '../../utils/effect';
 import { coreToConsolidated } from '../../utils/skill';
 import { collections } from '../collection';
 import { CharacterAttack } from './attack';
@@ -131,6 +139,8 @@ export default class Character {
       levelDetailWithoutPending: computed,
       classLevelDetail: computed,
       gainedClassFeats: computed,
+      gainedClassFeatsFromFeatSource: computed,
+      allGainedClassFeats: computed,
       classes: computed,
 
       archetypes: computed,
@@ -144,6 +154,8 @@ export default class Character {
       preparedSpecialSpellIds: observable,
 
       gainedFeats: computed,
+
+      bloodline: computed,
 
       formulaParserReady: observable,
     });
@@ -257,7 +269,7 @@ export default class Character {
 
   startUpgrade(): void {
     const lastUpgrade = last(this.upgrades);
-    const lastUpgradeClass = lastUpgrade ? lastUpgrade.classId : 'Bard';
+    const lastUpgradeClass = lastUpgrade ? lastUpgrade.classId : 'Sorcerer';
     const levelFeat = (this.level + 1) % 2 === 1;
     const levelAbility = (this.level + 1) % 4 === 1;
 
@@ -382,6 +394,46 @@ export default class Character {
 
     return result;
   }
+
+  get gainedClassFeatsFromFeatSource(): Map<Class, ClassFeat[]> {
+    const result = new Map<Class, ClassFeat[]>();
+
+    this.effect.getClassFeatSourceEffects().forEach(({ source, extendedFrom }) => {
+      if (source._type === 'classFeat') {
+        let clas = this.classes[0];
+        const rootSource = extendedFrom ? this.effect.getRootEffectSource(extendedFrom) : source;
+
+        if (rootSource._type === 'classFeat') {
+          for (const [c, f] of this.gainedClassFeats.entries()) {
+            if (f.includes(rootSource)) {
+              clas = c;
+            }
+          }
+        }
+
+        const existed = result.get(clas) ?? [];
+        result.set(clas, [...existed, source]);
+      }
+    });
+
+    return result;
+  }
+
+  get allGainedClassFeats(): Map<Class, ClassFeat[]> {
+    const result = new Map<Class, ClassFeat[]>();
+
+    for (const [clas, feats] of this.gainedClassFeats.entries()) {
+      const featsFromFeatSource = this.gainedClassFeatsFromFeatSource.get(clas) || [];
+
+      result.set(
+        clas,
+        [...feats, ...featsFromFeatSource].filter((f) => !f.placeholder)
+      );
+    }
+
+    return result;
+  }
+
   get classes(): Array<Class> {
     return uniq(this.upgradesWithPending.map((u) => u.classId)).map((cId) =>
       collections.class.getById(cId)
@@ -402,25 +454,31 @@ export default class Character {
 
     return this.classSkills.includes(s.id);
   }
-  get skillRanksFromEffects(): Map<string, number> {
-    const rankBonuses = new Map<string, Bonus[]>();
+  get skillBonusesFromEffects(): Map<string, NamedBonus[]> {
+    const rankBonuses = new Map<string, NamedBonus[]>();
 
-    this.effect.getGainSkillEffects().forEach(({ effect }) => {
-      const skill = collections.coreSkill.getById(effect.args.skillId);
+    this.effect.getGainSkillEffects().forEach(({ effect, source, input }) => {
+      const skillId = effect.args.skillId || (input ? validateGainSkillEffectInput(input) : '');
+
+      if (!skillId) {
+        throw new Error('effect `gainSkill` need a skillId');
+      }
+
+      const skill = collections.coreSkill.getById(skillId);
       const realSkill = this.skillSystem === 'consolidated' ? coreToConsolidated(skill) : skill;
 
       const bonuses = rankBonuses.get(realSkill.id) ?? [];
 
-      rankBonuses.set(realSkill.id, [...bonuses, effect.args.bonus]);
+      rankBonuses.set(realSkill.id, [
+        ...bonuses,
+        {
+          name: source.name,
+          bonus: effect.args.bonus,
+        },
+      ]);
     });
 
-    const ranks = new Map<string, number>();
-
-    for (const [sId, bonus] of rankBonuses) {
-      ranks.set(sId, this.aggregateBonusesMaxAmount(bonus));
-    }
-
-    return ranks;
+    return rankBonuses;
   }
   get skillRanks(): Map<string, number> {
     const ranks = new Map<string, number>();
@@ -444,9 +502,7 @@ export default class Character {
 
     return ranks;
   }
-  getSkillDetail(
-    s: Skill
-  ): {
+  getSkillDetail(s: Skill): {
     rank: number;
     modifier: number;
     classBonus: number;
@@ -458,16 +514,68 @@ export default class Character {
     const modifier = this.abilityModifier[s.ability];
     const isClassSkill = this.isClassSkill(s);
     const classBonus = rank > 0 && isClassSkill ? 3 : 0;
-    const fromEffect = this.skillRanksFromEffects.get(s.id) ?? 0;
+    const fromEffect = this.skillBonusesFromEffects.get(s.id);
+    const fromEffectAmount = fromEffect
+      ? this.aggregateNamedBonusesMaxAmount(this.makeNamedBonuses(fromEffect))
+      : 0;
+    const bonuses = this.skillBonuses.get(s.id);
+
+    if (!bonuses) {
+      throw new Error(`no skill bonuses found for ${s.id}`);
+    }
 
     return {
       rank,
       modifier,
       classBonus,
       isClassSkill,
-      fromEffect,
-      total: rank + modifier + classBonus + fromEffect,
+      fromEffect: fromEffectAmount,
+      total: this.aggregateNamedBonusesMaxAmount(bonuses),
     };
+  }
+  get skillBonuses(): Map<string, NamedBonus[]> {
+    const bonuses = new Map<string, NamedBonus[]>();
+    const skills =
+      this.skillSystem === 'consolidated'
+        ? collections.consolidatedSkill.data
+        : collections.coreSkill.data;
+
+    if (this.formulaParserReady) {
+      skills.forEach((s) => {
+        const bonusesFromEffects = this.skillBonusesFromEffects.get(s.id);
+        const isClassSkill = this.isClassSkill(s);
+
+        this.formulaParser.setVariable('currentSkillRank', this.skillRanks.get(s.id) || 0);
+
+        bonuses.set(
+          s.id,
+          this.makeNamedBonuses(
+            [
+              { name: '等级', bonus: { type: 'untyped', amount: this.skillRanks.get(s.id) || 0 } },
+              {
+                name: abilityTranslates[s.ability],
+                bonus: { type: 'untyped', amount: this.abilityModifier[s.ability] },
+              },
+              isClassSkill
+                ? {
+                    name: '职业技能',
+                    bonus: { type: 'untyped', amount: 3 },
+                  }
+                : null,
+              s.armorPenalty
+                ? {
+                    name: '盔甲减值',
+                    bonus: { type: 'untyped', amount: this.equipment.armorPenalty },
+                  }
+                : null,
+              ...(bonusesFromEffects || []),
+            ].filter((b): b is NamedBonus => Boolean(b))
+          )
+        );
+      });
+    }
+
+    return bonuses;
   }
 
   get gainedFeats(): Feat[] {
@@ -508,6 +616,18 @@ export default class Character {
     });
 
     this.spellbooks.replace(books);
+  }
+
+  get bloodline(): Bloodline | null {
+    const es = this.effect.getGainBloodlineEffects()?.[0];
+
+    if (es) {
+      const input = validateGainBloodlineEffectInput(es.input);
+
+      return collections.sorcererBloodline.getById(input.bloodline);
+    }
+
+    return null;
   }
 
   initFormulaParser(): void {

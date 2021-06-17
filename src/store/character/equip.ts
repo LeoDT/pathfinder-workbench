@@ -4,7 +4,7 @@ import { IObservableArray, action, computed, makeObservable, observable } from '
 import { Armor, Equipment, Weapon } from '../../types/core';
 import { SelectOptions } from '../../types/misc';
 import { Coin } from '../../utils/coin';
-import { equipmentCostWeight, showEquipment } from '../../utils/equipment';
+import { equipmentCostWeight, getArmorPenalty, showEquipment } from '../../utils/equipment';
 import { collections } from '../collection';
 import Character from '.';
 
@@ -52,6 +52,7 @@ export default class CharacterEquip {
       armor: computed,
 
       armorClassModifier: computed,
+      armorPenalty: computed,
 
       hold: action,
       unhold: action,
@@ -144,6 +145,24 @@ export default class CharacterEquip {
 
     if (this.buckler) {
       mod += this.buckler?.type.meta.ac;
+    }
+
+    return mod;
+  }
+
+  get armorPenalty(): number {
+    let mod = 0;
+
+    if (this.armor) {
+      mod += getArmorPenalty(this.armor);
+    }
+
+    if (this.offHand?.equipmentType === 'armor') {
+      mod = Math.max(getArmorPenalty(this.offHand), mod);
+    }
+
+    if (this.buckler) {
+      mod = Math.max(getArmorPenalty(this.buckler), mod);
     }
 
     return mod;

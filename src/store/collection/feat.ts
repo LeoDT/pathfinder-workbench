@@ -23,4 +23,18 @@ export class FeatCollection extends Collection<Feat> {
   getByType(t: FeatType): Feat[] {
     return this.indexByType.get(t) ?? [];
   }
+
+  getByIdsWithInputs(ids: string[]): Array<{ feat: Feat; input?: string }> {
+    return ids.map((i) => {
+      const match = i.match(/^(.*?)\[(.*?)\]$/);
+
+      if (match) {
+        const [, id, input] = match;
+
+        return { feat: this.getById(id), input };
+      }
+
+      return { feat: this.getById(i), input: undefined };
+    });
+  }
 }

@@ -271,7 +271,7 @@ export default function CharacterDetailBasic(): JSX.Element {
               </Stack>
             ) : null}
 
-            {Array.from(character.gainedClassFeats.entries()).map(([clas, feats]) => {
+            {Array.from(character.allGainedClassFeats.entries()).map(([clas, feats]) => {
               const archetypes: string = character
                 .getArchetypesForClass(clas)
                 .map((a) => a.name)
@@ -284,7 +284,7 @@ export default function CharacterDetailBasic(): JSX.Element {
                     {archetypes ? <small>({archetypes})</small> : ''}
                   </BlockHeading>
                   <CharacterDetailFeats
-                    entitiesWithInput={uniqByLast(feats, (f) => (f.original ? f.original : f)).map(
+                    entitiesWithInput={uniqByLast(feats, (f) => (f.origin ? f.origin : f)).map(
                       (f) => ({
                         entity: f,
                         input: character.effect.getEffectInputForClassFeat(clas, f),

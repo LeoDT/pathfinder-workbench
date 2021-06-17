@@ -43,7 +43,8 @@ export type EntityType =
   | 'classFeat'
   | 'weaponType'
   | 'armorType'
-  | 'arcaneSchool';
+  | 'arcaneSchool'
+  | 'bloodline';
 
 export interface Entity {
   _type: EntityType;
@@ -55,6 +56,7 @@ export interface Entity {
 export interface SpecialFeat extends Entity {
   desc: string;
   effects?: Effect[];
+  effectsWhen?: string;
   type?: 'su' | 'ex' | 'sp';
   replace?: string[];
 }
@@ -67,6 +69,8 @@ export interface Skill extends Entity {
   category?: boolean;
   parent?: string;
   core?: string[];
+  armorPenalty?: boolean;
+  trained?: boolean;
 }
 
 export type RaceSize = 'small' | 'medium';
@@ -135,6 +139,7 @@ export interface Feat extends Entity {
   type: FeatType[];
   brief: string;
   desc?: string;
+  effectsWhen?: string;
   effects?: Effect[];
 }
 
@@ -146,7 +151,8 @@ export interface ClassFeatGrow extends Entity {
 export interface ClassFeat extends SpecialFeat {
   _type: 'classFeat';
   grow?: Array<ClassFeatGrow>;
-  original?: ClassFeat;
+  origin?: ClassFeat;
+  placeholder?: boolean;
 }
 
 export interface ClassLevel {

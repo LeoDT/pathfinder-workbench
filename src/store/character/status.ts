@@ -1,10 +1,10 @@
-import { makeObservable, computed } from 'mobx';
-import { Abilities, NamedBonus } from '../../types/core';
+import { computed, makeObservable } from 'mobx';
 
-import { collections } from '../collection';
-import Character from '.';
+import { Abilities, NamedBonus } from '../../types/core';
 import { EffectGainSaveArgs } from '../../types/effectType';
 import { CarryLoad, getCarryLoad } from '../../utils/weight';
+import { collections } from '../collection';
+import Character from '.';
 
 export default class CharacterStatus {
   character: Character;
@@ -13,6 +13,9 @@ export default class CharacterStatus {
     makeObservable(this, {
       hpBonuses: computed,
       hp: computed,
+
+      speedBonuses: computed,
+      speed: computed,
 
       initiativeBonuses: computed,
       initiative: computed,

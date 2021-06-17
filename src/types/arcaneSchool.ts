@@ -1,5 +1,4 @@
-import { Entity, SpecialFeat } from './core';
-import { Effect } from './effectType';
+import { ClassFeat, Entity } from './core';
 
 export interface ArcaneSchoolStandardFocused extends ArcaneSchoolStandard {
   replace: Array<string>;
@@ -10,9 +9,9 @@ export interface ArcaneSchoolStandard extends Entity {
   type: 'standard';
   desc: string;
   noConflict?: boolean;
-  powers: Array<SpecialFeat>;
+  noSchoolSlot?: boolean;
+  powers: Array<ClassFeat>;
   focused: Array<ArcaneSchoolStandardFocused>;
-  effects?: Effect[];
 }
 
 export interface ArcaneSchoolElemental extends Entity {
@@ -20,8 +19,7 @@ export interface ArcaneSchoolElemental extends Entity {
   type: 'elemental';
   desc: string;
   conflict: Array<string>;
-  powers: Array<SpecialFeat>;
-  effects?: Effect[];
+  powers: Array<ClassFeat>;
 }
 
 export type ArcaneSchool = ArcaneSchoolStandard | ArcaneSchoolElemental;
