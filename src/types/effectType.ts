@@ -91,6 +91,7 @@ export type EffectGainFavoredClassAmount = BaseEffect<
 >;
 
 export interface EffectGainProficiencyArgs {
+  weaponWithSpecial?: string[];
   weaponTraining?: WeaponTraining[];
   armorTraining?: ArmorCategory[];
   shieldTraining?: 'normal'[];

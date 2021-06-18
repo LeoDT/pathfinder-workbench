@@ -332,7 +332,5 @@ export default class CreateCharacterStore {
   }
 }
 
-export const [
-  useCreateCharacterStore,
-  CreateCharacterStoreContext,
-] = createContextNoNullCheck<CreateCharacterStore>();
+export const [useCreateCharacterStore, CreateCharacterStoreContext] =
+  createContextNoNullCheck<CreateCharacterStore>();

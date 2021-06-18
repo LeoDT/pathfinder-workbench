@@ -270,8 +270,9 @@ export default class Character {
   startUpgrade(): void {
     const lastUpgrade = last(this.upgrades);
     const lastUpgradeClass = lastUpgrade ? lastUpgrade.classId : 'Sorcerer';
-    const levelFeat = (this.level + 1) % 2 === 1;
-    const levelAbility = (this.level + 1) % 4 === 1;
+    const levelFeat =
+      this.level === 1 && this.upgrades.length === 0 ? true : (this.level + 1) % 2 === 1;
+    const levelAbility = (this.level + 1) % 4 === 0;
 
     this.pendingUpgrade = {
       classId: lastUpgradeClass,
@@ -544,19 +545,20 @@ export default class Character {
       skills.forEach((s) => {
         const bonusesFromEffects = this.skillBonusesFromEffects.get(s.id);
         const isClassSkill = this.isClassSkill(s);
+        const rank = this.skillRanks.get(s.id) || 0;
 
-        this.formulaParser.setVariable('currentSkillRank', this.skillRanks.get(s.id) || 0);
+        this.formulaParser.setVariable('currentSkillRank', rank);
 
         bonuses.set(
           s.id,
           this.makeNamedBonuses(
             [
-              { name: '等级', bonus: { type: 'untyped', amount: this.skillRanks.get(s.id) || 0 } },
+              { name: '等级', bonus: { type: 'untyped', amount: rank } },
               {
                 name: abilityTranslates[s.ability],
                 bonus: { type: 'untyped', amount: this.abilityModifier[s.ability] },
               },
-              isClassSkill
+              isClassSkill && rank > 0
                 ? {
                     name: '职业技能',
                     bonus: { type: 'untyped', amount: 3 },
@@ -621,7 +623,7 @@ export default class Character {
   get bloodline(): Bloodline | null {
     const es = this.effect.getGainBloodlineEffects()?.[0];
 
-    if (es) {
+    if (es && es.input) {
       const input = validateGainBloodlineEffectInput(es.input);
 
       return collections.sorcererBloodline.getById(input.bloodline);

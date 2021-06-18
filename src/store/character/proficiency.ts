@@ -1,10 +1,9 @@
-import { makeObservable, computed } from 'mobx';
+import { computed, makeObservable } from 'mobx';
 
-import { collections } from '../collection';
-
-import Character from '.';
+import { ArmorType, WeaponType } from '../../types/core';
 import { EffectGainProficiencyArgs } from '../../types/effectType';
-import { WeaponType, ArmorType } from '../../types/core';
+import { collections } from '../collection';
+import Character from '.';
 
 type Proficiencies = Required<EffectGainProficiencyArgs>;
 
@@ -22,6 +21,7 @@ export class CharacterProficiency {
   get all(): Proficiencies {
     const effects = this.character.effect.getGainProficiencyEffects();
     const p: Proficiencies = {
+      weaponWithSpecial: [],
       weaponTraining: [],
       weapon: [],
       armorTraining: [],
@@ -41,6 +41,7 @@ export class CharacterProficiency {
     effects.forEach(({ effect }) => {
       const { args } = effect;
 
+      extend(p.weaponWithSpecial, args.weaponWithSpecial);
       extend(p.weaponTraining, args.weaponTraining);
       extend(p.weapon, args.weapon);
       extend(p.armorTraining, args.armorTraining);
@@ -65,6 +66,10 @@ export class CharacterProficiency {
 
     if (weaponType.meta.category === 'unarmed attacks') {
       return true;
+    }
+
+    if (this.all.weaponWithSpecial) {
+      return this.all.weaponWithSpecial.some((s) => weaponType.meta.special?.includes(s));
     }
 
     const { training } = weaponType.meta;

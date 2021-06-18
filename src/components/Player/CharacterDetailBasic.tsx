@@ -154,11 +154,9 @@ export default function CharacterDetailBasic(): JSX.Element {
                       {showModifier(character.status.initiative)}
                     </HBlockItemForBonus>
 
-                    <Box flexBasis={1 / 3} flexGrow={1}>
-                      <HBlockItem label="察觉" borderRight="0">
-                        {showModifier(character.skillRanks.get('perception') || 0)}
-                      </HBlockItem>
-                    </Box>
+                    <HBlockItemForBonus label="察觉" bonuses={character.status.perceptionBonuses}>
+                      {showModifier(character.status.perception)}
+                    </HBlockItemForBonus>
                   </HStack>
                 </Block>
               </Box>

@@ -14,6 +14,9 @@ export default class CharacterStatus {
       hpBonuses: computed,
       hp: computed,
 
+      perceptionBonuses: computed,
+      perception: computed,
+
       speedBonuses: computed,
       speed: computed,
 
@@ -48,6 +51,14 @@ export default class CharacterStatus {
 
   get modifier(): Abilities {
     return this.character.abilityModifier;
+  }
+
+  get perceptionBonuses(): NamedBonus[] {
+    return this.character.skillBonuses.get('perception');
+  }
+
+  get perception(): number {
+    return this.character.aggregateNamedBonusesMaxAmount(this.perceptionBonuses);
   }
 
   get speedBonuses(): NamedBonus[] {
