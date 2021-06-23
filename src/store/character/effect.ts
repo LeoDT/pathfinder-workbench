@@ -294,6 +294,12 @@ export default class CharacterEffect {
     );
   }
 
+  getRacialAbilityBonusEffects(): EffectAndSource<Effects.EffectRacialAbilityBonus>[] {
+    return this.getEffectsByType<Effects.EffectRacialAbilityBonus>(
+      Effects.EffectType.racialAbilityBonus
+    );
+  }
+
   getAbilityBonusEffects(): EffectAndSource<Effects.EffectAbilityBonus>[] {
     return this.getEffectsByType<Effects.EffectAbilityBonus>(Effects.EffectType.abilityBonus);
   }

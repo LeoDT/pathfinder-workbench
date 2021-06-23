@@ -121,7 +121,7 @@ export default class Character {
       abilityModifier: computed,
       maxBonusAbilityType: computed,
       bonusAbilityType: observable,
-      bonusAbility: computed,
+      racialBonusAbility: computed,
 
       raceId: observable,
       alternateRaceTraitIds: observable,
@@ -238,13 +238,22 @@ export default class Character {
     );
   }
   get ability(): Abilities {
-    return addBonusScores(this.baseAbility, this.bonusAbility);
+    let abilities = addBonusScores(this.baseAbility, this.racialBonusAbility);
+
+    this.effect.getAbilityBonusEffects().forEach(({ effect }) => {
+      const { args } = effect;
+      const ability = { [args.abilityType]: args.bonus.amount };
+
+      abilities = addBonusScores(abilities, ability);
+    });
+
+    return abilities;
   }
   get abilityModifier(): Abilities {
     return getModifiers(this.ability);
   }
   get maxBonusAbilityType(): number {
-    const effects = this.effect.getAbilityBonusEffects();
+    const effects = this.effect.getRacialAbilityBonusEffects();
     let amount = 0;
 
     if (isEmpty(this.race.ability)) {
@@ -253,7 +262,7 @@ export default class Character {
 
     return amount + effects.length;
   }
-  get bonusAbility(): Partial<Abilities> {
+  get racialBonusAbility(): Partial<Abilities> {
     if (isEmpty(this.race.ability)) {
       const abilities: Partial<Abilities> = {};
 

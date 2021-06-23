@@ -11,7 +11,10 @@ import {
 
 export enum EffectType {
   gainFeat = 'gainFeat',
+
   abilityBonus = 'abilityBonus',
+  racialAbilityBonus = 'racialAbilityBonus',
+
   gainSpellCasting = 'gainSpellCasting',
   gainFavoredClassAmount = 'gainFavoredClassAmount',
   gainProficiency = 'gainProficiency',
@@ -57,8 +60,17 @@ export interface EffectGainFeatArgs {
 }
 export type EffectGainFeat = BaseEffect<EffectType.gainFeat, EffectGainFeatArgs | null>;
 
-export interface EffectAbilityBonusArgs {
+export interface EffectRacialAbilityBonusArgs {
   abilityType?: AbilityType;
+}
+export type EffectRacialAbilityBonus = BaseEffect<
+  EffectType.racialAbilityBonus,
+  EffectRacialAbilityBonusArgs
+>;
+
+export interface EffectAbilityBonusArgs {
+  bonus: Bonus;
+  abilityType: AbilityType;
 }
 export type EffectAbilityBonus = BaseEffect<EffectType.abilityBonus, EffectAbilityBonusArgs>;
 
@@ -218,7 +230,7 @@ export type EffectSelectFromSubs = BaseEffect<EffectType.selectFromSubs, EffectS
 export type EffectSelectFromSubsInput = string[];
 
 export type Effect =
-  | EffectAbilityBonus
+  | EffectRacialAbilityBonus
   | EffectGainArcaneSchool
   | EffectGainFeat
   | EffectGainSpellCasting
