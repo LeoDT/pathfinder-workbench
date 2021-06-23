@@ -385,4 +385,8 @@ export default class CharacterEffect {
   getGainBloodlineEffects(): EffectAndSource<Effects.EffectGainBloodline>[] {
     return this.getEffectsByType<Effects.EffectGainBloodline>(Effects.EffectType.gainBloodline);
   }
+
+  getSelectFromSubsEffects(): EffectAndSource<Effects.EffectSelectFromSubs>[] {
+    return this.getEffectsByType<Effects.EffectSelectFromSubs>(Effects.EffectType.selectFromSubs);
+  }
 }

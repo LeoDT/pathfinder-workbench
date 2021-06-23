@@ -36,6 +36,8 @@ export enum EffectType {
   gainArcaneSchool = 'gainArcaneSchool',
 
   gainBloodline = 'gainBloodline',
+
+  selectFromSubs = 'selectFromSubs',
 }
 
 export interface BaseEffect<TYPE extends EffectType, ARGS> {
@@ -211,6 +213,10 @@ export interface EffectGainBloodlineInput {
   bloodline: string;
 }
 
+export interface EffectSelectFromSubsArgs {}
+export type EffectSelectFromSubs = BaseEffect<EffectType.selectFromSubs, EffectSelectFromSubsArgs>;
+export type EffectSelectFromSubsInput = string[];
+
 export type Effect =
   | EffectAbilityBonus
   | EffectGainArcaneSchool
@@ -231,7 +237,8 @@ export type Effect =
   | EffectAddAttackOption
   | EffectMeleeAttackAbility
   | EffectAddTracker
-  | EffectGainBloodline;
+  | EffectGainBloodline
+  | EffectSelectFromSubs;
 
 export type ArgsTypeForEffect<T extends Effect> = T['args'];
 
@@ -239,7 +246,8 @@ export type EffectNeedInput =
   | EffectGainSkill
   | EffectGainArcaneSchool
   | EffectGainSelectedWeaponProficiency
-  | EffectGainBloodline;
+  | EffectGainBloodline
+  | EffectSelectFromSubs;
 
 export const effectTypesNeedInput: Array<EffectType> = [
   EffectType.gainSkill,
@@ -248,4 +256,6 @@ export const effectTypesNeedInput: Array<EffectType> = [
   EffectType.gainSelectedWeaponProficiency,
 
   EffectType.gainBloodline,
+
+  EffectType.selectFromSubs,
 ];

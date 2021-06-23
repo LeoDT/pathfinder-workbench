@@ -59,6 +59,8 @@ export interface SpecialFeat extends Entity {
   effectsWhen?: string;
   type?: 'su' | 'ex' | 'sp';
   replace?: string[];
+  subs?: SpecialFeat[];
+  when?: string; // only used for subs
 }
 
 export type SkillSystem = 'core' | 'consolidated';

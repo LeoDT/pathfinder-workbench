@@ -282,11 +282,16 @@ export default function CharacterDetailBasic(): JSX.Element {
                     {archetypes ? <small>({archetypes})</small> : ''}
                   </BlockHeading>
                   <CharacterDetailFeats
-                    entitiesWithInput={uniqByLast(feats, (f) => (f.origin ? f.origin : f)).map(
-                      (f) => ({
+                    entitiesWithInput={uniqByLast(
+                      feats.map((f) => ({
                         entity: f,
                         input: character.effect.getEffectInputForClassFeat(clas, f),
-                      })
+                      })),
+                      (fi) => {
+                        if (fi.input) return fi.entity;
+
+                        return fi.entity.origin ?? fi.entity;
+                      }
                     )}
                   />
                 </Block>

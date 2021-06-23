@@ -3,6 +3,7 @@ import {
   EffectGainArcaneSchoolInput,
   EffectGainBloodlineInput,
   EffectGainFeatArgs,
+  EffectSelectFromSubsInput,
 } from '../types/effectType';
 import { featTypeTranslates } from './feat';
 
@@ -34,4 +35,8 @@ export function validateGainArcaneSchoolEffectInput(i: unknown): EffectGainArcan
 
 export function validateGainBloodlineEffectInput(i: unknown): EffectGainBloodlineInput {
   return i as EffectGainBloodlineInput;
+}
+
+export function validateSelectFromSubsEffectInput(i: unknown): EffectSelectFromSubsInput {
+  return i as EffectSelectFromSubsInput;
 }

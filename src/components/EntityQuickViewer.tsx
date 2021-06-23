@@ -46,22 +46,21 @@ export default function EntityQuickViewer(): JSX.Element {
         return <WeaponType weaponType={e as WeaponTypeType} showId />;
       case 'armorType':
         return <ArmorType armorType={e as ArmorTypeType} showId />;
-      case 'classFeat':
-      case 'racialTrait': {
-        const feat = e as SpecialFeat;
+      default: {
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        const desc = (e as any).desc;
+
         return (
           <Box>
             <Heading as="h4" fontSize="lg" color={ENTITY_COLORS.feat}>
-              {feat.name} <small style={{ fontWeight: 'normal' }}>({feat.id})</small>
+              {e.name} <small style={{ fontWeight: 'normal' }}>({e.id})</small>
             </Heading>
-            {feat.desc ? (
-              <Text pt="1" whiteSpace="pre-wrap" dangerouslySetInnerHTML={{ __html: feat.desc }} />
+            {desc ? (
+              <Text pt="1" whiteSpace="pre-wrap" dangerouslySetInnerHTML={{ __html: desc }} />
             ) : null}
           </Box>
         );
       }
-      default:
-        return <Text>无法显示</Text>;
     }
   }, []);
 

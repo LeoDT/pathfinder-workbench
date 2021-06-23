@@ -15,16 +15,18 @@ import {
 } from '@chakra-ui/react';
 
 import CreateCharacterStore from '../../store/createCharacter';
-import { Entity } from '../../types/core';
+import { Entity, SpecialFeat } from '../../types/core';
 import { EffectNeedInput, EffectType } from '../../types/effectType';
 import { ArcaneSchoolPicker } from '../ArcaneSchoolPicker';
 import { BloodlinePicker } from '../BloodlinePicker';
 import { EffectInputDisplayer } from '../EffectInputDisplayer';
 import { EntityPickerInputRefContext } from '../EntityPicker';
 import { SimpleEntityWithChild } from '../SimpleEntity';
+import { SubsSelector } from '../SubsSelector';
 import { WeaponProficiencyPicker } from '../WeaponProficiencyPicker';
 
 interface Props {
+  entity: Entity;
   effect: EffectNeedInput;
   createOrUpgrade: CreateCharacterStore;
 
@@ -35,6 +37,7 @@ interface Props {
 }
 
 export function EffectInput({
+  entity,
   createOrUpgrade,
   value,
   onChange,
@@ -85,6 +88,17 @@ export function EffectInput({
       );
     }
 
+    case EffectType.selectFromSubs: {
+      return (
+        <SubsSelector
+          parseFormulaBoolean={(s: string) => createOrUpgrade.character.parseFormulaBoolean(s)}
+          value={value}
+          onChange={onChange}
+          feat={entity as SpecialFeat}
+        />
+      );
+    }
+
     default:
       return null;
   }
@@ -130,12 +144,12 @@ export function SimpleEntityWithEffectInput({
               </PopoverTrigger>
               <PopoverContent w="auto" minW="xs">
                 <PopoverBody maxH="50vh" w="" overflowY="auto">
-                  {isOpen ? <EffectInput onClose={onClose} {...props} /> : null}
+                  {isOpen ? <EffectInput onClose={onClose} entity={entity} {...props} /> : null}
                 </PopoverBody>
               </PopoverContent>
             </Popover>
           }
-          child={<EffectInputDisplayer input={props.value} effect={props.effect} />}
+          child={<EffectInputDisplayer source={entity} input={props.value} effect={props.effect} />}
         />
       </Box>
     </EntityPickerInputRefContext.Provider>

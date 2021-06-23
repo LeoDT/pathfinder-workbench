@@ -30,7 +30,7 @@ export function CharacterDetailFeats({ entitiesWithInput }: Props): JSX.Element 
               <SimpleEntityWithChild
                 key={`${entity.id}:${i}`}
                 entity={entity}
-                child={<EffectInputDisplayer effect={es.effect} input={input} />}
+                child={<EffectInputDisplayer source={es.source} effect={es.effect} input={input} />}
               />
             ) : null;
           })}
