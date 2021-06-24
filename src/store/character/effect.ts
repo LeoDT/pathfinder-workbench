@@ -185,8 +185,12 @@ export default class CharacterEffect {
       });
     });
 
-    this.character.manualEffects.forEach(({ name, effect, input }) => {
-      add({ effect, source: makeManualEffectSource(name), input });
+    this.character.manualEffects.forEach(({ name, effects, inputs }) => {
+      const source = makeManualEffectSource(name);
+
+      effects.forEach((effect, i) => {
+        add({ effect, source, input: inputs?.[i] ?? undefined });
+      });
     });
 
     // read equip so that equip changing can trigger effects recalculation
@@ -333,6 +337,10 @@ export default class CharacterEffect {
 
   getGainSkillEffects(): EffectAndSource<Effects.EffectGainSkill>[] {
     return this.getEffectsByType<Effects.EffectGainSkill>(Effects.EffectType.gainSkill);
+  }
+
+  getGainClassSkillEffects(): EffectAndSource<Effects.EffectGainClassSkill>[] {
+    return this.getEffectsByType<Effects.EffectGainClassSkill>(Effects.EffectType.gainClassSkill);
   }
 
   getGainInitiativeEffects(): EffectAndSource<Effects.EffectGainInitiative>[] {

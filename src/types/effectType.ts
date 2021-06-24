@@ -19,7 +19,10 @@ export enum EffectType {
   gainFavoredClassAmount = 'gainFavoredClassAmount',
   gainProficiency = 'gainProficiency',
   gainSelectedWeaponProficiency = 'gainSelectedWeaponProficiency',
+
+  gainClassSkill = 'gainClassSkill',
   gainSkill = 'gainSkill',
+
   gainInitiative = 'gainInitiative',
   gainAC = 'gainAC',
   gainCMD = 'gainCMD',
@@ -131,6 +134,11 @@ export interface EffectGainSkillArgs {
   bonus: Bonus;
 }
 export type EffectGainSkill = BaseEffect<EffectType.gainSkill, EffectGainSkillArgs>;
+
+export interface EffectGainClassSkillArgs {
+  skillId: string;
+}
+export type EffectGainClassSkill = BaseEffect<EffectType.gainClassSkill, EffectGainClassSkillArgs>;
 
 export interface EffectGainInitiativeArgs {
   bonus: Bonus;
@@ -274,6 +282,6 @@ export const effectTypesNeedInput: Array<EffectType> = [
 
 export interface ManualEffect {
   name: string;
-  effect: Effect;
-  input?: unknown;
+  effects: Effect[];
+  inputs?: unknown[];
 }

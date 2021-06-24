@@ -465,7 +465,10 @@ export default class Character {
   }
 
   get classSkills(): Array<string> {
-    return uniq(this.classes.map((c) => c.classSkills).flat());
+    const effects = this.effect.getGainClassSkillEffects();
+    const fromEffects = effects.map(({ effect }) => effect.args.skillId);
+
+    return uniq([...this.classes.map((c) => c.classSkills).flat(), ...fromEffects]);
   }
   isClassSkill(s: Skill): boolean {
     if (s.parent) {

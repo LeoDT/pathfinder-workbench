@@ -46,6 +46,10 @@ export function CharacterDetailManualEffects({ value, onChange }: Props): JSX.El
                 onChange(v.state.doc.toJSON().join('\n'));
               }
             }),
+            EditorView.theme({
+              '&': { height: '60vh' },
+              '.cm-scroller': { overflow: 'auto' },
+            }),
           ],
         }),
         parent: cmWrapperRef.current,
