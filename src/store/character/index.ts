@@ -65,6 +65,7 @@ interface OptionalCharacterParams {
   tracker?: any;
 
   manualEffects?: ManualEffect[];
+  deity?: string;
 }
 
 export default class Character {
@@ -83,6 +84,9 @@ export default class Character {
   preparedSpellIds: Map<string, string[]>;
   preparedSpecialSpellIds: Map<string, string[]>; // for domain or arcane school
   spellbooks: IObservableArray<CharacterSpellbook>;
+  deity: string;
+
+  manualEffects: ManualEffect[];
 
   status: CharacterStatus;
   equipment: CharacterEquip;
@@ -90,8 +94,6 @@ export default class Character {
   proficiency: CharacterProficiency;
   attack: CharacterAttack;
   tracker: CharacterTracker;
-
-  manualEffects: ManualEffect[];
 
   formulaParser: FormulaParser;
   formulaParserReady: boolean;
@@ -114,6 +116,7 @@ export default class Character {
       equipment,
       tracker,
       manualEffects,
+      deity,
     }: OptionalCharacterParams = {}
   ) {
     makeObservable(this, {
@@ -121,6 +124,7 @@ export default class Character {
       skillSystem: observable,
       alignment: observable,
       favoredClassIds: observable,
+      deity: observable,
 
       baseAbility: computed,
       ability: computed,
@@ -173,6 +177,7 @@ export default class Character {
     this.name = name;
     this.skillSystem = skillSystem;
     this.alignment = alignment;
+    this.deity = deity;
 
     this.bonusAbilityType = bonusAbilityType ?? [AbilityType.str];
 
@@ -772,6 +777,7 @@ export default class Character {
   }
 
   static serializableProps = [
+    'deity',
     'skillSystem',
     'alignment',
     'raceId',

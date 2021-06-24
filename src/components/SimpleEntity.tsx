@@ -1,8 +1,19 @@
 import { ReactNode } from 'react';
+import { FaInfoCircle } from 'react-icons/fa';
 
-import { Badge, BadgeProps, Box, HStack, Heading, Spacer, StackProps } from '@chakra-ui/react';
+import {
+  Badge,
+  BadgeProps,
+  Box,
+  HStack,
+  Heading,
+  Icon,
+  Spacer,
+  StackProps,
+} from '@chakra-ui/react';
 
 import { ENTITY_COLORS } from '../constant';
+import { useStore } from '../store';
 import {
   ArmorType as ArmorTypeType,
   Entity,
@@ -146,12 +157,26 @@ export function SimpleEntityBadge({
   entity,
   showId = false,
   quickViewer = false,
+  ...badgeProps
 }: PropsForBadge): JSX.Element {
+  const { ui } = useStore();
+  const props: BadgeProps = quickViewer
+    ? {
+        cursor: 'pointer',
+        _hover: {
+          opacity: 0.8,
+        },
+        onClick: () => {
+          ui.showQuickViewer(entity);
+        },
+      }
+    : {};
+
   return (
-    <Badge fontSize="md" verticalAlign="top" colorScheme="blue">
+    <Badge fontSize="md" verticalAlign="top" colorScheme="blue" {...badgeProps} {...props}>
       {entity.name}
       {showId ? <small style={{ fontWeight: 'normal' }}>({entity.id})</small> : null}
-      {quickViewer ? <EntityQuickViewerToggler entity={entity} /> : null}
+      {quickViewer ? <Icon as={FaInfoCircle} verticalAlign="middle" /> : null}
     </Badge>
   );
 }

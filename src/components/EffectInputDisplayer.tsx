@@ -110,11 +110,11 @@ export function EffectInputDisplayer({ input, effect, source }: Props): JSX.Elem
           items.length > 1 ? (
             <HStack>
               {items.map((s) => (
-                <SimpleEntityBadge key={s.id} entity={s} />
+                <SimpleEntityBadge key={s.id} entity={s} quickViewer />
               ))}
             </HStack>
           ) : (
-            <SimpleEntityBadge entity={items[0]} />
+            <SimpleEntityBadge entity={items[0]} quickViewer />
           );
       }
       break;

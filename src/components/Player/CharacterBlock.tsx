@@ -79,9 +79,19 @@ export function HBlockItemForBonus({
   label: ReactNode;
 }): JSX.Element {
   return (
-    <Box flexBasis={1 / 3} flexGrow={1}>
+    <Box
+      flexBasis={1 / 3}
+      flexGrow={1}
+      borderRight="1px"
+      borderColor="gray.200"
+      _last={{
+        borderRight: 'none',
+      }}
+    >
       <NamedBonusPopover bonuses={bonuses}>
-        <HBlockItem label={label}>{children}</HBlockItem>
+        <HBlockItem label={label} borderRight="none">
+          {children}
+        </HBlockItem>
       </NamedBonusPopover>
     </Box>
   );
@@ -97,9 +107,19 @@ export function VBlockItemForBonus({
   label: ReactNode;
 }): JSX.Element {
   return (
-    <Box flexBasis={1 / 3} flexGrow={1}>
+    <Box
+      flexBasis={1 / 3}
+      flexGrow={1}
+      borderBottom="1px"
+      borderColor="gray.200"
+      _last={{
+        borderBottom: 'none',
+      }}
+    >
       <NamedBonusPopover bonuses={bonuses}>
-        <VBlockItem label={label}>{children}</VBlockItem>
+        <VBlockItem label={label} borderBottom="none">
+          {children}
+        </VBlockItem>
       </NamedBonusPopover>
     </Box>
   );

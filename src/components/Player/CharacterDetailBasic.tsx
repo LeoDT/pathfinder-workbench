@@ -1,10 +1,13 @@
 import { Observer } from 'mobx-react-lite';
+import { FaPen } from 'react-icons/fa';
 import { Link } from 'react-router-dom';
 
 import {
   Box,
   Button,
   HStack,
+  Icon,
+  Input,
   Spacer,
   Stack,
   StackProps,
@@ -123,7 +126,23 @@ export default function CharacterDetailBasic(): JSX.Element {
                       ))}
                     </VBlockItem>
                     <VBlockItem label="阵营">{alignmentTranslates[character.alignment]}</VBlockItem>
-                    <VBlockItem label="信仰">莎伦莱</VBlockItem>
+                    <VBlockItem
+                      label={
+                        <span>
+                          信仰 <Icon as={FaPen} boxSize="12px" verticalAlign="baseline" />
+                        </span>
+                      }
+                    >
+                      <Input
+                        textAlign="right"
+                        value={character.deity}
+                        onChange={(e) => {
+                          character.deity = e.target.value;
+                        }}
+                        variant="unstyled"
+                        borderRadius="0"
+                      />
+                    </VBlockItem>
                   </Block>
                 </Box>
               </HStack>
