@@ -177,7 +177,7 @@ export default class Character {
     this.name = name;
     this.skillSystem = skillSystem;
     this.alignment = alignment;
-    this.deity = deity;
+    this.deity = deity ?? '';
 
     this.bonusAbilityType = bonusAbilityType ?? [AbilityType.str];
 
@@ -729,20 +729,22 @@ export default class Character {
 
   makeNamedBonuses(bonuses: NamedBonus[]): NamedBonus[] {
     return markUnstackableBonus(
-      bonuses.map((b) => {
-        if (b.bonus.amountFormula) {
-          const amount = Array.isArray(b.bonus.amountFormula)
-            ? b.bonus.amountFormula.map((f) => this.parseFormulaNumber(f))
-            : this.parseFormulaNumber(b.bonus.amountFormula);
+      bonuses
+        .map((b) => {
+          if (b.bonus.amountFormula) {
+            const amount = Array.isArray(b.bonus.amountFormula)
+              ? b.bonus.amountFormula.map((f) => this.parseFormulaNumber(f))
+              : this.parseFormulaNumber(b.bonus.amountFormula);
 
-          return {
-            ...b,
-            bonus: { ...b.bonus, amount },
-          };
-        }
+            return {
+              ...b,
+              bonus: { ...b.bonus, amount },
+            };
+          }
 
-        return b;
-      })
+          return b;
+        })
+        .filter(({ bonus }) => bonus.amount !== 0)
     );
   }
   aggregateBonusesMaxAmount(bonuses: Bonus[]): number {

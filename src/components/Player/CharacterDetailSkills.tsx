@@ -6,6 +6,7 @@ import { Box, Button, Tag, Wrap, WrapItem } from '@chakra-ui/react';
 import { ABILITY_COLORS_SCHEME } from '../../constant';
 import { useStore } from '../../store';
 import { showModifier } from '../../utils/modifier';
+import { NamedBonusPopover } from '../NamedBonusPopover';
 import { useCurrentCharacter } from './context';
 
 export function CharacterDetailSkills(): JSX.Element {
@@ -33,18 +34,25 @@ export function CharacterDetailSkills(): JSX.Element {
 
           skills.forEach((s) => {
             const detail = character.getSkillDetail(s);
+            const bonuses = character.skillBonuses.get(s.id);
 
-            children.push(
-              <WrapItem key={s.id}>
-                <Tag
-                  colorScheme={ABILITY_COLORS_SCHEME[s.ability]}
-                  variant="outline"
-                  cursor="default"
-                >
-                  {s.name} {showModifier(detail.total)}
-                </Tag>
-              </WrapItem>
-            );
+            if (bonuses) {
+              children.push(
+                <WrapItem key={s.id}>
+                  <NamedBonusPopover bonuses={bonuses}>
+                    <Tag
+                      colorScheme={ABILITY_COLORS_SCHEME[s.ability]}
+                      variant="outline"
+                      _hover={{
+                        opacity: 0.8,
+                      }}
+                    >
+                      {s.name} {showModifier(detail.total)}
+                    </Tag>
+                  </NamedBonusPopover>
+                </WrapItem>
+              );
+            }
           });
 
           return <Wrap spacing="2">{children}</Wrap>;

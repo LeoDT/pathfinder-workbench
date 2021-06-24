@@ -20,7 +20,6 @@ import {
   ArmorType as ArmorTypeType,
   Entity,
   Feat as FeatEntity,
-  SpecialFeat,
   Spell as SpellEntity,
   WeaponType as WeaponTypeType,
 } from '../types/core';

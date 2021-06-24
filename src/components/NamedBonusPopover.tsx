@@ -8,8 +8,8 @@ import {
   PopoverContent,
   PopoverProps,
   PopoverTrigger,
-  Text,
   Portal,
+  Text,
 } from '@chakra-ui/react';
 
 import { NamedBonus } from '../types/core';
@@ -30,16 +30,20 @@ export function NamedBonusPopover({ bonuses, children, ...props }: Props): JSX.E
       <Portal>
         <PopoverContent width="48">
           <PopoverBody>
-            {bonuses.map(({ name, bonus }, i) => (
-              <HStack
-                key={i}
-                justifyContent="space-between"
-                textDecoration={bonus.ignored ? 'line-through' : ''}
-              >
-                <Text>{name}</Text>
-                <Text>{Array.isArray(bonus.amount) ? bonus.amount.join('/') : bonus.amount}</Text>
-              </HStack>
-            ))}
+            {bonuses.length > 0 ? (
+              bonuses.map(({ name, bonus }, i) => (
+                <HStack
+                  key={i}
+                  justifyContent="space-between"
+                  textDecoration={bonus.ignored ? 'line-through' : ''}
+                >
+                  <Text>{name}</Text>
+                  <Text>{Array.isArray(bonus.amount) ? bonus.amount.join('/') : bonus.amount}</Text>
+                </HStack>
+              ))
+            ) : (
+              <Text>没有加值</Text>
+            )}
           </PopoverBody>
         </PopoverContent>
       </Portal>

@@ -3,7 +3,6 @@ import { toJS } from 'mobx';
 import { useEffect, useRef, useState } from 'react';
 
 import {
-  Box,
   Button,
   HStack,
   Modal,

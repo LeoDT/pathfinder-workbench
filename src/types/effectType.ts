@@ -166,7 +166,11 @@ export interface EffectGainHPArgs {
 }
 export type EffectGainHP = BaseEffect<EffectType.gainHP, EffectGainHPArgs>;
 
-export type EffectGainTwoWeaponFighting = BaseEffect<EffectType.gainTwoWeaponFighting, void>;
+export interface EffectGainTwoWeaponFightingArgs {}
+export type EffectGainTwoWeaponFighting = BaseEffect<
+  EffectType.gainTwoWeaponFighting,
+  EffectGainTwoWeaponFightingArgs
+>;
 
 export interface EffectGainSpeedArgs {
   bonus: Bonus;
@@ -181,7 +185,11 @@ export type EffectClassFeatSource = BaseEffect<
   EffectClassFeatSourceArgs
 >;
 
-export type EffectClassFeatPlaceholder = BaseEffect<EffectType.classFeatPlaceholder, null>;
+export interface EffectClassFeatPlaceholderArgs {}
+export type EffectClassFeatPlaceholder = BaseEffect<
+  EffectType.classFeatPlaceholder,
+  EffectClassFeatPlaceholderArgs
+>;
 
 export interface EffectEnchantUnarmedStrikeArgs {
   damage: string;
@@ -239,6 +247,7 @@ export type EffectSelectFromSubsInput = string[];
 
 export type Effect =
   | EffectRacialAbilityBonus
+  | EffectAbilityBonus
   | EffectGainArcaneSchool
   | EffectGainFeat
   | EffectGainSpellCasting
@@ -246,13 +255,16 @@ export type Effect =
   | EffectGainProficiency
   | EffectGainSelectedWeaponProficiency
   | EffectGainSkill
+  | EffectGainClassSkill
   | EffectGainInitiative
   | EffectGainAC
   | EffectGainCMD
   | EffectGainSave
   | EffectGainHP
+  | EffectGainSpeed
   | EffectGainTwoWeaponFighting
   | EffectClassFeatSource
+  | EffectClassFeatPlaceholder
   | EffectEnchantUnarmedStrike
   | EffectAddAttackOption
   | EffectMeleeAttackAbility

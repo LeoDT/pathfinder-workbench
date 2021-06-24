@@ -54,7 +54,7 @@ export default class CharacterStatus {
   }
 
   get perceptionBonuses(): NamedBonus[] {
-    return this.character.skillBonuses.get('perception');
+    return this.character.skillBonuses.get('perception') as NamedBonus[];
   }
 
   get perception(): number {
