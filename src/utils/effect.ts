@@ -4,6 +4,7 @@ import {
   EffectGainBloodlineInput,
   EffectGainFeatArgs,
   EffectSelectFromSubsInput,
+  ManualEffect,
 } from '../types/effectType';
 import { featTypeTranslates } from './feat';
 
@@ -17,6 +18,22 @@ export function translateGainFeatEffectArgs(e: EffectGainFeatArgs): string {
   }
 
   return '奖励专长';
+}
+
+export function validateManualEffects(e: unknown): ManualEffect[] | null {
+  if (!e) {
+    return null;
+  }
+
+  return e as ManualEffect[];
+}
+export function makeManualEffectSource(name: string, id?: string): ClassFeat {
+  return {
+    _type: 'classFeat',
+    name,
+    id: id ?? name,
+    desc: '手动效果',
+  };
 }
 
 export function makeEffectInputKey(source: ClassFeat | RacialTrait | Feat, suffix = ''): string {

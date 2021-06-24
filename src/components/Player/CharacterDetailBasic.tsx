@@ -1,7 +1,17 @@
 import { Observer } from 'mobx-react-lite';
 import { Link } from 'react-router-dom';
 
-import { Box, Button, HStack, Spacer, Stack, StackProps, Text, VStack } from '@chakra-ui/react';
+import {
+  Box,
+  Button,
+  HStack,
+  Spacer,
+  Stack,
+  StackProps,
+  Text,
+  VStack,
+  useDisclosure,
+} from '@chakra-ui/react';
 
 import { AbilityType } from '../../types/core';
 import { abilityTranslates } from '../../utils/ability';
@@ -22,6 +32,7 @@ import {
 import { CharacterDetailAttackOptions } from './CharacterDetailAttackOptions';
 import CharacterDetailEquip from './CharacterDetailEquip';
 import { CharacterDetailFeats } from './CharacterDetailFeats';
+import { CharacterDetailManualEffectsModal } from './CharacterDetailManualEffects';
 import { CharacterDetailSkills } from './CharacterDetailSkills';
 import { CharacterDetailSpells } from './CharacterDetailSpells';
 import CharacterDetailStorage from './CharacterDetailStorage';
@@ -46,6 +57,7 @@ const hStackForBonusStyle = {
 
 export default function CharacterDetailBasic(): JSX.Element {
   const character = useCurrentCharacter();
+  const manualEffectsState = useDisclosure();
 
   function showAbility(t: AbilityType) {
     return (
@@ -74,17 +86,19 @@ export default function CharacterDetailBasic(): JSX.Element {
   return (
     <>
       <Box position="relative">
-        <Button
-          position="absolute"
-          right="0"
-          top="-10"
-          as={Link}
-          to={`/player/character/${character.id}/upgrade`}
-          colorScheme="teal"
-          size="sm"
-        >
-          升级
-        </Button>
+        <HStack position="absolute" right="0" top="-10">
+          <Button size="sm" onClick={() => manualEffectsState.onOpen()}>
+            手动效果
+          </Button>
+          <Button
+            as={Link}
+            to={`/player/character/${character.id}/upgrade`}
+            colorScheme="teal"
+            size="sm"
+          >
+            升级
+          </Button>
+        </HStack>
       </Box>
 
       <Observer>
@@ -320,6 +334,11 @@ export default function CharacterDetailBasic(): JSX.Element {
           </VStack>
         )}
       </Observer>
+
+      <CharacterDetailManualEffectsModal
+        isOpen={manualEffectsState.isOpen}
+        onClose={manualEffectsState.onClose}
+      />
     </>
   );
 }

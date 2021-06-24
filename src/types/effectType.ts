@@ -271,3 +271,9 @@ export const effectTypesNeedInput: Array<EffectType> = [
 
   EffectType.selectFromSubs,
 ];
+
+export interface ManualEffect {
+  name: string;
+  effect: Effect;
+  input?: unknown;
+}

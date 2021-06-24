@@ -21,6 +21,7 @@ import {
   Skill,
   SkillSystem,
 } from '../../types/core';
+import { ManualEffect } from '../../types/effectType';
 import {
   BASE_ABILITY,
   abilityTranslates,
@@ -62,6 +63,8 @@ interface OptionalCharacterParams {
   equipment?: any;
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   tracker?: any;
+
+  manualEffects?: ManualEffect[];
 }
 
 export default class Character {
@@ -88,6 +91,8 @@ export default class Character {
   attack: CharacterAttack;
   tracker: CharacterTracker;
 
+  manualEffects: ManualEffect[];
+
   formulaParser: FormulaParser;
   formulaParserReady: boolean;
 
@@ -108,6 +113,7 @@ export default class Character {
       upgrades,
       equipment,
       tracker,
+      manualEffects,
     }: OptionalCharacterParams = {}
   ) {
     makeObservable(this, {
@@ -157,6 +163,7 @@ export default class Character {
 
       bloodline: computed,
 
+      manualEffects: observable.ref,
       formulaParserReady: observable,
     });
 
@@ -181,6 +188,8 @@ export default class Character {
     this.preparedSpecialSpellIds = preparedSpecialSpellIds || new Map();
 
     this.formulaParserReady = false;
+
+    this.manualEffects = manualEffects || [];
 
     this.effect = new CharacterEffect(this);
     this.status = new CharacterStatus(this);
@@ -770,6 +779,7 @@ export default class Character {
     'baseAbility',
     'bonusAbilityType',
     'favoredClassIds',
+    'manualEffects',
   ];
 
   static stringify(c: Character): string {

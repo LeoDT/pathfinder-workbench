@@ -4,6 +4,7 @@ import { Class, ClassFeat, Feat, RacialTrait } from '../../types/core';
 import * as Effects from '../../types/effectType';
 import {
   makeEffectInputKey,
+  makeManualEffectSource,
   validateGainArcaneSchoolEffectInput,
   validateGainBloodlineEffectInput,
 } from '../../utils/effect';
@@ -182,6 +183,10 @@ export default class CharacterEffect {
       source.effects?.forEach((effect) => {
         add(this.extendEffect({ effect: this.growEffectArgs(effect, source), source, input }));
       });
+    });
+
+    this.character.manualEffects.forEach(({ name, effect, input }) => {
+      add({ effect, source: makeManualEffectSource(name), input });
     });
 
     // read equip so that equip changing can trigger effects recalculation
