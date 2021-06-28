@@ -176,7 +176,7 @@ export function SimpleEntityBadge({
     <Badge fontSize="md" verticalAlign="top" colorScheme="blue" {...badgeProps} {...props}>
       {entity.name}
       {showId ? <small style={{ fontWeight: 'normal' }}>({entity.id})</small> : null}
-      {quickViewer ? <Icon as={FaInfoCircle} verticalAlign="middle" /> : null}
+      {quickViewer ? <Icon as={FaInfoCircle} verticalAlign="-2px" ml="2px" /> : null}
     </Badge>
   );
 }
@@ -191,6 +191,7 @@ export function SimpleEntityWithChild({ child, ...props }: PropsWithChild): JSX.
   return child ? (
     <Box>
       {entity}
+
       <Box pl="4" pt="2">
         {child}
       </Box>

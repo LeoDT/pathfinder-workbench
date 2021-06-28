@@ -29,6 +29,7 @@ interface GetAttackOptionOptions {
   name?: string;
   isOffHand: boolean;
   ignoreTwoWeapon: boolean;
+  damageMultiplier?: number;
   maxBab: number;
 }
 const defaultGetAttackOptionOptions: GetAttackOptionOptions = {
@@ -185,8 +186,18 @@ export class CharacterAttack {
       }
     }
 
+    let twoHandDamageMultiplier = 1.5;
+    const damageMultiplierEffects = this.character.effect.getTwoHandDamageMultiplierEffects();
+    if (damageMultiplierEffects.length > 0) {
+      twoHandDamageMultiplier = Math.max(
+        ...damageMultiplierEffects.map((es) => es.effect.args.multiplier)
+      );
+    }
+
     const damageMultiplier =
-      c.equipment.isHoldingTwoHand && damageAbility === AbilityType.str ? 1.5 : 1;
+      c.equipment.isHoldingTwoHand && damageAbility === AbilityType.str
+        ? options.damageMultiplier ?? twoHandDamageMultiplier
+        : 1;
 
     if (damageAbility) {
       const name = abilityTranslates[damageAbility];
@@ -258,6 +269,7 @@ export class CharacterAttack {
         const option = this.getAttackOptionForWeapon(this.character.equipment.mainHand, {
           name: source.name,
           maxBab: (args.extraAttack?.amount || 0) + 1,
+          damageMultiplier: args.damageMultiplier,
           ignoreTwoWeapon: args.ignoreTwoWeapon || false,
         });
 

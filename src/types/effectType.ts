@@ -37,6 +37,7 @@ export enum EffectType {
   enchantUnarmedStrike = 'enchantUnarmedStrike',
   addAttackOption = 'addAttackOption',
   meleeAttackAbility = 'meleeAttackAbility',
+  twoHandDamageMultiplier = 'twoHandDamageMultiplier',
   addTracker = 'addTracker',
 
   gainArcaneSchool = 'gainArcaneSchool',
@@ -205,6 +206,7 @@ export interface EffectAddAttackOptionArgs {
     amount: number;
   };
   ignoreTwoWeapon?: boolean;
+  damageMultiplier?: number;
   attackBonuses?: NamedBonus[];
   damageBonuses?: Array<{
     applyMultiplier: AbilityType;
@@ -222,6 +224,14 @@ export interface EffectMeleeAttackAbilityArgs {
 export type EffectMeleeAttackAbility = BaseEffect<
   EffectType.meleeAttackAbility,
   EffectMeleeAttackAbilityArgs
+>;
+
+export interface EffectTwoHandDamageMultiplierArgs {
+  multiplier: number;
+}
+export type EffectTwoHandDamageMultiplier = BaseEffect<
+  EffectType.twoHandDamageMultiplier,
+  EffectTwoHandDamageMultiplierArgs
 >;
 
 export interface EffectAddTrackerArgs {

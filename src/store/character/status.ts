@@ -77,9 +77,11 @@ export default class CharacterStatus {
 
   get hpBonuses(): NamedBonus[] {
     let base = 0;
+    let fromFavoredClass = 0;
 
     this.character.upgradesWithPending.forEach((u, level) => {
       if (u.hp === 0) {
+        // hp === 0 -> hd / 2 + 1
         const clas = collections.class.getById(u.classId);
 
         base += level === 0 ? clas.hd : clas.hd / 2 + 1;
@@ -88,7 +90,7 @@ export default class CharacterStatus {
       }
 
       if (u.favoredClassBonus === 'hp') {
-        base += 1;
+        fromFavoredClass += 1;
       }
     });
 
@@ -96,6 +98,7 @@ export default class CharacterStatus {
 
     return this.character.makeNamedBonuses([
       { name: '基础', bonus: { amount: base, type: 'untyped' } },
+      { name: '天赋职业', bonus: { amount: fromFavoredClass, type: 'untyped' } },
       { name: '体质', bonus: { amount: con, type: 'untyped' } },
       ...this.character.effect.getGainHPEffects().map((es) => ({
         name: es.source.name,

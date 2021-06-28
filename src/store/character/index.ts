@@ -663,6 +663,8 @@ export default class Character {
 
     this.disposes.push(
       autorun(() => {
+        this.formulaParserReady = false;
+
         p.setVariable('level', this.level);
 
         this.levelDetail.forEach((level, clas) => {

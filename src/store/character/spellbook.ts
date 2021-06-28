@@ -4,10 +4,7 @@ import { computed, makeObservable } from 'mobx';
 import { ArcaneSchool } from '../../types/arcaneSchool';
 import { AbilityType, Class, Spell, SpellCastingType } from '../../types/core';
 import { getClassLevel } from '../../utils/class';
-import {
-  validateGainArcaneSchoolEffectInput,
-  validateGainBloodlineEffectInput,
-} from '../../utils/effect';
+import { validateGainArcaneSchoolEffectInput } from '../../utils/effect';
 import { spellsPerDayByAbilityModifier } from '../../utils/spell';
 import { collections } from '../collection';
 import Character from '.';

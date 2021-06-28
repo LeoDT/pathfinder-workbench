@@ -401,6 +401,12 @@ export default class CharacterEffect {
     );
   }
 
+  getTwoHandDamageMultiplierEffects(): EffectAndSource<Effects.EffectTwoHandDamageMultiplier>[] {
+    return this.getEffectsByType<Effects.EffectTwoHandDamageMultiplier>(
+      Effects.EffectType.twoHandDamageMultiplier
+    );
+  }
+
   getGainBloodlineEffects(): EffectAndSource<Effects.EffectGainBloodline>[] {
     return this.getEffectsByType<Effects.EffectGainBloodline>(Effects.EffectType.gainBloodline);
   }
