@@ -151,6 +151,15 @@ export default class CharacterEquip {
   getStorageById(id: string): Equipment | undefined {
     return this.storageIndex[id];
   }
+  removeFromStorage(e: Equipment): void {
+    if (this.mainHand === e) this.unhold('main');
+    if (this.offHand === e) this.unhold('off');
+    if (this.armor === e) this.unwearArmor();
+    if (this.buckler === e) this.unholdBuckler();
+    if (e.equipmentType === 'magicItem' && this.wondrous.includes(e)) this.unwearWondrous(e);
+
+    this.storage.remove(e);
+  }
 
   get mainHand(): Weapon | undefined {
     return this.mainHandId ? (this.storageIndex[this.mainHandId] as Weapon) : undefined;
@@ -296,21 +305,23 @@ export default class CharacterEquip {
     this.armorId = undefined;
   }
 
-  wearWondrous(w: MagicItem): void {
-    const { slot } = w.type.meta;
+  wearWondrous(w: Equipment): void {
+    if (w.equipmentType === 'magicItem') {
+      const { slot } = w.type.meta;
 
-    if (slot === 'ring') {
-      const all = this.wondrous.filter((w) => w.type.meta.slot === slot);
-      const filterOut = all.length > 1 ? all[0] : undefined;
+      if (slot === 'ring') {
+        const all = this.wondrous.filter((w) => w.type.meta.slot === slot);
+        const filterOut = all.length > 1 ? all[0] : undefined;
 
-      this.wondrousIds = [...this.wondrous.filter((w) => w !== filterOut), w].map((w) => w.id);
-    } else {
-      this.wondrousIds = [...this.wondrous.filter((w) => w.type.meta.slot !== slot), w].map(
-        (w) => w.id
-      );
+        this.wondrousIds = [...this.wondrous.filter((w) => w !== filterOut), w].map((w) => w.id);
+      } else {
+        this.wondrousIds = [...this.wondrous.filter((w) => w.type.meta.slot !== slot), w].map(
+          (w) => w.id
+        );
+      }
     }
   }
-  unwearWondrous(w: MagicItem): void {
+  unwearWondrous(w: Equipment): void {
     this.wondrousIds = this.wondrousIds?.filter((wId) => w.id !== wId) || [];
   }
 

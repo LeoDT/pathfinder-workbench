@@ -1,6 +1,6 @@
 import { Observer } from 'mobx-react-lite';
 
-import { Box, Tag, Text, Wrap, WrapItem } from '@chakra-ui/react';
+import { Box, Tag, TagCloseButton, TagLabel, Text, Wrap, WrapItem } from '@chakra-ui/react';
 
 import { EQUIPMENT_COLOR_SCHEME } from '../../constant';
 import { useStore } from '../../store';
@@ -32,15 +32,24 @@ export default function CharacterDetailStorage(): JSX.Element {
                 {character.equipment.storageWithCostWeight.map(({ e }) => (
                   <WrapItem key={e.id}>
                     <Tag
-                      _hover={{ opacity: 0.8 }}
                       variant="outline"
                       colorScheme={EQUIPMENT_COLOR_SCHEME[e.equipmentType]}
-                      cursor="pointer"
                       onClick={() => {
                         ui.showQuickViewer(e.type);
                       }}
                     >
-                      {showEquipment(e)}
+                      <TagLabel _hover={{ opacity: 0.8 }} cursor="pointer">
+                        {showEquipment(e)}
+                      </TagLabel>
+                      <TagCloseButton
+                        onClick={(ev) => {
+                          ev.stopPropagation();
+
+                          if (confirm('确定移除物品吗?')) {
+                            character.equipment.removeFromStorage(e);
+                          }
+                        }}
+                      />
                     </Tag>
                   </WrapItem>
                 ))}
