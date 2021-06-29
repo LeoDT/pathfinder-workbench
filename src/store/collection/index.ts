@@ -14,11 +14,12 @@ import CLASS_DATA from '../../data/classes.json';
 import CONSOLIDATED_SKILL_DATA from '../../data/consolidated-skills.json';
 import CORE_SKILL_DATA from '../../data/core-skills.json';
 import FEAT_DATA from '../../data/feats.json';
+import MAGIC_ITEM_TYPES_DATA from '../../data/magic-item-types.json';
 import RACE_DATA from '../../data/races.json';
 import SORCERER_BLOODLINES_DATA from '../../data/sorcerer-bloodlines.json';
 import SPELL_DATA from '../../data/spells.json';
 import WEAPON_TYPES_DATA from '../../data/weapon-types.json';
-import { ArmorType, BonusType, Skill } from '../../types/core';
+import { ArmorType, BonusType, MagicItemType, Skill } from '../../types/core';
 import { ArcaneSchoolCollection } from './arcaneSchool';
 import { ArchetypeCollection } from './archetype';
 import { Collection } from './base';
@@ -42,6 +43,7 @@ export const collections = {
   archetype: new ArchetypeCollection(ARCHETYPES_DATA as any),
   weaponType: new WeaponTypeCollection(WEAPON_TYPES_DATA as any),
   armorType: new Collection<ArmorType>('armorType', ARMOR_TYPES_DATA as any),
+  magicItemType: new Collection<MagicItemType>('magicItemType', MAGIC_ITEM_TYPES_DATA as any),
   arcaneSchool: new ArcaneSchoolCollection(ARCANE_SCHOOL_DATA as any),
   sorcererBloodline: new BloodlineCollection(SORCERER_BLOODLINES_DATA as any),
 };

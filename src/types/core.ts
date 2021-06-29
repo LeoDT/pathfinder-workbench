@@ -43,6 +43,7 @@ export type EntityType =
   | 'classFeat'
   | 'weaponType'
   | 'armorType'
+  | 'magicItemType'
   | 'arcaneSchool'
   | 'bloodline';
 
@@ -235,8 +236,6 @@ export interface Weapon extends Entity {
   _type: 'common';
   equipmentType: 'weapon';
   type: WeaponType;
-  id: string;
-  name: string;
   masterwork: boolean;
   enchantment: number;
   size: WeaponSize;
@@ -248,16 +247,52 @@ export interface Armor extends Entity {
   _type: 'common';
   equipmentType: 'armor';
   type: ArmorType;
-  id: string;
-  name: string;
   masterwork: boolean;
   enchantment: number;
   spiked: boolean;
   size: ArmorSize;
 }
 
-export type EquipmentType = 'weapon' | 'armor';
-export type Equipment = Weapon | Armor;
+export type MagicItemSlot =
+  | 'ring'
+  | 'belt'
+  | 'body'
+  | 'chest'
+  | 'eyes'
+  | 'feet'
+  | 'hand'
+  | 'head'
+  | 'headband'
+  | 'neck'
+  | 'shoulders'
+  | 'wrists'
+  | 'none';
+
+export interface MagicItemTypeMeta {
+  group: string;
+  price: string;
+  weight: number;
+  casterLevel: number;
+  aura: string;
+  slot: MagicItemSlot;
+}
+
+export interface MagicItemType extends Entity {
+  _type: 'magicItemType';
+  desc?: string;
+  meta: MagicItemTypeMeta;
+  effects?: Effect[];
+  effectsWhen?: string;
+}
+
+export interface MagicItem extends Entity {
+  _type: 'common';
+  equipmentType: 'magicItem';
+  type: MagicItemType;
+}
+
+export type EquipmentType = 'weapon' | 'armor' | 'magicItem';
+export type Equipment = Weapon | Armor | MagicItem;
 
 export interface BonusType extends Entity {
   stack: boolean;

@@ -1,30 +1,29 @@
+import { useMemo, useState } from 'react';
+
 import {
+  Box,
+  Button,
+  ButtonProps,
+  HStack,
   Modal,
-  ModalOverlay,
-  ModalContent,
-  ModalHeader,
   ModalBody,
   ModalCloseButton,
-  HStack,
-  Button,
-  useDisclosure,
-  Box,
+  ModalContent,
+  ModalHeader,
+  ModalOverlay,
   Wrap,
   WrapItem,
-  ButtonProps,
+  useDisclosure,
 } from '@chakra-ui/react';
-import { useMemo, useState } from 'react';
 
 import { useStore } from '../store';
 import { Collection } from '../store/collection/base';
-
-import { Entity, EntityType, EquipmentType, Equipment, RaceSize } from '../types/core';
+import { Entity, EntityType, Equipment, EquipmentType, RaceSize } from '../types/core';
 import { equipmentTypeTranslates } from '../utils/equipment';
-
-import Select from './Select';
-import SimpleEntity from './SimpleEntity';
 import { CollectionEntityPickerPopover } from './CollectionEntityPicker';
 import CreateEquipmentForm from './CreateEquipmentForm';
+import Select from './Select';
+import SimpleEntity from './SimpleEntity';
 
 interface Props {
   onCreate: (e: Equipment) => void;
@@ -35,6 +34,7 @@ interface Props {
 const equipmentTypeOptions: Array<{ text: string; value: EquipmentType }> = [
   { text: equipmentTypeTranslates.weapon, value: 'weapon' },
   { text: equipmentTypeTranslates.armor, value: 'armor' },
+  { text: equipmentTypeTranslates.magicItem, value: 'magicItem' },
 ];
 
 export default function CreateEquipment({ onCreate, onCancel, characterSize }: Props): JSX.Element {
@@ -47,6 +47,8 @@ export default function CreateEquipment({ onCreate, onCancel, characterSize }: P
         return store.collections.weaponType;
       case 'armor':
         return store.collections.armorType;
+      case 'magicItem':
+        return store.collections.magicItemType;
     }
   }, [equipmentType]);
   const entityForEquipment = useMemo(() => {
@@ -58,6 +60,8 @@ export default function CreateEquipment({ onCreate, onCancel, characterSize }: P
         return 'weaponType';
       case 'armor':
         return 'armorType';
+      case 'magicItem':
+        return 'magicItemType';
       default:
         return null;
     }

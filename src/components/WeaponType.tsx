@@ -1,18 +1,17 @@
-import './Feat.scss';
-
 import { memo, useCallback } from 'react';
-import { Box, HStack, Badge, Heading, Table, Tbody, Tr, Td, Text } from '@chakra-ui/react';
+
+import { Badge, Box, HStack, Heading, Table, Tbody, Td, Text, Tr } from '@chakra-ui/react';
 
 import { ENTITY_COLORS } from '../constant';
 import { WeaponType as WeaponTypeType } from '../types/core';
-import {
-  weaponTrainingTranslates,
-  weaponSpecialTranslates,
-  weaponCategoryTranslates,
-  weaponTypeMetaTranslates,
-  translateWeaponTypeMetaDamageType,
-} from '../utils/weaponType';
 import { showDistance, showWeight } from '../utils/misc';
+import {
+  translateWeaponTypeMetaDamageType,
+  weaponCategoryTranslates,
+  weaponSpecialTranslates,
+  weaponTrainingTranslates,
+  weaponTypeMetaTranslates,
+} from '../utils/weaponType';
 
 interface Props {
   weaponType: WeaponTypeType;

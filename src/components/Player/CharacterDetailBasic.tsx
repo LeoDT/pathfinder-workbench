@@ -19,9 +19,11 @@ import {
 import { AbilityType } from '../../types/core';
 import { abilityTranslates } from '../../utils/ability';
 import { alignmentTranslates } from '../../utils/alignment';
-import { uniqByLast } from '../../utils/misc';
+import { showCoin } from '../../utils/coin';
+import { showWeight, uniqByLast } from '../../utils/misc';
 import { showModifier } from '../../utils/modifier';
 import { sizeTranslates } from '../../utils/race';
+import { carryLoadTranslates } from '../../utils/weight';
 import AbilityIcon from '../AbilityIcon';
 import StatNumber from '../StatNumber';
 import {
@@ -274,7 +276,16 @@ export default function CharacterDetailBasic(): JSX.Element {
               </Box>
               <Box flexBasis={['50%', '100%']}>
                 <Block p="2" h="full">
-                  <BlockHeading>仓库</BlockHeading>
+                  <BlockHeading>
+                    <HStack alignItems="flex-end">
+                      <Text>背包</Text>
+                      <Text fontSize="x-small" color="gray.600" fontWeight="normal">
+                        {showCoin(character.equipment.storageCostWeight.cost)} /{' '}
+                        {showWeight(character.equipment.storageCostWeight.weight)}
+                        {carryLoadTranslates[character.status.carryLoad]}
+                      </Text>
+                    </HStack>
+                  </BlockHeading>
                   <CharacterDetailStorage />
                 </Block>
               </Box>

@@ -10,4 +10,5 @@ export const entityTypeTranslates: Record<string, string> = {
   arcaneSchool: '奥术学派',
   racialTrait: '种族特性',
   classFeat: '职业特性',
+  magicItemType: '奇物',
 };

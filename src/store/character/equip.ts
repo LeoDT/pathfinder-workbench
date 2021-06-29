@@ -1,15 +1,14 @@
-import { omit, pick } from 'lodash-es';
+import { keyBy, omit, pick } from 'lodash-es';
 import { IObservableArray, action, computed, makeObservable, observable } from 'mobx';
 
-import { Armor, Equipment, Weapon } from '../../types/core';
+import { Armor, Equipment, MagicItem, Weapon } from '../../types/core';
 import { SelectOptions } from '../../types/misc';
-import { Coin } from '../../utils/coin';
+import { Coin, coinAdd, makeCoin } from '../../utils/coin';
 import { equipmentCostWeight, getArmorPenalty, showEquipment } from '../../utils/equipment';
 import { collections } from '../collection';
 import Character from '.';
 
 export type Hand = 'main' | 'off';
-export type BodyPart = 'armor' | 'head';
 
 interface RawCharacterEquip {
   storage?: Array<Equipment>;
@@ -17,6 +16,7 @@ interface RawCharacterEquip {
   offHandId?: string;
   bucklerId?: string;
   armorId?: string;
+  wondrousIds?: string[];
 }
 
 export default class CharacterEquip {
@@ -29,12 +29,17 @@ export default class CharacterEquip {
   bucklerId?: string;
   armorId?: string;
 
+  wondrousIds?: string[];
+
   constructor(c: Character, raw?: RawCharacterEquip) {
     makeObservable(this, {
       storageWithCostWeight: computed,
+      storageCostWeight: computed,
+
       handOptions: computed,
       bucklerOptions: computed,
       armorOptions: computed,
+      wondrousOptions: computed,
 
       mainHandId: observable,
       mainHand: computed,
@@ -51,14 +56,19 @@ export default class CharacterEquip {
       armorId: observable,
       armor: computed,
 
+      wondrousIds: observable,
+      wondrous: computed,
+
       armorClassModifier: computed,
       armorPenalty: computed,
 
       hold: action,
       unhold: action,
       unholdBuckler: action,
-      wear: action,
-      unwear: action,
+      wearArmor: action,
+      unwearArmor: action,
+      wearWondrous: action,
+      unwearWondrous: action,
     });
 
     this.character = c;
@@ -68,16 +78,33 @@ export default class CharacterEquip {
     this.offHandId = raw?.offHandId;
     this.bucklerId = raw?.bucklerId;
     this.armorId = raw?.armorId;
+    this.wondrousIds = raw?.wondrousIds;
   }
 
   get storageWithCostWeight(): Array<{ e: Equipment; cost: Coin; weight: number }> {
     return this.storage.map((e) => ({ e, ...equipmentCostWeight(e) }));
   }
+  get storageIndex(): Record<string, Equipment> {
+    return keyBy(this.storage, 'id');
+  }
+  get storageCostWeight(): { cost: Coin; weight: number } {
+    return this.storage.reduce(
+      (acc, e) => {
+        const costWeight = equipmentCostWeight(e);
+
+        return {
+          cost: coinAdd(acc.cost, costWeight.cost),
+          weight: acc.weight + costWeight.weight,
+        };
+      },
+      { cost: makeCoin(0), weight: 0 }
+    );
+  }
 
   get handOptions(): SelectOptions<Weapon | Armor> {
     return this.storage
       .filter(
-        (e) =>
+        (e): e is Weapon | Armor =>
           e.equipmentType === 'weapon' ||
           (e.type._type === 'armorType' &&
             e.type.meta.category === 'shield' &&
@@ -112,24 +139,37 @@ export default class CharacterEquip {
         value: e,
       }));
   }
+  get wondrousOptions(): SelectOptions<MagicItem> {
+    return this.storage
+      .filter((e): e is MagicItem => Boolean(e.equipmentType === 'magicItem'))
+      .map((e) => ({
+        text: showEquipment(e),
+        value: e,
+      }));
+  }
 
   getStorageById(id: string): Equipment | undefined {
-    return this.storage.find((e) => e.id === id);
+    return this.storageIndex[id];
   }
 
   get mainHand(): Weapon | undefined {
-    return this.storage.find(
-      (e): e is Weapon => e.id === this.mainHandId && e.equipmentType === 'weapon'
-    );
+    return this.mainHandId ? (this.storageIndex[this.mainHandId] as Weapon) : undefined;
   }
   get offHand(): Weapon | Armor | undefined {
-    return this.storage.find((e): e is Weapon | Armor => e.id === this.offHandId);
+    return this.offHandId ? (this.storageIndex[this.offHandId] as Armor | Weapon) : undefined;
   }
   get buckler(): Armor | undefined {
-    return this.storage.find((e): e is Armor => e.id === this.bucklerId);
+    return this.bucklerId ? (this.storageIndex[this.bucklerId] as Armor) : undefined;
   }
   get armor(): Armor | undefined {
-    return this.storage.find((e): e is Armor => e.id === this.armorId);
+    return this.armorId ? (this.storageIndex[this.armorId] as Armor) : undefined;
+  }
+  get wondrous(): MagicItem[] {
+    return (
+      this.wondrousIds
+        ?.map((wId) => this.storageIndex[wId])
+        .filter((w): w is MagicItem => Boolean(w)) ?? []
+    );
   }
 
   get armorClassModifier(): number {
@@ -249,20 +289,29 @@ export default class CharacterEquip {
     this.bucklerId = undefined;
   }
 
-  wear(a: Armor, part: BodyPart = 'armor'): void {
-    switch (part) {
-      case 'armor':
-        this.armorId = a.id;
-        break;
-    }
+  wearArmor(a: Armor): void {
+    this.armorId = a.id;
+  }
+  unwearArmor(): void {
+    this.armorId = undefined;
   }
 
-  unwear(part: BodyPart = 'armor'): void {
-    switch (part) {
-      case 'armor':
-        this.armorId = undefined;
-        break;
+  wearWondrous(w: MagicItem): void {
+    const { slot } = w.type.meta;
+
+    if (slot === 'ring') {
+      const all = this.wondrous.filter((w) => w.type.meta.slot === slot);
+      const filterOut = all.length > 1 ? all[0] : undefined;
+
+      this.wondrousIds = [...this.wondrous.filter((w) => w !== filterOut), w].map((w) => w.id);
+    } else {
+      this.wondrousIds = [...this.wondrous.filter((w) => w.type.meta.slot !== slot), w].map(
+        (w) => w.id
+      );
     }
+  }
+  unwearWondrous(w: MagicItem): void {
+    this.wondrousIds = this.wondrousIds?.filter((wId) => w.id !== wId) || [];
   }
 
   static stringify(e: CharacterEquip): string {
@@ -271,6 +320,7 @@ export default class CharacterEquip {
       offHandId: e.offHandId,
       bucklerId: e.bucklerId,
       armorId: e.armorId,
+      wondrousIds: e.wondrousIds,
       storage: e.storage.map((e) => ({
         ...pick(e, ['equipmentType', 'id', 'size', 'name', 'masterwork', 'enchantment', 'spiked']),
         typeId: e.type.id,
@@ -292,6 +342,9 @@ export default class CharacterEquip {
           break;
         case 'armor':
           type = collections.armorType.getById(e.typeId);
+          break;
+        case 'magicItem':
+          type = collections.magicItemType.getById(e.typeId);
           break;
       }
 

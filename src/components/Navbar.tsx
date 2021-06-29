@@ -1,14 +1,15 @@
-import { Box, Container, Heading, Flex, Spacer, IconButton, HStack, Icon } from '@chakra-ui/react';
-import { Search2Icon } from '@chakra-ui/icons';
 import { GiAncientSword } from 'react-icons/gi';
 
-import QuickSearchToggler from './QuickSearchToggler';
+import { Search2Icon } from '@chakra-ui/icons';
+import { Box, Container, Flex, HStack, Heading, Icon, IconButton, Spacer } from '@chakra-ui/react';
+
 import NavLink from './NavLink';
+import QuickSearchToggler from './QuickSearchToggler';
 
 export default function Navbar(): JSX.Element {
   return (
     <Box bg="white" borderBottom="1px" borderColor="gray.300" py={3}>
-      <Container>
+      <Container px={['2', '0']}>
         <Flex alignItems="center">
           <HStack mr="8" color="gray.700">
             <Icon as={GiAncientSword} h="28px" w="28px" />

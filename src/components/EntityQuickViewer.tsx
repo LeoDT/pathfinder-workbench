@@ -20,11 +20,13 @@ import {
   ArmorType as ArmorTypeType,
   Entity,
   Feat as FeatEntity,
+  MagicItemType as MagicItemTypeType,
   Spell as SpellEntity,
   WeaponType as WeaponTypeType,
 } from '../types/core';
 import ArmorType from './ArmorType';
 import Feat from './Feat';
+import MagicItemType from './MagicItemType';
 import Spell from './Spell';
 import WeaponType from './WeaponType';
 
@@ -45,6 +47,8 @@ export default function EntityQuickViewer(): JSX.Element {
         return <WeaponType weaponType={e as WeaponTypeType} showId />;
       case 'armorType':
         return <ArmorType armorType={e as ArmorTypeType} showId />;
+      case 'magicItemType':
+        return <MagicItemType magicItemType={e as MagicItemTypeType} showId />;
       default: {
         // eslint-disable-next-line @typescript-eslint/no-explicit-any
         const desc = (e as any).desc;

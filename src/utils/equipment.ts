@@ -6,6 +6,8 @@ import {
   ArmorSize,
   ArmorType,
   Equipment,
+  MagicItem,
+  MagicItemType,
   Weapon,
   WeaponSize,
   WeaponType,
@@ -16,6 +18,7 @@ import { Coin, makeCoin, makeCoinFromString } from './coin';
 export const equipmentTypeTranslates = {
   weapon: '武器',
   armor: '护甲',
+  magicItem: '奇物',
 };
 
 export const MAX_ENCHANTMENT = 5;
@@ -100,6 +103,13 @@ export function weaponCostWeight(
   return { cost: makeCoin(cost), weight };
 }
 
+export function magicItemCostWeight(type: MagicItemType): { cost: Coin; weight: number } {
+  return {
+    cost: makeCoinFromString(type.meta.price),
+    weight: type.meta.weight,
+  };
+}
+
 export function equipmentCostWeight(e: Equipment): { cost: Coin; weight: number } {
   switch (e.equipmentType) {
     case 'armor':
@@ -107,6 +117,9 @@ export function equipmentCostWeight(e: Equipment): { cost: Coin; weight: number 
 
     case 'weapon':
       return weaponCostWeight(e.type, e.size, e.masterwork, e.enchantment);
+
+    case 'magicItem':
+      return magicItemCostWeight(e.type);
   }
 }
 
@@ -150,22 +163,40 @@ export function makeWeapon(
   };
 }
 
+export function makeMagicItem(type: MagicItemType, name: string): MagicItem {
+  return {
+    _type: 'common',
+    equipmentType: 'magicItem',
+    id: shortid(),
+    name,
+    type,
+  };
+}
+
 export function showEquipment(e: Equipment): string {
-  const n = [e.name];
+  switch (e.equipmentType) {
+    case 'weapon':
+    case 'armor': {
+      const n = [e.name];
 
-  if (e.enchantment) {
-    n.push(`+${e.enchantment}`);
+      if (e.enchantment) {
+        n.push(`+${e.enchantment}`);
+      }
+
+      if (e.masterwork && !e.enchantment) {
+        n.push('(精品)');
+      }
+
+      if (e.equipmentType === 'armor' && e.spiked) {
+        n.unshift('带刺');
+      }
+
+      return n.join('');
+    }
+
+    default:
+      return e.name;
   }
-
-  if (e.masterwork && !e.enchantment) {
-    n.push('(精品)');
-  }
-
-  if (e.equipmentType === 'armor' && e.spiked) {
-    n.unshift('带刺');
-  }
-
-  return n.join('');
 }
 
 export function getWeaponModifier(w: Weapon): number {

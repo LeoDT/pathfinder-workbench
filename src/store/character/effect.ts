@@ -1,6 +1,6 @@
 import { computed, makeObservable } from 'mobx';
 
-import { Class, ClassFeat, Feat, RacialTrait } from '../../types/core';
+import { Class, ClassFeat, Feat, MagicItemType, RacialTrait } from '../../types/core';
 import * as Effects from '../../types/effectType';
 import {
   makeEffectInputKey,
@@ -11,8 +11,13 @@ import {
 import { collections } from '../collection';
 import Character from '.';
 
-export type EntityTypesValidForEffectSource = 'racialTrait' | 'classFeat' | 'feat';
-export type EffectSource = RacialTrait | ClassFeat | Feat;
+export type EntityTypesValidForEffectSource =
+  | 'racialTrait'
+  | 'classFeat'
+  | 'feat'
+  | 'magicItemType';
+export type EffectSource = RacialTrait | ClassFeat | Feat | MagicItemType;
+
 export interface EffectAndSource<T = Effects.Effect> {
   effect: T;
   source: EffectSource;
@@ -196,6 +201,11 @@ export default class CharacterEffect {
     // read equip so that equip changing can trigger effects recalculation
     const { equipment } = this.character;
     [equipment.mainHand, equipment.offHand, equipment.buckler, equipment.armor].reverse();
+    equipment.wondrous.forEach((w) => {
+      w.type.effects?.forEach((effect) => {
+        add(this.extendEffect({ effect, source: w.type }));
+      });
+    });
 
     return effects;
   }

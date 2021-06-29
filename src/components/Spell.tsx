@@ -1,10 +1,11 @@
 import './Spell.scss';
 
 import { memo } from 'react';
-import { Box, Heading, Badge, Text, Stack, Table, Tbody, Tr, Td } from '@chakra-ui/react';
+
+import { Badge, Box, Heading, Stack, Table, Tbody, Td, Text, Tr } from '@chakra-ui/react';
 
 import { ENTITY_COLORS } from '../constant';
-import { Spell as SpellType, SpellMeta as SpellMetaType } from '../types/core';
+import { SpellMeta as SpellMetaType, Spell as SpellType } from '../types/core';
 import { schoolTranslates, translates as spellTranslates } from '../utils/spell';
 
 interface Props {
@@ -44,7 +45,7 @@ export function Spell({
       {showName ? (
         <Stack direction="row" align="center">
           <Badge minW="3em" textAlign="center" px="0">
-            {schoolTranslates[spell.meta.school].slice(0, 2)}
+            {schoolTranslates[spell.meta.school]?.slice(0, 2)}
           </Badge>
           <Heading as="h4" fontSize="lg" color={ENTITY_COLORS.spell}>
             {spell.name}{' '}
@@ -73,7 +74,7 @@ export function spellAsLabelRenderer(spell: SpellType): JSX.Element {
   return (
     <>
       <Badge minW="3em" textAlign="center" px="0">
-        {schoolTranslates[spell.meta.school].slice(0, 2)}
+        {schoolTranslates[spell.meta.school]?.slice(0, 2)}
       </Badge>
       <Text pl="2" display="inline">
         {spell.name}

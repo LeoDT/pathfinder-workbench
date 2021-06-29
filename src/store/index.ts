@@ -1,20 +1,20 @@
 import Fuse from 'fuse.js';
-import { observable, IObservableArray, autorun, observe } from 'mobx';
-import { set, entries, del } from 'idb-keyval';
-
-import { createContextNoNullCheck } from '../utils/react';
+import { del, entries, set } from 'idb-keyval';
+import { IObservableArray, autorun, observable, observe } from 'mobx';
 
 import { Entity, EntityType } from '../types/core';
+import { createContextNoNullCheck } from '../utils/react';
+import Character from './character';
+import { Collection, collections } from './collection';
 import DMStore from './dm';
 import UIStore from './ui';
-import { collections, Collection } from './collection';
-import Character from './character';
 
 const quickSearchCollections = [
   collections.spell,
   collections.feat,
   collections.weaponType,
   collections.armorType,
+  collections.magicItemType,
 ];
 
 export class Store {

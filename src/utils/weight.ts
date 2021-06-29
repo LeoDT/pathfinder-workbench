@@ -53,3 +53,10 @@ export function getCarryLoad(str: number, weight: number): CarryLoad {
 
   return 'overload';
 }
+
+export const carryLoadTranslates: Record<CarryLoad, string> = {
+  light: '轻载',
+  medium: '中载',
+  heavy: '重载',
+  overload: '超载',
+};

@@ -1,34 +1,37 @@
 import { useEffect, useMemo, useState } from 'react';
+
+import { ChevronDownIcon, Search2Icon } from '@chakra-ui/icons';
 import {
   Box,
-  InputGroup,
+  Button,
+  HStack,
   Input,
+  InputGroup,
   InputLeftElement,
   Menu,
   MenuButton,
   MenuItem,
   MenuList,
-  Button,
   Tag,
-  HStack,
 } from '@chakra-ui/react';
-import { Search2Icon, ChevronDownIcon } from '@chakra-ui/icons';
 
 import { ENTITY_COLORS } from '../constant';
 import { useStore } from '../store';
 import {
-  Entity,
-  Spell as SpellType,
-  Feat as FeatType,
-  WeaponType as WeaponTypeType,
   ArmorType as ArmorTypeType,
+  Entity,
+  Feat as FeatType,
+  MagicItemType as MagicItemTypeType,
+  Spell as SpellType,
+  WeaponType as WeaponTypeType,
 } from '../types/core';
-import { useIsSmallerScreen } from '../utils/react';
 import { entityTypeTranslates } from '../utils/entity';
-import Spell from './Spell';
-import Feat from './Feat';
-import WeaponType from './WeaponType';
+import { useIsSmallerScreen } from '../utils/react';
 import ArmorType from './ArmorType';
+import Feat from './Feat';
+import MagicItemType from './MagicItemType';
+import Spell from './Spell';
+import WeaponType from './WeaponType';
 
 function QuickSearchResultItem({ item }: { item: Entity }) {
   let el = null;
@@ -45,6 +48,9 @@ function QuickSearchResultItem({ item }: { item: Entity }) {
       break;
     case 'armorType':
       el = <ArmorType armorType={item as ArmorTypeType} showId />;
+      break;
+    case 'magicItemType':
+      el = <MagicItemType magicItemType={item as MagicItemTypeType} showId />;
       break;
     default:
       break;

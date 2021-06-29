@@ -5,6 +5,7 @@ import { FaCheck, FaChevronDown, FaSearch, FaTimesCircle } from 'react-icons/fa'
 import {
   Box,
   Button,
+  ButtonProps,
   HStack,
   Icon,
   Input,
@@ -171,6 +172,7 @@ export interface PopoverProps<T extends Entity> extends Props<T> {
   textWithArrow?: boolean;
   togglerDisabled?: boolean;
   closeOnPick?: boolean;
+  togglerBtnProps?: ButtonProps;
 }
 
 export function EntityPickerPopover<T extends Entity>({
@@ -178,6 +180,7 @@ export function EntityPickerPopover<T extends Entity>({
   textWithArrow,
   togglerDisabled,
   closeOnPick,
+  togglerBtnProps,
   ...props
 }: PopoverProps<T>): JSX.Element {
   const { isOpen, onClose, onToggle } = useDisclosure();
@@ -192,7 +195,7 @@ export function EntityPickerPopover<T extends Entity>({
       isLazy
     >
       <PopoverTrigger>
-        <Button disabled={togglerDisabled} onClick={onToggle}>
+        <Button disabled={togglerDisabled} onClick={onToggle} {...togglerBtnProps}>
           <HStack>
             {typeof text === 'string' ? <Text>{text}</Text> : text}
             {textWithArrow ? <Icon as={FaChevronDown} display="inine-block" /> : null}
