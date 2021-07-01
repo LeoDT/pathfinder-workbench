@@ -4,9 +4,9 @@ import { Abilities, NamedBonus } from '../../types/core';
 import { EffectGainSaveArgs } from '../../types/effectType';
 import { CarryLoad, getCarryLoad } from '../../utils/weight';
 import { collections } from '../collection';
-import Character from '.';
+import { Character } from '.';
 
-export default class CharacterStatus {
+export class CharacterStatus {
   character: Character;
 
   constructor(c: Character) {

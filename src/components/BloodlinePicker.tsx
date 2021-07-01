@@ -2,7 +2,7 @@ import { useMemo } from 'react';
 
 import { useStore } from '../store';
 import { EffectGainBloodlineInput } from '../types/effectType';
-import CollectionEntityPicker from './CollectionEntityPicker';
+import { CollectionEntityPicker } from './CollectionEntityPicker';
 
 interface Props {
   value: EffectGainBloodlineInput | null;

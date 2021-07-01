@@ -9,13 +9,13 @@ import { ABILITY_TYPES, abilityTranslates, getScoreCost } from '../../utils/abil
 import { BASE_ABILITY, MAXIMUM_ABILITY_SCORE, MINIMUM_ABILITY_SCORE } from '../../utils/ability';
 import { constraintAppliedAlignmentOptions } from '../../utils/alignment';
 import { favoredClassBonusOptions } from '../../utils/upgrade';
-import AbilityInput from '../AbilityInput';
+import { AbilityInput } from '../AbilityInput';
 import { ClassPicker } from '../ClassPicker';
 import { CollectionEntityPickerPopover } from '../CollectionEntityPicker';
-import RacePicker from '../RacePicker';
-import Select, { MultipleSelect } from '../Select';
+import { RacePicker } from '../RacePicker';
+import { MultipleSelect, Select } from '../Select';
 
-export default function CreateCharacterBasic(): JSX.Element {
+export function CreateCharacterBasic(): JSX.Element {
   const store = useStore();
   const create = useCreateCharacterStore();
   const { character } = create;

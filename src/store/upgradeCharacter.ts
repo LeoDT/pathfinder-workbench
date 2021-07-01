@@ -2,10 +2,10 @@ import { action, computed, makeObservable } from 'mobx';
 
 import { AbilityType } from '../types/core';
 import { createContextNoNullCheck } from '../utils/react';
-import Character from './character';
-import CreateCharacterStore, { GainFeatReason } from './createCharacter';
+import { Character } from './character';
+import { CreateCharacterStore, GainFeatReason } from './createCharacter';
 
-export default class UpgradeCharacterStore extends CreateCharacterStore {
+export class UpgradeCharacterStore extends CreateCharacterStore {
   upgradeAbilityBonus: AbilityType | null;
 
   constructor(c: Character) {
@@ -39,7 +39,5 @@ export default class UpgradeCharacterStore extends CreateCharacterStore {
   }
 }
 
-export const [
-  useUpgradeCharacterStore,
-  UpgradeCharacterStoreContext,
-] = createContextNoNullCheck<UpgradeCharacterStore>();
+export const [useUpgradeCharacterStore, UpgradeCharacterStoreContext] =
+  createContextNoNullCheck<UpgradeCharacterStore>();

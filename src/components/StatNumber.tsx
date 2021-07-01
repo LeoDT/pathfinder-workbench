@@ -1,5 +1,6 @@
 import { memo } from 'react';
-import { VStack, Text, TextProps } from '@chakra-ui/react';
+
+import { Text, TextProps, VStack } from '@chakra-ui/react';
 
 interface Props {
   number: string | number;
@@ -7,7 +8,7 @@ interface Props {
   numberProps?: TextProps;
 }
 
-export function StatNumber({ number, text, numberProps }: Props): JSX.Element {
+export function RawStatNumber({ number, text, numberProps }: Props): JSX.Element {
   return (
     <VStack spacing="0">
       <Text
@@ -28,4 +29,4 @@ export function StatNumber({ number, text, numberProps }: Props): JSX.Element {
   );
 }
 
-export default memo(StatNumber);
+export const StatNumber = memo(RawStatNumber);

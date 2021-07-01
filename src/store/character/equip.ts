@@ -6,7 +6,7 @@ import { SelectOptions } from '../../types/misc';
 import { Coin, coinAdd, makeCoin } from '../../utils/coin';
 import { equipmentCostWeight, getArmorPenalty, showEquipment } from '../../utils/equipment';
 import { collections } from '../collection';
-import Character from '.';
+import { Character } from '.';
 
 export type Hand = 'main' | 'off';
 
@@ -19,7 +19,7 @@ interface RawCharacterEquip {
   wondrousIds?: string[];
 }
 
-export default class CharacterEquip {
+export class CharacterEquip {
   character: Character;
 
   storage: IObservableArray<Equipment>;

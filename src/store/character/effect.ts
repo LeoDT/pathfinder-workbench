@@ -9,7 +9,7 @@ import {
   validateGainBloodlineEffectInput,
 } from '../../utils/effect';
 import { collections } from '../collection';
-import Character from '.';
+import { Character } from '.';
 
 export type EntityTypesValidForEffectSource =
   | 'racialTrait'
@@ -25,7 +25,7 @@ export interface EffectAndSource<T = Effects.Effect> {
   extendedFrom?: EffectAndSource;
 }
 
-export default class CharacterEffect {
+export class CharacterEffect {
   character: Character;
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   growedEffectCache: WeakMap<any, Effects.Effect>;

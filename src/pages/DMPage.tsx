@@ -1,36 +1,36 @@
-import { useState } from 'react';
 import { Observer } from 'mobx-react-lite';
+import { useState } from 'react';
+import { FaChevronDown } from 'react-icons/fa';
+
 import {
   Button,
   ButtonGroup,
+  Container,
+  HStack,
   IconButton,
+  ListItem,
   Menu,
   MenuButton,
-  MenuList,
   MenuItem,
-  Container,
-  SimpleGrid,
-  HStack,
-  Spacer,
-  useDisclosure,
+  MenuList,
   Modal,
-  ModalOverlay,
-  ModalContent,
-  ModalHeader,
   ModalBody,
   ModalCloseButton,
+  ModalContent,
   ModalFooter,
-  Text,
+  ModalHeader,
+  ModalOverlay,
   OrderedList,
-  ListItem,
+  SimpleGrid,
+  Spacer,
+  Text,
+  useDisclosure,
 } from '@chakra-ui/react';
-import { FaChevronDown } from 'react-icons/fa';
 
+import { ButtonSwitch } from '../components/ButtonSwitch';
+import { Character as DMCharacter } from '../components/DM/Character';
 import { useStore } from '../store';
 import { useIsSmallerScreen } from '../utils/react';
-
-import DMCharacter from '../components/DM/Character';
-import ButtonSwitch from '../components/ButtonSwitch';
 
 type Rolling = 'perception' | 'will';
 const rollingTranslates = {
@@ -38,7 +38,7 @@ const rollingTranslates = {
   will: '意志',
 };
 
-export default function DMPage(): JSX.Element {
+export function DMPage(): JSX.Element {
   const { dm } = useStore();
   const [order, setOrder] = useState('normal');
   const isSmallerScreen = useIsSmallerScreen();

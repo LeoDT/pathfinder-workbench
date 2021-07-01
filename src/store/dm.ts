@@ -1,5 +1,5 @@
 import { cloneDeep } from 'lodash-es';
-import { observable, IObservableArray, makeObservable, action, computed, toJS } from 'mobx';
+import { IObservableArray, action, computed, makeObservable, observable, toJS } from 'mobx';
 import shortid from 'shortid';
 
 export interface Tracker {
@@ -41,7 +41,7 @@ const DEFAULT_CHARACTER_PROPS = {
   trackers: [],
 };
 
-export default class DMStore {
+export class DMStore {
   characters: IObservableArray<DMCharacter>;
 
   constructor() {

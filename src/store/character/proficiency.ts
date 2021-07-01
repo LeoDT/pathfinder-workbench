@@ -3,7 +3,7 @@ import { computed, makeObservable } from 'mobx';
 import { ArmorType, WeaponType } from '../../types/core';
 import { EffectGainProficiencyArgs } from '../../types/effectType';
 import { collections } from '../collection';
-import Character from '.';
+import { Character } from '.';
 
 type Proficiencies = Required<EffectGainProficiencyArgs>;
 

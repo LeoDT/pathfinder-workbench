@@ -9,7 +9,7 @@ import {
   validateGainSkillEffectInput,
   validateSelectFromSubsEffectInput,
 } from '../utils/effect';
-import SimpleEntity, { SimpleEntityBadge } from './SimpleEntity';
+import { SimpleEntity, SimpleEntityBadge } from './SimpleEntity';
 
 interface Props {
   input: unknown;

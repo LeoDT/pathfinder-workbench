@@ -6,17 +6,17 @@ import { FaStar } from 'react-icons/fa';
 import { Box, Button, HStack, Icon, Spacer, Text, VStack } from '@chakra-ui/react';
 
 import { useStore } from '../../store';
-import CreateCharacterStore from '../../store/createCharacter';
+import { CreateCharacterStore } from '../../store/createCharacter';
 import { SkillSystem } from '../../types/core';
-import AbilityIcon from '../AbilityIcon';
-import Select from '../Select';
-import SkillInput from '../SkillInput';
+import { AbilityIcon } from '../AbilityIcon';
+import { Select } from '../Select';
+import { SkillInput } from '../SkillInput';
 
 interface Props {
   createOrUpgrade: CreateCharacterStore;
 }
 
-export default function CreateCharacterSkills({ createOrUpgrade }: Props): JSX.Element {
+export function CreateCharacterSkills({ createOrUpgrade }: Props): JSX.Element {
   const store = useStore();
   const { character } = createOrUpgrade;
   const [collapsedCategory, setCollapsedCategory] = useState([

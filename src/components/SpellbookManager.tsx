@@ -1,27 +1,27 @@
 import { Observer } from 'mobx-react-lite';
+import { FaTrash } from 'react-icons/fa';
 
 import {
   Box,
   Button,
   ButtonProps,
+  Icon,
+  IconButton,
   Modal,
   ModalBody,
-  ModalHeader,
   ModalContent,
   ModalFooter,
+  ModalHeader,
   ModalOverlay,
   SimpleGrid,
   Text,
   useDisclosure,
-  IconButton,
-  Icon,
 } from '@chakra-ui/react';
-import { FaTrash } from 'react-icons/fa';
 
 import { CharacterSpellbook } from '../store/character/spellbook';
-import { EntityPickerPopover } from './EntityPicker';
-import SimpleEntity from './SimpleEntity';
 import { collections } from '../store/collection';
+import { EntityPickerPopover } from './EntityPicker';
+import { SimpleEntity } from './SimpleEntity';
 
 interface ManagerProps {
   spellbook: CharacterSpellbook;

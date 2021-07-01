@@ -1,12 +1,13 @@
-import { Box, Text, BoxProps, TextProps } from '@chakra-ui/layout';
 import { useMemo } from 'react';
+
+import { Box, BoxProps, Text, TextProps } from '@chakra-ui/layout';
 
 interface Props extends BoxProps {
   text: string;
   textProps?: TextProps;
 }
 
-export default function TextWithLinebreaks({ text, textProps, ...props }: Props): JSX.Element {
+export function TextWithLinebreaks({ text, textProps, ...props }: Props): JSX.Element {
   const converted = useMemo(() => text.split('\n'), [text]);
 
   return (

@@ -8,10 +8,10 @@ import { MagicItem } from '../../types/core';
 import { showEquipment } from '../../utils/equipment';
 import { magicItemSlotTranslates } from '../../utils/magicItemType';
 import { EntityPickerPopover } from '../EntityPicker';
-import Select from '../Select';
+import { Select } from '../Select';
 import { useCurrentCharacter } from './context';
 
-export default function CharacterDetailEquip(): JSX.Element {
+export function CharacterDetailEquip(): JSX.Element {
   const character = useCurrentCharacter();
   const equip = character.equipment;
 

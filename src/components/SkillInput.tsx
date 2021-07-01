@@ -1,11 +1,11 @@
 import { memo } from 'react';
-import { HStack, Text, Icon, Spacer, ButtonGroup, IconButton } from '@chakra-ui/react';
-import { FaStar, FaMinus, FaPlus } from 'react-icons/fa';
+import { FaMinus, FaPlus, FaStar } from 'react-icons/fa';
 
-import { Skill, AbilityType } from '../types/core';
+import { ButtonGroup, HStack, Icon, IconButton, Spacer, Text } from '@chakra-ui/react';
 
-import AbilityIcon from './AbilityIcon';
-import StatNumber from './StatNumber';
+import { AbilityType, Skill } from '../types/core';
+import { AbilityIcon } from './AbilityIcon';
+import { StatNumber } from './StatNumber';
 
 export function SkillIcon({
   ability,
@@ -41,7 +41,7 @@ interface Props {
   onChange: (s: number) => void;
 }
 
-export default function SkillInput({
+export function SkillInput({
   skill,
   rank,
   modifier,

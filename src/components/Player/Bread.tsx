@@ -1,13 +1,14 @@
 import { orderBy } from 'lodash-es';
 import { useCallback, useEffect, useReducer } from 'react';
 import { Link } from 'react-router-dom';
+
 import { Breadcrumb, BreadcrumbItem, BreadcrumbLink, BreadcrumbProps } from '@chakra-ui/react';
 
 import { createContextNoNullCheck } from '../../utils/react';
 
 type Props = BreadcrumbProps;
 
-export default function Bread(props: Props): JSX.Element {
+export function Bread(props: Props): JSX.Element {
   const { items } = useBreadcrumbManager();
 
   return (
@@ -86,7 +87,5 @@ export function useBreadcrumb(text: string, link: string): void {
   }, [text, link]);
 }
 
-export const [
-  useBreadcrumbManager,
-  BreadcrumbManagerContext,
-] = createContextNoNullCheck<BreadcrumbManager>();
+export const [useBreadcrumbManager, BreadcrumbManagerContext] =
+  createContextNoNullCheck<BreadcrumbManager>();

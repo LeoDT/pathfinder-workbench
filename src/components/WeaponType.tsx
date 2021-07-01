@@ -61,7 +61,7 @@ function WeaponTypeMeta({ weaponType }: { weaponType: WeaponTypeType }): JSX.Ele
   );
 }
 
-export function WeaponType({
+export function RawWeaponType({
   weaponType,
   showName = true,
   showMeta = true,
@@ -94,4 +94,4 @@ export function WeaponType({
   );
 }
 
-export default memo(WeaponType);
+export const WeaponType = memo(RawWeaponType);

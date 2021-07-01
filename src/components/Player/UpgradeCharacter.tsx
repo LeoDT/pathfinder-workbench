@@ -1,20 +1,20 @@
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { FaChevronLeft } from 'react-icons/fa';
-import { Prompt, Redirect, Route, Switch, useHistory, useRouteMatch } from 'react-router-dom';
+import { Prompt, Redirect, Route, Switch, useRouteMatch } from 'react-router-dom';
 
 import { Box, Icon } from '@chakra-ui/react';
 
-import UpgradeCharacterStore, { UpgradeCharacterStoreContext } from '../../store/upgradeCharacter';
+import { UpgradeCharacterStore, UpgradeCharacterStoreContext } from '../../store/upgradeCharacter';
 import { HStackNav, HStackNavItem } from '../HStackNav';
 import { useBreadcrumb } from './Bread';
-import CharacterBasic from './UpgradeCharacterBasic';
-import CharacterFeat from './UpgradeCharacterFeat';
-import CharacterFinish from './UpgradeCharacterFinish';
-import CharacterSkill from './UpgradeCharacterSkill';
-import CharacterSpell from './UpgradeCharacterSpell';
+import { CreateCharacterBasic as CharacterBasic } from './UpgradeCharacterBasic';
+import { UpgradeCharacterFeat as CharacterFeat } from './UpgradeCharacterFeat';
+import { UpgradeCharacterFeat as CharacterFinish } from './UpgradeCharacterFinish';
+import { UpgradeCharacterSkills as CharacterSkill } from './UpgradeCharacterSkill';
+import { UpgradeCharacterSpell as CharacterSpell } from './UpgradeCharacterSpell';
 import { HistoryUnblockContext, useCurrentCharacter } from './context';
 
-export default function UpgradeCharacter(): JSX.Element {
+export function UpgradeCharacter(): JSX.Element {
   const character = useCurrentCharacter();
   // initialize here will cause react setstate and mobx action conflict, so do it in an effect
   const [upgrade, setUpgrade] = useState<UpgradeCharacterStore | null>(null);

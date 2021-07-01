@@ -1,20 +1,21 @@
 import { Observer } from 'mobx-react-lite';
+import { FaMinus, FaPlus, FaUndo } from 'react-icons/fa';
+
 import {
   Button,
   ButtonGroup,
-  IconButton,
   HStack,
-  Popover,
-  PopoverTrigger,
-  PopoverContent,
-  PopoverBody,
-  PopoverFooter,
-  Text,
+  IconButton,
   Input,
-  Spacer,
+  Popover,
+  PopoverBody,
+  PopoverContent,
+  PopoverFooter,
+  PopoverTrigger,
   Portal,
+  Spacer,
+  Text,
 } from '@chakra-ui/react';
-import { FaPlus, FaMinus, FaUndo } from 'react-icons/fa';
 
 import { useStore } from '../../store';
 import { DMCharacter, Tracker as TrackerType } from '../../store/dm';
@@ -86,7 +87,7 @@ export function Tracker({ tracker }: { tracker: TrackerType }): JSX.Element {
   );
 }
 
-export default function CharacterTracker({ character }: Props): JSX.Element {
+export function CharacterTracker({ character }: Props): JSX.Element {
   const { dm } = useStore();
 
   return (

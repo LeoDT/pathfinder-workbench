@@ -1,7 +1,7 @@
 import { useCreateCharacterStore } from '../../store/createCharacter';
-import CreateOrUpgradeCharacterFinish from './CreateOrUpgradeCharacterFinish';
+import { CreateOrUpgradeCharacterFinish } from './CreateOrUpgradeCharacterFinish';
 
-export default function CreateCharacterFeat(): JSX.Element {
+export function CreateCharacterFeat(): JSX.Element {
   const create = useCreateCharacterStore();
 
   return <CreateOrUpgradeCharacterFinish createOrUpgrade={create} />;

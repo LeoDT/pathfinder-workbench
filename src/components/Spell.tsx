@@ -33,7 +33,7 @@ export function SpellMeta({ spell }: Props): JSX.Element {
   );
 }
 
-export function Spell({
+export function RawSpell({
   spell,
   showName = true,
   showMeta = true,
@@ -68,7 +68,7 @@ export function Spell({
   );
 }
 
-export default memo(Spell);
+export const Spell = memo(RawSpell);
 
 export function spellAsLabelRenderer(spell: SpellType): JSX.Element {
   return (

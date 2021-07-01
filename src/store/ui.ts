@@ -2,7 +2,7 @@ import { makeObservable, observable } from 'mobx';
 
 import { Entity } from '../types/core';
 
-export default class UIStore {
+export class UIStore {
   quickViewerEntity: Entity | null;
 
   constructor() {

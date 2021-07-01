@@ -4,10 +4,10 @@ import { IObservableArray, autorun, observable, observe } from 'mobx';
 
 import { Entity, EntityType } from '../types/core';
 import { createContextNoNullCheck } from '../utils/react';
-import Character from './character';
+import { Character } from './character';
 import { Collection, collections } from './collection';
-import DMStore from './dm';
-import UIStore from './ui';
+import { DMStore } from './dm';
+import { UIStore } from './ui';
 
 const quickSearchCollections = [
   collections.spell,

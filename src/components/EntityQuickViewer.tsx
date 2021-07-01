@@ -24,13 +24,13 @@ import {
   Spell as SpellEntity,
   WeaponType as WeaponTypeType,
 } from '../types/core';
-import ArmorType from './ArmorType';
-import Feat from './Feat';
-import MagicItemType from './MagicItemType';
-import Spell from './Spell';
-import WeaponType from './WeaponType';
+import { ArmorType } from './ArmorType';
+import { Feat } from './Feat';
+import { MagicItemType } from './MagicItemType';
+import { Spell } from './Spell';
+import { WeaponType } from './WeaponType';
 
-export default function EntityQuickViewer(): JSX.Element {
+export function EntityQuickViewer(): JSX.Element {
   const { ui } = useStore();
   const onClose = useCallback(() => ui.closeQuickViewer(), []);
   const renderEntity = useCallback(() => {

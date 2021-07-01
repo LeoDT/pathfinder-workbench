@@ -1,12 +1,12 @@
-import { HStack, Spacer, IconButton, Text, ButtonGroup } from '@chakra-ui/react';
-import { FaPlus, FaMinus } from 'react-icons/fa';
+import { FaMinus, FaPlus } from 'react-icons/fa';
+
+import { ButtonGroup, HStack, IconButton, Spacer, Text } from '@chakra-ui/react';
 
 import { AbilityType } from '../types/core';
 import { getModifierFromScore } from '../utils/ability';
 import { showModifier } from '../utils/modifier';
-
-import AbilityIcon from './AbilityIcon';
-import StatNumber from './StatNumber';
+import { AbilityIcon } from './AbilityIcon';
+import { StatNumber } from './StatNumber';
 
 interface Props {
   ability: AbilityType;
@@ -19,7 +19,7 @@ interface Props {
   racial?: number;
 }
 
-export default function AbilityInput({
+export function AbilityInput({
   ability,
   score,
   onChange,

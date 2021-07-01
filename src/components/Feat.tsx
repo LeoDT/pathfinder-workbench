@@ -1,10 +1,11 @@
 import './Feat.scss';
 
 import { memo } from 'react';
-import { Box, HStack, Badge, Heading, Table, Tbody, Tr, Td, Text } from '@chakra-ui/react';
+
+import { Badge, Box, HStack, Heading, Table, Tbody, Td, Text, Tr } from '@chakra-ui/react';
 
 import { ENTITY_COLORS } from '../constant';
-import { Feat as FeatType, FeatMeta as FeatMetaType } from '../types/core';
+import { FeatMeta as FeatMetaType, Feat as FeatType } from '../types/core';
 import { featTranslates, featTypeTranslates } from '../utils/feat';
 
 interface Props {
@@ -43,7 +44,7 @@ function FeatMeta({ feat }: { feat: FeatType }) {
   );
 }
 
-export function Feat({
+export function RawFeat({
   feat,
   showName = true,
   showBrief = true,
@@ -83,4 +84,4 @@ export function Feat({
   );
 }
 
-export default memo(Feat);
+export const Feat = memo(RawFeat);

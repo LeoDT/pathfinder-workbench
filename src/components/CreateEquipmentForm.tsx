@@ -28,7 +28,7 @@ import {
 import { showWeight } from '../utils/misc';
 import { ButtonSwitch } from './ButtonSwitch';
 import { Form, FormControl } from './Form';
-import Select from './Select';
+import { Select } from './Select';
 
 interface Props {
   proto: WeaponType | ArmorType | MagicItemType | Spell;
@@ -43,7 +43,7 @@ const SPELL_ITEM_TYPE_OPTIONS: Array<{ text: string; value: SpellItemType }> = A
   value: k as SpellItemType,
 }));
 
-export default function CreateEquipmentForm({ proto, size, onCreate }: Props): JSX.Element {
+export function CreateEquipmentForm({ proto, size, onCreate }: Props): JSX.Element {
   const [masterwork, setMasterwork] = useState(false);
   const [enchantment, setEnchantment] = useState(0);
   const [spiked, setSpiked] = useState(false);

@@ -21,11 +21,11 @@ import {
   Spell as SpellType,
   WeaponType as WeaponTypeType,
 } from '../types/core';
-import ArmorType from './ArmorType';
+import { ArmorType } from './ArmorType';
 import { EntityQuickViewerToggler } from './EntityQuickViewer';
-import Feat from './Feat';
-import Spell from './Spell';
-import WeaponType from './WeaponType';
+import { Feat } from './Feat';
+import { Spell } from './Spell';
+import { WeaponType } from './WeaponType';
 
 interface BaseProps {
   entity: Entity;
@@ -37,7 +37,7 @@ interface Props extends BaseProps, StackProps {
   addon?: ReactNode;
 }
 
-export default function SimpleEntity({
+export function SimpleEntity({
   entity,
   showId = false,
   quickViewer = true,

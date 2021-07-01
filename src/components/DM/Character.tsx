@@ -1,32 +1,32 @@
 import { Observer } from 'mobx-react-lite';
+import { FaCopy, FaTrashAlt } from 'react-icons/fa';
+
 import {
-  VStack,
-  HStack,
-  Input,
   Box,
-  Text,
   Button,
   ButtonGroup,
+  HStack,
+  Icon,
+  Input,
   Menu,
   MenuButton,
-  MenuList,
   MenuItem,
+  MenuList,
   Portal,
-  Icon,
+  Text,
+  VStack,
 } from '@chakra-ui/react';
-import { FaTrashAlt, FaCopy } from 'react-icons/fa';
 
 import { useStore } from '../../store';
 import { DMCharacter } from '../../store/dm';
 import { stringToColor } from '../../utils/misc';
-
-import CharacterTracker from './CharacterTracker';
+import { CharacterTracker } from './CharacterTracker';
 
 interface Props {
   character: DMCharacter;
 }
 
-export default function Character({ character: c }: Props): JSX.Element {
+export function Character({ character: c }: Props): JSX.Element {
   const { dm } = useStore();
 
   return (

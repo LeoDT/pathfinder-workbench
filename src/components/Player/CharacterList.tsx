@@ -16,9 +16,9 @@ import {
 } from '@chakra-ui/react';
 
 import { useStore } from '../../store';
-import Bread, { useBreadcrumb } from './Bread';
+import { Bread, useBreadcrumb } from './Bread';
 
-export default function CharacterList(): JSX.Element {
+export function CharacterList(): JSX.Element {
   const store = useStore();
 
   useBreadcrumb('角色列表', '/player/list');

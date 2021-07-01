@@ -1,6 +1,7 @@
 import { Collection } from '../store/collection';
 import { Entity } from '../types/core';
-import EntityPicker, {
+import {
+  EntityPicker,
   EntityPickerPopover,
   PopoverProps as EntityPickerPopoverProps,
   Props as EntityPickerProps,
@@ -10,7 +11,7 @@ interface Props<T extends Entity> extends Omit<EntityPickerProps<T>, 'fuse'> {
   collection: Collection<T>;
 }
 
-export default function CollectionEntityPicker<T extends Entity>({
+export function CollectionEntityPicker<T extends Entity>({
   collection,
   ...props
 }: Props<T>): JSX.Element {

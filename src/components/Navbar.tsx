@@ -3,10 +3,10 @@ import { GiAncientSword } from 'react-icons/gi';
 import { Search2Icon } from '@chakra-ui/icons';
 import { Box, Container, Flex, HStack, Heading, Icon, IconButton, Spacer } from '@chakra-ui/react';
 
-import NavLink from './NavLink';
-import QuickSearchToggler from './QuickSearchToggler';
+import { NavLink } from './NavLink';
+import { QuickSearchToggler } from './QuickSearchToggler';
 
-export default function Navbar(): JSX.Element {
+export function Navbar(): JSX.Element {
   return (
     <Box bg="white" borderBottom="1px" borderColor="gray.300" py={3}>
       <Container px={['2', '0']}>

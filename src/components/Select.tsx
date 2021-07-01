@@ -1,4 +1,4 @@
-import { without, tail } from 'lodash-es';
+import { tail, without } from 'lodash-es';
 import { useMemo } from 'react';
 import { FaCheck, FaChevronDown } from 'react-icons/fa';
 
@@ -27,7 +27,7 @@ export interface Props<T = string> {
   menuListProps?: BoxProps;
 }
 
-export default function Select<T>({
+export function Select<T>({
   options,
   value,
   onChange,

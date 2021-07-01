@@ -7,7 +7,7 @@ import { getClassLevel } from '../../utils/class';
 import { validateGainArcaneSchoolEffectInput } from '../../utils/effect';
 import { spellsPerDayByAbilityModifier } from '../../utils/spell';
 import { collections } from '../collection';
-import Character from '.';
+import { Character } from '.';
 
 export class CharacterSpellbook {
   character: Character;

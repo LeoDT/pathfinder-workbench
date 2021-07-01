@@ -4,7 +4,7 @@ import { AbilityType, NamedBonus, Weapon, WeaponType } from '../../types/core';
 import { abilityTranslates } from '../../utils/ability';
 import { getWeaponDamageModifier, getWeaponModifier, showEquipment } from '../../utils/equipment';
 import { collections } from '../collection';
-import Character from '.';
+import { Character } from '.';
 
 interface AttackOption {
   name: string;

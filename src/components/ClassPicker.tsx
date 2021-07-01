@@ -22,7 +22,7 @@ import { ENTITY_COLORS } from '../constant';
 import { useStore } from '../store';
 import { Archetype, Class } from '../types/core';
 import { CollectionEntityPickerPopover } from './CollectionEntityPicker';
-import SimpleEntity from './SimpleEntity';
+import { SimpleEntity } from './SimpleEntity';
 
 interface ClassPickerValue {
   classId: string;

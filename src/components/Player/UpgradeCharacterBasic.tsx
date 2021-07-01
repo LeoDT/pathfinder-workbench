@@ -7,11 +7,11 @@ import { useStore } from '../../store';
 import { useUpgradeCharacterStore } from '../../store/upgradeCharacter';
 import { ABILITY_TYPES } from '../../utils/ability';
 import { favoredClassBonusOptions } from '../../utils/upgrade';
-import AbilityInput from '../AbilityInput';
+import { AbilityInput } from '../AbilityInput';
 import { ClassPicker } from '../ClassPicker';
-import Select from '../Select';
+import { Select } from '../Select';
 
-export default function CreateCharacterBasic(): JSX.Element {
+export function CreateCharacterBasic(): JSX.Element {
   const { collections } = useStore();
   const upgradeStore = useUpgradeCharacterStore();
 

@@ -1,15 +1,16 @@
-import { Box, Icon } from '@chakra-ui/react';
 import { memo } from 'react';
 import {
-  GiFist,
-  GiBullseye,
-  GiShield,
-  GiBrain,
   GiAerialSignal,
+  GiBrain,
+  GiBullseye,
+  GiFist,
   GiFlyingFlag,
+  GiShield,
 } from 'react-icons/gi';
-import { ABILITY_COLORS } from '../constant';
 
+import { Box, Icon } from '@chakra-ui/react';
+
+import { ABILITY_COLORS } from '../constant';
 import { AbilityType } from '../types/core';
 
 const icons = {
@@ -26,7 +27,7 @@ interface Props {
   iconSize?: number | number[];
 }
 
-export function AbilityIcon({ ability, iconSize = 8 }: Props): JSX.Element {
+export function RawAbilityIcon({ ability, iconSize = 8 }: Props): JSX.Element {
   const { icon, color } = icons[ability];
 
   return (
@@ -36,4 +37,4 @@ export function AbilityIcon({ ability, iconSize = 8 }: Props): JSX.Element {
   );
 }
 
-export default memo(AbilityIcon);
+export const AbilityIcon = memo(RawAbilityIcon);

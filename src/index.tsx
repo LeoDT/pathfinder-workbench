@@ -1,15 +1,15 @@
 import './style.scss';
 
+import { configure } from 'mobx';
 import React from 'react';
 import ReactDOM from 'react-dom';
+
 import { ChakraProvider, extendTheme } from '@chakra-ui/react';
-import { configure } from 'mobx';
 
+import { App } from './App';
 import { CONTAINER_WIDTH } from './constant';
-import { StoreContext, Store } from './store';
-
-import App from './App';
 import * as serviceWorkerRegistration from './serviceWorkerRegistration';
+import { Store, StoreContext } from './store';
 
 configure({ enforceActions: 'never' });
 

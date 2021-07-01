@@ -4,17 +4,17 @@ import { Prompt, Redirect, Route, Switch } from 'react-router-dom';
 
 import { Box, Icon } from '@chakra-ui/react';
 
-import CreateCharacterStore, { CreateCharacterStoreContext } from '../../store/createCharacter';
+import { CreateCharacterStore, CreateCharacterStoreContext } from '../../store/createCharacter';
 import { HStackNav, HStackNavItem } from '../HStackNav';
-import Bread, { useBreadcrumb } from './Bread';
-import CharacterBasic from './CreateCharacterBasic';
-import CharacterFeat from './CreateCharacterFeat';
-import CharacterFinish from './CreateCharacterFinish';
-import CharacterSkill from './CreateCharacterSkill';
-import CharacterSpell from './CreateCharacterSpell';
+import { Bread, useBreadcrumb } from './Bread';
+import { CreateCharacterBasic as CharacterBasic } from './CreateCharacterBasic';
+import { CreateCharacterFeat as CharacterFeat } from './CreateCharacterFeat';
+import { CreateCharacterFeat as CharacterFinish } from './CreateCharacterFinish';
+import { CreateCharacterSkills as CharacterSkill } from './CreateCharacterSkill';
+import { CreateCharacterSpell as CharacterSpell } from './CreateCharacterSpell';
 import { HistoryUnblockContext } from './context';
 
-export default function CreateCharacter(): JSX.Element {
+export function CreateCharacter(): JSX.Element {
   const [create] = useState(() => new CreateCharacterStore());
   const historyUnblock = useRef<null | (() => void)>(null);
   const blocking = useRef(true);

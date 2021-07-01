@@ -13,7 +13,7 @@ import {
 } from '../utils/ability';
 import { constraintAppliedAlignmentOptions } from '../utils/alignment';
 import { createContextNoNullCheck } from '../utils/react';
-import Character from './character';
+import { Character } from './character';
 import { EntityTypesValidForEffectSource } from './character/effect';
 import { CharacterSpellbook } from './character/spellbook';
 import { collections } from './collection';
@@ -31,7 +31,7 @@ export type InvalidReason =
   | 'spell'
   | 'favoredClass';
 
-export default class CreateCharacterStore {
+export class CreateCharacterStore {
   character: Character;
   disposes: Array<() => void>;
 

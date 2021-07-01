@@ -3,7 +3,7 @@ import { Observer } from 'mobx-react-lite';
 import { Box, Divider, Heading } from '@chakra-ui/react';
 
 import { useStore } from '../../store';
-import CreateCharacterStore from '../../store/createCharacter';
+import { CreateCharacterStore } from '../../store/createCharacter';
 import { Feat } from '../../types/core';
 import { translateGainFeatEffectArgs } from '../../utils/effect';
 import { gainFeatReasonTranslates } from '../../utils/upgrade';
@@ -16,7 +16,7 @@ interface Props {
   showRaceTraits: boolean;
 }
 
-export default function CreateOrUpgradeCharacterFeat({
+export function CreateOrUpgradeCharacterFeat({
   createOrUpgrade,
   showRaceTraits = false,
 }: Props): JSX.Element {

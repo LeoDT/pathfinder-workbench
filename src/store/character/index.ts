@@ -35,11 +35,11 @@ import { validateGainBloodlineEffectInput, validateGainSkillEffectInput } from '
 import { coreToConsolidated } from '../../utils/skill';
 import { collections } from '../collection';
 import { CharacterAttack } from './attack';
-import CharacterEffect from './effect';
-import CharacterEquip from './equip';
+import { CharacterEffect } from './effect';
+import { CharacterEquip } from './equip';
 import { CharacterProficiency } from './proficiency';
 import { CharacterSpellbook } from './spellbook';
-import CharacterStatus from './status';
+import { CharacterStatus } from './status';
 import { CharacterTracker } from './tracker';
 
 interface OptionalCharacterParams {
@@ -68,7 +68,7 @@ interface OptionalCharacterParams {
   deity?: string;
 }
 
-export default class Character {
+export class Character {
   id: string;
   name: string;
   skillSystem: SkillSystem;

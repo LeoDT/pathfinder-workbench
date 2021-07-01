@@ -1,7 +1,8 @@
 import './Feat.scss';
 
 import { memo, useCallback } from 'react';
-import { Box, HStack, Heading, Table, Tbody, Tr, Td, Text } from '@chakra-ui/react';
+
+import { Box, HStack, Heading, Table, Tbody, Td, Text, Tr } from '@chakra-ui/react';
 
 import { ENTITY_COLORS } from '../constant';
 import { ArmorType as ArmorTypeType } from '../types/core';
@@ -48,7 +49,7 @@ function ArmorTypeMeta({ armorType }: { armorType: ArmorTypeType }): JSX.Element
   );
 }
 
-export function ArmorType({
+export function RawArmorType({
   armorType,
   showName = true,
   showMeta = true,
@@ -80,4 +81,4 @@ export function ArmorType({
   );
 }
 
-export default memo(ArmorType);
+export const ArmorType = memo(RawArmorType);

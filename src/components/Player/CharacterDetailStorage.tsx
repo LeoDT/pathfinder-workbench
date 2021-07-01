@@ -8,7 +8,7 @@ import { showEquipment } from '../../utils/equipment';
 import { CreateEquipmentToggler } from '../CreateEquipment';
 import { useCurrentCharacter } from './context';
 
-export default function CharacterDetailStorage(): JSX.Element {
+export function CharacterDetailStorage(): JSX.Element {
   const character = useCurrentCharacter();
   const { ui } = useStore();
 

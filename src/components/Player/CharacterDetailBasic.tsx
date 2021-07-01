@@ -24,8 +24,8 @@ import { showWeight, uniqByLast } from '../../utils/misc';
 import { showModifier } from '../../utils/modifier';
 import { sizeTranslates } from '../../utils/race';
 import { carryLoadTranslates } from '../../utils/weight';
-import AbilityIcon from '../AbilityIcon';
-import StatNumber from '../StatNumber';
+import { AbilityIcon } from '../AbilityIcon';
+import { StatNumber } from '../StatNumber';
 import {
   Block,
   BlockHeading,
@@ -35,12 +35,12 @@ import {
   VBlockItemForBonus,
 } from './CharacterBlock';
 import { CharacterDetailAttackOptions } from './CharacterDetailAttackOptions';
-import CharacterDetailEquip from './CharacterDetailEquip';
+import { CharacterDetailEquip } from './CharacterDetailEquip';
 import { CharacterDetailFeats } from './CharacterDetailFeats';
 import { CharacterDetailManualEffectsModal } from './CharacterDetailManualEffects';
 import { CharacterDetailSkills } from './CharacterDetailSkills';
 import { CharacterDetailSpells } from './CharacterDetailSpells';
-import CharacterDetailStorage from './CharacterDetailStorage';
+import { CharacterDetailStorage } from './CharacterDetailStorage';
 import { CharacterDetailTrackers } from './CharacterDetailTrackers';
 import { useCurrentCharacter } from './context';
 
@@ -60,7 +60,7 @@ const hStackForBonusStyle = {
   spacing: '0',
 };
 
-export default function CharacterDetailBasic(): JSX.Element {
+export function CharacterDetailBasic(): JSX.Element {
   const character = useCurrentCharacter();
   const manualEffectsState = useDisclosure();
 

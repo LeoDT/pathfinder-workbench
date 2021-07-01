@@ -4,7 +4,7 @@ import { SimpleGrid, Text } from '@chakra-ui/react';
 
 import { ClassFeat, Feat, RacialTrait } from '../../types/core';
 import { EffectInputDisplayer } from '../EffectInputDisplayer';
-import SimpleEntity, { SimpleEntityWithChild } from '../SimpleEntity';
+import { SimpleEntity, SimpleEntityWithChild } from '../SimpleEntity';
 import { useCurrentCharacter } from './context';
 
 interface Props {

@@ -1,12 +1,13 @@
+import { Redirect, Route, Switch } from 'react-router-dom';
+
 import { Container } from '@chakra-ui/react';
-import { Route, Switch, Redirect } from 'react-router-dom';
 
-import { useBreadcrumbs, BreadcrumbManagerContext } from '../components/Player/Bread';
-import CharacterList from '../components/Player/CharacterList';
-import CreateCharacter from '../components/Player/CreateCharacter';
-import CharacterDetail from '../components/Player/CharacterDetail';
+import { BreadcrumbManagerContext, useBreadcrumbs } from '../components/Player/Bread';
+import { CharacterDetail } from '../components/Player/CharacterDetail';
+import { CharacterList } from '../components/Player/CharacterList';
+import { CreateCharacter } from '../components/Player/CreateCharacter';
 
-export default function PlayerPage(): JSX.Element {
+export function PlayerPage(): JSX.Element {
   const breadcrumbs = useBreadcrumbs([{ link: '/player', text: 'PC' }]);
 
   return (

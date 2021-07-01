@@ -46,7 +46,7 @@ const labelRenderers: Record<string, (...args: any) => ReactNode> = {
   spell: spellAsLabelRenderer,
 };
 
-export default function EntityPicker<T extends Entity>({
+export function EntityPicker<T extends Entity>({
   inputRef,
   onPick,
   afterPick,

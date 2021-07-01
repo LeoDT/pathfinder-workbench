@@ -21,9 +21,9 @@ import { Collection } from '../store/collection/base';
 import { Entity, EntityType, Equipment, EquipmentType, RaceSize } from '../types/core';
 import { equipmentTypeTranslates } from '../utils/equipment';
 import { CollectionEntityPickerPopover } from './CollectionEntityPicker';
-import CreateEquipmentForm from './CreateEquipmentForm';
-import Select from './Select';
-import SimpleEntity from './SimpleEntity';
+import { CreateEquipmentForm } from './CreateEquipmentForm';
+import { Select } from './Select';
+import { SimpleEntity } from './SimpleEntity';
 
 interface Props {
   onCreate: (e: Equipment) => void;
@@ -38,7 +38,7 @@ const equipmentTypeOptions: Array<{ text: string; value: EquipmentType }> = [
   { text: equipmentTypeTranslates.spellItem, value: 'spellItem' },
 ];
 
-export default function CreateEquipment({ onCreate, onCancel, characterSize }: Props): JSX.Element {
+export function CreateEquipment({ onCreate, onCancel, characterSize }: Props): JSX.Element {
   const store = useStore();
   const [equipmentType, setEquipmentType] = useState<EquipmentType>('weapon');
   const [equipment, setEquipment] = useState<{ id: string; type: EquipmentType } | null>(null);

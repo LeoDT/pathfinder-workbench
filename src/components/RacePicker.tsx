@@ -1,9 +1,10 @@
 import { without } from 'lodash-es';
-import { useCallback, useMemo, useState, useEffect } from 'react';
+import { useCallback, useEffect, useMemo, useState } from 'react';
 
 import {
   Box,
   Button,
+  HStack,
   Heading,
   Modal,
   ModalBody,
@@ -11,7 +12,6 @@ import {
   ModalFooter,
   ModalHeader,
   ModalOverlay,
-  HStack,
   Portal,
   SimpleGrid,
   useDisclosure,
@@ -21,7 +21,7 @@ import { ENTITY_COLORS } from '../constant';
 import { useStore } from '../store';
 import { Race, RacialTrait } from '../types/core';
 import { CollectionEntitySelect } from './CollectionEntitySelect';
-import SimpleEntity from './SimpleEntity';
+import { SimpleEntity } from './SimpleEntity';
 
 interface RacePickerValue {
   raceId: string;
@@ -33,7 +33,7 @@ interface Props {
   onChange: (v: RacePickerValue) => void;
 }
 
-export default function RacePicker({ onChange, value }: Props): JSX.Element {
+export function RacePicker({ onChange, value }: Props): JSX.Element {
   const { collections } = useStore();
   const { isOpen, onOpen, onClose } = useDisclosure();
   const [raceId, setRaceId] = useState<string>(value.raceId);

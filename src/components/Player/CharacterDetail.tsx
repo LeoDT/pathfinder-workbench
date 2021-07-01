@@ -1,16 +1,15 @@
 import { autorun } from 'mobx';
 import { useEffect, useState } from 'react';
-import { useParams, Switch, Route, Redirect, useRouteMatch } from 'react-router-dom';
+import { Redirect, Route, Switch, useParams, useRouteMatch } from 'react-router-dom';
 
 import { useStore } from '../../store';
-import Character from '../../store/character';
+import { Character } from '../../store/character';
+import { Bread, useBreadcrumb } from './Bread';
+import { CharacterDetailBasic } from './CharacterDetailBasic';
+import { UpgradeCharacter as CharacterUpgrade } from './UpgradeCharacter';
 import { CurrentCharacterContext } from './context';
 
-import Bread, { useBreadcrumb } from './Bread';
-import CharacterDetailBasic from './CharacterDetailBasic';
-import CharacterUpgrade from './UpgradeCharacter';
-
-export default function CharacterDetail(): JSX.Element | null {
+export function CharacterDetail(): JSX.Element | null {
   const store = useStore();
   const { id } = useParams<{ id: string }>();
   const { path, url } = useRouteMatch();

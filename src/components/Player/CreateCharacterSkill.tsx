@@ -1,8 +1,7 @@
 import { useCreateCharacterStore } from '../../store/createCharacter';
+import { CreateCharacterSkills as CreateOrUpgradeCharacterSkill } from './CreateOrUpgradeCharacterSkill';
 
-import CreateOrUpgradeCharacterSkill from './CreateOrUpgradeCharacterSkill';
-
-export default function CreateCharacterSkills(): JSX.Element {
+export function CreateCharacterSkills(): JSX.Element {
   const create = useCreateCharacterStore();
 
   return <CreateOrUpgradeCharacterSkill createOrUpgrade={create} />;

@@ -6,9 +6,9 @@ import { Box, Heading, SimpleGrid, Text } from '@chakra-ui/react';
 
 import { useStore } from '../../store';
 import { CharacterSpellbook } from '../../store/character/spellbook';
-import CreateCharacterStore from '../../store/createCharacter';
+import { CreateCharacterStore } from '../../store/createCharacter';
 import { EntityPickerPopover } from '../EntityPicker';
-import SimpleEntity from '../SimpleEntity';
+import { SimpleEntity } from '../SimpleEntity';
 
 interface SpellsForLevelProps {
   spellbook: CharacterSpellbook;
@@ -124,7 +124,7 @@ interface Props {
   createOrUpgrade: CreateCharacterStore;
 }
 
-export default function CreateOrUpgradeCharacterSpell({ createOrUpgrade }: Props): JSX.Element {
+export function CreateOrUpgradeCharacterSpell({ createOrUpgrade }: Props): JSX.Element {
   return (
     <Observer>
       {() => {

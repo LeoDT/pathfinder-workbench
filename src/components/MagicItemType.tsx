@@ -45,7 +45,7 @@ function MagicItemTypeMeta({ magicItemType }: { magicItemType: MagicItemTypeType
   );
 }
 
-export function MagicItemType({
+export function RawMagicItemType({
   magicItemType,
   showName = true,
   showMeta = true,
@@ -78,4 +78,4 @@ export function MagicItemType({
   );
 }
 
-export default memo(MagicItemType);
+export const MagicItemType = memo(RawMagicItemType);

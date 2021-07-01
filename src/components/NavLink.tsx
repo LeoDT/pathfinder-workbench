@@ -1,5 +1,6 @@
-import { Link, LinkProps } from '@chakra-ui/react';
 import { Link as RouterLink, LinkProps as RouterLinkProps, useRouteMatch } from 'react-router-dom';
+
+import { Link, LinkProps } from '@chakra-ui/react';
 
 interface Props
   extends LinkProps,
@@ -7,7 +8,7 @@ interface Props
   to: string;
 }
 
-export default function NavLink({ to, ...props }: Props): JSX.Element {
+export function NavLink({ to, ...props }: Props): JSX.Element {
   const match = useRouteMatch(to);
 
   return <Link as={RouterLink} color={match ? 'teal.400' : 'black'} to={to} {...props} />;

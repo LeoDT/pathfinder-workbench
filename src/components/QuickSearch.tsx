@@ -27,11 +27,11 @@ import {
 } from '../types/core';
 import { entityTypeTranslates } from '../utils/entity';
 import { useIsSmallerScreen } from '../utils/react';
-import ArmorType from './ArmorType';
-import Feat from './Feat';
-import MagicItemType from './MagicItemType';
-import Spell from './Spell';
-import WeaponType from './WeaponType';
+import { ArmorType } from './ArmorType';
+import { Feat } from './Feat';
+import { MagicItemType } from './MagicItemType';
+import { Spell } from './Spell';
+import { WeaponType } from './WeaponType';
 
 function QuickSearchResultItem({ item }: { item: Entity }) {
   let el = null;
@@ -74,7 +74,7 @@ function QuickSearchResultItem({ item }: { item: Entity }) {
   );
 }
 
-export default function QuickSearch(): JSX.Element {
+export function QuickSearch(): JSX.Element {
   const store = useStore();
   const [searchKey, setSearchKey] = useState('');
   const searchResult = useMemo(() => store.quickSearch(searchKey), [searchKey]);

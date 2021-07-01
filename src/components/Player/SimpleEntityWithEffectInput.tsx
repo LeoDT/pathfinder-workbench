@@ -14,7 +14,7 @@ import {
   useDisclosure,
 } from '@chakra-ui/react';
 
-import CreateCharacterStore from '../../store/createCharacter';
+import { CreateCharacterStore } from '../../store/createCharacter';
 import { Entity, SpecialFeat } from '../../types/core';
 import { EffectNeedInput, EffectType } from '../../types/effectType';
 import { ArcaneSchoolPicker } from '../ArcaneSchoolPicker';

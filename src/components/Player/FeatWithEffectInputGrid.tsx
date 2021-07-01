@@ -3,9 +3,9 @@ import { Observer } from 'mobx-react-lite';
 
 import { SimpleGrid } from '@chakra-ui/react';
 
-import CreateCharacterStore from '../../store/createCharacter';
+import { CreateCharacterStore } from '../../store/createCharacter';
 import { ClassFeat, Feat, RacialTrait } from '../../types/core';
-import SimpleEntity from '../SimpleEntity';
+import { SimpleEntity } from '../SimpleEntity';
 import { SimpleEntityWithEffectInput } from './SimpleEntityWithEffectInput';
 
 interface Props {

@@ -1,11 +1,11 @@
 import { Redirect, Route, BrowserRouter as Router, Switch } from 'react-router-dom';
 
-import EntityQuickViewer from './components/EntityQuickViewer';
-import Navbar from './components/Navbar';
-import DMPage from './pages/DMPage';
-import PlayerPage from './pages/PlayerPage';
+import { EntityQuickViewer } from './components/EntityQuickViewer';
+import { Navbar } from './components/Navbar';
+import { DMPage } from './pages/DMPage';
+import { PlayerPage } from './pages/PlayerPage';
 
-function App(): JSX.Element {
+export function App(): JSX.Element {
   return (
     <Router basename={process.env.NODE_ENV === 'development' ? '/' : process.env.PFWB_BASENAME}>
       <>
@@ -25,5 +25,3 @@ function App(): JSX.Element {
     </Router>
   );
 }
-
-export default App;

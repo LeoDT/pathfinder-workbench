@@ -21,5 +21,3 @@ export function ButtonSwitch<T = string>({ options, value, onChange }: Props<T>)
     </ButtonGroup>
   );
 }
-
-export default ButtonSwitch;

@@ -1,20 +1,20 @@
 import {
   Drawer,
+  DrawerBody,
+  DrawerCloseButton,
+  DrawerContent,
   DrawerHeader,
   DrawerOverlay,
-  DrawerContent,
-  DrawerCloseButton,
-  DrawerBody,
   useDisclosure,
 } from '@chakra-ui/react';
 
-import QuickSearch from './QuickSearch';
+import { QuickSearch } from './QuickSearch';
 
 interface Props {
   children: JSX.Element;
 }
 
-export default function QuickSearchToggler({ children }: Props): JSX.Element {
+export function QuickSearchToggler({ children }: Props): JSX.Element {
   const { isOpen, onClose, onOpen } = useDisclosure();
 
   return (

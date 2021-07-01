@@ -3,7 +3,7 @@ import { makeObservable, observable, reaction } from 'mobx';
 
 import { Spell } from '../../types/core';
 import { CharacterSpellbook } from './spellbook';
-import Character from '.';
+import { Character } from '.';
 
 export interface Tracker {
   id: string;
