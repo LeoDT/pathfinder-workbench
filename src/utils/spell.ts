@@ -1,4 +1,5 @@
 import { collections } from '../store/collection';
+import { Spell } from '../types/core';
 
 export const translates = {
   school: '学派',
@@ -42,3 +43,18 @@ export const spellsPerDayByAbilityModifier: Record<number, number[]> = {
   16: [4, 4, 4, 4, 3, 3, 3, 3, 2],
   17: [5, 4, 4, 4, 4, 3, 3, 3, 3],
 };
+
+export function getLowestSpellLevelFromMeta(spell: Spell): number {
+  const { level } = spell.meta;
+
+  if (level) {
+    const levels = level
+      .split(', ')
+      .map((l) => parseInt(l.replace(/^[a-z/\s]+\s(\d+)$/, '$1')))
+      .filter((n) => !Number.isNaN(n));
+
+    return Math.min(...levels);
+  }
+
+  return 0;
+}

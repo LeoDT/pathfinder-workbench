@@ -106,7 +106,8 @@ export default class CharacterEquip {
       .filter(
         (e): e is Weapon | Armor =>
           e.equipmentType === 'weapon' ||
-          (e.type._type === 'armorType' &&
+          (e.equipmentType === 'armor' &&
+            e.type._type === 'armorType' &&
             e.type.meta.category === 'shield' &&
             !e.type.meta.buckler)
       )
@@ -356,6 +357,9 @@ export default class CharacterEquip {
           break;
         case 'magicItem':
           type = collections.magicItemType.getById(e.typeId);
+          break;
+        case 'spellItem':
+          type = collections.spell.getById(e.typeId);
           break;
       }
 

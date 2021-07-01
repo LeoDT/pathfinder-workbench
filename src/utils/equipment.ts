@@ -8,17 +8,22 @@ import {
   Equipment,
   MagicItem,
   MagicItemType,
+  Spell,
+  SpellItem,
+  SpellItemType,
   Weapon,
   WeaponSize,
   WeaponType,
 } from '../types/core';
 import { getArmorCostWeightInSize } from './armorType';
 import { Coin, makeCoin, makeCoinFromString } from './coin';
+import { getLowestSpellLevelFromMeta } from './spell';
 
 export const equipmentTypeTranslates = {
   weapon: '武器',
   armor: '护甲',
   magicItem: '奇物',
+  spellItem: '药剂/卷轴/魔杖',
 };
 
 export const MAX_ENCHANTMENT = 5;
@@ -110,6 +115,32 @@ export function magicItemCostWeight(type: MagicItemType): { cost: Coin; weight: 
   };
 }
 
+const scrollCosts = [12.5, 25, 150, 375, 700, 1125, 1650, 2275, 3000, 3825];
+const potionCosts = [25, 50, 300, 750];
+const wandCosts = [375, 750, 4500, 11250, 210000];
+
+export function spellItemCostWeight(
+  spell: Spell,
+  type: SpellItemType
+): { cost: Coin; weight: number } {
+  const level = getLowestSpellLevelFromMeta(spell);
+  let cost = 0;
+
+  switch (type) {
+    case 'scroll':
+      cost = scrollCosts[level] ?? 0;
+      break;
+    case 'potion':
+      cost = potionCosts[level] ?? 0;
+      break;
+    case 'wand':
+      cost = wandCosts[level] ?? 0;
+      break;
+  }
+
+  return { cost: makeCoin(cost), weight: 0 };
+}
+
 export function equipmentCostWeight(e: Equipment): { cost: Coin; weight: number } {
   switch (e.equipmentType) {
     case 'armor':
@@ -120,6 +151,9 @@ export function equipmentCostWeight(e: Equipment): { cost: Coin; weight: number 
 
     case 'magicItem':
       return magicItemCostWeight(e.type);
+
+    case 'spellItem':
+      return spellItemCostWeight(e.type, e.spellItemType);
   }
 }
 
@@ -171,6 +205,26 @@ export function makeMagicItem(type: MagicItemType, name: string): MagicItem {
     name,
     type,
   };
+}
+
+export function makeSpellItem(spell: Spell, type: SpellItemType, name: string): SpellItem {
+  return {
+    _type: 'common',
+    equipmentType: 'spellItem',
+    id: shortid(),
+    name,
+    spellItemType: type,
+    type: spell,
+  };
+}
+
+export const spellItemTypeTranslates: Record<SpellItemType, string> = {
+  scroll: '卷轴',
+  potion: '药剂',
+  wand: '魔杖',
+};
+export function getSpellItemDefaultName(spell: Spell, type: SpellItemType): string {
+  return `${spell.name}${spellItemTypeTranslates[type]}`;
 }
 
 export function showEquipment(e: Equipment): string {

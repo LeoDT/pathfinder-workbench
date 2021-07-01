@@ -24,6 +24,10 @@ export function makeCoinFromString(g: string): Coin {
   return makeCoin(parseInt(amount), unit as CoinUnit);
 }
 
+export function coinEqual(a: Coin, b: Coin): boolean {
+  return a.amount === b.amount && a.unit === b.unit;
+}
+
 //TODO: different unit
 export function coinAdd(a: string | Coin, b: string | Coin): Coin {
   const ac = typeof a === 'string' ? makeCoinFromString(a) : a;

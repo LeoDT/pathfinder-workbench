@@ -41,4 +41,5 @@ export const EQUIPMENT_COLOR_SCHEME = {
   armor: 'red',
   magicItem: 'blue',
   item: 'gray',
+  spellItem: 'purple',
 };

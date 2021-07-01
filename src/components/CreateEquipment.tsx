@@ -35,6 +35,7 @@ const equipmentTypeOptions: Array<{ text: string; value: EquipmentType }> = [
   { text: equipmentTypeTranslates.weapon, value: 'weapon' },
   { text: equipmentTypeTranslates.armor, value: 'armor' },
   { text: equipmentTypeTranslates.magicItem, value: 'magicItem' },
+  { text: equipmentTypeTranslates.spellItem, value: 'spellItem' },
 ];
 
 export default function CreateEquipment({ onCreate, onCancel, characterSize }: Props): JSX.Element {
@@ -49,6 +50,8 @@ export default function CreateEquipment({ onCreate, onCancel, characterSize }: P
         return store.collections.armorType;
       case 'magicItem':
         return store.collections.magicItemType;
+      case 'spellItem':
+        return store.collections.spell;
     }
   }, [equipmentType]);
   const entityForEquipment = useMemo(() => {
@@ -62,6 +65,8 @@ export default function CreateEquipment({ onCreate, onCancel, characterSize }: P
         return 'armorType';
       case 'magicItem':
         return 'magicItemType';
+      case 'spellItem':
+        return 'spell';
       default:
         return null;
     }
@@ -88,7 +93,9 @@ export default function CreateEquipment({ onCreate, onCancel, characterSize }: P
             onPick={(id) => {
               setEquipment({ id, type: equipmentType });
             }}
-            text={`选择${equipmentTypeTranslates[equipmentType]}`}
+            text={`选择${
+              equipmentType === 'spellItem' ? '法术' : equipmentTypeTranslates[equipmentType]
+            }`}
           />
         </WrapItem>
         <WrapItem>

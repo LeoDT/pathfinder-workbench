@@ -6,11 +6,7 @@ interface Props<T> {
   onChange: (v: T) => void;
 }
 
-export default function ButtonSwitch<T = string>({
-  options,
-  value,
-  onChange,
-}: Props<T>): JSX.Element {
+export function ButtonSwitch<T = string>({ options, value, onChange }: Props<T>): JSX.Element {
   return (
     <ButtonGroup isAttached>
       {options.map(({ text, value: v, key }, i) => (
@@ -25,3 +21,5 @@ export default function ButtonSwitch<T = string>({
     </ButtonGroup>
   );
 }
+
+export default ButtonSwitch;

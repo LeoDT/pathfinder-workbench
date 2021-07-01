@@ -291,8 +291,17 @@ export interface MagicItem extends Entity {
   type: MagicItemType;
 }
 
-export type EquipmentType = 'weapon' | 'armor' | 'magicItem';
-export type Equipment = Weapon | Armor | MagicItem;
+export type SpellItemType = 'potion' | 'scroll' | 'wand';
+
+export interface SpellItem extends Entity {
+  _type: 'common';
+  equipmentType: 'spellItem';
+  spellItemType: SpellItemType;
+  type: Spell;
+}
+
+export type EquipmentType = 'weapon' | 'armor' | 'magicItem' | 'spellItem';
+export type Equipment = Weapon | Armor | MagicItem | SpellItem;
 
 export interface BonusType extends Entity {
   stack: boolean;

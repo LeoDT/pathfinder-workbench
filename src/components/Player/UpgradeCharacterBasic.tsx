@@ -110,7 +110,7 @@ export default function CreateCharacterBasic(): JSX.Element {
                       key={ab}
                       ability={ab}
                       score={score}
-                      racial={upgradeStore.character.bonusAbility[ab]}
+                      racial={upgradeStore.character.racialBonusAbility[ab]}
                       onChange={(v) => {
                         if (v > score) {
                           upgradeStore.useUpgradeAbilityBonus(ab);
