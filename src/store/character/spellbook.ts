@@ -1,5 +1,5 @@
 import { range, without } from 'lodash-es';
-import { computed, makeObservable } from 'mobx';
+import { action, computed, makeObservable } from 'mobx';
 
 import { ArcaneSchool } from '../../types/arcaneSchool';
 import { AbilityType, Class, Spell, SpellCastingType } from '../../types/core';
@@ -8,6 +8,11 @@ import { validateGainArcaneSchoolEffectInput } from '../../utils/effect';
 import { spellsPerDayByAbilityModifier } from '../../utils/spell';
 import { collections } from '../collection';
 import { Character } from '.';
+
+export interface SpellManageAction {
+  action: 'add' | 'remove';
+  spellId: string;
+}
 
 export class CharacterSpellbook {
   character: Character;
@@ -33,6 +38,12 @@ export class CharacterSpellbook {
 
       bloodlineSpells: computed,
       bloodlineSpellLevels: computed,
+
+      addedSpellIds: computed,
+      removedSpellIds: computed,
+
+      addSpell: action,
+      removeSpell: action,
     });
 
     this.character = c;
@@ -65,7 +76,10 @@ export class CharacterSpellbook {
   }
 
   get knownSpellIds(): string[] {
-    const fromUpgrades = this.character.upgradesWithPending.map((u) => u.spells).flat();
+    const fromUpgrades = this.character.upgradesWithPending
+      .map((u) => u.spells)
+      .flat()
+      .filter((s) => !this.removedSpellIds.includes(s));
     let fromClass: string[] = [];
 
     switch (this.castingType) {
@@ -79,7 +93,7 @@ export class CharacterSpellbook {
         break;
     }
 
-    return [...fromClass, ...fromUpgrades];
+    return [...fromClass, ...fromUpgrades, ...this.addedSpellIds];
   }
   get knownSpells(): Array<Spell[]> {
     const spells = collections.spell.getByIds(this.knownSpellIds);
@@ -191,13 +205,13 @@ export class CharacterSpellbook {
   get arcaneSchoolPrepareSlot(): { amount: number; school: string } | null {
     switch (this.arcaneSchool?.school.type) {
       case 'elemental':
-        return { amount: 1, school: this.arcaneSchool?.school.id };
+        return { amount: 1, school: this.arcaneSchool?.school.id.toLowerCase() };
       case 'standard':
         if (this.arcaneSchool?.school.noSchoolSlot) {
           return null;
         }
 
-        return { amount: 1, school: this.arcaneSchool?.school.id };
+        return { amount: 1, school: this.arcaneSchool?.school.id.toLowerCase() };
       default:
         return null;
     }
@@ -262,5 +276,43 @@ export class CharacterSpellbook {
     }
 
     return 1;
+  }
+
+  get addedSpellIds(): string[] {
+    return this.character.spellManageHistory
+      .filter((m) => m.action === 'add')
+      .map((m) => m.spellId);
+  }
+  get removedSpellIds(): string[] {
+    return this.character.spellManageHistory
+      .filter((m) => m.action === 'remove')
+      .map((m) => m.spellId);
+  }
+  addSpell(s: Spell | string): void {
+    const id = typeof s === 'string' ? s : s.id;
+
+    const removed = this.character.spellManageHistory.find(
+      (m) => m.action === 'remove' && m.spellId === id
+    );
+
+    if (removed) {
+      this.character.spellManageHistory.remove(removed);
+    } else {
+      this.character.spellManageHistory.push({ action: 'add', spellId: id });
+    }
+  }
+
+  removeSpell(s: Spell): void {
+    const id = typeof s === 'string' ? s : s.id;
+
+    const added = this.character.spellManageHistory.find(
+      (m) => m.action === 'add' && m.spellId === id
+    );
+
+    if (added) {
+      this.character.spellManageHistory.remove(added);
+    } else {
+      this.character.spellManageHistory.push({ action: 'remove', spellId: id });
+    }
   }
 }

@@ -112,9 +112,7 @@ export function CharacterDetailSpells({ spellbook }: Props): JSX.Element {
         >
           恢复
         </Button>
-        {spellbook.castingType === 'sorcerer-like' ? null : (
-          <SpellbookManagerToggler spellbook={spellbook} buttonProps={{ size: 'sm' }} />
-        )}
+        <SpellbookManagerToggler spellbook={spellbook} buttonProps={{ size: 'sm' }} />
       </HStack>
 
       <Observer>

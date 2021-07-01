@@ -11,15 +11,20 @@ import {
   ModalBody,
   ModalContent,
   ModalFooter,
-  ModalHeader,
   ModalOverlay,
   SimpleGrid,
+  Tab,
+  TabList,
+  TabPanel,
+  TabPanels,
+  Tabs,
   Text,
   useDisclosure,
 } from '@chakra-ui/react';
 
 import { CharacterSpellbook } from '../store/character/spellbook';
 import { collections } from '../store/collection';
+import { schoolTranslates } from '../utils/spell';
 import { EntityPickerPopover } from './EntityPicker';
 import { SimpleEntity } from './SimpleEntity';
 
@@ -27,7 +32,7 @@ interface ManagerProps {
   spellbook: CharacterSpellbook;
 }
 
-export function SpellbookManager({ spellbook }: ManagerProps): JSX.Element {
+export function PrepareSpells({ spellbook }: ManagerProps): JSX.Element {
   return (
     <Observer>
       {() => {
@@ -43,6 +48,7 @@ export function SpellbookManager({ spellbook }: ManagerProps): JSX.Element {
               const speicalSpellsKnownForLevel = spellbook.knownSpecialSpells[i] ?? [];
               const spellDuplicatable = spellbook.castingType === 'wizard-like' && i > 0;
               const specialSlot = i > 0 ? spellbook.arcaneSchoolPrepareSlot?.amount ?? 0 : 0;
+              const specialSlotSchool = i > 0 ? spellbook.arcaneSchoolPrepareSlot?.school : '';
               const slotUsage = preparedSpellsForLevel
                 .map((s) => spellbook.getSlotUsageForSpell(s))
                 .reduce((acc, s) => acc + s, 0);
@@ -62,7 +68,9 @@ export function SpellbookManager({ spellbook }: ManagerProps): JSX.Element {
                     mb="2"
                   >
                     {i} 环 {slotUsage}/{perDay} 个法术位
-                    {specialSlot > 0 ? ` ${specialSlot}额外法术位` : ''}
+                    {specialSlot > 0 && specialSlotSchool
+                      ? ` ${specialSlot} 个${schoolTranslates[specialSlotSchool]}额外法术位`
+                      : ''}
                   </Text>
                   <SimpleGrid columns={[1, 3]} spacing="2" pb="2">
                     {preparedSpellsForLevel.map((s, i) => (
@@ -146,24 +154,100 @@ export function SpellbookManager({ spellbook }: ManagerProps): JSX.Element {
   );
 }
 
+export function ManageSpells({ spellbook }: ManagerProps): JSX.Element {
+  return (
+    <Observer>
+      {() => (
+        <>
+          {spellbook.knownSpells.map((spells, level) => {
+            const availableSpells = spellbook.classSpells[level].filter((s) => !spells.includes(s));
+
+            return (
+              <Box key={level}>
+                <Text
+                  fontSize="md"
+                  bgColor="gray.50"
+                  borderTop="1px"
+                  borderBottom="1px"
+                  borderColor="gray.200"
+                  px="2"
+                  py="1"
+                  mb="2"
+                >
+                  {level} 环
+                </Text>
+                {availableSpells.length > 0 ? (
+                  <EntityPickerPopover
+                    text="学习新法术"
+                    entities={availableSpells}
+                    onPick={(s) => spellbook.addSpell(s)}
+                    closeOnPick
+                    listAll
+                  />
+                ) : null}
+                <SimpleGrid columns={[1, 3]} spacing="2" py="2">
+                  {spells.map((s, i) => (
+                    <SimpleEntity
+                      key={`${s.id}:${i}`}
+                      entity={s}
+                      addon={
+                        <IconButton
+                          aria-label="移除法术"
+                          icon={<FaTrash />}
+                          colorScheme="red"
+                          size="sm"
+                          height="auto"
+                          borderLeftRadius="0"
+                          onClick={() => spellbook.removeSpell(s)}
+                        />
+                      }
+                    />
+                  ))}
+                </SimpleGrid>
+              </Box>
+            );
+          })}
+        </>
+      )}
+    </Observer>
+  );
+}
+
 interface TogglerProps extends ManagerProps {
   buttonProps?: ButtonProps;
 }
 
 export function SpellbookManagerToggler({ spellbook, buttonProps }: TogglerProps): JSX.Element {
   const { isOpen, onClose, onOpen } = useDisclosure();
+  const disablePrepare = spellbook.castingType === 'sorcerer-like';
 
   return (
     <>
       <Button {...buttonProps} onClick={() => onOpen()}>
-        准备法术
+        法术管理
       </Button>
 
       <Modal isOpen={isOpen} onClose={onClose} size="4xl">
         <ModalOverlay />
         <ModalContent>
-          <ModalHeader>准备法术</ModalHeader>
-          <ModalBody>{isOpen ? <SpellbookManager spellbook={spellbook} /> : null}</ModalBody>
+          <ModalBody>
+            {isOpen ? (
+              <Tabs isLazy defaultIndex={disablePrepare ? 1 : 0}>
+                <TabList>
+                  <Tab isDisabled={disablePrepare}>准备法术</Tab>
+                  <Tab>管理法术</Tab>
+                </TabList>
+                <TabPanels>
+                  <TabPanel>
+                    <PrepareSpells spellbook={spellbook} />
+                  </TabPanel>
+                  <TabPanel>
+                    <ManageSpells spellbook={spellbook} />
+                  </TabPanel>
+                </TabPanels>
+              </Tabs>
+            ) : null}
+          </ModalBody>
           <ModalFooter>
             <Button onClick={() => onClose()}>OK</Button>
           </ModalFooter>

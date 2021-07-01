@@ -196,8 +196,8 @@ export class CreateCharacterStore {
         if (source._type === 'classFeat') {
           let rootSource = null;
 
-          if (effect.args.source) {
-            rootSource = this.newGainedClassFeats.find((f) => f.id === effect.args.source);
+          if (effect.args?.source) {
+            rootSource = this.newGainedClassFeats.find((f) => f.id === effect.args?.source);
           }
 
           if (!rootSource && extendedFrom) {

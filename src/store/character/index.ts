@@ -38,7 +38,7 @@ import { CharacterAttack } from './attack';
 import { CharacterEffect } from './effect';
 import { CharacterEquip } from './equip';
 import { CharacterProficiency } from './proficiency';
-import { CharacterSpellbook } from './spellbook';
+import { CharacterSpellbook, SpellManageAction } from './spellbook';
 import { CharacterStatus } from './status';
 import { CharacterTracker } from './tracker';
 
@@ -56,6 +56,7 @@ interface OptionalCharacterParams {
 
   preparedSpellIds?: Map<string, string[]>;
   preparedSpecialSpellIds?: Map<string, string[]>;
+  spellManageHistory?: SpellManageAction[];
 
   upgrades?: CharacterUpgrade[];
 
@@ -83,6 +84,7 @@ export class Character {
   favoredClassIds: string[];
   preparedSpellIds: Map<string, string[]>;
   preparedSpecialSpellIds: Map<string, string[]>; // for domain or arcane school
+  spellManageHistory: IObservableArray<SpellManageAction>;
   spellbooks: IObservableArray<CharacterSpellbook>;
   deity: string;
 
@@ -111,6 +113,7 @@ export class Character {
       alternateRaceTraitIds,
       preparedSpellIds,
       preparedSpecialSpellIds,
+      spellManageHistory,
       favoredClassIds,
       upgrades,
       equipment,
@@ -162,6 +165,7 @@ export class Character {
 
       preparedSpellIds: observable,
       preparedSpecialSpellIds: observable,
+      spellManageHistory: observable,
 
       gainedFeats: computed,
 
@@ -191,6 +195,7 @@ export class Character {
 
     this.preparedSpellIds = preparedSpellIds || new Map();
     this.preparedSpecialSpellIds = preparedSpecialSpellIds || new Map();
+    this.spellManageHistory = spellManageHistory || [];
 
     this.formulaParserReady = false;
 
@@ -793,6 +798,7 @@ export class Character {
     'bonusAbilityType',
     'favoredClassIds',
     'manualEffects',
+    'spellManageHistory',
   ];
 
   static stringify(c: Character): string {
