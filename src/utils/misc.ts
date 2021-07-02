@@ -32,3 +32,38 @@ export function uniqByLast<T>(arr: Array<T>, iter: (v: T) => unknown): Array<T> 
 
   return Array.from(map.values());
 }
+
+export function stringToBlobUrl(content: string): string {
+  const blob = new Blob([content]);
+
+  return URL.createObjectURL(blob);
+}
+
+export function download(url: string, name: string): void {
+  const a = document.createElement('a');
+  a.setAttribute('download', name);
+  a.setAttribute('href', url);
+  a.style.position = 'absolute';
+
+  document.body.append(a);
+
+  a.click();
+
+  document.body.removeChild(a);
+}
+
+export async function readFileAsString(file: File): Promise<string> {
+  return new Promise((resolve, reject) => {
+    const reader = new FileReader();
+
+    reader.addEventListener('load', (e) => {
+      resolve(e.target?.result as string);
+    });
+
+    reader.addEventListener('error', () => {
+      reject(reader.error);
+    });
+
+    reader.readAsText(file);
+  });
+}

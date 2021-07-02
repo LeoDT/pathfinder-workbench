@@ -802,24 +802,28 @@ export class Character {
     'spellManageHistory',
   ];
 
-  static stringify(c: Character): string {
-    return JSON.stringify({
-      id: c.id,
-      name: c.name,
-      upgrades: c.upgrades.map((u) => ({
-        ...u,
-        skills: Array.from(u.skills.entries()),
-        effectInputs: Array.from(u.effectInputs.entries()),
-      })),
-      equipment: CharacterEquip.stringify(c.equipment),
-      tracker: CharacterTracker.stringify(c.tracker),
-      preparedSpellIds: Array.from(c.preparedSpellIds.entries()),
-      preparedSpecialSpellIds: Array.from(c.preparedSpecialSpellIds.entries()),
-      ...pick(c, Character.serializableProps),
-    });
+  static stringify(c: Character, format?: number): string {
+    return JSON.stringify(
+      {
+        id: c.id,
+        name: c.name,
+        upgrades: c.upgrades.map((u) => ({
+          ...u,
+          skills: Array.from(u.skills.entries()),
+          effectInputs: Array.from(u.effectInputs.entries()),
+        })),
+        equipment: CharacterEquip.stringify(c.equipment),
+        tracker: CharacterTracker.stringify(c.tracker),
+        preparedSpellIds: Array.from(c.preparedSpellIds.entries()),
+        preparedSpecialSpellIds: Array.from(c.preparedSpecialSpellIds.entries()),
+        ...pick(c, Character.serializableProps),
+      },
+      undefined,
+      format
+    );
   }
 
-  static parse(s: string): Character {
+  static parse(s: string, newId?: string): Character {
     const json = JSON.parse(s);
 
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -829,6 +833,10 @@ export class Character {
 
     json.preparedSpellIds = new Map(json.preparedSpellIds);
     json.preparedSpecialSpellIds = new Map(json.preparedSpecialSpellIds);
+
+    if (newId) {
+      json.id = newId;
+    }
 
     return new Character(json.name, json);
   }

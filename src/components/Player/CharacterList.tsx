@@ -1,5 +1,5 @@
 import { Observer } from 'mobx-react-lite';
-import { FaRegTrashAlt } from 'react-icons/fa';
+import { FaFileExport, FaRegTrashAlt } from 'react-icons/fa';
 import { Link } from 'react-router-dom';
 
 import {
@@ -9,6 +9,7 @@ import {
   HStack,
   Heading,
   Icon,
+  IconButton,
   LinkBox,
   LinkOverlay,
   Spacer,
@@ -16,7 +17,10 @@ import {
 } from '@chakra-ui/react';
 
 import { useStore } from '../../store';
+import { Character } from '../../store/character';
+import { download, stringToBlobUrl } from '../../utils/misc';
 import { Bread, useBreadcrumb } from './Bread';
+import { ImportCharacter } from './ImportCharacter';
 
 export function CharacterList(): JSX.Element {
   const store = useStore();
@@ -29,9 +33,12 @@ export function CharacterList(): JSX.Element {
 
       <Divider my="4" />
 
-      <Button as={Link} to="/player/create" colorScheme="teal" mb="4">
-        新建角色
-      </Button>
+      <HStack mb="4">
+        <Button as={Link} to="/player/create" colorScheme="teal">
+          新建角色
+        </Button>
+        <ImportCharacter />
+      </HStack>
 
       <Observer>
         {() => (
@@ -64,17 +71,25 @@ export function CharacterList(): JSX.Element {
                     </LinkOverlay>
                   </LinkBox>
                   <Spacer />
-                  <Icon
-                    as={FaRegTrashAlt}
-                    color="red.500"
-                    _hover={{ color: 'red.600' }}
-                    width="4"
-                    height="4"
-                    cursor="pointer"
+                  <IconButton
+                    aria-label="删除角色"
+                    size="sm"
+                    colorScheme="red"
+                    icon={<Icon as={FaRegTrashAlt} />}
                     onClick={() => {
                       if (confirm('角色删除无法恢复, 确认删除吗?')) {
                         store.removeCharacter(c);
                       }
+                    }}
+                  />
+                  <IconButton
+                    aria-label="备份角色"
+                    size="sm"
+                    icon={<Icon as={FaFileExport} />}
+                    onClick={() => {
+                      const exported = Character.stringify(c, 4);
+
+                      download(stringToBlobUrl(exported), `${c.name}.json`);
                     }}
                   />
                 </HStack>
