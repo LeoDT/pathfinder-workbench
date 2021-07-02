@@ -1,5 +1,5 @@
-import { Parser as FormulaParser } from 'hot-formula-parser';
-import { compact, intersection, isEmpty, last, pick, range, uniq } from 'lodash-es';
+import { ERROR_VALUE as FORMULA_ERROR_VALUE, Parser as FormulaParser } from 'hot-formula-parser';
+import { compact, intersection, isEmpty, isEqual, last, pick, range, uniq } from 'lodash-es';
 import { IObservableArray, action, autorun, computed, makeObservable, observable } from 'mobx';
 import shortid from 'shortid';
 
@@ -20,6 +20,7 @@ import {
   RacialTrait,
   Skill,
   SkillSystem,
+  SpecialFeat,
 } from '../../types/core';
 import { ManualEffect } from '../../types/effectType';
 import { SpellManageAction } from '../../types/misc';
@@ -32,7 +33,11 @@ import {
 } from '../../utils/ability';
 import { markUnstackableBonus } from '../../utils/bonus';
 import { getClassLevel } from '../../utils/class';
-import { validateGainBloodlineEffectInput, validateGainSkillEffectInput } from '../../utils/effect';
+import {
+  validateGainBloodlineEffectInput,
+  validateGainSkillEffectInput,
+  validateSelectFromSubsEffectInput,
+} from '../../utils/effect';
 import { coreToConsolidated } from '../../utils/skill';
 import { collections } from '../collection';
 import { CharacterAttack } from './attack';
@@ -664,6 +669,30 @@ export class Character {
     return null;
   }
 
+  hasFeatSubs(feat: SpecialFeat, subIds: string[]): boolean {
+    let realFeat = feat;
+    if (realFeat._type === 'classFeat') {
+      realFeat = (realFeat as ClassFeat).origin ?? realFeat;
+    }
+
+    const es = this.effect.getSelectFromSubsEffects();
+    const hit = es.filter(({ source }) => {
+      if (source._type === 'classFeat') {
+        return source.origin ? source.origin.id === realFeat.id : source.id === realFeat.id;
+      }
+
+      return source.id === realFeat.id;
+    });
+
+    return Boolean(
+      hit.find(({ input }) => {
+        const realInput = validateSelectFromSubsEffectInput(input);
+
+        return isEqual(realInput, subIds);
+      })
+    );
+  }
+
   initFormulaParser(): void {
     const p = this.formulaParser;
 
@@ -679,6 +708,7 @@ export class Character {
 
         p.setVariable('carryLoad', this.status.carryLoad);
         p.setVariable('armor', this.equipment.armor?.id || 'none');
+        p.setVariable('armorCategory', this.equipment.armor?.type.meta.category || 'none');
         p.setVariable('buckler', this.equipment.buckler?.id || 'none');
         p.setVariable('mainHand', this.equipment.mainHand?.type.id || 'none');
         p.setVariable(
@@ -701,6 +731,41 @@ export class Character {
           AbilityType.cha,
         ].forEach((s) => {
           p.setVariable(s, this.abilityModifier[s]);
+        });
+
+        p.setFunction('HAS_CLASSFEAT', (params) => {
+          const [classId, classFeatId] = params;
+          const subIds = params.slice(2);
+
+          if (typeof classId !== 'string' || typeof classFeatId !== 'string') {
+            throw Error(FORMULA_ERROR_VALUE);
+          }
+
+          if (subIds.length && subIds.some((id) => typeof id !== 'string')) {
+            throw Error(FORMULA_ERROR_VALUE);
+          }
+
+          const clas = this.classes.find((c) => c.id === classId);
+
+          if (!clas) return false;
+
+          const classFeats = this.allGainedClassFeats.get(clas) || [];
+
+          if (subIds.length) {
+            const feat = classFeats.find(
+              (f) => f.origin?.id === classFeatId || f.id === classFeatId
+            );
+
+            if (!feat) return false;
+
+            return this.hasFeatSubs(feat.origin ?? feat, subIds as string[]);
+          } else {
+            return Boolean(
+              classFeats.find((f) =>
+                f.origin ? f.origin.id === classFeatId : f.id === classFeatId
+              )
+            );
+          }
         });
 
         this.formulaParserReady = true;

@@ -92,6 +92,7 @@ export function EffectInput({
       return (
         <SubsSelector
           parseFormulaBoolean={(s: string) => createOrUpgrade.character.parseFormulaBoolean(s)}
+          hasSubs={(s: string[]) => createOrUpgrade.character.hasFeatSubs(entity as SpecialFeat, s)}
           value={value}
           onChange={onChange}
           feat={entity as SpecialFeat}

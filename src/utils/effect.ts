@@ -55,5 +55,5 @@ export function validateGainBloodlineEffectInput(i: unknown): EffectGainBloodlin
 }
 
 export function validateSelectFromSubsEffectInput(i: unknown): EffectSelectFromSubsInput {
-  return i as EffectSelectFromSubsInput;
+  return i ? (i as EffectSelectFromSubsInput) : [];
 }

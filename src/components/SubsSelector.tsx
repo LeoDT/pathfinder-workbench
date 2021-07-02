@@ -24,6 +24,7 @@ interface Props {
   value: string[];
   onChange: (v: string[]) => void;
   parseFormulaBoolean?: (s: string) => boolean;
+  hasSubs: (s: string[]) => boolean;
   quickViewer?: boolean;
 }
 
@@ -32,6 +33,7 @@ export function SubsSelector({
   value,
   onChange,
   parseFormulaBoolean,
+  hasSubs,
   quickViewer = true,
 }: Props): JSX.Element {
   const renderSubs = useCallback(
@@ -58,6 +60,8 @@ export function SubsSelector({
                       .concat(item.id)
                   : [item.id];
               const picked = isEqual(itemValue, value);
+
+              if (hasSubs(itemValue)) return null;
 
               return (
                 <Fragment key={id}>
