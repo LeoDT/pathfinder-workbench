@@ -4,3 +4,8 @@ export type SelectOptions<T = string> = Array<{
   disabled?: boolean;
   key?: string | number;
 }>;
+
+export interface SpellManageAction {
+  action: 'add' | 'remove';
+  spellId: string;
+}

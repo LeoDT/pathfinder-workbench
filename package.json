@@ -18,7 +18,7 @@
     "@types/react-dom": "^17.0.5",
     "@types/react-router-dom": "^5.1.7",
     "@types/shortid": "0.0.29",
-    "ajv": "^6.12.6",
+    "ajv": "^8.6.0",
     "env-cmd": "^10.1.0",
     "framer-motion": "^4.1.17",
     "fuse.js": "^6.4.6",
@@ -57,7 +57,7 @@
     "build:staging": "env-cmd -f .env.staging npm run build",
     "test": "react-scripts test",
     "eject": "react-scripts eject",
-    "generateJsonSchema": "typescript-json-schema --required \"src/types/*.ts\" \"*\" | sed 's|#/definitions/||' > schema.json"
+    "generateJsonSchema": "ts-json-schema-generator --path 'src/types/*.ts' --type '*' > schema.json"
   },
   "eslintConfig": {
     "extends": [
@@ -84,6 +84,6 @@
     "eslint-plugin-react": "^7.23.2",
     "gh-pages": "^3.1.0",
     "node-sass": "^5.0.0",
-    "typescript-json-schema": "^0.50.1"
+    "ts-json-schema-generator": "^0.93.0"
   }
 }

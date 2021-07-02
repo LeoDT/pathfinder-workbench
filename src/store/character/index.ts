@@ -22,6 +22,7 @@ import {
   SkillSystem,
 } from '../../types/core';
 import { ManualEffect } from '../../types/effectType';
+import { SpellManageAction } from '../../types/misc';
 import {
   BASE_ABILITY,
   abilityTranslates,
@@ -38,7 +39,7 @@ import { CharacterAttack } from './attack';
 import { CharacterEffect } from './effect';
 import { CharacterEquip } from './equip';
 import { CharacterProficiency } from './proficiency';
-import { CharacterSpellbook, SpellManageAction } from './spellbook';
+import { CharacterSpellbook } from './spellbook';
 import { CharacterStatus } from './status';
 import { CharacterTracker } from './tracker';
 
@@ -195,7 +196,7 @@ export class Character {
 
     this.preparedSpellIds = preparedSpellIds || new Map();
     this.preparedSpecialSpellIds = preparedSpecialSpellIds || new Map();
-    this.spellManageHistory = spellManageHistory || [];
+    this.spellManageHistory = observable.array(spellManageHistory || [], { deep: false });
 
     this.formulaParserReady = false;
 

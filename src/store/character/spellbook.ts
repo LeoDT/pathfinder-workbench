@@ -9,11 +9,6 @@ import { spellsPerDayByAbilityModifier } from '../../utils/spell';
 import { collections } from '../collection';
 import { Character } from '.';
 
-export interface SpellManageAction {
-  action: 'add' | 'remove';
-  spellId: string;
-}
-
 export class CharacterSpellbook {
   character: Character;
   class: Class;
