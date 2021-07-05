@@ -7,6 +7,7 @@ import {
   ManualEffect,
 } from '../types/effectType';
 import { featTypeTranslates } from './feat';
+import { validate } from './schemaValidator';
 
 export function translateGainFeatEffectArgs(e: EffectGainFeatArgs): string {
   if (e.forceFeat) {
@@ -25,8 +26,15 @@ export function validateManualEffects(e: unknown): ManualEffect[] | null {
     return null;
   }
 
-  return e as ManualEffect[];
+  if (Array.isArray(e)) {
+    const valid = e.every((i) => validate('ManualEffect', i)[0]);
+
+    return valid ? (e as ManualEffect[]) : null;
+  }
+
+  return null;
 }
+
 export function makeManualEffectSource(name: string, id?: string): ClassFeat {
   return {
     _type: 'classFeat',

@@ -57,7 +57,7 @@
     "build:staging": "env-cmd -f .env.staging npm run build",
     "test": "react-scripts test",
     "eject": "react-scripts eject",
-    "generateJsonSchema": "ts-json-schema-generator --path 'src/types/*.ts' --type '*' > schema.json"
+    "generateJsonSchema": "ts-json-schema-generator --path 'src/types/*.ts' --type '*' > src/schema.json"
   },
   "eslintConfig": {
     "extends": [

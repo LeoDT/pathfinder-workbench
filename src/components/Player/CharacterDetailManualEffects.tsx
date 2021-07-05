@@ -108,3 +108,25 @@ export function CharacterDetailManualEffectsModal({ isOpen, onClose }: ModalProp
     </Modal>
   );
 }
+
+`
+- name: 黑骑士
+  effects:
+    - type: abilityBonus
+      args:
+        abilityType: dex
+        bonus:
+          amount: 2
+          type: untyped
+- name: 特级厨师
+  effects:
+    - type: gainSkill
+      args:
+        skillId: survival
+        bonus:
+          amount: 1
+          type: untyped
+    - type: gainClassSkill
+      args:
+        skillId: survival
+`;

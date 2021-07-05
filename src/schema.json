@@ -1,0 +1,3065 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "definitions": {
+    "Abilities": {
+      "additionalProperties": false,
+      "properties": {
+        "cha": {
+          "type": "number"
+        },
+        "con": {
+          "type": "number"
+        },
+        "dex": {
+          "type": "number"
+        },
+        "int": {
+          "type": "number"
+        },
+        "str": {
+          "type": "number"
+        },
+        "wis": {
+          "type": "number"
+        }
+      },
+      "required": ["str", "dex", "con", "int", "wis", "cha"],
+      "type": "object"
+    },
+    "AbilityType": {
+      "enum": ["str", "dex", "con", "int", "wis", "cha"],
+      "type": "string"
+    },
+    "Alignment": {
+      "enum": ["LG", "NG", "CG", "LN", "N", "CN", "LE", "NE", "CE"],
+      "type": "string"
+    },
+    "ArcaneSchool": {
+      "anyOf": [
+        {
+          "$ref": "#/definitions/ArcaneSchoolStandard"
+        },
+        {
+          "$ref": "#/definitions/ArcaneSchoolElemental"
+        }
+      ]
+    },
+    "ArcaneSchoolElemental": {
+      "additionalProperties": false,
+      "properties": {
+        "_type": {
+          "const": "arcaneSchool",
+          "type": "string"
+        },
+        "conflict": {
+          "items": {
+            "type": "string"
+          },
+          "type": "array"
+        },
+        "deprecated": {
+          "type": "boolean"
+        },
+        "desc": {
+          "type": "string"
+        },
+        "id": {
+          "type": "string"
+        },
+        "name": {
+          "type": "string"
+        },
+        "powers": {
+          "items": {
+            "$ref": "#/definitions/ClassFeat"
+          },
+          "type": "array"
+        },
+        "type": {
+          "const": "elemental",
+          "type": "string"
+        }
+      },
+      "required": ["_type", "conflict", "desc", "id", "name", "powers", "type"],
+      "type": "object"
+    },
+    "ArcaneSchoolStandard": {
+      "additionalProperties": false,
+      "properties": {
+        "_type": {
+          "const": "arcaneSchool",
+          "type": "string"
+        },
+        "deprecated": {
+          "type": "boolean"
+        },
+        "desc": {
+          "type": "string"
+        },
+        "focused": {
+          "items": {
+            "$ref": "#/definitions/ArcaneSchoolStandardFocused"
+          },
+          "type": "array"
+        },
+        "id": {
+          "type": "string"
+        },
+        "name": {
+          "type": "string"
+        },
+        "noConflict": {
+          "type": "boolean"
+        },
+        "noSchoolSlot": {
+          "type": "boolean"
+        },
+        "powers": {
+          "items": {
+            "$ref": "#/definitions/ClassFeat"
+          },
+          "type": "array"
+        },
+        "type": {
+          "const": "standard",
+          "type": "string"
+        }
+      },
+      "required": ["_type", "desc", "focused", "id", "name", "powers", "type"],
+      "type": "object"
+    },
+    "ArcaneSchoolStandardFocused": {
+      "additionalProperties": false,
+      "properties": {
+        "_type": {
+          "const": "arcaneSchool",
+          "type": "string"
+        },
+        "deprecated": {
+          "type": "boolean"
+        },
+        "desc": {
+          "type": "string"
+        },
+        "focused": {
+          "items": {
+            "$ref": "#/definitions/ArcaneSchoolStandardFocused"
+          },
+          "type": "array"
+        },
+        "id": {
+          "type": "string"
+        },
+        "name": {
+          "type": "string"
+        },
+        "noConflict": {
+          "type": "boolean"
+        },
+        "noSchoolSlot": {
+          "type": "boolean"
+        },
+        "powers": {
+          "items": {
+            "$ref": "#/definitions/ClassFeat"
+          },
+          "type": "array"
+        },
+        "replace": {
+          "items": {
+            "type": "string"
+          },
+          "type": "array"
+        },
+        "type": {
+          "const": "standard",
+          "type": "string"
+        }
+      },
+      "required": ["_type", "desc", "focused", "id", "name", "powers", "replace", "type"],
+      "type": "object"
+    },
+    "Archetype": {
+      "additionalProperties": false,
+      "properties": {
+        "_type": {
+          "const": "archetype",
+          "type": "string"
+        },
+        "book": {
+          "type": "string"
+        },
+        "class": {
+          "type": "string"
+        },
+        "deprecated": {
+          "type": "boolean"
+        },
+        "desc": {
+          "additionalProperties": {
+            "type": "string"
+          },
+          "type": "object"
+        },
+        "feats": {
+          "items": {
+            "$ref": "#/definitions/ClassFeat"
+          },
+          "type": "array"
+        },
+        "id": {
+          "type": "string"
+        },
+        "name": {
+          "type": "string"
+        }
+      },
+      "required": ["_type", "book", "class", "desc", "feats", "id", "name"],
+      "type": "object"
+    },
+    "Armor": {
+      "additionalProperties": false,
+      "properties": {
+        "_type": {
+          "const": "common",
+          "type": "string"
+        },
+        "deprecated": {
+          "type": "boolean"
+        },
+        "enchantment": {
+          "type": "number"
+        },
+        "equipmentType": {
+          "const": "armor",
+          "type": "string"
+        },
+        "id": {
+          "type": "string"
+        },
+        "masterwork": {
+          "type": "boolean"
+        },
+        "name": {
+          "type": "string"
+        },
+        "size": {
+          "$ref": "#/definitions/ArmorSize"
+        },
+        "spiked": {
+          "type": "boolean"
+        },
+        "type": {
+          "$ref": "#/definitions/ArmorType"
+        }
+      },
+      "required": [
+        "_type",
+        "enchantment",
+        "equipmentType",
+        "id",
+        "masterwork",
+        "name",
+        "size",
+        "spiked",
+        "type"
+      ],
+      "type": "object"
+    },
+    "ArmorCategory": {
+      "enum": ["light", "medium", "heavy", "shield"],
+      "type": "string"
+    },
+    "ArmorSize": {
+      "enum": ["tiny", "small", "medium", "large", "huge"],
+      "type": "string"
+    },
+    "ArmorType": {
+      "additionalProperties": false,
+      "properties": {
+        "_type": {
+          "const": "armorType",
+          "type": "string"
+        },
+        "deprecated": {
+          "type": "boolean"
+        },
+        "desc": {
+          "type": "string"
+        },
+        "id": {
+          "type": "string"
+        },
+        "meta": {
+          "$ref": "#/definitions/ArmorTypeMeata"
+        },
+        "name": {
+          "type": "string"
+        }
+      },
+      "required": ["_type", "id", "meta", "name"],
+      "type": "object"
+    },
+    "ArmorTypeMeata": {
+      "additionalProperties": false,
+      "properties": {
+        "ac": {
+          "type": "number"
+        },
+        "arcaneFailureChance": {
+          "type": "string"
+        },
+        "buckler": {
+          "type": "boolean"
+        },
+        "category": {
+          "$ref": "#/definitions/ArmorCategory"
+        },
+        "cost": {
+          "type": "string"
+        },
+        "maxDex": {
+          "type": "number"
+        },
+        "penalty": {
+          "type": "number"
+        },
+        "speed20": {
+          "type": "number"
+        },
+        "speed30": {
+          "type": "number"
+        },
+        "weight": {
+          "type": "number"
+        }
+      },
+      "required": ["category", "cost", "ac", "penalty", "arcaneFailureChance", "weight"],
+      "type": "object"
+    },
+    "BaseEffect<enum-425666241-1014-1068-425666241-189-1216-425666241-0-7998,EffectTwoHandDamageMultiplierArgs>": {
+      "additionalProperties": false,
+      "properties": {
+        "args": {
+          "$ref": "#/definitions/EffectTwoHandDamageMultiplierArgs"
+        },
+        "growArgs": {
+          "items": {
+            "additionalProperties": false,
+            "properties": {
+              "args": {
+                "$ref": "#/definitions/EffectTwoHandDamageMultiplierArgs"
+              },
+              "level": {
+                "type": "number"
+              }
+            },
+            "required": ["level", "args"],
+            "type": "object"
+          },
+          "type": "array"
+        },
+        "origin": {
+          "$ref": "#/definitions/Effect"
+        },
+        "type": {
+          "const": "twoHandDamageMultiplier",
+          "type": "string"
+        },
+        "when": {
+          "type": "string"
+        }
+      },
+      "required": ["type", "args"],
+      "type": "object"
+    },
+    "BaseEffect<enum-425666241-1069-1097-425666241-189-1216-425666241-0-7998,EffectAddTrackerArgs>": {
+      "additionalProperties": false,
+      "properties": {
+        "args": {
+          "$ref": "#/definitions/EffectAddTrackerArgs"
+        },
+        "growArgs": {
+          "items": {
+            "additionalProperties": false,
+            "properties": {
+              "args": {
+                "$ref": "#/definitions/EffectAddTrackerArgs"
+              },
+              "level": {
+                "type": "number"
+              }
+            },
+            "required": ["level", "args"],
+            "type": "object"
+          },
+          "type": "array"
+        },
+        "origin": {
+          "$ref": "#/definitions/Effect"
+        },
+        "type": {
+          "const": "addTracker",
+          "type": "string"
+        },
+        "when": {
+          "type": "string"
+        }
+      },
+      "required": ["type", "args"],
+      "type": "object"
+    },
+    "BaseEffect<enum-425666241-1098-1139-425666241-189-1216-425666241-0-7998,EffectGainArcaneSchoolArgs>": {
+      "additionalProperties": false,
+      "properties": {
+        "args": {
+          "$ref": "#/definitions/EffectGainArcaneSchoolArgs"
+        },
+        "growArgs": {
+          "items": {
+            "additionalProperties": false,
+            "properties": {
+              "args": {
+                "$ref": "#/definitions/EffectGainArcaneSchoolArgs"
+              },
+              "level": {
+                "type": "number"
+              }
+            },
+            "required": ["level", "args"],
+            "type": "object"
+          },
+          "type": "array"
+        },
+        "origin": {
+          "$ref": "#/definitions/Effect"
+        },
+        "type": {
+          "const": "gainArcaneSchool",
+          "type": "string"
+        },
+        "when": {
+          "type": "string"
+        }
+      },
+      "required": ["type", "args"],
+      "type": "object"
+    },
+    "BaseEffect<enum-425666241-1140-1175-425666241-189-1216-425666241-0-7998,EffectGainBloodlineArgs>": {
+      "additionalProperties": false,
+      "properties": {
+        "args": {
+          "$ref": "#/definitions/EffectGainBloodlineArgs"
+        },
+        "growArgs": {
+          "items": {
+            "additionalProperties": false,
+            "properties": {
+              "args": {
+                "$ref": "#/definitions/EffectGainBloodlineArgs"
+              },
+              "level": {
+                "type": "number"
+              }
+            },
+            "required": ["level", "args"],
+            "type": "object"
+          },
+          "type": "array"
+        },
+        "origin": {
+          "$ref": "#/definitions/Effect"
+        },
+        "type": {
+          "const": "gainBloodline",
+          "type": "string"
+        },
+        "when": {
+          "type": "string"
+        }
+      },
+      "required": ["type", "args"],
+      "type": "object"
+    },
+    "BaseEffect<enum-425666241-1176-1213-425666241-189-1216-425666241-0-7998,EffectSelectFromSubsArgs>": {
+      "additionalProperties": false,
+      "properties": {
+        "args": {
+          "$ref": "#/definitions/EffectSelectFromSubsArgs"
+        },
+        "growArgs": {
+          "items": {
+            "additionalProperties": false,
+            "properties": {
+              "args": {
+                "$ref": "#/definitions/EffectSelectFromSubsArgs"
+              },
+              "level": {
+                "type": "number"
+              }
+            },
+            "required": ["level", "args"],
+            "type": "object"
+          },
+          "type": "array"
+        },
+        "origin": {
+          "$ref": "#/definitions/Effect"
+        },
+        "type": {
+          "const": "selectFromSubs",
+          "type": "string"
+        },
+        "when": {
+          "type": "string"
+        }
+      },
+      "required": ["type", "args"],
+      "type": "object"
+    },
+    "BaseEffect<enum-425666241-215-239-425666241-189-1216-425666241-0-7998,(EffectGainFeatArgs|null)>": {
+      "additionalProperties": false,
+      "properties": {
+        "args": {
+          "anyOf": [
+            {
+              "$ref": "#/definitions/EffectGainFeatArgs"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "growArgs": {
+          "items": {
+            "additionalProperties": false,
+            "properties": {
+              "args": {
+                "anyOf": [
+                  {
+                    "$ref": "#/definitions/EffectGainFeatArgs"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ]
+              },
+              "level": {
+                "type": "number"
+              }
+            },
+            "required": ["level", "args"],
+            "type": "object"
+          },
+          "type": "array"
+        },
+        "origin": {
+          "$ref": "#/definitions/Effect"
+        },
+        "type": {
+          "const": "gainFeat",
+          "type": "string"
+        },
+        "when": {
+          "type": "string"
+        }
+      },
+      "required": ["type", "args"],
+      "type": "object"
+    },
+    "BaseEffect<enum-425666241-240-273-425666241-189-1216-425666241-0-7998,EffectAbilityBonusArgs>": {
+      "additionalProperties": false,
+      "properties": {
+        "args": {
+          "$ref": "#/definitions/EffectAbilityBonusArgs"
+        },
+        "growArgs": {
+          "items": {
+            "additionalProperties": false,
+            "properties": {
+              "args": {
+                "$ref": "#/definitions/EffectAbilityBonusArgs"
+              },
+              "level": {
+                "type": "number"
+              }
+            },
+            "required": ["level", "args"],
+            "type": "object"
+          },
+          "type": "array"
+        },
+        "origin": {
+          "$ref": "#/definitions/Effect"
+        },
+        "type": {
+          "const": "abilityBonus",
+          "type": "string"
+        },
+        "when": {
+          "type": "string"
+        }
+      },
+      "required": ["type", "args"],
+      "type": "object"
+    },
+    "BaseEffect<enum-425666241-274-318-425666241-189-1216-425666241-0-7998,EffectRacialAbilityBonusArgs>": {
+      "additionalProperties": false,
+      "properties": {
+        "args": {
+          "$ref": "#/definitions/EffectRacialAbilityBonusArgs"
+        },
+        "growArgs": {
+          "items": {
+            "additionalProperties": false,
+            "properties": {
+              "args": {
+                "$ref": "#/definitions/EffectRacialAbilityBonusArgs"
+              },
+              "level": {
+                "type": "number"
+              }
+            },
+            "required": ["level", "args"],
+            "type": "object"
+          },
+          "type": "array"
+        },
+        "origin": {
+          "$ref": "#/definitions/Effect"
+        },
+        "type": {
+          "const": "racialAbilityBonus",
+          "type": "string"
+        },
+        "when": {
+          "type": "string"
+        }
+      },
+      "required": ["type", "args"],
+      "type": "object"
+    },
+    "BaseEffect<enum-425666241-319-360-425666241-189-1216-425666241-0-7998,EffectGainSpellCastingArgs>": {
+      "additionalProperties": false,
+      "properties": {
+        "args": {
+          "$ref": "#/definitions/EffectGainSpellCastingArgs"
+        },
+        "growArgs": {
+          "items": {
+            "additionalProperties": false,
+            "properties": {
+              "args": {
+                "$ref": "#/definitions/EffectGainSpellCastingArgs"
+              },
+              "level": {
+                "type": "number"
+              }
+            },
+            "required": ["level", "args"],
+            "type": "object"
+          },
+          "type": "array"
+        },
+        "origin": {
+          "$ref": "#/definitions/Effect"
+        },
+        "type": {
+          "const": "gainSpellCasting",
+          "type": "string"
+        },
+        "when": {
+          "type": "string"
+        }
+      },
+      "required": ["type", "args"],
+      "type": "object"
+    },
+    "BaseEffect<enum-425666241-361-413-425666241-189-1216-425666241-0-7998,EffectGainFavoredClassAmountArgs>": {
+      "additionalProperties": false,
+      "properties": {
+        "args": {
+          "$ref": "#/definitions/EffectGainFavoredClassAmountArgs"
+        },
+        "growArgs": {
+          "items": {
+            "additionalProperties": false,
+            "properties": {
+              "args": {
+                "$ref": "#/definitions/EffectGainFavoredClassAmountArgs"
+              },
+              "level": {
+                "type": "number"
+              }
+            },
+            "required": ["level", "args"],
+            "type": "object"
+          },
+          "type": "array"
+        },
+        "origin": {
+          "$ref": "#/definitions/Effect"
+        },
+        "type": {
+          "const": "gainFavoredClassAmount",
+          "type": "string"
+        },
+        "when": {
+          "type": "string"
+        }
+      },
+      "required": ["type", "args"],
+      "type": "object"
+    },
+    "BaseEffect<enum-425666241-414-452-425666241-189-1216-425666241-0-7998,EffectGainProficiencyArgs>": {
+      "additionalProperties": false,
+      "properties": {
+        "args": {
+          "$ref": "#/definitions/EffectGainProficiencyArgs"
+        },
+        "growArgs": {
+          "items": {
+            "additionalProperties": false,
+            "properties": {
+              "args": {
+                "$ref": "#/definitions/EffectGainProficiencyArgs"
+              },
+              "level": {
+                "type": "number"
+              }
+            },
+            "required": ["level", "args"],
+            "type": "object"
+          },
+          "type": "array"
+        },
+        "origin": {
+          "$ref": "#/definitions/Effect"
+        },
+        "type": {
+          "const": "gainProficiency",
+          "type": "string"
+        },
+        "when": {
+          "type": "string"
+        }
+      },
+      "required": ["type", "args"],
+      "type": "object"
+    },
+    "BaseEffect<enum-425666241-453-519-425666241-189-1216-425666241-0-7998,EffectGainSelectedWeaponProficiencyArgs>": {
+      "additionalProperties": false,
+      "properties": {
+        "args": {
+          "$ref": "#/definitions/EffectGainSelectedWeaponProficiencyArgs"
+        },
+        "growArgs": {
+          "items": {
+            "additionalProperties": false,
+            "properties": {
+              "args": {
+                "$ref": "#/definitions/EffectGainSelectedWeaponProficiencyArgs"
+              },
+              "level": {
+                "type": "number"
+              }
+            },
+            "required": ["level", "args"],
+            "type": "object"
+          },
+          "type": "array"
+        },
+        "origin": {
+          "$ref": "#/definitions/Effect"
+        },
+        "type": {
+          "const": "gainSelectedWeaponProficiency",
+          "type": "string"
+        },
+        "when": {
+          "type": "string"
+        }
+      },
+      "required": ["type", "args"],
+      "type": "object"
+    },
+    "BaseEffect<enum-425666241-520-557-425666241-189-1216-425666241-0-7998,EffectGainClassSkillArgs>": {
+      "additionalProperties": false,
+      "properties": {
+        "args": {
+          "$ref": "#/definitions/EffectGainClassSkillArgs"
+        },
+        "growArgs": {
+          "items": {
+            "additionalProperties": false,
+            "properties": {
+              "args": {
+                "$ref": "#/definitions/EffectGainClassSkillArgs"
+              },
+              "level": {
+                "type": "number"
+              }
+            },
+            "required": ["level", "args"],
+            "type": "object"
+          },
+          "type": "array"
+        },
+        "origin": {
+          "$ref": "#/definitions/Effect"
+        },
+        "type": {
+          "const": "gainClassSkill",
+          "type": "string"
+        },
+        "when": {
+          "type": "string"
+        }
+      },
+      "required": ["type", "args"],
+      "type": "object"
+    },
+    "BaseEffect<enum-425666241-558-584-425666241-189-1216-425666241-0-7998,EffectGainSkillArgs>": {
+      "additionalProperties": false,
+      "properties": {
+        "args": {
+          "$ref": "#/definitions/EffectGainSkillArgs"
+        },
+        "growArgs": {
+          "items": {
+            "additionalProperties": false,
+            "properties": {
+              "args": {
+                "$ref": "#/definitions/EffectGainSkillArgs"
+              },
+              "level": {
+                "type": "number"
+              }
+            },
+            "required": ["level", "args"],
+            "type": "object"
+          },
+          "type": "array"
+        },
+        "origin": {
+          "$ref": "#/definitions/Effect"
+        },
+        "type": {
+          "const": "gainSkill",
+          "type": "string"
+        },
+        "when": {
+          "type": "string"
+        }
+      },
+      "required": ["type", "args"],
+      "type": "object"
+    },
+    "BaseEffect<enum-425666241-585-622-425666241-189-1216-425666241-0-7998,EffectGainInitiativeArgs>": {
+      "additionalProperties": false,
+      "properties": {
+        "args": {
+          "$ref": "#/definitions/EffectGainInitiativeArgs"
+        },
+        "growArgs": {
+          "items": {
+            "additionalProperties": false,
+            "properties": {
+              "args": {
+                "$ref": "#/definitions/EffectGainInitiativeArgs"
+              },
+              "level": {
+                "type": "number"
+              }
+            },
+            "required": ["level", "args"],
+            "type": "object"
+          },
+          "type": "array"
+        },
+        "origin": {
+          "$ref": "#/definitions/Effect"
+        },
+        "type": {
+          "const": "gainInitiative",
+          "type": "string"
+        },
+        "when": {
+          "type": "string"
+        }
+      },
+      "required": ["type", "args"],
+      "type": "object"
+    },
+    "BaseEffect<enum-425666241-623-643-425666241-189-1216-425666241-0-7998,EffectGainACArgs>": {
+      "additionalProperties": false,
+      "properties": {
+        "args": {
+          "$ref": "#/definitions/EffectGainACArgs"
+        },
+        "growArgs": {
+          "items": {
+            "additionalProperties": false,
+            "properties": {
+              "args": {
+                "$ref": "#/definitions/EffectGainACArgs"
+              },
+              "level": {
+                "type": "number"
+              }
+            },
+            "required": ["level", "args"],
+            "type": "object"
+          },
+          "type": "array"
+        },
+        "origin": {
+          "$ref": "#/definitions/Effect"
+        },
+        "type": {
+          "const": "gainAC",
+          "type": "string"
+        },
+        "when": {
+          "type": "string"
+        }
+      },
+      "required": ["type", "args"],
+      "type": "object"
+    },
+    "BaseEffect<enum-425666241-644-666-425666241-189-1216-425666241-0-7998,EffectGainCMDArgs>": {
+      "additionalProperties": false,
+      "properties": {
+        "args": {
+          "$ref": "#/definitions/EffectGainCMDArgs"
+        },
+        "growArgs": {
+          "items": {
+            "additionalProperties": false,
+            "properties": {
+              "args": {
+                "$ref": "#/definitions/EffectGainCMDArgs"
+              },
+              "level": {
+                "type": "number"
+              }
+            },
+            "required": ["level", "args"],
+            "type": "object"
+          },
+          "type": "array"
+        },
+        "origin": {
+          "$ref": "#/definitions/Effect"
+        },
+        "type": {
+          "const": "gainCMD",
+          "type": "string"
+        },
+        "when": {
+          "type": "string"
+        }
+      },
+      "required": ["type", "args"],
+      "type": "object"
+    },
+    "BaseEffect<enum-425666241-667-691-425666241-189-1216-425666241-0-7998,EffectGainSaveArgs>": {
+      "additionalProperties": false,
+      "properties": {
+        "args": {
+          "$ref": "#/definitions/EffectGainSaveArgs"
+        },
+        "growArgs": {
+          "items": {
+            "additionalProperties": false,
+            "properties": {
+              "args": {
+                "$ref": "#/definitions/EffectGainSaveArgs"
+              },
+              "level": {
+                "type": "number"
+              }
+            },
+            "required": ["level", "args"],
+            "type": "object"
+          },
+          "type": "array"
+        },
+        "origin": {
+          "$ref": "#/definitions/Effect"
+        },
+        "type": {
+          "const": "gainSave",
+          "type": "string"
+        },
+        "when": {
+          "type": "string"
+        }
+      },
+      "required": ["type", "args"],
+      "type": "object"
+    },
+    "BaseEffect<enum-425666241-692-712-425666241-189-1216-425666241-0-7998,EffectGainHPArgs>": {
+      "additionalProperties": false,
+      "properties": {
+        "args": {
+          "$ref": "#/definitions/EffectGainHPArgs"
+        },
+        "growArgs": {
+          "items": {
+            "additionalProperties": false,
+            "properties": {
+              "args": {
+                "$ref": "#/definitions/EffectGainHPArgs"
+              },
+              "level": {
+                "type": "number"
+              }
+            },
+            "required": ["level", "args"],
+            "type": "object"
+          },
+          "type": "array"
+        },
+        "origin": {
+          "$ref": "#/definitions/Effect"
+        },
+        "type": {
+          "const": "gainHP",
+          "type": "string"
+        },
+        "when": {
+          "type": "string"
+        }
+      },
+      "required": ["type", "args"],
+      "type": "object"
+    },
+    "BaseEffect<enum-425666241-713-763-425666241-189-1216-425666241-0-7998,EffectGainTwoWeaponFightingArgs>": {
+      "additionalProperties": false,
+      "properties": {
+        "args": {
+          "$ref": "#/definitions/EffectGainTwoWeaponFightingArgs"
+        },
+        "growArgs": {
+          "items": {
+            "additionalProperties": false,
+            "properties": {
+              "args": {
+                "$ref": "#/definitions/EffectGainTwoWeaponFightingArgs"
+              },
+              "level": {
+                "type": "number"
+              }
+            },
+            "required": ["level", "args"],
+            "type": "object"
+          },
+          "type": "array"
+        },
+        "origin": {
+          "$ref": "#/definitions/Effect"
+        },
+        "type": {
+          "const": "gainTwoWeaponFighting",
+          "type": "string"
+        },
+        "when": {
+          "type": "string"
+        }
+      },
+      "required": ["type", "args"],
+      "type": "object"
+    },
+    "BaseEffect<enum-425666241-764-790-425666241-189-1216-425666241-0-7998,EffectGainSpeedArgs>": {
+      "additionalProperties": false,
+      "properties": {
+        "args": {
+          "$ref": "#/definitions/EffectGainSpeedArgs"
+        },
+        "growArgs": {
+          "items": {
+            "additionalProperties": false,
+            "properties": {
+              "args": {
+                "$ref": "#/definitions/EffectGainSpeedArgs"
+              },
+              "level": {
+                "type": "number"
+              }
+            },
+            "required": ["level", "args"],
+            "type": "object"
+          },
+          "type": "array"
+        },
+        "origin": {
+          "$ref": "#/definitions/Effect"
+        },
+        "type": {
+          "const": "gainSpeed",
+          "type": "string"
+        },
+        "when": {
+          "type": "string"
+        }
+      },
+      "required": ["type", "args"],
+      "type": "object"
+    },
+    "BaseEffect<enum-425666241-791-830-425666241-189-1216-425666241-0-7998,EffectClassFeatSourceArgs>": {
+      "additionalProperties": false,
+      "properties": {
+        "args": {
+          "$ref": "#/definitions/EffectClassFeatSourceArgs"
+        },
+        "growArgs": {
+          "items": {
+            "additionalProperties": false,
+            "properties": {
+              "args": {
+                "$ref": "#/definitions/EffectClassFeatSourceArgs"
+              },
+              "level": {
+                "type": "number"
+              }
+            },
+            "required": ["level", "args"],
+            "type": "object"
+          },
+          "type": "array"
+        },
+        "origin": {
+          "$ref": "#/definitions/Effect"
+        },
+        "type": {
+          "const": "classFeatSource",
+          "type": "string"
+        },
+        "when": {
+          "type": "string"
+        }
+      },
+      "required": ["type", "args"],
+      "type": "object"
+    },
+    "BaseEffect<enum-425666241-831-879-425666241-189-1216-425666241-0-7998,EffectClassFeatPlaceholderArgs>": {
+      "additionalProperties": false,
+      "properties": {
+        "args": {
+          "$ref": "#/definitions/EffectClassFeatPlaceholderArgs"
+        },
+        "growArgs": {
+          "items": {
+            "additionalProperties": false,
+            "properties": {
+              "args": {
+                "$ref": "#/definitions/EffectClassFeatPlaceholderArgs"
+              },
+              "level": {
+                "type": "number"
+              }
+            },
+            "required": ["level", "args"],
+            "type": "object"
+          },
+          "type": "array"
+        },
+        "origin": {
+          "$ref": "#/definitions/Effect"
+        },
+        "type": {
+          "const": "classFeatPlaceholder",
+          "type": "string"
+        },
+        "when": {
+          "type": "string"
+        }
+      },
+      "required": ["type", "args"],
+      "type": "object"
+    },
+    "BaseEffect<enum-425666241-880-929-425666241-189-1216-425666241-0-7998,EffectEnchantUnarmedStrikeArgs>": {
+      "additionalProperties": false,
+      "properties": {
+        "args": {
+          "$ref": "#/definitions/EffectEnchantUnarmedStrikeArgs"
+        },
+        "growArgs": {
+          "items": {
+            "additionalProperties": false,
+            "properties": {
+              "args": {
+                "$ref": "#/definitions/EffectEnchantUnarmedStrikeArgs"
+              },
+              "level": {
+                "type": "number"
+              }
+            },
+            "required": ["level", "args"],
+            "type": "object"
+          },
+          "type": "array"
+        },
+        "origin": {
+          "$ref": "#/definitions/Effect"
+        },
+        "type": {
+          "const": "enchantUnarmedStrike",
+          "type": "string"
+        },
+        "when": {
+          "type": "string"
+        }
+      },
+      "required": ["type", "args"],
+      "type": "object"
+    },
+    "BaseEffect<enum-425666241-930-968-425666241-189-1216-425666241-0-7998,EffectAddAttackOptionArgs>": {
+      "additionalProperties": false,
+      "properties": {
+        "args": {
+          "$ref": "#/definitions/EffectAddAttackOptionArgs"
+        },
+        "growArgs": {
+          "items": {
+            "additionalProperties": false,
+            "properties": {
+              "args": {
+                "$ref": "#/definitions/EffectAddAttackOptionArgs"
+              },
+              "level": {
+                "type": "number"
+              }
+            },
+            "required": ["level", "args"],
+            "type": "object"
+          },
+          "type": "array"
+        },
+        "origin": {
+          "$ref": "#/definitions/Effect"
+        },
+        "type": {
+          "const": "addAttackOption",
+          "type": "string"
+        },
+        "when": {
+          "type": "string"
+        }
+      },
+      "required": ["type", "args"],
+      "type": "object"
+    },
+    "BaseEffect<enum-425666241-969-1013-425666241-189-1216-425666241-0-7998,EffectMeleeAttackAbilityArgs>": {
+      "additionalProperties": false,
+      "properties": {
+        "args": {
+          "$ref": "#/definitions/EffectMeleeAttackAbilityArgs"
+        },
+        "growArgs": {
+          "items": {
+            "additionalProperties": false,
+            "properties": {
+              "args": {
+                "$ref": "#/definitions/EffectMeleeAttackAbilityArgs"
+              },
+              "level": {
+                "type": "number"
+              }
+            },
+            "required": ["level", "args"],
+            "type": "object"
+          },
+          "type": "array"
+        },
+        "origin": {
+          "$ref": "#/definitions/Effect"
+        },
+        "type": {
+          "const": "meleeAttackAbility",
+          "type": "string"
+        },
+        "when": {
+          "type": "string"
+        }
+      },
+      "required": ["type", "args"],
+      "type": "object"
+    },
+    "Bloodline": {
+      "additionalProperties": false,
+      "properties": {
+        "_type": {
+          "const": "bloodline",
+          "type": "string"
+        },
+        "arcana": {
+          "$ref": "#/definitions/ClassFeat"
+        },
+        "deprecated": {
+          "type": "boolean"
+        },
+        "desc": {
+          "type": "string"
+        },
+        "feats": {
+          "items": {
+            "type": "string"
+          },
+          "type": "array"
+        },
+        "id": {
+          "type": "string"
+        },
+        "name": {
+          "type": "string"
+        },
+        "powers": {
+          "items": {
+            "$ref": "#/definitions/ClassFeat"
+          },
+          "type": "array"
+        },
+        "skills": {
+          "items": {
+            "type": "string"
+          },
+          "type": "array"
+        },
+        "spells": {
+          "items": {
+            "type": "string"
+          },
+          "type": "array"
+        }
+      },
+      "required": ["_type", "desc", "feats", "id", "name", "powers", "skills", "spells"],
+      "type": "object"
+    },
+    "Bonus": {
+      "additionalProperties": false,
+      "properties": {
+        "amount": {
+          "anyOf": [
+            {
+              "type": "number"
+            },
+            {
+              "items": {
+                "type": "number"
+              },
+              "type": "array"
+            }
+          ]
+        },
+        "amountFormula": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "items": {
+                "type": "string"
+              },
+              "type": "array"
+            }
+          ]
+        },
+        "ignored": {
+          "type": "boolean"
+        },
+        "type": {
+          "type": "string"
+        }
+      },
+      "required": ["amount", "type"],
+      "type": "object"
+    },
+    "BonusType": {
+      "additionalProperties": false,
+      "properties": {
+        "_type": {
+          "$ref": "#/definitions/EntityType"
+        },
+        "deprecated": {
+          "type": "boolean"
+        },
+        "flatFootedAC": {
+          "type": "boolean"
+        },
+        "id": {
+          "type": "string"
+        },
+        "name": {
+          "type": "string"
+        },
+        "stack": {
+          "type": "boolean"
+        },
+        "touchAC": {
+          "type": "boolean"
+        }
+      },
+      "required": ["_type", "id", "name", "stack"],
+      "type": "object"
+    },
+    "CharacterUpgrade": {
+      "additionalProperties": false,
+      "properties": {
+        "abilities": {
+          "additionalProperties": false,
+          "properties": {
+            "cha": {
+              "type": "number"
+            },
+            "con": {
+              "type": "number"
+            },
+            "dex": {
+              "type": "number"
+            },
+            "int": {
+              "type": "number"
+            },
+            "str": {
+              "type": "number"
+            },
+            "wis": {
+              "type": "number"
+            }
+          },
+          "type": "object"
+        },
+        "archetypeIds": {
+          "anyOf": [
+            {
+              "items": {
+                "type": "string"
+              },
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "classId": {
+          "type": "string"
+        },
+        "effectInputs": {
+          "additionalProperties": false,
+          "properties": {
+            "size": {
+              "type": "number"
+            }
+          },
+          "required": ["size"],
+          "type": "object"
+        },
+        "favoredClassBonus": {
+          "$ref": "#/definitions/FavoredClassBonus"
+        },
+        "feats": {
+          "items": {
+            "type": "string"
+          },
+          "type": "array"
+        },
+        "hp": {
+          "type": "number"
+        },
+        "levelAbility": {
+          "type": "boolean"
+        },
+        "levelFeat": {
+          "type": "boolean"
+        },
+        "skills": {
+          "additionalProperties": false,
+          "properties": {
+            "size": {
+              "type": "number"
+            }
+          },
+          "required": ["size"],
+          "type": "object"
+        },
+        "spells": {
+          "items": {
+            "type": "string"
+          },
+          "type": "array"
+        }
+      },
+      "required": [
+        "classId",
+        "archetypeIds",
+        "favoredClassBonus",
+        "skills",
+        "abilities",
+        "feats",
+        "effectInputs",
+        "spells",
+        "hp",
+        "levelFeat",
+        "levelAbility"
+      ],
+      "type": "object"
+    },
+    "Class": {
+      "additionalProperties": false,
+      "properties": {
+        "_type": {
+          "const": "class",
+          "type": "string"
+        },
+        "alignment": {
+          "items": {
+            "$ref": "#/definitions/Alignment"
+          },
+          "type": "array"
+        },
+        "classSkills": {
+          "items": {
+            "type": "string"
+          },
+          "type": "array"
+        },
+        "deprecated": {
+          "type": "boolean"
+        },
+        "feats": {
+          "items": {
+            "$ref": "#/definitions/ClassFeat"
+          },
+          "type": "array"
+        },
+        "hd": {
+          "type": "number"
+        },
+        "id": {
+          "type": "string"
+        },
+        "levels": {
+          "items": {
+            "$ref": "#/definitions/ClassLevel"
+          },
+          "type": "array"
+        },
+        "name": {
+          "type": "string"
+        },
+        "skillPoints": {
+          "type": "number"
+        }
+      },
+      "required": [
+        "_type",
+        "alignment",
+        "classSkills",
+        "feats",
+        "hd",
+        "id",
+        "levels",
+        "name",
+        "skillPoints"
+      ],
+      "type": "object"
+    },
+    "ClassFeat": {
+      "additionalProperties": false,
+      "properties": {
+        "_type": {
+          "const": "classFeat",
+          "type": "string"
+        },
+        "deprecated": {
+          "type": "boolean"
+        },
+        "desc": {
+          "type": "string"
+        },
+        "effects": {
+          "items": {
+            "$ref": "#/definitions/Effect"
+          },
+          "type": "array"
+        },
+        "effectsWhen": {
+          "type": "string"
+        },
+        "grow": {
+          "items": {
+            "$ref": "#/definitions/ClassFeatGrow"
+          },
+          "type": "array"
+        },
+        "id": {
+          "type": "string"
+        },
+        "name": {
+          "type": "string"
+        },
+        "origin": {
+          "$ref": "#/definitions/ClassFeat"
+        },
+        "placeholder": {
+          "type": "boolean"
+        },
+        "replace": {
+          "items": {
+            "type": "string"
+          },
+          "type": "array"
+        },
+        "subs": {
+          "items": {
+            "$ref": "#/definitions/SpecialFeat"
+          },
+          "type": "array"
+        },
+        "type": {
+          "enum": ["su", "ex", "sp"],
+          "type": "string"
+        },
+        "when": {
+          "type": "string"
+        }
+      },
+      "required": ["_type", "desc", "id", "name"],
+      "type": "object"
+    },
+    "ClassFeatGrow": {
+      "additionalProperties": false,
+      "properties": {
+        "_type": {
+          "const": "common",
+          "type": "string"
+        },
+        "deprecated": {
+          "type": "boolean"
+        },
+        "effects": {
+          "items": {
+            "$ref": "#/definitions/Effect"
+          },
+          "type": "array"
+        },
+        "id": {
+          "type": "string"
+        },
+        "level": {
+          "type": "number"
+        },
+        "name": {
+          "type": "string"
+        }
+      },
+      "required": ["_type", "id", "level", "name"],
+      "type": "object"
+    },
+    "ClassLevel": {
+      "additionalProperties": false,
+      "properties": {
+        "bab": {
+          "items": {
+            "type": "number"
+          },
+          "type": "array"
+        },
+        "fortitude": {
+          "type": "number"
+        },
+        "level": {
+          "type": "number"
+        },
+        "reflex": {
+          "type": "number"
+        },
+        "special": {
+          "items": {
+            "type": "string"
+          },
+          "type": "array"
+        },
+        "spellsKnown": {
+          "items": {
+            "type": "number"
+          },
+          "type": "array"
+        },
+        "spellsPerDay": {
+          "items": {
+            "type": "number"
+          },
+          "type": "array"
+        },
+        "will": {
+          "type": "number"
+        }
+      },
+      "required": ["level", "bab", "fortitude", "reflex", "will"],
+      "type": "object"
+    },
+    "Effect": {
+      "anyOf": [
+        {
+          "$ref": "#/definitions/EffectRacialAbilityBonus"
+        },
+        {
+          "$ref": "#/definitions/EffectAbilityBonus"
+        },
+        {
+          "$ref": "#/definitions/EffectGainArcaneSchool"
+        },
+        {
+          "$ref": "#/definitions/EffectGainFeat"
+        },
+        {
+          "$ref": "#/definitions/EffectGainSpellCasting"
+        },
+        {
+          "$ref": "#/definitions/EffectGainFavoredClassAmount"
+        },
+        {
+          "$ref": "#/definitions/EffectGainProficiency"
+        },
+        {
+          "$ref": "#/definitions/EffectGainSelectedWeaponProficiency"
+        },
+        {
+          "$ref": "#/definitions/EffectGainSkill"
+        },
+        {
+          "$ref": "#/definitions/EffectGainClassSkill"
+        },
+        {
+          "$ref": "#/definitions/EffectGainInitiative"
+        },
+        {
+          "$ref": "#/definitions/EffectGainAC"
+        },
+        {
+          "$ref": "#/definitions/EffectGainCMD"
+        },
+        {
+          "$ref": "#/definitions/EffectGainSave"
+        },
+        {
+          "$ref": "#/definitions/EffectGainHP"
+        },
+        {
+          "$ref": "#/definitions/EffectGainSpeed"
+        },
+        {
+          "$ref": "#/definitions/EffectGainTwoWeaponFighting"
+        },
+        {
+          "$ref": "#/definitions/EffectClassFeatSource"
+        },
+        {
+          "$ref": "#/definitions/EffectClassFeatPlaceholder"
+        },
+        {
+          "$ref": "#/definitions/EffectEnchantUnarmedStrike"
+        },
+        {
+          "$ref": "#/definitions/EffectAddAttackOption"
+        },
+        {
+          "$ref": "#/definitions/EffectMeleeAttackAbility"
+        },
+        {
+          "$ref": "#/definitions/EffectAddTracker"
+        },
+        {
+          "$ref": "#/definitions/EffectGainBloodline"
+        },
+        {
+          "$ref": "#/definitions/EffectSelectFromSubs"
+        }
+      ]
+    },
+    "EffectAbilityBonus": {
+      "$ref": "#/definitions/BaseEffect%3Cenum-425666241-240-273-425666241-189-1216-425666241-0-7998%2CEffectAbilityBonusArgs%3E"
+    },
+    "EffectAbilityBonusArgs": {
+      "additionalProperties": false,
+      "properties": {
+        "abilityType": {
+          "$ref": "#/definitions/AbilityType"
+        },
+        "bonus": {
+          "$ref": "#/definitions/Bonus"
+        }
+      },
+      "required": ["bonus", "abilityType"],
+      "type": "object"
+    },
+    "EffectAddAttackOption": {
+      "$ref": "#/definitions/BaseEffect%3Cenum-425666241-930-968-425666241-189-1216-425666241-0-7998%2CEffectAddAttackOptionArgs%3E"
+    },
+    "EffectAddAttackOptionArgs": {
+      "additionalProperties": false,
+      "properties": {
+        "attackBonuses": {
+          "items": {
+            "$ref": "#/definitions/NamedBonus"
+          },
+          "type": "array"
+        },
+        "damageBonuses": {
+          "items": {
+            "additionalProperties": false,
+            "properties": {
+              "applyMultiplier": {
+                "$ref": "#/definitions/AbilityType"
+              },
+              "bonus": {
+                "$ref": "#/definitions/NamedBonus"
+              }
+            },
+            "required": ["applyMultiplier", "bonus"],
+            "type": "object"
+          },
+          "type": "array"
+        },
+        "damageMultiplier": {
+          "type": "number"
+        },
+        "extraAttack": {
+          "additionalProperties": false,
+          "properties": {
+            "amount": {
+              "type": "number"
+            },
+            "by": {
+              "const": "maxBab",
+              "type": "string"
+            }
+          },
+          "required": ["by", "amount"],
+          "type": "object"
+        },
+        "ignoreTwoWeapon": {
+          "type": "boolean"
+        }
+      },
+      "type": "object"
+    },
+    "EffectAddTracker": {
+      "$ref": "#/definitions/BaseEffect%3Cenum-425666241-1069-1097-425666241-189-1216-425666241-0-7998%2CEffectAddTrackerArgs%3E"
+    },
+    "EffectAddTrackerArgs": {
+      "additionalProperties": false,
+      "properties": {
+        "id": {
+          "type": "string"
+        },
+        "max": {
+          "type": "number"
+        },
+        "maxFormula": {
+          "type": "string"
+        },
+        "name": {
+          "type": "string"
+        }
+      },
+      "type": "object"
+    },
+    "EffectClassFeatPlaceholder": {
+      "$ref": "#/definitions/BaseEffect%3Cenum-425666241-831-879-425666241-189-1216-425666241-0-7998%2CEffectClassFeatPlaceholderArgs%3E"
+    },
+    "EffectClassFeatPlaceholderArgs": {
+      "additionalProperties": false,
+      "type": "object"
+    },
+    "EffectClassFeatSource": {
+      "$ref": "#/definitions/BaseEffect%3Cenum-425666241-791-830-425666241-189-1216-425666241-0-7998%2CEffectClassFeatSourceArgs%3E"
+    },
+    "EffectClassFeatSourceArgs": {
+      "additionalProperties": false,
+      "properties": {
+        "source": {
+          "type": "string"
+        }
+      },
+      "type": "object"
+    },
+    "EffectEnchantUnarmedStrike": {
+      "$ref": "#/definitions/BaseEffect%3Cenum-425666241-880-929-425666241-189-1216-425666241-0-7998%2CEffectEnchantUnarmedStrikeArgs%3E"
+    },
+    "EffectEnchantUnarmedStrikeArgs": {
+      "additionalProperties": false,
+      "properties": {
+        "damage": {
+          "type": "string"
+        }
+      },
+      "required": ["damage"],
+      "type": "object"
+    },
+    "EffectGainAC": {
+      "$ref": "#/definitions/BaseEffect%3Cenum-425666241-623-643-425666241-189-1216-425666241-0-7998%2CEffectGainACArgs%3E"
+    },
+    "EffectGainACArgs": {
+      "additionalProperties": false,
+      "properties": {
+        "bonus": {
+          "$ref": "#/definitions/Bonus"
+        }
+      },
+      "required": ["bonus"],
+      "type": "object"
+    },
+    "EffectGainArcaneSchool": {
+      "$ref": "#/definitions/BaseEffect%3Cenum-425666241-1098-1139-425666241-189-1216-425666241-0-7998%2CEffectGainArcaneSchoolArgs%3E"
+    },
+    "EffectGainArcaneSchoolArgs": {
+      "additionalProperties": false,
+      "properties": {
+        "standardForbidden": {
+          "type": "number"
+        }
+      },
+      "required": ["standardForbidden"],
+      "type": "object"
+    },
+    "EffectGainArcaneSchoolInput": {
+      "additionalProperties": false,
+      "properties": {
+        "focused": {
+          "type": "string"
+        },
+        "forbiddenSchool": {
+          "items": {
+            "type": "string"
+          },
+          "type": "array"
+        },
+        "school": {
+          "type": "string"
+        }
+      },
+      "required": ["school", "forbiddenSchool"],
+      "type": "object"
+    },
+    "EffectGainBloodline": {
+      "$ref": "#/definitions/BaseEffect%3Cenum-425666241-1140-1175-425666241-189-1216-425666241-0-7998%2CEffectGainBloodlineArgs%3E"
+    },
+    "EffectGainBloodlineArgs": {
+      "additionalProperties": false,
+      "properties": {
+        "bloodline": {
+          "type": "string"
+        }
+      },
+      "required": ["bloodline"],
+      "type": "object"
+    },
+    "EffectGainBloodlineInput": {
+      "additionalProperties": false,
+      "properties": {
+        "bloodline": {
+          "type": "string"
+        }
+      },
+      "required": ["bloodline"],
+      "type": "object"
+    },
+    "EffectGainCMD": {
+      "$ref": "#/definitions/BaseEffect%3Cenum-425666241-644-666-425666241-189-1216-425666241-0-7998%2CEffectGainCMDArgs%3E"
+    },
+    "EffectGainCMDArgs": {
+      "additionalProperties": false,
+      "properties": {
+        "bonus": {
+          "$ref": "#/definitions/Bonus"
+        }
+      },
+      "required": ["bonus"],
+      "type": "object"
+    },
+    "EffectGainClassSkill": {
+      "$ref": "#/definitions/BaseEffect%3Cenum-425666241-520-557-425666241-189-1216-425666241-0-7998%2CEffectGainClassSkillArgs%3E"
+    },
+    "EffectGainClassSkillArgs": {
+      "additionalProperties": false,
+      "properties": {
+        "skillId": {
+          "type": "string"
+        }
+      },
+      "required": ["skillId"],
+      "type": "object"
+    },
+    "EffectGainFavoredClassAmount": {
+      "$ref": "#/definitions/BaseEffect%3Cenum-425666241-361-413-425666241-189-1216-425666241-0-7998%2CEffectGainFavoredClassAmountArgs%3E"
+    },
+    "EffectGainFavoredClassAmountArgs": {
+      "additionalProperties": false,
+      "properties": {
+        "amount": {
+          "type": "number"
+        }
+      },
+      "required": ["amount"],
+      "type": "object"
+    },
+    "EffectGainFeat": {
+      "$ref": "#/definitions/BaseEffect%3Cenum-425666241-215-239-425666241-189-1216-425666241-0-7998%2C(EffectGainFeatArgs%7Cnull)%3E"
+    },
+    "EffectGainFeatArgs": {
+      "additionalProperties": false,
+      "properties": {
+        "bloodlineFeat": {
+          "type": "boolean"
+        },
+        "featType": {
+          "$ref": "#/definitions/FeatType"
+        },
+        "feats": {
+          "items": {
+            "type": "string"
+          },
+          "type": "array"
+        },
+        "forceFeat": {
+          "type": "string"
+        },
+        "ignorePrerequisites": {
+          "type": "boolean"
+        }
+      },
+      "type": "object"
+    },
+    "EffectGainHP": {
+      "$ref": "#/definitions/BaseEffect%3Cenum-425666241-692-712-425666241-189-1216-425666241-0-7998%2CEffectGainHPArgs%3E"
+    },
+    "EffectGainHPArgs": {
+      "additionalProperties": false,
+      "properties": {
+        "bonus": {
+          "$ref": "#/definitions/Bonus"
+        }
+      },
+      "required": ["bonus"],
+      "type": "object"
+    },
+    "EffectGainInitiative": {
+      "$ref": "#/definitions/BaseEffect%3Cenum-425666241-585-622-425666241-189-1216-425666241-0-7998%2CEffectGainInitiativeArgs%3E"
+    },
+    "EffectGainInitiativeArgs": {
+      "additionalProperties": false,
+      "properties": {
+        "bonus": {
+          "$ref": "#/definitions/Bonus"
+        }
+      },
+      "required": ["bonus"],
+      "type": "object"
+    },
+    "EffectGainProficiency": {
+      "$ref": "#/definitions/BaseEffect%3Cenum-425666241-414-452-425666241-189-1216-425666241-0-7998%2CEffectGainProficiencyArgs%3E"
+    },
+    "EffectGainProficiencyArgs": {
+      "additionalProperties": false,
+      "properties": {
+        "armor": {
+          "items": {
+            "type": "string"
+          },
+          "type": "array"
+        },
+        "armorTraining": {
+          "items": {
+            "$ref": "#/definitions/ArmorCategory"
+          },
+          "type": "array"
+        },
+        "shield": {
+          "items": {
+            "type": "string"
+          },
+          "type": "array"
+        },
+        "shieldTraining": {
+          "items": {
+            "const": "normal",
+            "type": "string"
+          },
+          "type": "array"
+        },
+        "weapon": {
+          "items": {
+            "type": "string"
+          },
+          "type": "array"
+        },
+        "weaponTraining": {
+          "items": {
+            "$ref": "#/definitions/WeaponTraining"
+          },
+          "type": "array"
+        },
+        "weaponWithSpecial": {
+          "items": {
+            "type": "string"
+          },
+          "type": "array"
+        }
+      },
+      "type": "object"
+    },
+    "EffectGainSave": {
+      "$ref": "#/definitions/BaseEffect%3Cenum-425666241-667-691-425666241-189-1216-425666241-0-7998%2CEffectGainSaveArgs%3E"
+    },
+    "EffectGainSaveArgs": {
+      "additionalProperties": false,
+      "properties": {
+        "bonus": {
+          "$ref": "#/definitions/Bonus"
+        },
+        "saveType": {
+          "enum": ["fortitude", "will", "reflex", "all"],
+          "type": "string"
+        }
+      },
+      "required": ["saveType", "bonus"],
+      "type": "object"
+    },
+    "EffectGainSelectedWeaponProficiency": {
+      "$ref": "#/definitions/BaseEffect%3Cenum-425666241-453-519-425666241-189-1216-425666241-0-7998%2CEffectGainSelectedWeaponProficiencyArgs%3E"
+    },
+    "EffectGainSelectedWeaponProficiencyArgs": {
+      "additionalProperties": false,
+      "properties": {
+        "training": {
+          "items": {
+            "$ref": "#/definitions/WeaponTraining"
+          },
+          "type": "array"
+        }
+      },
+      "required": ["training"],
+      "type": "object"
+    },
+    "EffectGainSkill": {
+      "$ref": "#/definitions/BaseEffect%3Cenum-425666241-558-584-425666241-189-1216-425666241-0-7998%2CEffectGainSkillArgs%3E"
+    },
+    "EffectGainSkillArgs": {
+      "additionalProperties": false,
+      "properties": {
+        "bonus": {
+          "$ref": "#/definitions/Bonus"
+        },
+        "skillId": {
+          "type": "string"
+        }
+      },
+      "required": ["bonus"],
+      "type": "object"
+    },
+    "EffectGainSpeed": {
+      "$ref": "#/definitions/BaseEffect%3Cenum-425666241-764-790-425666241-189-1216-425666241-0-7998%2CEffectGainSpeedArgs%3E"
+    },
+    "EffectGainSpeedArgs": {
+      "additionalProperties": false,
+      "properties": {
+        "bonus": {
+          "$ref": "#/definitions/Bonus"
+        }
+      },
+      "required": ["bonus"],
+      "type": "object"
+    },
+    "EffectGainSpellCasting": {
+      "$ref": "#/definitions/BaseEffect%3Cenum-425666241-319-360-425666241-189-1216-425666241-0-7998%2CEffectGainSpellCastingArgs%3E"
+    },
+    "EffectGainSpellCastingArgs": {
+      "additionalProperties": false,
+      "properties": {
+        "abilityType": {
+          "$ref": "#/definitions/AbilityType"
+        },
+        "castingType": {
+          "$ref": "#/definitions/SpellCastingType"
+        }
+      },
+      "required": ["castingType", "abilityType"],
+      "type": "object"
+    },
+    "EffectGainTwoWeaponFighting": {
+      "$ref": "#/definitions/BaseEffect%3Cenum-425666241-713-763-425666241-189-1216-425666241-0-7998%2CEffectGainTwoWeaponFightingArgs%3E"
+    },
+    "EffectGainTwoWeaponFightingArgs": {
+      "additionalProperties": false,
+      "type": "object"
+    },
+    "EffectMeleeAttackAbility": {
+      "$ref": "#/definitions/BaseEffect%3Cenum-425666241-969-1013-425666241-189-1216-425666241-0-7998%2CEffectMeleeAttackAbilityArgs%3E"
+    },
+    "EffectMeleeAttackAbilityArgs": {
+      "additionalProperties": false,
+      "properties": {
+        "ability": {
+          "$ref": "#/definitions/AbilityType"
+        }
+      },
+      "required": ["ability"],
+      "type": "object"
+    },
+    "EffectNeedInput": {
+      "anyOf": [
+        {
+          "$ref": "#/definitions/EffectGainSkill"
+        },
+        {
+          "$ref": "#/definitions/EffectGainArcaneSchool"
+        },
+        {
+          "$ref": "#/definitions/EffectGainSelectedWeaponProficiency"
+        },
+        {
+          "$ref": "#/definitions/EffectGainBloodline"
+        },
+        {
+          "$ref": "#/definitions/EffectSelectFromSubs"
+        }
+      ]
+    },
+    "EffectRacialAbilityBonus": {
+      "$ref": "#/definitions/BaseEffect%3Cenum-425666241-274-318-425666241-189-1216-425666241-0-7998%2CEffectRacialAbilityBonusArgs%3E"
+    },
+    "EffectRacialAbilityBonusArgs": {
+      "additionalProperties": false,
+      "properties": {
+        "abilityType": {
+          "$ref": "#/definitions/AbilityType"
+        }
+      },
+      "type": "object"
+    },
+    "EffectSelectFromSubs": {
+      "$ref": "#/definitions/BaseEffect%3Cenum-425666241-1176-1213-425666241-189-1216-425666241-0-7998%2CEffectSelectFromSubsArgs%3E"
+    },
+    "EffectSelectFromSubsArgs": {
+      "additionalProperties": false,
+      "type": "object"
+    },
+    "EffectSelectFromSubsInput": {
+      "items": {
+        "type": "string"
+      },
+      "type": "array"
+    },
+    "EffectTwoHandDamageMultiplier": {
+      "$ref": "#/definitions/BaseEffect%3Cenum-425666241-1014-1068-425666241-189-1216-425666241-0-7998%2CEffectTwoHandDamageMultiplierArgs%3E"
+    },
+    "EffectTwoHandDamageMultiplierArgs": {
+      "additionalProperties": false,
+      "properties": {
+        "multiplier": {
+          "type": "number"
+        }
+      },
+      "required": ["multiplier"],
+      "type": "object"
+    },
+    "EffectType": {
+      "enum": [
+        "gainFeat",
+        "abilityBonus",
+        "racialAbilityBonus",
+        "gainSpellCasting",
+        "gainFavoredClassAmount",
+        "gainProficiency",
+        "gainSelectedWeaponProficiency",
+        "gainClassSkill",
+        "gainSkill",
+        "gainInitiative",
+        "gainAC",
+        "gainCMD",
+        "gainSave",
+        "gainHP",
+        "gainTwoWeaponFighting",
+        "gainSpeed",
+        "classFeatSource",
+        "classFeatPlaceholder",
+        "enchantUnarmedStrike",
+        "addAttackOption",
+        "meleeAttackAbility",
+        "twoHandDamageMultiplier",
+        "addTracker",
+        "gainArcaneSchool",
+        "gainBloodline",
+        "selectFromSubs"
+      ],
+      "type": "string"
+    },
+    "Entity": {
+      "additionalProperties": false,
+      "properties": {
+        "_type": {
+          "$ref": "#/definitions/EntityType"
+        },
+        "deprecated": {
+          "type": "boolean"
+        },
+        "id": {
+          "type": "string"
+        },
+        "name": {
+          "type": "string"
+        }
+      },
+      "required": ["_type", "id", "name"],
+      "type": "object"
+    },
+    "EntityType": {
+      "enum": [
+        "common",
+        "skill",
+        "bonusType",
+        "race",
+        "class",
+        "archetype",
+        "spell",
+        "feat",
+        "racialTrait",
+        "classFeat",
+        "weaponType",
+        "armorType",
+        "magicItemType",
+        "arcaneSchool",
+        "bloodline"
+      ],
+      "type": "string"
+    },
+    "Equipment": {
+      "anyOf": [
+        {
+          "$ref": "#/definitions/Weapon"
+        },
+        {
+          "$ref": "#/definitions/Armor"
+        },
+        {
+          "$ref": "#/definitions/MagicItem"
+        },
+        {
+          "$ref": "#/definitions/SpellItem"
+        }
+      ]
+    },
+    "EquipmentType": {
+      "enum": ["weapon", "armor", "magicItem", "spellItem"],
+      "type": "string"
+    },
+    "FavoredClassBonus": {
+      "enum": ["hp", "skill", "custom"],
+      "type": "string"
+    },
+    "Feat": {
+      "additionalProperties": false,
+      "properties": {
+        "_type": {
+          "const": "feat",
+          "type": "string"
+        },
+        "book": {
+          "type": "string"
+        },
+        "brief": {
+          "type": "string"
+        },
+        "deprecated": {
+          "type": "boolean"
+        },
+        "desc": {
+          "type": "string"
+        },
+        "effects": {
+          "items": {
+            "$ref": "#/definitions/Effect"
+          },
+          "type": "array"
+        },
+        "effectsWhen": {
+          "type": "string"
+        },
+        "id": {
+          "type": "string"
+        },
+        "meta": {
+          "$ref": "#/definitions/FeatMeta"
+        },
+        "name": {
+          "type": "string"
+        },
+        "type": {
+          "items": {
+            "$ref": "#/definitions/FeatType"
+          },
+          "type": "array"
+        }
+      },
+      "required": ["_type", "book", "brief", "id", "meta", "name", "type"],
+      "type": "object"
+    },
+    "FeatMeta": {
+      "additionalProperties": false,
+      "properties": {
+        "benefit": {
+          "type": "string"
+        },
+        "normal": {
+          "type": "string"
+        },
+        "requirement": {
+          "type": "string"
+        },
+        "special": {
+          "type": "string"
+        }
+      },
+      "type": "object"
+    },
+    "FeatType": {
+      "enum": [
+        "general",
+        "combat",
+        "metamagic",
+        "item creation",
+        "teamwork",
+        "grit",
+        "performance",
+        "style",
+        "panache",
+        "technique",
+        "stare",
+        "arcane discovery"
+      ],
+      "type": "string"
+    },
+    "MagicItem": {
+      "additionalProperties": false,
+      "properties": {
+        "_type": {
+          "const": "common",
+          "type": "string"
+        },
+        "deprecated": {
+          "type": "boolean"
+        },
+        "equipmentType": {
+          "const": "magicItem",
+          "type": "string"
+        },
+        "id": {
+          "type": "string"
+        },
+        "name": {
+          "type": "string"
+        },
+        "type": {
+          "$ref": "#/definitions/MagicItemType"
+        }
+      },
+      "required": ["_type", "equipmentType", "id", "name", "type"],
+      "type": "object"
+    },
+    "MagicItemSlot": {
+      "enum": [
+        "ring",
+        "belt",
+        "body",
+        "chest",
+        "eyes",
+        "feet",
+        "hand",
+        "head",
+        "headband",
+        "neck",
+        "shoulders",
+        "wrists",
+        "none"
+      ],
+      "type": "string"
+    },
+    "MagicItemType": {
+      "additionalProperties": false,
+      "properties": {
+        "_type": {
+          "const": "magicItemType",
+          "type": "string"
+        },
+        "deprecated": {
+          "type": "boolean"
+        },
+        "desc": {
+          "type": "string"
+        },
+        "effects": {
+          "items": {
+            "$ref": "#/definitions/Effect"
+          },
+          "type": "array"
+        },
+        "effectsWhen": {
+          "type": "string"
+        },
+        "id": {
+          "type": "string"
+        },
+        "meta": {
+          "$ref": "#/definitions/MagicItemTypeMeta"
+        },
+        "name": {
+          "type": "string"
+        }
+      },
+      "required": ["_type", "id", "meta", "name"],
+      "type": "object"
+    },
+    "MagicItemTypeMeta": {
+      "additionalProperties": false,
+      "properties": {
+        "aura": {
+          "type": "string"
+        },
+        "casterLevel": {
+          "type": "number"
+        },
+        "group": {
+          "type": "string"
+        },
+        "price": {
+          "type": "string"
+        },
+        "slot": {
+          "$ref": "#/definitions/MagicItemSlot"
+        },
+        "weight": {
+          "type": "number"
+        }
+      },
+      "required": ["group", "price", "weight", "casterLevel", "aura", "slot"],
+      "type": "object"
+    },
+    "ManualEffect": {
+      "additionalProperties": false,
+      "properties": {
+        "effects": {
+          "items": {
+            "$ref": "#/definitions/Effect"
+          },
+          "type": "array"
+        },
+        "inputs": {
+          "items": {},
+          "type": "array"
+        },
+        "name": {
+          "type": "string"
+        }
+      },
+      "required": ["name", "effects"],
+      "type": "object"
+    },
+    "NamedBonus": {
+      "additionalProperties": false,
+      "properties": {
+        "bonus": {
+          "$ref": "#/definitions/Bonus"
+        },
+        "name": {
+          "type": "string"
+        }
+      },
+      "required": ["name", "bonus"],
+      "type": "object"
+    },
+    "Race": {
+      "additionalProperties": false,
+      "properties": {
+        "_type": {
+          "const": "race",
+          "type": "string"
+        },
+        "ability": {
+          "additionalProperties": false,
+          "properties": {
+            "cha": {
+              "type": "number"
+            },
+            "con": {
+              "type": "number"
+            },
+            "dex": {
+              "type": "number"
+            },
+            "int": {
+              "type": "number"
+            },
+            "str": {
+              "type": "number"
+            },
+            "wis": {
+              "type": "number"
+            }
+          },
+          "type": "object"
+        },
+        "alternateRacialTrait": {
+          "items": {
+            "$ref": "#/definitions/RacialTrait"
+          },
+          "type": "array"
+        },
+        "deprecated": {
+          "type": "boolean"
+        },
+        "desc": {
+          "additionalProperties": {
+            "type": "string"
+          },
+          "type": "object"
+        },
+        "id": {
+          "type": "string"
+        },
+        "name": {
+          "type": "string"
+        },
+        "racialTrait": {
+          "items": {
+            "$ref": "#/definitions/RacialTrait"
+          },
+          "type": "array"
+        },
+        "size": {
+          "$ref": "#/definitions/RaceSize"
+        },
+        "speed": {
+          "type": "number"
+        }
+      },
+      "required": [
+        "_type",
+        "ability",
+        "alternateRacialTrait",
+        "desc",
+        "id",
+        "name",
+        "racialTrait",
+        "size",
+        "speed"
+      ],
+      "type": "object"
+    },
+    "RaceSize": {
+      "enum": ["small", "medium"],
+      "type": "string"
+    },
+    "RacialTrait": {
+      "additionalProperties": false,
+      "properties": {
+        "_type": {
+          "const": "racialTrait",
+          "type": "string"
+        },
+        "deprecated": {
+          "type": "boolean"
+        },
+        "desc": {
+          "type": "string"
+        },
+        "effects": {
+          "items": {
+            "$ref": "#/definitions/Effect"
+          },
+          "type": "array"
+        },
+        "effectsWhen": {
+          "type": "string"
+        },
+        "id": {
+          "type": "string"
+        },
+        "name": {
+          "type": "string"
+        },
+        "replace": {
+          "items": {
+            "type": "string"
+          },
+          "type": "array"
+        },
+        "subs": {
+          "items": {
+            "$ref": "#/definitions/SpecialFeat"
+          },
+          "type": "array"
+        },
+        "type": {
+          "enum": ["su", "ex", "sp"],
+          "type": "string"
+        },
+        "when": {
+          "type": "string"
+        }
+      },
+      "required": ["_type", "desc", "id", "name"],
+      "type": "object"
+    },
+    "Skill": {
+      "additionalProperties": false,
+      "properties": {
+        "_type": {
+          "const": "skill",
+          "type": "string"
+        },
+        "ability": {
+          "$ref": "#/definitions/AbilityType"
+        },
+        "armorPenalty": {
+          "type": "boolean"
+        },
+        "category": {
+          "type": "boolean"
+        },
+        "core": {
+          "items": {
+            "type": "string"
+          },
+          "type": "array"
+        },
+        "deprecated": {
+          "type": "boolean"
+        },
+        "id": {
+          "type": "string"
+        },
+        "name": {
+          "type": "string"
+        },
+        "parent": {
+          "type": "string"
+        },
+        "trained": {
+          "type": "boolean"
+        }
+      },
+      "required": ["_type", "ability", "id", "name"],
+      "type": "object"
+    },
+    "SkillSystem": {
+      "enum": ["core", "consolidated"],
+      "type": "string"
+    },
+    "SpecialFeat": {
+      "additionalProperties": false,
+      "properties": {
+        "_type": {
+          "$ref": "#/definitions/EntityType"
+        },
+        "deprecated": {
+          "type": "boolean"
+        },
+        "desc": {
+          "type": "string"
+        },
+        "effects": {
+          "items": {
+            "$ref": "#/definitions/Effect"
+          },
+          "type": "array"
+        },
+        "effectsWhen": {
+          "type": "string"
+        },
+        "id": {
+          "type": "string"
+        },
+        "name": {
+          "type": "string"
+        },
+        "replace": {
+          "items": {
+            "type": "string"
+          },
+          "type": "array"
+        },
+        "subs": {
+          "items": {
+            "$ref": "#/definitions/SpecialFeat"
+          },
+          "type": "array"
+        },
+        "type": {
+          "enum": ["su", "ex", "sp"],
+          "type": "string"
+        },
+        "when": {
+          "type": "string"
+        }
+      },
+      "required": ["_type", "desc", "id", "name"],
+      "type": "object"
+    },
+    "Spell": {
+      "additionalProperties": false,
+      "properties": {
+        "_type": {
+          "const": "spell",
+          "type": "string"
+        },
+        "book": {
+          "type": "string"
+        },
+        "deprecated": {
+          "type": "boolean"
+        },
+        "desc": {
+          "type": "string"
+        },
+        "id": {
+          "type": "string"
+        },
+        "meta": {
+          "$ref": "#/definitions/SpellMeta"
+        },
+        "name": {
+          "type": "string"
+        }
+      },
+      "required": ["_type", "book", "desc", "id", "meta", "name"],
+      "type": "object"
+    },
+    "SpellCastingType": {
+      "enum": ["wizard-like", "sorcerer-like", "cleric-like"],
+      "type": "string"
+    },
+    "SpellItem": {
+      "additionalProperties": false,
+      "properties": {
+        "_type": {
+          "const": "common",
+          "type": "string"
+        },
+        "deprecated": {
+          "type": "boolean"
+        },
+        "equipmentType": {
+          "const": "spellItem",
+          "type": "string"
+        },
+        "id": {
+          "type": "string"
+        },
+        "name": {
+          "type": "string"
+        },
+        "spellItemType": {
+          "$ref": "#/definitions/SpellItemType"
+        },
+        "type": {
+          "$ref": "#/definitions/Spell"
+        }
+      },
+      "required": ["_type", "equipmentType", "id", "name", "spellItemType", "type"],
+      "type": "object"
+    },
+    "SpellItemType": {
+      "enum": ["potion", "scroll", "wand"],
+      "type": "string"
+    },
+    "SpellManageAction": {
+      "additionalProperties": false,
+      "properties": {
+        "action": {
+          "enum": ["add", "remove"],
+          "type": "string"
+        },
+        "spellId": {
+          "type": "string"
+        }
+      },
+      "required": ["action", "spellId"],
+      "type": "object"
+    },
+    "SpellMeta": {
+      "additionalProperties": false,
+      "properties": {
+        "aiming": {
+          "type": "string"
+        },
+        "area": {
+          "type": "string"
+        },
+        "castingTime": {
+          "type": "string"
+        },
+        "components": {
+          "type": "string"
+        },
+        "duration": {
+          "type": "string"
+        },
+        "effect": {
+          "type": "string"
+        },
+        "level": {
+          "type": "string"
+        },
+        "resistance": {
+          "type": "string"
+        },
+        "saving": {
+          "type": "string"
+        },
+        "school": {
+          "type": "string"
+        },
+        "subschool": {
+          "type": "string"
+        },
+        "target": {
+          "type": "string"
+        }
+      },
+      "required": ["school"],
+      "type": "object"
+    },
+    "Weapon": {
+      "additionalProperties": false,
+      "properties": {
+        "_type": {
+          "const": "common",
+          "type": "string"
+        },
+        "deprecated": {
+          "type": "boolean"
+        },
+        "enchantment": {
+          "type": "number"
+        },
+        "equipmentType": {
+          "const": "weapon",
+          "type": "string"
+        },
+        "id": {
+          "type": "string"
+        },
+        "masterwork": {
+          "type": "boolean"
+        },
+        "name": {
+          "type": "string"
+        },
+        "size": {
+          "$ref": "#/definitions/WeaponSize"
+        },
+        "type": {
+          "$ref": "#/definitions/WeaponType"
+        }
+      },
+      "required": [
+        "_type",
+        "enchantment",
+        "equipmentType",
+        "id",
+        "masterwork",
+        "name",
+        "size",
+        "type"
+      ],
+      "type": "object"
+    },
+    "WeaponCategory": {
+      "enum": ["light", "one-handed", "two-handed", "ranged", "unarmed attacks"],
+      "type": "string"
+    },
+    "WeaponDamageType": {
+      "enum": ["P", "B", "S", "P or S", "B or S", "B and P", "P and S"],
+      "type": "string"
+    },
+    "WeaponSize": {
+      "enum": ["tiny", "small", "medium", "large", "huge"],
+      "type": "string"
+    },
+    "WeaponTraining": {
+      "enum": ["simple", "martial", "exotic"],
+      "type": "string"
+    },
+    "WeaponType": {
+      "additionalProperties": false,
+      "properties": {
+        "_type": {
+          "const": "weaponType",
+          "type": "string"
+        },
+        "deprecated": {
+          "type": "boolean"
+        },
+        "desc": {
+          "type": "string"
+        },
+        "id": {
+          "type": "string"
+        },
+        "meta": {
+          "$ref": "#/definitions/WeaponTypeMeta"
+        },
+        "name": {
+          "type": "string"
+        }
+      },
+      "required": ["_type", "id", "meta", "name"],
+      "type": "object"
+    },
+    "WeaponTypeMeta": {
+      "additionalProperties": false,
+      "properties": {
+        "bothHand": {
+          "type": "boolean"
+        },
+        "category": {
+          "$ref": "#/definitions/WeaponCategory"
+        },
+        "cost": {
+          "type": "string"
+        },
+        "critical": {
+          "type": "string"
+        },
+        "damage": {
+          "type": "string"
+        },
+        "damageType": {
+          "$ref": "#/definitions/WeaponDamageType"
+        },
+        "range": {
+          "type": "number"
+        },
+        "special": {
+          "items": {
+            "type": "string"
+          },
+          "type": "array"
+        },
+        "training": {
+          "$ref": "#/definitions/WeaponTraining"
+        },
+        "weight": {
+          "type": "number"
+        }
+      },
+      "required": ["training", "category", "cost", "weight"],
+      "type": "object"
+    }
+  }
+}
