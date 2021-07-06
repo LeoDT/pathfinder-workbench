@@ -11,6 +11,7 @@ import {
   ModalFooter,
   ModalHeader,
   ModalOverlay,
+  Text,
 } from '@chakra-ui/react';
 import { EditorState, EditorView, basicSetup } from '@codemirror/basic-setup';
 import { indentMore } from '@codemirror/commands';
@@ -61,8 +62,61 @@ export function CharacterDetailManualEffects({ value, onChange }: Props): JSX.El
     };
   }, []);
 
+  useEffect(() => {
+    cmRef.current?.update([
+      cmRef.current.state.update({
+        changes: {
+          from: 0,
+          to: cmRef.current.state.doc.length,
+          insert: value,
+        },
+      }),
+    ]);
+  }, [value]);
+
   return <div ref={cmWrapperRef} />;
 }
+
+const SHORTCUTS = [
+  {
+    name: '能力奖励',
+    text: `
+- name: 能力奖励
+  effects:
+    - type: abilityBonus
+      args:
+        abilityType: dex
+        bonus:
+          amount: 2
+          type: untyped
+`,
+  },
+  {
+    name: '技能奖励',
+    text: `
+- name: 技能奖励
+  effects:
+    - type: gainSkill
+      args:
+        skillId: survival
+        bonus:
+          amount: 1
+          type: untyped
+`,
+  },
+  {
+    name: 'AC奖励',
+    text: `
+- name: AC奖励
+  effects:
+    - type: gainAC
+      args:
+        bonus:
+          amount: 1
+          type: untyped
+`,
+  },
+];
 
 interface ModalProps {
   isOpen: boolean;
@@ -82,6 +136,24 @@ export function CharacterDetailManualEffectsModal({ isOpen, onClose }: ModalProp
         <ModalHeader>管理手动效果</ModalHeader>
         <ModalBody>
           <CharacterDetailManualEffects value={value} onChange={(v) => setValue(v)} />
+
+          <HStack>
+            {SHORTCUTS.map(({ name, text }) => (
+              <Text
+                key={name}
+                onClick={() => {
+                  setValue([value, text].join(''));
+                }}
+                color="blue.500"
+                cursor="pointer"
+                _hover={{
+                  textDecoration: 'underline',
+                }}
+              >
+                {name}
+              </Text>
+            ))}
+          </HStack>
         </ModalBody>
         <ModalFooter>
           <HStack>
@@ -108,25 +180,3 @@ export function CharacterDetailManualEffectsModal({ isOpen, onClose }: ModalProp
     </Modal>
   );
 }
-
-`
-- name: 黑骑士
-  effects:
-    - type: abilityBonus
-      args:
-        abilityType: dex
-        bonus:
-          amount: 2
-          type: untyped
-- name: 特级厨师
-  effects:
-    - type: gainSkill
-      args:
-        skillId: survival
-        bonus:
-          amount: 1
-          type: untyped
-    - type: gainClassSkill
-      args:
-        skillId: survival
-`;

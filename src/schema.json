@@ -23,15 +23,39 @@
           "type": "number"
         }
       },
-      "required": ["str", "dex", "con", "int", "wis", "cha"],
+      "required": [
+        "str",
+        "dex",
+        "con",
+        "int",
+        "wis",
+        "cha"
+      ],
       "type": "object"
     },
     "AbilityType": {
-      "enum": ["str", "dex", "con", "int", "wis", "cha"],
+      "enum": [
+        "str",
+        "dex",
+        "con",
+        "int",
+        "wis",
+        "cha"
+      ],
       "type": "string"
     },
     "Alignment": {
-      "enum": ["LG", "NG", "CG", "LN", "N", "CN", "LE", "NE", "CE"],
+      "enum": [
+        "LG",
+        "NG",
+        "CG",
+        "LN",
+        "N",
+        "CN",
+        "LE",
+        "NE",
+        "CE"
+      ],
       "type": "string"
     },
     "ArcaneSchool": {
@@ -80,7 +104,15 @@
           "type": "string"
         }
       },
-      "required": ["_type", "conflict", "desc", "id", "name", "powers", "type"],
+      "required": [
+        "_type",
+        "conflict",
+        "desc",
+        "id",
+        "name",
+        "powers",
+        "type"
+      ],
       "type": "object"
     },
     "ArcaneSchoolStandard": {
@@ -125,7 +157,15 @@
           "type": "string"
         }
       },
-      "required": ["_type", "desc", "focused", "id", "name", "powers", "type"],
+      "required": [
+        "_type",
+        "desc",
+        "focused",
+        "id",
+        "name",
+        "powers",
+        "type"
+      ],
       "type": "object"
     },
     "ArcaneSchoolStandardFocused": {
@@ -176,7 +216,16 @@
           "type": "string"
         }
       },
-      "required": ["_type", "desc", "focused", "id", "name", "powers", "replace", "type"],
+      "required": [
+        "_type",
+        "desc",
+        "focused",
+        "id",
+        "name",
+        "powers",
+        "replace",
+        "type"
+      ],
       "type": "object"
     },
     "Archetype": {
@@ -214,7 +263,15 @@
           "type": "string"
         }
       },
-      "required": ["_type", "book", "class", "desc", "feats", "id", "name"],
+      "required": [
+        "_type",
+        "book",
+        "class",
+        "desc",
+        "feats",
+        "id",
+        "name"
+      ],
       "type": "object"
     },
     "Armor": {
@@ -267,11 +324,22 @@
       "type": "object"
     },
     "ArmorCategory": {
-      "enum": ["light", "medium", "heavy", "shield"],
+      "enum": [
+        "light",
+        "medium",
+        "heavy",
+        "shield"
+      ],
       "type": "string"
     },
     "ArmorSize": {
-      "enum": ["tiny", "small", "medium", "large", "huge"],
+      "enum": [
+        "tiny",
+        "small",
+        "medium",
+        "large",
+        "huge"
+      ],
       "type": "string"
     },
     "ArmorType": {
@@ -297,7 +365,12 @@
           "type": "string"
         }
       },
-      "required": ["_type", "id", "meta", "name"],
+      "required": [
+        "_type",
+        "id",
+        "meta",
+        "name"
+      ],
       "type": "object"
     },
     "ArmorTypeMeata": {
@@ -334,7 +407,14 @@
           "type": "number"
         }
       },
-      "required": ["category", "cost", "ac", "penalty", "arcaneFailureChance", "weight"],
+      "required": [
+        "category",
+        "cost",
+        "ac",
+        "penalty",
+        "arcaneFailureChance",
+        "weight"
+      ],
       "type": "object"
     },
     "BaseEffect<enum-425666241-1014-1068-425666241-189-1216-425666241-0-7998,EffectTwoHandDamageMultiplierArgs>": {
@@ -354,7 +434,10 @@
                 "type": "number"
               }
             },
-            "required": ["level", "args"],
+            "required": [
+              "level",
+              "args"
+            ],
             "type": "object"
           },
           "type": "array"
@@ -370,7 +453,10 @@
           "type": "string"
         }
       },
-      "required": ["type", "args"],
+      "required": [
+        "type",
+        "args"
+      ],
       "type": "object"
     },
     "BaseEffect<enum-425666241-1069-1097-425666241-189-1216-425666241-0-7998,EffectAddTrackerArgs>": {
@@ -390,7 +476,10 @@
                 "type": "number"
               }
             },
-            "required": ["level", "args"],
+            "required": [
+              "level",
+              "args"
+            ],
             "type": "object"
           },
           "type": "array"
@@ -406,7 +495,10 @@
           "type": "string"
         }
       },
-      "required": ["type", "args"],
+      "required": [
+        "type",
+        "args"
+      ],
       "type": "object"
     },
     "BaseEffect<enum-425666241-1098-1139-425666241-189-1216-425666241-0-7998,EffectGainArcaneSchoolArgs>": {
@@ -426,7 +518,10 @@
                 "type": "number"
               }
             },
-            "required": ["level", "args"],
+            "required": [
+              "level",
+              "args"
+            ],
             "type": "object"
           },
           "type": "array"
@@ -442,7 +537,10 @@
           "type": "string"
         }
       },
-      "required": ["type", "args"],
+      "required": [
+        "type",
+        "args"
+      ],
       "type": "object"
     },
     "BaseEffect<enum-425666241-1140-1175-425666241-189-1216-425666241-0-7998,EffectGainBloodlineArgs>": {
@@ -462,7 +560,10 @@
                 "type": "number"
               }
             },
-            "required": ["level", "args"],
+            "required": [
+              "level",
+              "args"
+            ],
             "type": "object"
           },
           "type": "array"
@@ -478,7 +579,10 @@
           "type": "string"
         }
       },
-      "required": ["type", "args"],
+      "required": [
+        "type",
+        "args"
+      ],
       "type": "object"
     },
     "BaseEffect<enum-425666241-1176-1213-425666241-189-1216-425666241-0-7998,EffectSelectFromSubsArgs>": {
@@ -498,7 +602,10 @@
                 "type": "number"
               }
             },
-            "required": ["level", "args"],
+            "required": [
+              "level",
+              "args"
+            ],
             "type": "object"
           },
           "type": "array"
@@ -514,7 +621,10 @@
           "type": "string"
         }
       },
-      "required": ["type", "args"],
+      "required": [
+        "type",
+        "args"
+      ],
       "type": "object"
     },
     "BaseEffect<enum-425666241-215-239-425666241-189-1216-425666241-0-7998,(EffectGainFeatArgs|null)>": {
@@ -548,7 +658,10 @@
                 "type": "number"
               }
             },
-            "required": ["level", "args"],
+            "required": [
+              "level",
+              "args"
+            ],
             "type": "object"
           },
           "type": "array"
@@ -564,7 +677,10 @@
           "type": "string"
         }
       },
-      "required": ["type", "args"],
+      "required": [
+        "type",
+        "args"
+      ],
       "type": "object"
     },
     "BaseEffect<enum-425666241-240-273-425666241-189-1216-425666241-0-7998,EffectAbilityBonusArgs>": {
@@ -584,7 +700,10 @@
                 "type": "number"
               }
             },
-            "required": ["level", "args"],
+            "required": [
+              "level",
+              "args"
+            ],
             "type": "object"
           },
           "type": "array"
@@ -600,7 +719,10 @@
           "type": "string"
         }
       },
-      "required": ["type", "args"],
+      "required": [
+        "type",
+        "args"
+      ],
       "type": "object"
     },
     "BaseEffect<enum-425666241-274-318-425666241-189-1216-425666241-0-7998,EffectRacialAbilityBonusArgs>": {
@@ -620,7 +742,10 @@
                 "type": "number"
               }
             },
-            "required": ["level", "args"],
+            "required": [
+              "level",
+              "args"
+            ],
             "type": "object"
           },
           "type": "array"
@@ -636,7 +761,10 @@
           "type": "string"
         }
       },
-      "required": ["type", "args"],
+      "required": [
+        "type",
+        "args"
+      ],
       "type": "object"
     },
     "BaseEffect<enum-425666241-319-360-425666241-189-1216-425666241-0-7998,EffectGainSpellCastingArgs>": {
@@ -656,7 +784,10 @@
                 "type": "number"
               }
             },
-            "required": ["level", "args"],
+            "required": [
+              "level",
+              "args"
+            ],
             "type": "object"
           },
           "type": "array"
@@ -672,7 +803,10 @@
           "type": "string"
         }
       },
-      "required": ["type", "args"],
+      "required": [
+        "type",
+        "args"
+      ],
       "type": "object"
     },
     "BaseEffect<enum-425666241-361-413-425666241-189-1216-425666241-0-7998,EffectGainFavoredClassAmountArgs>": {
@@ -692,7 +826,10 @@
                 "type": "number"
               }
             },
-            "required": ["level", "args"],
+            "required": [
+              "level",
+              "args"
+            ],
             "type": "object"
           },
           "type": "array"
@@ -708,7 +845,10 @@
           "type": "string"
         }
       },
-      "required": ["type", "args"],
+      "required": [
+        "type",
+        "args"
+      ],
       "type": "object"
     },
     "BaseEffect<enum-425666241-414-452-425666241-189-1216-425666241-0-7998,EffectGainProficiencyArgs>": {
@@ -728,7 +868,10 @@
                 "type": "number"
               }
             },
-            "required": ["level", "args"],
+            "required": [
+              "level",
+              "args"
+            ],
             "type": "object"
           },
           "type": "array"
@@ -744,7 +887,10 @@
           "type": "string"
         }
       },
-      "required": ["type", "args"],
+      "required": [
+        "type",
+        "args"
+      ],
       "type": "object"
     },
     "BaseEffect<enum-425666241-453-519-425666241-189-1216-425666241-0-7998,EffectGainSelectedWeaponProficiencyArgs>": {
@@ -764,7 +910,10 @@
                 "type": "number"
               }
             },
-            "required": ["level", "args"],
+            "required": [
+              "level",
+              "args"
+            ],
             "type": "object"
           },
           "type": "array"
@@ -780,7 +929,10 @@
           "type": "string"
         }
       },
-      "required": ["type", "args"],
+      "required": [
+        "type",
+        "args"
+      ],
       "type": "object"
     },
     "BaseEffect<enum-425666241-520-557-425666241-189-1216-425666241-0-7998,EffectGainClassSkillArgs>": {
@@ -800,7 +952,10 @@
                 "type": "number"
               }
             },
-            "required": ["level", "args"],
+            "required": [
+              "level",
+              "args"
+            ],
             "type": "object"
           },
           "type": "array"
@@ -816,7 +971,10 @@
           "type": "string"
         }
       },
-      "required": ["type", "args"],
+      "required": [
+        "type",
+        "args"
+      ],
       "type": "object"
     },
     "BaseEffect<enum-425666241-558-584-425666241-189-1216-425666241-0-7998,EffectGainSkillArgs>": {
@@ -836,7 +994,10 @@
                 "type": "number"
               }
             },
-            "required": ["level", "args"],
+            "required": [
+              "level",
+              "args"
+            ],
             "type": "object"
           },
           "type": "array"
@@ -852,7 +1013,10 @@
           "type": "string"
         }
       },
-      "required": ["type", "args"],
+      "required": [
+        "type",
+        "args"
+      ],
       "type": "object"
     },
     "BaseEffect<enum-425666241-585-622-425666241-189-1216-425666241-0-7998,EffectGainInitiativeArgs>": {
@@ -872,7 +1036,10 @@
                 "type": "number"
               }
             },
-            "required": ["level", "args"],
+            "required": [
+              "level",
+              "args"
+            ],
             "type": "object"
           },
           "type": "array"
@@ -888,7 +1055,10 @@
           "type": "string"
         }
       },
-      "required": ["type", "args"],
+      "required": [
+        "type",
+        "args"
+      ],
       "type": "object"
     },
     "BaseEffect<enum-425666241-623-643-425666241-189-1216-425666241-0-7998,EffectGainACArgs>": {
@@ -908,7 +1078,10 @@
                 "type": "number"
               }
             },
-            "required": ["level", "args"],
+            "required": [
+              "level",
+              "args"
+            ],
             "type": "object"
           },
           "type": "array"
@@ -924,7 +1097,10 @@
           "type": "string"
         }
       },
-      "required": ["type", "args"],
+      "required": [
+        "type",
+        "args"
+      ],
       "type": "object"
     },
     "BaseEffect<enum-425666241-644-666-425666241-189-1216-425666241-0-7998,EffectGainCMDArgs>": {
@@ -944,7 +1120,10 @@
                 "type": "number"
               }
             },
-            "required": ["level", "args"],
+            "required": [
+              "level",
+              "args"
+            ],
             "type": "object"
           },
           "type": "array"
@@ -960,7 +1139,10 @@
           "type": "string"
         }
       },
-      "required": ["type", "args"],
+      "required": [
+        "type",
+        "args"
+      ],
       "type": "object"
     },
     "BaseEffect<enum-425666241-667-691-425666241-189-1216-425666241-0-7998,EffectGainSaveArgs>": {
@@ -980,7 +1162,10 @@
                 "type": "number"
               }
             },
-            "required": ["level", "args"],
+            "required": [
+              "level",
+              "args"
+            ],
             "type": "object"
           },
           "type": "array"
@@ -996,7 +1181,10 @@
           "type": "string"
         }
       },
-      "required": ["type", "args"],
+      "required": [
+        "type",
+        "args"
+      ],
       "type": "object"
     },
     "BaseEffect<enum-425666241-692-712-425666241-189-1216-425666241-0-7998,EffectGainHPArgs>": {
@@ -1016,7 +1204,10 @@
                 "type": "number"
               }
             },
-            "required": ["level", "args"],
+            "required": [
+              "level",
+              "args"
+            ],
             "type": "object"
           },
           "type": "array"
@@ -1032,7 +1223,10 @@
           "type": "string"
         }
       },
-      "required": ["type", "args"],
+      "required": [
+        "type",
+        "args"
+      ],
       "type": "object"
     },
     "BaseEffect<enum-425666241-713-763-425666241-189-1216-425666241-0-7998,EffectGainTwoWeaponFightingArgs>": {
@@ -1052,7 +1246,10 @@
                 "type": "number"
               }
             },
-            "required": ["level", "args"],
+            "required": [
+              "level",
+              "args"
+            ],
             "type": "object"
           },
           "type": "array"
@@ -1068,7 +1265,10 @@
           "type": "string"
         }
       },
-      "required": ["type", "args"],
+      "required": [
+        "type",
+        "args"
+      ],
       "type": "object"
     },
     "BaseEffect<enum-425666241-764-790-425666241-189-1216-425666241-0-7998,EffectGainSpeedArgs>": {
@@ -1088,7 +1288,10 @@
                 "type": "number"
               }
             },
-            "required": ["level", "args"],
+            "required": [
+              "level",
+              "args"
+            ],
             "type": "object"
           },
           "type": "array"
@@ -1104,7 +1307,10 @@
           "type": "string"
         }
       },
-      "required": ["type", "args"],
+      "required": [
+        "type",
+        "args"
+      ],
       "type": "object"
     },
     "BaseEffect<enum-425666241-791-830-425666241-189-1216-425666241-0-7998,EffectClassFeatSourceArgs>": {
@@ -1124,7 +1330,10 @@
                 "type": "number"
               }
             },
-            "required": ["level", "args"],
+            "required": [
+              "level",
+              "args"
+            ],
             "type": "object"
           },
           "type": "array"
@@ -1140,7 +1349,10 @@
           "type": "string"
         }
       },
-      "required": ["type", "args"],
+      "required": [
+        "type",
+        "args"
+      ],
       "type": "object"
     },
     "BaseEffect<enum-425666241-831-879-425666241-189-1216-425666241-0-7998,EffectClassFeatPlaceholderArgs>": {
@@ -1160,7 +1372,10 @@
                 "type": "number"
               }
             },
-            "required": ["level", "args"],
+            "required": [
+              "level",
+              "args"
+            ],
             "type": "object"
           },
           "type": "array"
@@ -1176,7 +1391,10 @@
           "type": "string"
         }
       },
-      "required": ["type", "args"],
+      "required": [
+        "type",
+        "args"
+      ],
       "type": "object"
     },
     "BaseEffect<enum-425666241-880-929-425666241-189-1216-425666241-0-7998,EffectEnchantUnarmedStrikeArgs>": {
@@ -1196,7 +1414,10 @@
                 "type": "number"
               }
             },
-            "required": ["level", "args"],
+            "required": [
+              "level",
+              "args"
+            ],
             "type": "object"
           },
           "type": "array"
@@ -1212,7 +1433,10 @@
           "type": "string"
         }
       },
-      "required": ["type", "args"],
+      "required": [
+        "type",
+        "args"
+      ],
       "type": "object"
     },
     "BaseEffect<enum-425666241-930-968-425666241-189-1216-425666241-0-7998,EffectAddAttackOptionArgs>": {
@@ -1232,7 +1456,10 @@
                 "type": "number"
               }
             },
-            "required": ["level", "args"],
+            "required": [
+              "level",
+              "args"
+            ],
             "type": "object"
           },
           "type": "array"
@@ -1248,7 +1475,10 @@
           "type": "string"
         }
       },
-      "required": ["type", "args"],
+      "required": [
+        "type",
+        "args"
+      ],
       "type": "object"
     },
     "BaseEffect<enum-425666241-969-1013-425666241-189-1216-425666241-0-7998,EffectMeleeAttackAbilityArgs>": {
@@ -1268,7 +1498,10 @@
                 "type": "number"
               }
             },
-            "required": ["level", "args"],
+            "required": [
+              "level",
+              "args"
+            ],
             "type": "object"
           },
           "type": "array"
@@ -1284,7 +1517,10 @@
           "type": "string"
         }
       },
-      "required": ["type", "args"],
+      "required": [
+        "type",
+        "args"
+      ],
       "type": "object"
     },
     "Bloodline": {
@@ -1334,7 +1570,16 @@
           "type": "array"
         }
       },
-      "required": ["_type", "desc", "feats", "id", "name", "powers", "skills", "spells"],
+      "required": [
+        "_type",
+        "desc",
+        "feats",
+        "id",
+        "name",
+        "powers",
+        "skills",
+        "spells"
+      ],
       "type": "object"
     },
     "Bonus": {
@@ -1373,7 +1618,10 @@
           "type": "string"
         }
       },
-      "required": ["amount", "type"],
+      "required": [
+        "amount",
+        "type"
+      ],
       "type": "object"
     },
     "BonusType": {
@@ -1401,7 +1649,12 @@
           "type": "boolean"
         }
       },
-      "required": ["_type", "id", "name", "stack"],
+      "required": [
+        "_type",
+        "id",
+        "name",
+        "stack"
+      ],
       "type": "object"
     },
     "CharacterUpgrade": {
@@ -1454,7 +1707,9 @@
               "type": "number"
             }
           },
-          "required": ["size"],
+          "required": [
+            "size"
+          ],
           "type": "object"
         },
         "favoredClassBonus": {
@@ -1482,7 +1737,9 @@
               "type": "number"
             }
           },
-          "required": ["size"],
+          "required": [
+            "size"
+          ],
           "type": "object"
         },
         "spells": {
@@ -1620,14 +1877,23 @@
           "type": "array"
         },
         "type": {
-          "enum": ["su", "ex", "sp"],
+          "enum": [
+            "su",
+            "ex",
+            "sp"
+          ],
           "type": "string"
         },
         "when": {
           "type": "string"
         }
       },
-      "required": ["_type", "desc", "id", "name"],
+      "required": [
+        "_type",
+        "desc",
+        "id",
+        "name"
+      ],
       "type": "object"
     },
     "ClassFeatGrow": {
@@ -1656,7 +1922,12 @@
           "type": "string"
         }
       },
-      "required": ["_type", "id", "level", "name"],
+      "required": [
+        "_type",
+        "id",
+        "level",
+        "name"
+      ],
       "type": "object"
     },
     "ClassLevel": {
@@ -1699,7 +1970,13 @@
           "type": "number"
         }
       },
-      "required": ["level", "bab", "fortitude", "reflex", "will"],
+      "required": [
+        "level",
+        "bab",
+        "fortitude",
+        "reflex",
+        "will"
+      ],
       "type": "object"
     },
     "Effect": {
@@ -1794,7 +2071,10 @@
           "$ref": "#/definitions/Bonus"
         }
       },
-      "required": ["bonus", "abilityType"],
+      "required": [
+        "bonus",
+        "abilityType"
+      ],
       "type": "object"
     },
     "EffectAddAttackOption": {
@@ -1820,7 +2100,10 @@
                 "$ref": "#/definitions/NamedBonus"
               }
             },
-            "required": ["applyMultiplier", "bonus"],
+            "required": [
+              "applyMultiplier",
+              "bonus"
+            ],
             "type": "object"
           },
           "type": "array"
@@ -1839,7 +2122,10 @@
               "type": "string"
             }
           },
-          "required": ["by", "amount"],
+          "required": [
+            "by",
+            "amount"
+          ],
           "type": "object"
         },
         "ignoreTwoWeapon": {
@@ -1898,7 +2184,9 @@
           "type": "string"
         }
       },
-      "required": ["damage"],
+      "required": [
+        "damage"
+      ],
       "type": "object"
     },
     "EffectGainAC": {
@@ -1911,7 +2199,9 @@
           "$ref": "#/definitions/Bonus"
         }
       },
-      "required": ["bonus"],
+      "required": [
+        "bonus"
+      ],
       "type": "object"
     },
     "EffectGainArcaneSchool": {
@@ -1924,7 +2214,9 @@
           "type": "number"
         }
       },
-      "required": ["standardForbidden"],
+      "required": [
+        "standardForbidden"
+      ],
       "type": "object"
     },
     "EffectGainArcaneSchoolInput": {
@@ -1943,7 +2235,10 @@
           "type": "string"
         }
       },
-      "required": ["school", "forbiddenSchool"],
+      "required": [
+        "school",
+        "forbiddenSchool"
+      ],
       "type": "object"
     },
     "EffectGainBloodline": {
@@ -1956,7 +2251,9 @@
           "type": "string"
         }
       },
-      "required": ["bloodline"],
+      "required": [
+        "bloodline"
+      ],
       "type": "object"
     },
     "EffectGainBloodlineInput": {
@@ -1966,7 +2263,9 @@
           "type": "string"
         }
       },
-      "required": ["bloodline"],
+      "required": [
+        "bloodline"
+      ],
       "type": "object"
     },
     "EffectGainCMD": {
@@ -1979,7 +2278,9 @@
           "$ref": "#/definitions/Bonus"
         }
       },
-      "required": ["bonus"],
+      "required": [
+        "bonus"
+      ],
       "type": "object"
     },
     "EffectGainClassSkill": {
@@ -1992,7 +2293,9 @@
           "type": "string"
         }
       },
-      "required": ["skillId"],
+      "required": [
+        "skillId"
+      ],
       "type": "object"
     },
     "EffectGainFavoredClassAmount": {
@@ -2005,7 +2308,9 @@
           "type": "number"
         }
       },
-      "required": ["amount"],
+      "required": [
+        "amount"
+      ],
       "type": "object"
     },
     "EffectGainFeat": {
@@ -2045,7 +2350,9 @@
           "$ref": "#/definitions/Bonus"
         }
       },
-      "required": ["bonus"],
+      "required": [
+        "bonus"
+      ],
       "type": "object"
     },
     "EffectGainInitiative": {
@@ -2058,7 +2365,9 @@
           "$ref": "#/definitions/Bonus"
         }
       },
-      "required": ["bonus"],
+      "required": [
+        "bonus"
+      ],
       "type": "object"
     },
     "EffectGainProficiency": {
@@ -2123,11 +2432,19 @@
           "$ref": "#/definitions/Bonus"
         },
         "saveType": {
-          "enum": ["fortitude", "will", "reflex", "all"],
+          "enum": [
+            "fortitude",
+            "will",
+            "reflex",
+            "all"
+          ],
           "type": "string"
         }
       },
-      "required": ["saveType", "bonus"],
+      "required": [
+        "saveType",
+        "bonus"
+      ],
       "type": "object"
     },
     "EffectGainSelectedWeaponProficiency": {
@@ -2143,7 +2460,9 @@
           "type": "array"
         }
       },
-      "required": ["training"],
+      "required": [
+        "training"
+      ],
       "type": "object"
     },
     "EffectGainSkill": {
@@ -2159,7 +2478,9 @@
           "type": "string"
         }
       },
-      "required": ["bonus"],
+      "required": [
+        "bonus"
+      ],
       "type": "object"
     },
     "EffectGainSpeed": {
@@ -2172,7 +2493,9 @@
           "$ref": "#/definitions/Bonus"
         }
       },
-      "required": ["bonus"],
+      "required": [
+        "bonus"
+      ],
       "type": "object"
     },
     "EffectGainSpellCasting": {
@@ -2188,7 +2511,10 @@
           "$ref": "#/definitions/SpellCastingType"
         }
       },
-      "required": ["castingType", "abilityType"],
+      "required": [
+        "castingType",
+        "abilityType"
+      ],
       "type": "object"
     },
     "EffectGainTwoWeaponFighting": {
@@ -2208,7 +2534,9 @@
           "$ref": "#/definitions/AbilityType"
         }
       },
-      "required": ["ability"],
+      "required": [
+        "ability"
+      ],
       "type": "object"
     },
     "EffectNeedInput": {
@@ -2265,7 +2593,9 @@
           "type": "number"
         }
       },
-      "required": ["multiplier"],
+      "required": [
+        "multiplier"
+      ],
       "type": "object"
     },
     "EffectType": {
@@ -2315,7 +2645,11 @@
           "type": "string"
         }
       },
-      "required": ["_type", "id", "name"],
+      "required": [
+        "_type",
+        "id",
+        "name"
+      ],
       "type": "object"
     },
     "EntityType": {
@@ -2355,11 +2689,20 @@
       ]
     },
     "EquipmentType": {
-      "enum": ["weapon", "armor", "magicItem", "spellItem"],
+      "enum": [
+        "weapon",
+        "armor",
+        "magicItem",
+        "spellItem"
+      ],
       "type": "string"
     },
     "FavoredClassBonus": {
-      "enum": ["hp", "skill", "custom"],
+      "enum": [
+        "hp",
+        "skill",
+        "custom"
+      ],
       "type": "string"
     },
     "Feat": {
@@ -2406,7 +2749,15 @@
           "type": "array"
         }
       },
-      "required": ["_type", "book", "brief", "id", "meta", "name", "type"],
+      "required": [
+        "_type",
+        "book",
+        "brief",
+        "id",
+        "meta",
+        "name",
+        "type"
+      ],
       "type": "object"
     },
     "FeatMeta": {
@@ -2468,7 +2819,13 @@
           "$ref": "#/definitions/MagicItemType"
         }
       },
-      "required": ["_type", "equipmentType", "id", "name", "type"],
+      "required": [
+        "_type",
+        "equipmentType",
+        "id",
+        "name",
+        "type"
+      ],
       "type": "object"
     },
     "MagicItemSlot": {
@@ -2521,7 +2878,12 @@
           "type": "string"
         }
       },
-      "required": ["_type", "id", "meta", "name"],
+      "required": [
+        "_type",
+        "id",
+        "meta",
+        "name"
+      ],
       "type": "object"
     },
     "MagicItemTypeMeta": {
@@ -2546,7 +2908,14 @@
           "type": "number"
         }
       },
-      "required": ["group", "price", "weight", "casterLevel", "aura", "slot"],
+      "required": [
+        "group",
+        "price",
+        "weight",
+        "casterLevel",
+        "aura",
+        "slot"
+      ],
       "type": "object"
     },
     "ManualEffect": {
@@ -2559,14 +2928,18 @@
           "type": "array"
         },
         "inputs": {
-          "items": {},
+          "items": {
+          },
           "type": "array"
         },
         "name": {
           "type": "string"
         }
       },
-      "required": ["name", "effects"],
+      "required": [
+        "name",
+        "effects"
+      ],
       "type": "object"
     },
     "NamedBonus": {
@@ -2579,7 +2952,10 @@
           "type": "string"
         }
       },
-      "required": ["name", "bonus"],
+      "required": [
+        "name",
+        "bonus"
+      ],
       "type": "object"
     },
     "Race": {
@@ -2661,7 +3037,10 @@
       "type": "object"
     },
     "RaceSize": {
-      "enum": ["small", "medium"],
+      "enum": [
+        "small",
+        "medium"
+      ],
       "type": "string"
     },
     "RacialTrait": {
@@ -2705,14 +3084,23 @@
           "type": "array"
         },
         "type": {
-          "enum": ["su", "ex", "sp"],
+          "enum": [
+            "su",
+            "ex",
+            "sp"
+          ],
           "type": "string"
         },
         "when": {
           "type": "string"
         }
       },
-      "required": ["_type", "desc", "id", "name"],
+      "required": [
+        "_type",
+        "desc",
+        "id",
+        "name"
+      ],
       "type": "object"
     },
     "Skill": {
@@ -2753,11 +3141,19 @@
           "type": "boolean"
         }
       },
-      "required": ["_type", "ability", "id", "name"],
+      "required": [
+        "_type",
+        "ability",
+        "id",
+        "name"
+      ],
       "type": "object"
     },
     "SkillSystem": {
-      "enum": ["core", "consolidated"],
+      "enum": [
+        "core",
+        "consolidated"
+      ],
       "type": "string"
     },
     "SpecialFeat": {
@@ -2800,14 +3196,23 @@
           "type": "array"
         },
         "type": {
-          "enum": ["su", "ex", "sp"],
+          "enum": [
+            "su",
+            "ex",
+            "sp"
+          ],
           "type": "string"
         },
         "when": {
           "type": "string"
         }
       },
-      "required": ["_type", "desc", "id", "name"],
+      "required": [
+        "_type",
+        "desc",
+        "id",
+        "name"
+      ],
       "type": "object"
     },
     "Spell": {
@@ -2836,11 +3241,22 @@
           "type": "string"
         }
       },
-      "required": ["_type", "book", "desc", "id", "meta", "name"],
+      "required": [
+        "_type",
+        "book",
+        "desc",
+        "id",
+        "meta",
+        "name"
+      ],
       "type": "object"
     },
     "SpellCastingType": {
-      "enum": ["wizard-like", "sorcerer-like", "cleric-like"],
+      "enum": [
+        "wizard-like",
+        "sorcerer-like",
+        "cleric-like"
+      ],
       "type": "string"
     },
     "SpellItem": {
@@ -2870,25 +3286,42 @@
           "$ref": "#/definitions/Spell"
         }
       },
-      "required": ["_type", "equipmentType", "id", "name", "spellItemType", "type"],
+      "required": [
+        "_type",
+        "equipmentType",
+        "id",
+        "name",
+        "spellItemType",
+        "type"
+      ],
       "type": "object"
     },
     "SpellItemType": {
-      "enum": ["potion", "scroll", "wand"],
+      "enum": [
+        "potion",
+        "scroll",
+        "wand"
+      ],
       "type": "string"
     },
     "SpellManageAction": {
       "additionalProperties": false,
       "properties": {
         "action": {
-          "enum": ["add", "remove"],
+          "enum": [
+            "add",
+            "remove"
+          ],
           "type": "string"
         },
         "spellId": {
           "type": "string"
         }
       },
-      "required": ["action", "spellId"],
+      "required": [
+        "action",
+        "spellId"
+      ],
       "type": "object"
     },
     "SpellMeta": {
@@ -2931,7 +3364,9 @@
           "type": "string"
         }
       },
-      "required": ["school"],
+      "required": [
+        "school"
+      ],
       "type": "object"
     },
     "Weapon": {
@@ -2980,19 +3415,43 @@
       "type": "object"
     },
     "WeaponCategory": {
-      "enum": ["light", "one-handed", "two-handed", "ranged", "unarmed attacks"],
+      "enum": [
+        "light",
+        "one-handed",
+        "two-handed",
+        "ranged",
+        "unarmed attacks"
+      ],
       "type": "string"
     },
     "WeaponDamageType": {
-      "enum": ["P", "B", "S", "P or S", "B or S", "B and P", "P and S"],
+      "enum": [
+        "P",
+        "B",
+        "S",
+        "P or S",
+        "B or S",
+        "B and P",
+        "P and S"
+      ],
       "type": "string"
     },
     "WeaponSize": {
-      "enum": ["tiny", "small", "medium", "large", "huge"],
+      "enum": [
+        "tiny",
+        "small",
+        "medium",
+        "large",
+        "huge"
+      ],
       "type": "string"
     },
     "WeaponTraining": {
-      "enum": ["simple", "martial", "exotic"],
+      "enum": [
+        "simple",
+        "martial",
+        "exotic"
+      ],
       "type": "string"
     },
     "WeaponType": {
@@ -3018,7 +3477,12 @@
           "type": "string"
         }
       },
-      "required": ["_type", "id", "meta", "name"],
+      "required": [
+        "_type",
+        "id",
+        "meta",
+        "name"
+      ],
       "type": "object"
     },
     "WeaponTypeMeta": {
@@ -3058,7 +3522,12 @@
           "type": "number"
         }
       },
-      "required": ["training", "category", "cost", "weight"],
+      "required": [
+        "training",
+        "category",
+        "cost",
+        "weight"
+      ],
       "type": "object"
     }
   }
