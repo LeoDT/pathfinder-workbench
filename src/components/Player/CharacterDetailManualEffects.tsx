@@ -161,6 +161,14 @@ export function CharacterDetailManualEffectsModal({ isOpen, onClose }: ModalProp
             <Button
               colorScheme="teal"
               onClick={() => {
+                if (value === '') {
+                  character.manualEffects = [];
+
+                  onClose();
+
+                  return;
+                }
+
                 const effects = validateManualEffects(yaml.load(value));
 
                 if (effects) {
