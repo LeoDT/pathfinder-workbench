@@ -286,9 +286,42 @@ export function characterAsMarkdown(c: Character, collections: any): Array<strin
         {c.upgrades.map((u, i) => (
           <tr key={i}>
             <td>{i + 1}</td>
-            <td>{u.favoredClassBonus}</td>
+            <td>
+              {u.favoredClassBonus === 'hp'
+                ? 'HP'
+                : u.favoredClassBonus === 'skill'
+                ? '技能点'
+                : '自定义'}
+            </td>
           </tr>
         ))}
+        <tr>
+          <td>总计</td>
+          <td>
+            {(() => {
+              const a = c.upgrades
+                .map((u) => u.favoredClassBonus)
+                .reduce(
+                  (acc, i) => {
+                    if (i === 'hp') {
+                      return [acc[0] + 1, acc[1]];
+                    }
+
+                    if (i === 'skill') {
+                      return [acc[0], acc[1] + 1];
+                    }
+
+                    return acc;
+                  },
+                  [0, 0]
+                );
+
+              return [a[0] ? `+${a[0]}HP` : '', a[1] ? `+${a[1]}技能点` : '']
+                .filter((i) => i)
+                .join(', ');
+            })()}
+          </td>
+        </tr>
       </tbody>
     </table>,
     '## 专长',
@@ -316,6 +349,29 @@ export function characterAsMarkdown(c: Character, collections: any): Array<strin
         ))}
       </tbody>
     </table>,
+    ...c.spellbooks
+      .map((book) => [
+        `## ${book.class.name}法术`,
+        <table>
+          <thead>
+            <tr>
+              <th>环位</th>
+              <th>每日法术</th>
+              <th>法术列表</th>
+            </tr>
+          </thead>
+          <tbody>
+            {book.knownSpells.map((spells, level) => (
+              <tr key={level}>
+                <td>{level}环</td>
+                <td>{book.spellsPerDay[level]}</td>
+                <td>{spells.map((s) => s.name).join(',')}</td>
+              </tr>
+            ))}
+          </tbody>
+        </table>,
+      ])
+      .flat(),
     '## 装备',
     `总价值: ${showCoin(c.equipment.storageCostWeight.cost)}, 总重量: ${showWeight(
       c.equipment.storageCostWeight.weight
