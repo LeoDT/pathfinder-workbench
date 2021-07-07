@@ -300,6 +300,38 @@ export class Character {
 
     return this.race.ability;
   }
+  getBonusesForAbilityType(a: AbilityType, includeBase = true): NamedBonus[] {
+    const base = this.upgrades[0].abilities[a];
+    const fromLevel = this.upgrades.slice(1).map((u) => u.abilities[a]);
+    const racialBonus = this.racialBonusAbility[a];
+    const fromEffects = this.effect.getAbilityBonusEffects().filter(({ effect }) => {
+      return effect.args.abilityType === a;
+    });
+
+    return this.makeNamedBonuses(
+      (
+        [
+          includeBase && base
+            ? { name: '基础', bonus: { amount: base + 10, type: 'untyped' } }
+            : null,
+          racialBonus ? { name: '种族', bonus: { amount: racialBonus, type: 'untyped' } } : null,
+          ...fromLevel
+            .map((a, i) => {
+              if (a) {
+                return { name: `${i + 2}级`, bonus: { amount: a, type: 'untyped' } } as NamedBonus;
+              }
+
+              return null;
+            })
+            .filter((a): a is NamedBonus => Boolean(a)),
+          ...fromEffects.map(({ effect, source }) => ({
+            name: source.name,
+            bonus: effect.args.bonus,
+          })),
+        ] as Array<NamedBonus | null>
+      ).filter((a): a is NamedBonus => Boolean(a))
+    );
+  }
 
   startUpgrade(): void {
     const lastUpgrade = last(this.upgrades);

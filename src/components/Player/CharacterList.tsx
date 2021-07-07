@@ -1,5 +1,5 @@
 import { Observer } from 'mobx-react-lite';
-import { FaFileExport, FaRegTrashAlt } from 'react-icons/fa';
+import { FaDownload, FaRegTrashAlt } from 'react-icons/fa';
 import { Link } from 'react-router-dom';
 
 import {
@@ -20,6 +20,7 @@ import { useStore } from '../../store';
 import { Character } from '../../store/character';
 import { download, stringToBlobUrl } from '../../utils/misc';
 import { Bread, useBreadcrumb } from './Bread';
+import { CharacterAsMarkdownModal } from './CharacterAsMarkdown';
 import { ImportCharacter } from './ImportCharacter';
 
 export function CharacterList(): JSX.Element {
@@ -85,13 +86,14 @@ export function CharacterList(): JSX.Element {
                   <IconButton
                     aria-label="备份角色"
                     size="sm"
-                    icon={<Icon as={FaFileExport} />}
+                    icon={<Icon as={FaDownload} />}
                     onClick={() => {
                       const exported = Character.stringify(c, 4);
 
                       download(stringToBlobUrl(exported), `${c.name}.json`);
                     }}
                   />
+                  <CharacterAsMarkdownModal character={c} />
                 </HStack>
               </Box>
             ))}

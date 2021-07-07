@@ -6,7 +6,7 @@ import { getWeaponDamageModifier, getWeaponModifier, showEquipment } from '../..
 import { collections } from '../collection';
 import { Character } from '.';
 
-interface AttackOption {
+export interface AttackOption {
   name: string;
   ability: AbilityType;
   damage: string;
@@ -17,7 +17,7 @@ interface AttackOption {
   damageBonuses: NamedBonus[];
 }
 
-interface Attack {
+export interface Attack {
   option: AttackOption;
   attackBonuses: NamedBonus[];
   attackModifier: number[];
@@ -25,7 +25,7 @@ interface Attack {
   damageModifier: number;
 }
 
-interface GetAttackOptionOptions {
+export interface GetAttackOptionOptions {
   name?: string;
   isOffHand: boolean;
   ignoreTwoWeapon: boolean;
@@ -320,18 +320,19 @@ export class CharacterAttack {
     return this.attackOptionsFromWeapons.concat(this.attackOptionsFromEffects);
   }
 
-  get attacks(): Attack[] {
-    return this.attackOptions.map((o) => {
-      const attackBonuses: NamedBonus[] = this.character.makeNamedBonuses(o.attackBonuses);
-      const damageBonuses: NamedBonus[] = this.character.makeNamedBonuses(o.damageBonuses);
+  mapAttackOptionToAttack(o: AttackOption): Attack {
+    const attackBonuses: NamedBonus[] = this.character.makeNamedBonuses(o.attackBonuses);
+    const damageBonuses: NamedBonus[] = this.character.makeNamedBonuses(o.damageBonuses);
 
-      return {
-        option: o,
-        attackBonuses,
-        attackModifier: this.character.aggregateNamedBonusesAmount(attackBonuses),
-        damageBonuses,
-        damageModifier: this.character.aggregateNamedBonusesMaxAmount(damageBonuses),
-      };
-    });
+    return {
+      option: o,
+      attackBonuses,
+      attackModifier: this.character.aggregateNamedBonusesAmount(attackBonuses),
+      damageBonuses,
+      damageModifier: this.character.aggregateNamedBonusesMaxAmount(damageBonuses),
+    };
+  }
+  get attacks(): Attack[] {
+    return this.attackOptions.map((o) => this.mapAttackOptionToAttack(o));
   }
 }

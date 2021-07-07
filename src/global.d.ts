@@ -24,3 +24,14 @@ declare module 'hot-formula-parser' {
     ): void;
   }
 }
+
+declare module 'prettier/esm/standalone' {
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const v: any;
+  export default v;
+}
+declare module 'prettier/esm/parser-html' {
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const v: any;
+  export default v;
+}
