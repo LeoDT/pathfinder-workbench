@@ -45,7 +45,8 @@ export type EntityType =
   | 'armorType'
   | 'magicItemType'
   | 'arcaneSchool'
-  | 'bloodline';
+  | 'bloodline'
+  | 'domain';
 
 export interface Entity {
   _type: EntityType;

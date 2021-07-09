@@ -335,7 +335,7 @@ export class Character {
 
   startUpgrade(): void {
     const lastUpgrade = last(this.upgrades);
-    const lastUpgradeClass = lastUpgrade ? lastUpgrade.classId : 'Sorcerer';
+    const lastUpgradeClass = lastUpgrade ? lastUpgrade.classId : 'Inquisitor';
     const levelFeat =
       this.level === 1 && this.upgrades.length === 0 ? true : (this.level + 1) % 2 === 1;
     const levelAbility = (this.level + 1) % 4 === 0;
@@ -733,6 +733,8 @@ export class Character {
         this.formulaParserReady = false;
 
         p.setVariable('level', this.level);
+        p.setVariable('clericLevel', 0);
+        p.setVariable('druidLevel', 0);
 
         this.levelDetail.forEach((level, clas) => {
           p.setVariable(`${clas.id.toLowerCase().replace(/[()]/g, '')}Level`, level);

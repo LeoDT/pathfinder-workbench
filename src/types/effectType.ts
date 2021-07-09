@@ -44,6 +44,8 @@ export enum EffectType {
 
   gainBloodline = 'gainBloodline',
 
+  gainDomain = 'gainDomain',
+
   selectFromSubs = 'selectFromSubs',
 }
 
@@ -131,7 +133,7 @@ export type EffectGainSelectedWeaponProficiency = BaseEffect<
 >;
 
 export interface EffectGainSkillArgs {
-  skillId?: string;
+  skillId: string;
   bonus: Bonus;
 }
 export type EffectGainSkill = BaseEffect<EffectType.gainSkill, EffectGainSkillArgs>;
@@ -243,12 +245,24 @@ export interface EffectAddTrackerArgs {
 export type EffectAddTracker = BaseEffect<EffectType.addTracker, EffectAddTrackerArgs>;
 
 export interface EffectGainBloodlineArgs {
-  bloodline: string;
+  sorcerer: boolean;
+  bloodrager: boolean;
 }
 export type EffectGainBloodline = BaseEffect<EffectType.gainBloodline, EffectGainBloodlineArgs>;
 
 export interface EffectGainBloodlineInput {
   bloodline: string;
+}
+
+export interface EffectGainDomainArgs {
+  inquisition: boolean;
+  druid: boolean;
+  amount: number;
+  spells: boolean;
+}
+export type EffectGainDomain = BaseEffect<EffectType.gainDomain, EffectGainDomainArgs>;
+export interface EffectGainDomainInput {
+  domains: string[];
 }
 
 export interface EffectSelectFromSubsArgs {}
@@ -280,24 +294,25 @@ export type Effect =
   | EffectMeleeAttackAbility
   | EffectAddTracker
   | EffectGainBloodline
+  | EffectGainDomain
   | EffectSelectFromSubs;
 
 export type ArgsTypeForEffect<T extends Effect> = T['args'];
 
 export type EffectNeedInput =
-  | EffectGainSkill
   | EffectGainArcaneSchool
   | EffectGainSelectedWeaponProficiency
   | EffectGainBloodline
+  | EffectGainDomain
   | EffectSelectFromSubs;
 
 export const effectTypesNeedInput: Array<EffectType> = [
-  EffectType.gainSkill,
-
   EffectType.gainArcaneSchool,
   EffectType.gainSelectedWeaponProficiency,
 
   EffectType.gainBloodline,
+
+  EffectType.gainDomain,
 
   EffectType.selectFromSubs,
 ];

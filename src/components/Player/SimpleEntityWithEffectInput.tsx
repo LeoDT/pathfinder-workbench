@@ -19,6 +19,7 @@ import { Entity, SpecialFeat } from '../../types/core';
 import { EffectNeedInput, EffectType } from '../../types/effectType';
 import { ArcaneSchoolPicker } from '../ArcaneSchoolPicker';
 import { BloodlinePicker } from '../BloodlinePicker';
+import { DomainPicker } from '../DomainPicker';
 import { EffectInputDisplayer } from '../EffectInputDisplayer';
 import { EntityPickerInputRefContext } from '../EntityPicker';
 import { SimpleEntityWithChild } from '../SimpleEntity';
@@ -45,14 +46,6 @@ export function EffectInput({
   onClose,
 }: Props): JSX.Element | null {
   switch (effect.type) {
-    case EffectType.gainSkill: {
-      if (effect.args.skillId) {
-        return null;
-      }
-
-      return <div>123</div>;
-    }
-
     case EffectType.gainArcaneSchool: {
       return (
         <ArcaneSchoolPicker
@@ -83,9 +76,13 @@ export function EffectInput({
         <BloodlinePicker
           value={value}
           onChange={onChange}
-          type={createOrUpgrade.upgrade.classId === 'Sorcerer' ? 'Sorcerer' : 'Sorcerer'}
+          type={createOrUpgrade.upgrade.classId === 'Sorcerer' ? 'Sorcerer' : 'Sorcerer'} // TODO
         />
       );
+    }
+
+    case EffectType.gainDomain: {
+      return <DomainPicker value={value} onChange={onChange} {...effect.args} />;
     }
 
     case EffectType.selectFromSubs: {

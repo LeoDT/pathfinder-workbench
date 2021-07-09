@@ -7,6 +7,7 @@ import {
   makeManualEffectSource,
   validateGainArcaneSchoolEffectInput,
   validateGainBloodlineEffectInput,
+  validateGainDomainEffectInput,
 } from '../../utils/effect';
 import { collections } from '../collection';
 import { Character } from '.';
@@ -122,6 +123,26 @@ export class CharacterEffect {
           )
           .flat();
 
+        return [es, ...newES];
+      }
+
+      case Effects.EffectType.gainDomain: {
+        if (!input) return es;
+
+        const realInput = validateGainDomainEffectInput(input);
+        const domains = collections.domain.getByIds(realInput.domains);
+        const newES = domains
+          .map((domain) =>
+            domain.powers
+              .map(
+                (p) =>
+                  p.effects
+                    ?.map((effect): EffectAndSource => ({ effect, source: p, extendedFrom: es }))
+                    .flat() ?? []
+              )
+              .flat()
+          )
+          .flat();
         return [es, ...newES];
       }
 

@@ -6,6 +6,7 @@ import { EffectNeedInput, EffectType } from '../types/effectType';
 import {
   validateGainArcaneSchoolEffectInput,
   validateGainBloodlineEffectInput,
+  validateGainDomainEffectInput,
   validateGainSkillEffectInput,
   validateSelectFromSubsEffectInput,
 } from '../utils/effect';
@@ -77,6 +78,22 @@ export function EffectInputDisplayer({ input, effect, source }: Props): JSX.Elem
         const bloodline = collections.sorcererBloodline.getById(realInput.bloodline);
 
         child = <SimpleEntityBadge entity={bloodline} />;
+      }
+      break;
+
+    case EffectType.gainDomain:
+      {
+        const realInput = validateGainDomainEffectInput(input);
+
+        const domains = collections.domain.getByIds(realInput.domains);
+
+        child = (
+          <HStack>
+            {domains.map((d) => (
+              <SimpleEntityBadge key={d.id} entity={d} quickViewer />
+            ))}
+          </HStack>
+        );
       }
       break;
 

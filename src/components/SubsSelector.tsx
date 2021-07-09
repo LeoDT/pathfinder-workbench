@@ -1,4 +1,4 @@
-import { isEqual, last } from 'lodash';
+import { isEqual, last } from 'lodash-es';
 import { Fragment, useCallback } from 'react';
 import { FaCheck, FaChevronDown } from 'react-icons/fa';
 
