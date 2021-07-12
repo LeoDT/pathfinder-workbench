@@ -8,6 +8,8 @@ import { Box, Button, HStack, Icon, Spacer, Text, VStack } from '@chakra-ui/reac
 import { useStore } from '../../store';
 import { CreateCharacterStore } from '../../store/createCharacter';
 import { SkillSystem } from '../../types/core';
+import { ABILITY_TYPES } from '../../utils/ability';
+import { sortedSkills } from '../../utils/skill';
 import { AbilityIcon } from '../AbilityIcon';
 import { Select } from '../Select';
 import { SkillInput } from '../SkillInput';
@@ -64,14 +66,14 @@ export function CreateCharacterSkills({ createOrUpgrade }: Props): JSX.Element {
                 技能点数: {createOrUpgrade.skillPointsRemain} / {createOrUpgrade.skillPoints}
               </Text>
 
-              {skillCollection.data.map((s) => {
+              {sortedSkills(skillCollection.data).map((s) => {
                 if (s.category) {
                   const collapsed = collapsedCategory.includes(s.id);
 
                   return (
                     <HStack w="full" key={s.id}>
                       <AbilityIcon ability={s.ability} />
-                      <Text fontSize="large">
+                      <Text fontSize="lg">
                         {s.name}
                         {character.isClassSkill(s) ? <Icon as={FaStar} color="gray.600" /> : null}
                       </Text>

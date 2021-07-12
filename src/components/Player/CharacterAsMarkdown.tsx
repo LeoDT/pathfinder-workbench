@@ -440,6 +440,7 @@ export function CharacterAsMarkdownModal({ character }: Props): JSX.Element {
     <>
       <IconButton
         aria-label="导出Markdown"
+        title="导出Markdown"
         size="sm"
         icon={<Icon as={FaFileArchive} />}
         onClick={() => {

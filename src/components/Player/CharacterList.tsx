@@ -74,6 +74,7 @@ export function CharacterList(): JSX.Element {
                   <Spacer />
                   <IconButton
                     aria-label="删除角色"
+                    title="删除角色"
                     size="sm"
                     colorScheme="red"
                     icon={<Icon as={FaRegTrashAlt} />}
@@ -85,6 +86,7 @@ export function CharacterList(): JSX.Element {
                   />
                   <IconButton
                     aria-label="备份角色"
+                    title="备份角色"
                     size="sm"
                     icon={<Icon as={FaDownload} />}
                     onClick={() => {

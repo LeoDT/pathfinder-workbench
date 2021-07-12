@@ -6,6 +6,7 @@ import { Box, Button, Tag, Wrap, WrapItem } from '@chakra-ui/react';
 import { ABILITY_COLORS_SCHEME } from '../../constant';
 import { useStore } from '../../store';
 import { showModifier } from '../../utils/modifier';
+import { sortedSkills } from '../../utils/skill';
 import { NamedBonusPopover } from '../NamedBonusPopover';
 import { useCurrentCharacter } from './context';
 
@@ -32,7 +33,7 @@ export function CharacterDetailSkills(): JSX.Element {
             ? col.data
             : Array.from(character.skillRanks.keys()).map((s) => col.getById(s));
 
-          skills.forEach((s) => {
+          sortedSkills(skills).forEach((s) => {
             const detail = character.getSkillDetail(s);
             const bonuses = character.skillBonuses.get(s.id);
 
