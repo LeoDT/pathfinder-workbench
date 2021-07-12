@@ -1,4 +1,5 @@
 import { createContext, useContext } from 'react';
+
 import { useMediaQuery } from '@chakra-ui/react';
 
 import { CONTAINER_WIDTH } from '../constant';

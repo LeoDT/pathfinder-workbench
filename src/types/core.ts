@@ -48,11 +48,19 @@ export type EntityType =
   | 'bloodline'
   | 'domain';
 
+export interface CalculatedValue {
+  name: string;
+  formula: string;
+  showInName?: boolean;
+  showInNameTemplate?: string;
+}
+
 export interface Entity {
   _type: EntityType;
   id: string;
   name: string;
   deprecated?: boolean;
+  calculatedValues?: CalculatedValue[];
 }
 
 export interface SpecialFeat extends Entity {

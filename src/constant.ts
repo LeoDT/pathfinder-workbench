@@ -20,8 +20,13 @@ export const ABILITY_COLORS_SCHEME: Record<string, string> = {
 
 export const ENTITY_COLORS: Record<string, string> = {
   class: 'green.600',
+  archetype: 'green.600',
   spell: 'purple.600',
+
   feat: 'teal.600',
+  classFeat: 'teal.600',
+  racialTrait: 'teal.600',
+
   weaponType: 'orange.600',
   armorType: 'red.600',
   magicItemType: 'blue.600',

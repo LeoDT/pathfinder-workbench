@@ -4,6 +4,7 @@ import { Redirect, Route, Switch, useParams, useRouteMatch } from 'react-router-
 
 import { useStore } from '../../store';
 import { Character } from '../../store/character';
+import { OptionalCharacterContext } from '../context';
 import { Bread, useBreadcrumb } from './Bread';
 import { CharacterDetailBasic } from './CharacterDetailBasic';
 import { UpgradeCharacter as CharacterUpgrade } from './UpgradeCharacter';
@@ -37,17 +38,19 @@ export function CharacterDetail(): JSX.Element | null {
   }, [id]);
 
   return character ? (
-    <CurrentCharacterContext.Provider value={character}>
-      <>
-        <Bread mb="2" />
+    <OptionalCharacterContext.Provider value={character}>
+      <CurrentCharacterContext.Provider value={character}>
+        <>
+          <Bread mb="2" />
 
-        <Switch>
-          <Route path={`${path}/basic`} component={CharacterDetailBasic} />
-          <Route path={`${path}/upgrade`} component={CharacterUpgrade} />
+          <Switch>
+            <Route path={`${path}/basic`} component={CharacterDetailBasic} />
+            <Route path={`${path}/upgrade`} component={CharacterUpgrade} />
 
-          <Redirect to={`${path}/basic`} />
-        </Switch>
-      </>
-    </CurrentCharacterContext.Provider>
+            <Redirect to={`${path}/basic`} />
+          </Switch>
+        </>
+      </CurrentCharacterContext.Provider>
+    </OptionalCharacterContext.Provider>
   ) : null;
 }

@@ -1,4 +1,5 @@
-import { ReactNode } from 'react';
+import { template } from 'lodash-es';
+import { ReactNode, useMemo } from 'react';
 import { FaInfoCircle } from 'react-icons/fa';
 
 import {
@@ -7,6 +8,7 @@ import {
   Box,
   HStack,
   Heading,
+  HeadingProps,
   Icon,
   Spacer,
   StackProps,
@@ -14,18 +16,9 @@ import {
 
 import { ENTITY_COLORS } from '../constant';
 import { useStore } from '../store';
-import {
-  ArmorType as ArmorTypeType,
-  Entity,
-  Feat as FeatType,
-  Spell as SpellType,
-  WeaponType as WeaponTypeType,
-} from '../types/core';
-import { ArmorType } from './ArmorType';
+import { Entity, Feat as FeatType } from '../types/core';
 import { EntityQuickViewerToggler } from './EntityQuickViewer';
-import { Feat } from './Feat';
-import { Spell } from './Spell';
-import { WeaponType } from './WeaponType';
+import { useOptionalCharacter } from './context';
 
 interface BaseProps {
   entity: Entity;
@@ -44,88 +37,42 @@ export function SimpleEntity({
   addon,
   ...props
 }: Props): JSX.Element {
-  let child;
+  const character = useOptionalCharacter();
+  const calculatedValueInName = useMemo(() => {
+    if (character) {
+      const cv = entity.calculatedValues?.find((c) => c.showInName);
+
+      if (cv) {
+        const value = character.parseFormulaNumber(cv.formula);
+        const tpl = template(cv.showInNameTemplate ?? '<%= value %>');
+
+        return tpl({ value });
+      }
+    }
+  }, [entity, character]);
+  const children = (
+    <>
+      {entity.name} {showId ? <small style={{ fontWeight: 'normal' }}>({entity.id})</small> : null}
+      {calculatedValueInName ? `(${calculatedValueInName})` : null}
+    </>
+  );
+  const headingProps = useMemo<HeadingProps>(
+    () => ({
+      as: 'h4',
+      fontSize: 'lg',
+      textDecoration: entity.deprecated ? 'solid line-through 2px red' : '',
+      color: ENTITY_COLORS[entity._type],
+    }),
+    [entity]
+  );
+  const name = <Heading {...headingProps}>{children}</Heading>;
+  let badge;
 
   switch (entity._type) {
-    case 'spell': {
-      child = (
-        <Spell
-          spell={entity as SpellType}
-          showDescription={false}
-          showMeta={false}
-          showId={showId}
-        />
-      );
-      break;
-    }
+    case 'feat':
+      badge = entity._type === 'feat' ? <Badge>{(entity as FeatType).book}</Badge> : null;
 
-    case 'feat': {
-      child = (
-        <Feat
-          feat={entity as FeatType}
-          showBrief={false}
-          showMeta={false}
-          showDescription={false}
-          showId={showId}
-        />
-      );
       break;
-    }
-
-    case 'weaponType':
-      child = (
-        <WeaponType
-          weaponType={entity as WeaponTypeType}
-          showMeta={false}
-          showDescription={false}
-          showId={showId}
-        />
-      );
-      break;
-
-    case 'armorType':
-      child = (
-        <ArmorType
-          armorType={entity as ArmorTypeType}
-          showMeta={false}
-          showDescription={false}
-          showId={showId}
-        />
-      );
-      break;
-
-    case 'classFeat':
-    case 'racialTrait':
-      child = (
-        <Heading
-          as="h4"
-          fontSize="lg"
-          color={ENTITY_COLORS.feat}
-          textDecoration={entity.deprecated ? 'solid line-through 2px red' : ''}
-        >
-          {entity.name}{' '}
-          {showId ? <small style={{ fontWeight: 'normal' }}>({entity.id})</small> : null}
-        </Heading>
-      );
-      break;
-
-    case 'class':
-    case 'archetype':
-      child = (
-        <Heading as="h4" fontSize="lg" color={ENTITY_COLORS.class}>
-          {entity.name}{' '}
-          {showId ? <small style={{ fontWeight: 'normal' }}>({entity.id})</small> : null}
-        </Heading>
-      );
-      break;
-
-    default:
-      child = (
-        <Heading as="h4" fontSize="lg">
-          {entity.name}{' '}
-          {showId ? <small style={{ fontWeight: 'normal' }}>({entity.id})</small> : null}
-        </Heading>
-      );
   }
 
   return (
@@ -142,7 +89,8 @@ export function SimpleEntity({
       {...props}
     >
       <HStack p="2" w="100%">
-        {child}
+        {badge}
+        {name}
         <Spacer />
         {quickViewer ? <EntityQuickViewerToggler entity={entity} /> : null}
       </HStack>
