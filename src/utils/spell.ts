@@ -1,5 +1,7 @@
 import { collections } from '../store/collection';
+import { ArcaneSchoolStandard } from '../types/arcaneSchool';
 import { Spell } from '../types/core';
+import { classTranslates } from './class';
 
 export const translates = {
   school: '学派',
@@ -21,6 +23,10 @@ export const translates = {
 export const schoolTranslates: Record<string, string> = {};
 collections.arcaneSchool.data.forEach((s) => {
   schoolTranslates[s.id.toLowerCase()] = s.name;
+
+  (s as ArcaneSchoolStandard).focused?.forEach((f) => {
+    schoolTranslates[f.id.toLowerCase()] = f.name;
+  });
 });
 
 export const spellsPerDayByAbilityModifier: Record<number, number[]> = {
@@ -57,4 +63,21 @@ export function getLowestSpellLevelFromMeta(spell: Spell): number {
   }
 
   return 0;
+}
+
+export function translateSpellMetaSchool(s: string): string {
+  return s
+    .split(', ')
+    .map((s) => schoolTranslates[s] || s)
+    .join(', ');
+}
+
+export function translateSpellMetaLevel(s: string): string {
+  let result = s;
+
+  Object.entries(classTranslates).forEach(([key, value]) => {
+    result = result.replace(key, value);
+  });
+
+  return result;
 }

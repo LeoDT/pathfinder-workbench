@@ -32,7 +32,6 @@ import {
   makeAbilities,
 } from '../../utils/ability';
 import { markUnstackableBonus } from '../../utils/bonus';
-import { getClassLevel } from '../../utils/class';
 import {
   validateGainBloodlineEffectInput,
   validateGainSkillEffectInput,
@@ -412,7 +411,7 @@ export class Character {
     const classLevels = new Map<Class, ClassLevel>();
 
     this.levelDetail.forEach((l, clas) => {
-      const classLevel = getClassLevel(clas, l);
+      const classLevel = collections.class.getClassLevel(clas, l);
 
       classLevels.set(clas, classLevel);
     });

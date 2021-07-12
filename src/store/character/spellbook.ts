@@ -3,7 +3,6 @@ import { action, computed, makeObservable } from 'mobx';
 
 import { ArcaneSchool } from '../../types/arcaneSchool';
 import { AbilityType, Class, Spell, SpellCastingType } from '../../types/core';
-import { getClassLevel } from '../../utils/class';
 import { validateGainArcaneSchoolEffectInput } from '../../utils/effect';
 import { spellsPerDayByAbilityModifier } from '../../utils/spell';
 import { collections } from '../collection';
@@ -243,7 +242,7 @@ export class CharacterSpellbook {
 
   getSorcererNewSpellSlotsForLevel(spellLevel: number): number {
     const level = this.character.getLevelForClass(this.class);
-    const currentLevel = getClassLevel(this.class, level);
+    const currentLevel = collections.class.getClassLevel(this.class, level);
 
     if (currentLevel.spellsKnown) {
       const currentLevelSpellsKnown = currentLevel.spellsKnown[spellLevel] || 0;
@@ -251,7 +250,7 @@ export class CharacterSpellbook {
       if (level === 1) {
         return currentLevelSpellsKnown;
       } else {
-        const lastLevel = getClassLevel(this.class, level - 1);
+        const lastLevel = collections.class.getClassLevel(this.class, level - 1);
 
         if (lastLevel.spellsKnown) {
           return currentLevelSpellsKnown - (lastLevel.spellsKnown[spellLevel] || 0);

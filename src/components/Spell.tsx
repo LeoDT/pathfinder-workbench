@@ -6,7 +6,12 @@ import { Badge, Box, Heading, Stack, Table, Tbody, Td, Text, Tr } from '@chakra-
 
 import { ENTITY_COLORS } from '../constant';
 import { SpellMeta as SpellMetaType, Spell as SpellType } from '../types/core';
-import { schoolTranslates, translates as spellTranslates } from '../utils/spell';
+import {
+  schoolTranslates,
+  translates as spellTranslates,
+  translateSpellMetaLevel,
+  translateSpellMetaSchool,
+} from '../utils/spell';
 
 interface Props {
   spell: SpellType;
@@ -20,14 +25,30 @@ export function SpellMeta({ spell }: Props): JSX.Element {
   return (
     <Table size="sm" mt="2">
       <Tbody>
-        {(Object.keys(spell.meta) as Array<keyof SpellMetaType>).map((k) => (
-          <Tr key={k}>
-            <Td pl="0" color="blue.500" width="8em">
-              {spellTranslates[k]}
-            </Td>
-            <Td>{spell.meta[k]}</Td>
-          </Tr>
-        ))}
+        {(Object.keys(spell.meta) as Array<keyof SpellMetaType>).map((k) => {
+          const key = spellTranslates[k];
+          let value = spell.meta[k] as string;
+
+          switch (k) {
+            case 'school':
+              value = translateSpellMetaSchool(value);
+              break;
+            case 'subschool':
+              value = translateSpellMetaSchool(value);
+              break;
+            case 'level':
+              value = translateSpellMetaLevel(value);
+          }
+
+          return (
+            <Tr key={k}>
+              <Td pl="0" color="blue.500" width="8em">
+                {key}
+              </Td>
+              <Td>{value}</Td>
+            </Tr>
+          );
+        })}
       </Tbody>
     </Table>
   );

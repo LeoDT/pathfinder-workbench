@@ -1,7 +1,6 @@
 import { intersection, range } from 'lodash-es';
 
-import { Archetype, Class, ClassFeat, ClassFeatGrow } from '../../types/core';
-import { getClassLevel } from '../../utils/class';
+import { Archetype, Class, ClassFeat, ClassFeatGrow, ClassLevel } from '../../types/core';
 import { Collection, CollectionOptions } from './base';
 
 export class ClassCollection extends Collection<Class> {
@@ -55,7 +54,7 @@ export class ClassCollection extends Collection<Class> {
   }
 
   getClassFeatsByLevel(clas: Class, l: number, archetypes: Archetype[] = []): ClassFeat[] {
-    const level = getClassLevel(clas, l);
+    const level = this.getClassLevel(clas, l);
     const archetypeFeats = archetypes.map((a) => a.feats).flat();
 
     const feats = level.special?.map((s) => {
@@ -98,5 +97,15 @@ export class ClassCollection extends Collection<Class> {
     }
 
     return highest;
+  }
+
+  getClassLevel(clas: Class, l: number): ClassLevel {
+    const level = clas.levels[l - 1];
+
+    if (level) {
+      return level;
+    }
+
+    throw new Error(`class ${clas.id} do no have level ${l}`);
   }
 }
