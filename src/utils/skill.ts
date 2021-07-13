@@ -25,3 +25,7 @@ export function sortedSkills(skills: Skill[]): Skill[] {
 
   return data;
 }
+
+export function translateSkill(sId: string): string {
+  return collections.coreSkill.getById(sId).name;
+}

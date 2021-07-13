@@ -18,6 +18,7 @@ import { ENTITY_COLORS } from '../constant';
 import { useStore } from '../store';
 import {
   ArmorType as ArmorTypeType,
+  Class as ClassType,
   Entity,
   Feat as FeatEntity,
   MagicItemType as MagicItemTypeType,
@@ -25,6 +26,8 @@ import {
   WeaponType as WeaponTypeType,
 } from '../types/core';
 import { ArmorType } from './ArmorType';
+import { Class } from './Class';
+import { DescriptionTable, convertRecordToDescriptions } from './DescriptionTable';
 import { Feat } from './Feat';
 import { MagicItemType } from './MagicItemType';
 import { Spell } from './Spell';
@@ -49,18 +52,26 @@ export function EntityQuickViewer(): JSX.Element {
         return <ArmorType armorType={e as ArmorTypeType} showId />;
       case 'magicItemType':
         return <MagicItemType magicItemType={e as MagicItemTypeType} showId />;
+      case 'class':
+        return <Class clas={e as ClassType} />;
       default: {
         // eslint-disable-next-line @typescript-eslint/no-explicit-any
         const desc = (e as any).desc;
+        const descEl =
+          typeof desc === 'string' ? (
+            <Text pt="1" whiteSpace="pre-wrap" dangerouslySetInnerHTML={{ __html: desc }} />
+          ) : typeof desc === 'object' ? (
+            <DescriptionTable
+              descriptions={convertRecordToDescriptions(desc as Record<string, string>)}
+            />
+          ) : null;
 
         return (
           <Box>
             <Heading as="h4" fontSize="lg" color={ENTITY_COLORS.feat}>
               {e.name} <small style={{ fontWeight: 'normal' }}>({e.id})</small>
             </Heading>
-            {desc ? (
-              <Text pt="1" whiteSpace="pre-wrap" dangerouslySetInnerHTML={{ __html: desc }} />
-            ) : null}
+            {descEl}
           </Box>
         );
       }

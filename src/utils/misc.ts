@@ -13,6 +13,10 @@ export function stringToColor(str: string): string {
   return color;
 }
 
+export function showDice(d: number, n?: number): string {
+  return `${n ? n : ''}d${d}`;
+}
+
 export function showDistance(d: number): string {
   return `${d} 尺`;
 }

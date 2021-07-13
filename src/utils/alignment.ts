@@ -13,9 +13,9 @@ export const alignmentTranslates: Record<Alignment, string> = {
   [Alignment.CE]: '混乱邪恶',
 };
 
-export const alignmentOptions: SelectOptions<Alignment> = Object.entries(
-  alignmentTranslates
-).map(([value, text]) => ({ value: value as Alignment, text }));
+export const alignmentOptions: SelectOptions<Alignment> = Object.entries(alignmentTranslates).map(
+  ([value, text]) => ({ value: value as Alignment, text })
+);
 
 export function constraintAppliedAlignmentOptions(
   constraint: Alignment[]

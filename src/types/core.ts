@@ -180,6 +180,7 @@ export interface ClassLevel {
 
 export interface Class extends Entity {
   _type: 'class';
+  desc: Record<string, string>;
   hd: number;
   alignment: Alignment[];
   classSkills: Array<string>;
