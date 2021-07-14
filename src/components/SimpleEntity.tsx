@@ -16,7 +16,7 @@ import {
 
 import { ENTITY_COLORS } from '../constant';
 import { useStore } from '../store';
-import { Entity, Feat as FeatType } from '../types/core';
+import { Archetype as ArchetypeType, Entity, Feat as FeatType } from '../types/core';
 import { EntityQuickViewerToggler } from './EntityQuickViewer';
 import { useOptionalCharacter } from './context';
 
@@ -70,8 +70,10 @@ export function SimpleEntity({
 
   switch (entity._type) {
     case 'feat':
-      badge = entity._type === 'feat' ? <Badge>{(entity as FeatType).book}</Badge> : null;
-
+      badge = <Badge>{(entity as FeatType).book}</Badge>;
+      break;
+    case 'archetype':
+      badge = <Badge>{(entity as ArchetypeType).book}</Badge>;
       break;
   }
 

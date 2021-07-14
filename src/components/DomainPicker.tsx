@@ -7,6 +7,7 @@ import { Badge, Box, HStack, Heading, Icon } from '@chakra-ui/react';
 import { useStore } from '../store';
 import { Domain } from '../types/domain';
 import { EffectGainDomainArgs, EffectGainDomainInput } from '../types/effectType';
+import { EntityQuickViewerToggler } from './EntityQuickViewer';
 
 interface Props extends EffectGainDomainArgs {
   value: EffectGainDomainInput;
@@ -77,6 +78,7 @@ export function DomainPicker({ inquisition, amount, value, onChange }: Props): J
               <Heading as="h4" {...domainNameStyle}>
                 {d.name}
               </Heading>
+              <EntityQuickViewerToggler entity={d} />
             </HStack>
             <>
               {d.subDomains.map((sub) => {
@@ -120,6 +122,8 @@ export function DomainPicker({ inquisition, amount, value, onChange }: Props): J
             <Heading as="h4" {...domainNameStyle}>
               {d.name}
             </Heading>
+
+            <EntityQuickViewerToggler entity={d} />
           </HStack>
         );
       })}

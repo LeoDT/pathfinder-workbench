@@ -24,17 +24,21 @@ export class FeatCollection extends Collection<Feat> {
     return this.indexByType.get(t) ?? [];
   }
 
+  matchFeatIdWithInput(id: string): { id: string; input?: string } {
+    const match = id.match(/^(.*?)\[(.*?)\]$/);
+
+    if (match) {
+      return { id: match[1], input: match[2] };
+    }
+
+    return { id };
+  }
+
   getByIdsWithInputs(ids: string[]): Array<{ feat: Feat; input?: string }> {
     return ids.map((i) => {
-      const match = i.match(/^(.*?)\[(.*?)\]$/);
+      const { id, input } = this.matchFeatIdWithInput(i);
 
-      if (match) {
-        const [, id, input] = match;
-
-        return { feat: this.getById(id), input };
-      }
-
-      return { feat: this.getById(i), input: undefined };
+      return { feat: this.getById(id), input };
     });
   }
 }

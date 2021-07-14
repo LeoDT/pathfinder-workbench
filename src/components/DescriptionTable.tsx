@@ -27,10 +27,16 @@ export function DescriptionTable({ descriptions }: Props): JSX.Element {
 }
 
 export function convertRecordToDescriptions(
-  o: Record<string, string | number>
+  o: Record<string, string | number | undefined | null>
 ): Array<{ key: string; value: string }> {
-  return Array.from(Object.entries(o)).map(([k, v]) => ({
-    key: k.toString(),
-    value: v.toString(),
-  }));
+  return Array.from(Object.entries(o))
+    .map(([k, v]) => {
+      if (!v) return null;
+
+      return {
+        key: k.toString(),
+        value: v?.toString(),
+      };
+    })
+    .filter((r): r is { key: string; value: string } => Boolean(r));
 }

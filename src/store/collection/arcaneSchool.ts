@@ -15,6 +15,8 @@ export class ArcaneSchoolCollection extends Collection<ArcaneSchool> {
         case 'standard':
           if (i.focused) {
             for (const focus of i.focused) {
+              focus._type = 'arcaneSchool';
+
               for (const p of focus.powers) {
                 p._type = 'classFeat';
               }

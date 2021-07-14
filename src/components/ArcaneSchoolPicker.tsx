@@ -1,9 +1,11 @@
 import { isEqual } from 'lodash-es';
 import { useCallback, useEffect, useMemo, useState } from 'react';
-import { Box, VStack, Flex, Heading, Button, HStack, Badge } from '@chakra-ui/react';
+
+import { Badge, Box, Button, Flex, HStack, Heading, VStack } from '@chakra-ui/react';
 
 import { useStore } from '../store';
 import { EffectGainArcaneSchoolInput } from '../types/effectType';
+import { EntityQuickViewerToggler } from './EntityQuickViewer';
 
 interface Props {
   value: EffectGainArcaneSchoolInput | null;
@@ -14,6 +16,8 @@ interface Props {
 const schoolStyle = {
   w: 'full',
   cursor: 'pointer',
+  alignItems: 'center',
+  pr: '2',
 };
 const schoolNameStyle = {
   p: '2',
@@ -146,6 +150,7 @@ export function ArcaneSchoolPicker({ value, onChange, standardForbidden }: Props
                       >
                         {s.name}
                       </Heading>
+                      <EntityQuickViewerToggler entity={s} />
                     </Flex>
                     {school
                       ? null
@@ -203,6 +208,7 @@ export function ArcaneSchoolPicker({ value, onChange, standardForbidden }: Props
                       >
                         {s.name}
                       </Heading>
+                      <EntityQuickViewerToggler entity={s} />
                     </Flex>
                   </Box>
                 );
@@ -212,7 +218,7 @@ export function ArcaneSchoolPicker({ value, onChange, standardForbidden }: Props
           })}
         </VStack>
       )}
-      <HStack>
+      <HStack mt="2">
         <Button
           colorScheme="teal"
           disabled={!finished}

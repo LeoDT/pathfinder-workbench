@@ -334,7 +334,7 @@ export class Character {
 
   startUpgrade(): void {
     const lastUpgrade = last(this.upgrades);
-    const lastUpgradeClass = lastUpgrade ? lastUpgrade.classId : 'Inquisitor';
+    const lastUpgradeClass = lastUpgrade ? lastUpgrade.classId : 'Bard';
     const levelFeat =
       this.level === 1 && this.upgrades.length === 0 ? true : (this.level + 1) % 2 === 1;
     const levelAbility = (this.level + 1) % 4 === 0;

@@ -16,7 +16,10 @@ import {
 
 import { ENTITY_COLORS } from '../constant';
 import { useStore } from '../store';
+import { ArcaneSchool as ArcaneSchoolType } from '../types/arcaneSchool';
+import { Bloodline as BloodlineType } from '../types/bloodline';
 import {
+  Archetype as ArchetypeType,
   ArmorType as ArmorTypeType,
   Class as ClassType,
   Entity,
@@ -25,9 +28,14 @@ import {
   Spell as SpellEntity,
   WeaponType as WeaponTypeType,
 } from '../types/core';
+import { Domain as DomainType } from '../types/domain';
+import { ArcaneSchool } from './ArcaneSchool';
+import { Archetype } from './Archetype';
 import { ArmorType } from './ArmorType';
+import { Bloodline } from './Bloodline';
 import { Class } from './Class';
 import { DescriptionTable, convertRecordToDescriptions } from './DescriptionTable';
+import { Domain } from './Domain';
 import { Feat } from './Feat';
 import { MagicItemType } from './MagicItemType';
 import { Spell } from './Spell';
@@ -54,6 +62,14 @@ export function EntityQuickViewer(): JSX.Element {
         return <MagicItemType magicItemType={e as MagicItemTypeType} showId />;
       case 'class':
         return <Class clas={e as ClassType} />;
+      case 'arcaneSchool':
+        return <ArcaneSchool arcaneSchool={e as ArcaneSchoolType} />;
+      case 'domain':
+        return <Domain domain={e as DomainType} />;
+      case 'bloodline':
+        return <Bloodline bloodline={e as BloodlineType} />;
+      case 'archetype':
+        return <Archetype archetype={e as ArchetypeType} />;
       default: {
         // eslint-disable-next-line @typescript-eslint/no-explicit-any
         const desc = (e as any).desc;

@@ -27,6 +27,10 @@ export const ENTITY_COLORS: Record<string, string> = {
   classFeat: 'teal.600',
   racialTrait: 'teal.600',
 
+  arcaneSchool: 'blue.600',
+  domain: 'blue.600',
+  bloodline: 'blue.600',
+
   weaponType: 'orange.600',
   armorType: 'red.600',
   magicItemType: 'blue.600',

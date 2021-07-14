@@ -32,7 +32,7 @@ export function Class({ clas }: Props): JSX.Element {
   const spellsKnown = clas.levels.map((l) => l.spellsKnown).filter((s) => s);
 
   return (
-    <Box className="spell">
+    <Box>
       <Heading as="h4" fontSize="lg" color={ENTITY_COLORS.class}>
         {clas.name} {<small style={{ fontWeight: 'normal' }}>({clas.id})</small>}
       </Heading>
