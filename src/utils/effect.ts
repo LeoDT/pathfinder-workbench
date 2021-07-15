@@ -15,8 +15,8 @@ export function translateGainFeatEffectArgs(e: EffectGainFeatArgs): string {
     return `固定专长`;
   }
 
-  if (e.featType) {
-    return `${featTypeTranslates[e.featType]}专长`;
+  if (e.featTypes) {
+    return `${e.featTypes.map((t) => featTypeTranslates[t]).join(',')}专长`;
   }
 
   return '奖励专长';

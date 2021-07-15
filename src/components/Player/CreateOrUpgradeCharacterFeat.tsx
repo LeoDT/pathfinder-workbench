@@ -82,10 +82,10 @@ export function CreateOrUpgradeCharacterFeat({
                         entities={maybeFeatsWithInput.map(({ feat }) => feat)}
                         listAll
                       />
-                    ) : r.featType ? (
+                    ) : r.featTypes ? (
                       <EntityPickerPopover
                         {...pickerProps}
-                        entities={collections.feat.getByType(r.featType)}
+                        entities={r.featTypes.map((t) => collections.feat.getByType(t)).flat()}
                       />
                     ) : (
                       <CollectionEntityPickerPopover

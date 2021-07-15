@@ -438,6 +438,10 @@ export class CharacterEffect {
     );
   }
 
+  getGainDomainEffects(): EffectAndSource<Effects.EffectGainDomain>[] {
+    return this.getEffectsByType<Effects.EffectGainDomain>(Effects.EffectType.gainDomain);
+  }
+
   getGainBloodlineEffects(): EffectAndSource<Effects.EffectGainBloodline>[] {
     return this.getEffectsByType<Effects.EffectGainBloodline>(Effects.EffectType.gainBloodline);
   }

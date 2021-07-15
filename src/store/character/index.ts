@@ -334,7 +334,7 @@ export class Character {
 
   startUpgrade(): void {
     const lastUpgrade = last(this.upgrades);
-    const lastUpgradeClass = lastUpgrade ? lastUpgrade.classId : 'Bard';
+    const lastUpgradeClass = lastUpgrade ? lastUpgrade.classId : 'Cleric';
     const levelFeat =
       this.level === 1 && this.upgrades.length === 0 ? true : (this.level + 1) % 2 === 1;
     const levelAbility = (this.level + 1) % 4 === 0;
@@ -674,12 +674,7 @@ export class Character {
         if (existedSpellbook) {
           books.push(existedSpellbook);
         } else {
-          const newSpellbook = new CharacterSpellbook(
-            this,
-            clas,
-            effect.args.castingType,
-            effect.args.abilityType
-          );
+          const newSpellbook = new CharacterSpellbook(this, clas, effect.args);
           books.push(newSpellbook);
         }
       }
@@ -734,6 +729,7 @@ export class Character {
         p.setVariable('level', this.level);
         p.setVariable('clericLevel', 0);
         p.setVariable('druidLevel', 0);
+        p.setVariable('inquisitorLevel', 0);
 
         this.levelDetail.forEach((level, clas) => {
           p.setVariable(`${clas.id.toLowerCase().replace(/[()]/g, '')}Level`, level);

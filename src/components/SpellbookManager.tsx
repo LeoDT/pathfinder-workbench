@@ -47,8 +47,9 @@ export function PrepareSpells({ spellbook }: ManagerProps): JSX.Element {
               const spellsKnownForLevel = spellbook.knownSpells[i] ?? [];
               const speicalSpellsKnownForLevel = spellbook.knownSpecialSpells[i] ?? [];
               const spellDuplicatable = spellbook.castingType === 'wizard-like' && i > 0;
-              const specialSlot = i > 0 ? spellbook.arcaneSchoolPrepareSlot?.amount ?? 0 : 0;
-              const specialSlotSchool = i > 0 ? spellbook.arcaneSchoolPrepareSlot?.school : '';
+              const arcaneSchoolSlot = i > 0 ? spellbook.arcaneSchoolPrepareSlot?.amount ?? 0 : 0;
+              const arcaneSchool = i > 0 ? spellbook.arcaneSchoolPrepareSlot?.school : '';
+              const domainSlot = i > 0 && spellbook.domain?.spells ? 1 : 0;
               const slotUsage = preparedSpellsForLevel
                 .map((s) => spellbook.getSlotUsageForSpell(s))
                 .reduce((acc, s) => acc + s, 0);
@@ -68,9 +69,10 @@ export function PrepareSpells({ spellbook }: ManagerProps): JSX.Element {
                     mb="2"
                   >
                     {i} 环 {slotUsage}/{perDay} 个法术位
-                    {specialSlot > 0 && specialSlotSchool
-                      ? ` ${specialSlot} 个${schoolTranslates[specialSlotSchool]}额外法术位`
+                    {arcaneSchoolSlot > 0 && arcaneSchool
+                      ? ` ${arcaneSchoolSlot} 个${schoolTranslates[arcaneSchool]}额外法术位`
                       : ''}
+                    {domainSlot > 0 ? ` ${domainSlot} 个领域法术位` : ''}
                   </Text>
                   <SimpleGrid columns={[1, 3]} spacing="2" pb="2">
                     {preparedSpellsForLevel.map((s, i) => (
@@ -119,7 +121,7 @@ export function PrepareSpells({ spellbook }: ManagerProps): JSX.Element {
                     listAll
                   />
 
-                  {specialSlot > 0 ? (
+                  {arcaneSchoolSlot > 0 ? (
                     <>
                       <SimpleGrid columns={[1, 3]} spacing="2" py="2">
                         {preparedSpecialSpellsForLevel.map((s, i) => (
@@ -131,7 +133,33 @@ export function PrepareSpells({ spellbook }: ManagerProps): JSX.Element {
                         entities={speicalSpellsKnownForLevel}
                         items={preparedSpecialSpellIds}
                         onPick={
-                          preparedSpecialSpellsForLevel.length >= specialSlot
+                          preparedSpecialSpellsForLevel.length >= arcaneSchoolSlot
+                            ? undefined
+                            : (s: string) => {
+                                spellbook.prepareSpecialSpell(collections.spell.getById(s));
+                              }
+                        }
+                        onUnpick={(s: string) => {
+                          spellbook.unprepareSpecialSpell(collections.spell.getById(s));
+                        }}
+                        listAll
+                      />
+                    </>
+                  ) : null}
+
+                  {domainSlot > 0 ? (
+                    <>
+                      <SimpleGrid columns={[1, 3]} spacing="2" py="2">
+                        {preparedSpecialSpellsForLevel.map((s, i) => (
+                          <SimpleEntity key={`${s.id}:${i}`} entity={s} />
+                        ))}
+                      </SimpleGrid>
+                      <EntityPickerPopover
+                        text="选择额外法术"
+                        entities={speicalSpellsKnownForLevel}
+                        items={preparedSpecialSpellIds}
+                        onPick={
+                          preparedSpecialSpellsForLevel.length >= domainSlot
                             ? undefined
                             : (s: string) => {
                                 spellbook.prepareSpecialSpell(collections.spell.getById(s));
@@ -160,7 +188,8 @@ export function ManageSpells({ spellbook }: ManagerProps): JSX.Element {
       {() => (
         <>
           {spellbook.knownSpells.map((spells, level) => {
-            const availableSpells = spellbook.classSpells[level].filter((s) => !spells.includes(s));
+            const availableSpells =
+              spellbook.classSpells.get(level)?.filter((s) => !spells.includes(s)) || [];
 
             return (
               <Box key={level}>

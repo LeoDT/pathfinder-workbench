@@ -36,9 +36,8 @@ function SpellsForLevel({ createOrUpgrade, spellbook, level, perday }: SpellsFor
         // knownSpells will include pendingUpgrade, filter them out
         const knownSpells =
           spellbook.knownSpells[level]?.filter((s) => !spells.includes(s.id)) || [];
-        const availableSpells = spellbook.classSpells[level].filter(
-          (s) => !knownSpells.includes(s)
-        );
+        const availableSpells =
+          spellbook.classSpells.get(level)?.filter((s) => !knownSpells.includes(s)) || [];
 
         const pickerProps: {
           text: string;
@@ -63,6 +62,9 @@ function SpellsForLevel({ createOrUpgrade, spellbook, level, perday }: SpellsFor
             pickerProps.text = `选择新法术(${spells.length}/${slots})`;
             pickerProps.onPick = spells.length < slots ? onPick : undefined;
             break;
+          }
+
+          case 'cleric-like': {
           }
         }
 

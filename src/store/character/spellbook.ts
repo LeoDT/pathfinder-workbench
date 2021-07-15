@@ -3,7 +3,12 @@ import { action, computed, makeObservable } from 'mobx';
 
 import { ArcaneSchool } from '../../types/arcaneSchool';
 import { AbilityType, Class, Spell, SpellCastingType } from '../../types/core';
-import { validateGainArcaneSchoolEffectInput } from '../../utils/effect';
+import { Domain } from '../../types/domain';
+import { EffectGainSpellCastingArgs } from '../../types/effectType';
+import {
+  validateGainArcaneSchoolEffectInput,
+  validateGainDomainEffectInput,
+} from '../../utils/effect';
 import { spellsPerDayByAbilityModifier } from '../../utils/spell';
 import { collections } from '../collection';
 import { Character } from '.';
@@ -13,8 +18,12 @@ export class CharacterSpellbook {
   class: Class;
   castingType: SpellCastingType;
   abilityType: AbilityType;
+  spellSourceClass: Class[];
+  maxSpellLevel?: number;
 
-  constructor(c: Character, clas: Class, castingType: SpellCastingType, abilityType: AbilityType) {
+  spellLevelCache: Map<string, number>;
+
+  constructor(c: Character, clas: Class, options: EffectGainSpellCastingArgs) {
     makeObservable(this, {
       cl: computed,
       abilityModifier: computed,
@@ -26,6 +35,10 @@ export class CharacterSpellbook {
       knownSpecialSpells: computed,
       preparedSpecialSpellIds: computed,
       preparedSpecialSpells: computed,
+
+      domain: computed,
+      domainPrepareSlot: computed,
+      domainSpellLevels: computed,
 
       arcaneSchool: computed,
       arcaneSchoolPrepareSlot: computed,
@@ -42,18 +55,50 @@ export class CharacterSpellbook {
 
     this.character = c;
     this.class = clas;
-    this.castingType = castingType;
-    this.abilityType = abilityType;
+    this.castingType = options.castingType;
+    this.abilityType = options.abilityType;
+    this.spellSourceClass = options.spellSourceClass
+      ? collections.class.getByIds(options.spellSourceClass)
+      : [clas];
+    this.maxSpellLevel = options.maxSpellLevel;
+
+    this.spellLevelCache = new Map<string, number>();
   }
 
   getSpellLevel(spell: Spell | string): number {
-    let spellLevels = undefined;
+    const sId = typeof spell === 'string' ? spell : spell.id;
 
-    if (this.bloodlineSpells.length) {
-      spellLevels = this.bloodlineSpellLevels;
+    const cached = this.spellLevelCache.get(sId);
+    if (cached !== undefined) {
+      return cached;
     }
 
-    return collections.spell.getSpellLevelForClass(spell, this.class, spellLevels);
+    let level = -1;
+
+    if (this.bloodlineSpellLevels) {
+      level = this.bloodlineSpellLevels[sId] ?? -1;
+    }
+
+    if (this.domainSpellLevels) {
+      level = this.domainSpellLevels[sId] ?? -1;
+    }
+
+    if (level === -1) {
+      for (const [l, spells] of this.classSpells) {
+        if (spells.find((s) => s.id === sId)) {
+          level = l;
+          break;
+        }
+      }
+    }
+
+    if (level !== -1) {
+      this.spellLevelCache.set(sId, level);
+
+      return level;
+    }
+
+    throw Error(`can not get spell level for ${sId}`);
   }
 
   get cl(): number {
@@ -63,10 +108,59 @@ export class CharacterSpellbook {
     return this.character.abilityModifier[this.abilityType];
   }
 
-  get classSpells(): Record<number, Spell[]> {
-    return collections.spell
-      .getByClass(this.class)
-      .map((spells) => spells.map((s) => collections.spell.getById(s)));
+  get classSpells(): Map<number, Spell[]> {
+    const spellLevel: Record<string, number> = {};
+
+    const allSpells = this.spellSourceClass.map((c) => collections.spell.getByClass(c));
+    let maxLevel = 0;
+    for (let spellsForClass of allSpells) {
+      if (this.maxSpellLevel) {
+        spellsForClass = spellsForClass.slice(0, this.maxSpellLevel + 1);
+      }
+
+      for (const [level, spellsForLevel] of spellsForClass.entries()) {
+        for (const s of spellsForLevel) {
+          if (spellLevel[s] === undefined || spellLevel[s] > level) {
+            spellLevel[s] = level;
+          }
+        }
+
+        if (level > maxLevel) maxLevel = level;
+      }
+    }
+
+    const result = new Map<number, Spell[]>();
+    for (let i = 0; i < maxLevel; i++) {
+      result.set(i, []);
+    }
+
+    for (const [sId, level] of Object.entries(spellLevel)) {
+      const spell = collections.spell.getById(sId);
+
+      if (!result.has(level)) {
+        result.set(level, []);
+      }
+
+      (result.get(level) as Array<Spell>).push(spell);
+    }
+
+    return result;
+  }
+
+  partitionSpellsByLevel(spells: Spell[]): Array<Spell[]> {
+    const result: Array<Spell[]> = [];
+
+    spells.forEach((spell) => {
+      const level = this.getSpellLevel(spell);
+
+      if (!result[level]) {
+        result[level] = [];
+      }
+
+      result[level].push(spell);
+    });
+
+    return result;
   }
 
   get knownSpellIds(): string[] {
@@ -78,12 +172,19 @@ export class CharacterSpellbook {
 
     switch (this.castingType) {
       case 'wizard-like':
-        fromClass = collections.spell.getByClassLevel(this.class, 0);
+        fromClass = (this.classSpells.get(0) || []).map((s) => s.id);
         break;
       case 'sorcerer-like':
         if (this.bloodlineSpells.length) {
           fromClass = this.bloodlineSpells.map((s) => s.id);
         }
+        break;
+      case 'cleric-like':
+        this.spellsPerDay.forEach((c, l) => {
+          if (c !== 0 || l === 0) {
+            fromClass = fromClass.concat((this.classSpells.get(l) || []).map((s) => s.id));
+          }
+        });
         break;
     }
 
@@ -91,13 +192,8 @@ export class CharacterSpellbook {
   }
   get knownSpells(): Array<Spell[]> {
     const spells = collections.spell.getByIds(this.knownSpellIds);
-    let spellLevels = undefined;
 
-    if (this.bloodlineSpells.length) {
-      spellLevels = this.bloodlineSpellLevels;
-    }
-
-    return collections.spell.partitionSpellsByLevel(spells, this.class, spellLevels);
+    return this.partitionSpellsByLevel(spells);
   }
 
   get spellsPerDay(): number[] {
@@ -122,7 +218,7 @@ export class CharacterSpellbook {
   get preparedSpells(): Array<Spell[]> {
     const spells = collections.spell.getByIds(this.preparedSpellIds);
 
-    return collections.spell.partitionSpellsByLevel(spells, this.class);
+    return this.partitionSpellsByLevel(spells);
   }
 
   prepareSpell(s: Spell): void {
@@ -149,20 +245,27 @@ export class CharacterSpellbook {
   get preparedSpecialSpells(): Array<Spell[]> {
     const spells = collections.spell.getByIds(this.preparedSpecialSpellIds);
 
-    return collections.spell.partitionSpellsByLevel(spells, this.class);
+    return this.partitionSpellsByLevel(spells);
   }
 
   get knownSpecialSpells(): Array<Spell[]> {
-    const slot = this.arcaneSchoolPrepareSlot;
-    if (!slot) {
-      return [];
+    if (this.arcaneSchoolPrepareSlot) {
+      const slot = this.arcaneSchoolPrepareSlot;
+
+      const spells = collections.spell
+        .getByIds(this.knownSpellIds)
+        .filter((s) => s.meta.school && s.meta.school === slot.school);
+
+      return this.partitionSpellsByLevel(spells);
     }
 
-    const spells = collections.spell
-      .getByIds(this.knownSpellIds)
-      .filter((s) => s.meta.school && s.meta.school === slot.school);
+    if (this.domainPrepareSlot) {
+      const slot = this.domainPrepareSlot;
 
-    return collections.spell.partitionSpellsByLevel(spells, this.class);
+      return this.partitionSpellsByLevel(slot.spells);
+    }
+
+    return [];
   }
 
   prepareSpecialSpell(s: Spell): void {
@@ -176,6 +279,52 @@ export class CharacterSpellbook {
       this.class.id,
       without(this.preparedSpecialSpellIds, s.id)
     );
+  }
+
+  get domain(): { domains: Domain[]; spells: boolean } | null {
+    const es = this.character.effect.getGainDomainEffects()?.[0];
+
+    if (es) {
+      const input = validateGainDomainEffectInput(es.input);
+
+      return {
+        domains: collections.domain.getByIds(input.domains),
+        spells: es.effect.args.spells,
+      };
+    }
+
+    return null;
+  }
+  get domainSpellLevels(): Record<string, number> | null {
+    if (this.domain?.spells) {
+      const result: Record<string, number> = {};
+
+      this.domain?.domains.forEach((d) => {
+        d.spells?.forEach((s, l) => {
+          if (result[s] === undefined) {
+            result[s] = l;
+          } else {
+            result[s] = result[s] > l ? l : result[s];
+          }
+        });
+      });
+
+      return result;
+    }
+
+    return null;
+  }
+  get domainPrepareSlot(): { amount: number; spells: Spell[] } | null {
+    if (this.domain?.spells) {
+      return {
+        amount: 1,
+        spells: this.domain?.domains
+          .map((d) => (d.spells ? collections.spell.getByIds(d.spells) : []))
+          .flat(),
+      };
+    }
+
+    return null;
   }
 
   get arcaneSchool(): {
@@ -230,14 +379,18 @@ export class CharacterSpellbook {
     return [];
   }
 
-  get bloodlineSpellLevels(): Record<string, number> {
-    const result: Record<string, number> = {};
+  get bloodlineSpellLevels(): Record<string, number> | null {
+    if (this.bloodlineSpells.length) {
+      const result: Record<string, number> = {};
 
-    this.bloodlineSpells.forEach((s, l) => {
-      result[s.id] = l + 1;
-    });
+      this.bloodlineSpells.forEach((s, l) => {
+        result[s.id] = l + 1;
+      });
 
-    return result;
+      return result;
+    }
+
+    return null;
   }
 
   getSorcererNewSpellSlotsForLevel(spellLevel: number): number {

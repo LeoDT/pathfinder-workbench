@@ -293,9 +293,8 @@ export class CreateCharacterStore {
       case 'wizard-like':
         return this.upgrade.spells.length === this.spellbook.wizardNewSpellSlots;
       case 'sorcerer-like': {
-        const spells = collections.spell.partitionSpellsByLevel(
-          collections.spell.getByIds(this.upgrade.spells),
-          this.class
+        const spells = this.spellbook.partitionSpellsByLevel(
+          collections.spell.getByIds(this.upgrade.spells)
         );
         const slotsForLevel = range(0, 10).map((l) =>
           this.spellbook?.getSorcererNewSpellSlotsForLevel(l)
@@ -307,6 +306,8 @@ export class CreateCharacterStore {
           return spells[level]?.length === slots;
         });
       }
+      case 'cleric-like':
+        return true;
 
       default:
         return false;

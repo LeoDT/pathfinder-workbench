@@ -55,9 +55,42 @@ export function CharacterDetailSpells({ spellbook }: Props): JSX.Element {
         }
         break;
 
-      case 'sorcerer-like': {
-        spellbook.knownSpells.forEach((spells, level) => {
-          const perday = spellbook.spellsPerDay[level];
+      case 'sorcerer-like':
+        {
+          spellbook.knownSpells.forEach((spells, level) => {
+            const perday = spellbook.spellsPerDay[level];
+            const castedByLevel: number[] = [];
+
+            for (const c of casted) {
+              const level = spellbook.getSpellLevel(c);
+
+              if (!castedByLevel[level]) {
+                castedByLevel[level] = 0;
+              }
+
+              castedByLevel[level] += 1;
+            }
+
+            spells.forEach((s) => {
+              const level = spellbook.getSpellLevel(s);
+
+              if (level === 0) {
+                result.set(s, -1);
+              } else {
+                result.set(s, perday - (castedByLevel[level] ?? 0));
+              }
+            });
+          });
+        }
+
+        break;
+
+      case 'cleric-like':
+        {
+          const preparedSpells = collections.spell.getByIds([
+            ...spellbook.preparedSpellIds,
+            ...spellbook.preparedSpecialSpellIds,
+          ]);
           const castedByLevel: number[] = [];
 
           for (const c of casted) {
@@ -70,19 +103,18 @@ export function CharacterDetailSpells({ spellbook }: Props): JSX.Element {
             castedByLevel[level] += 1;
           }
 
-          spells.forEach((s) => {
-            const level = spellbook.getSpellLevel(s);
+          for (const spell of preparedSpells) {
+            const level = spellbook.getSpellLevel(spell);
+            const perday = spellbook.spellsPerDay[level];
 
             if (level === 0) {
-              result.set(s, -1);
+              result.set(spell, -1);
             } else {
-              result.set(s, perday - (castedByLevel[level] ?? 0));
+              result.set(spell, perday - (castedByLevel[level] ?? 0));
             }
-          });
-        });
-
+          }
+        }
         break;
-      }
 
       default:
         break;

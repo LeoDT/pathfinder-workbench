@@ -59,7 +59,7 @@ export interface BaseEffect<TYPE extends EffectType, ARGS> {
 
 export interface EffectGainFeatArgs {
   ignorePrerequisites?: boolean;
-  featType?: FeatType;
+  featTypes?: FeatType[];
   feats?: string[]; // override above
   bloodlineFeat?: boolean; // override above
   forceFeat?: string; // override above
@@ -96,6 +96,8 @@ export interface EffectGainArcaneSchoolInput {
 export interface EffectGainSpellCastingArgs {
   castingType: SpellCastingType;
   abilityType: AbilityType;
+  spellSourceClass?: string[];
+  maxSpellLevel?: number;
 }
 export type EffectGainSpellCasting = BaseEffect<
   EffectType.gainSpellCasting,

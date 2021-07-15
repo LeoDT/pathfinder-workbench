@@ -49,24 +49,4 @@ export class SpellCollection extends Collection<Spell> {
 
     return level;
   }
-
-  partitionSpellsByLevel(
-    spells: Spell[],
-    clas: Class,
-    spellLevels?: Record<string, number>
-  ): Array<Spell[]> {
-    const result: Array<Spell[]> = [];
-
-    spells.forEach((spell) => {
-      const level = this.getSpellLevelForClass(spell, clas, spellLevels);
-
-      if (!result[level]) {
-        result[level] = [];
-      }
-
-      result[level].push(spell);
-    });
-
-    return result;
-  }
 }
