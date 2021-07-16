@@ -1,23 +1,33 @@
-import { makeObservable, observable } from 'mobx';
+import { computed, makeObservable, observable } from 'mobx';
 
 import { Entity } from '../types/core';
 
 export class UIStore {
-  quickViewerEntity: Entity | null;
+  quickViewerEntities: Entity[];
 
   constructor() {
     makeObservable(this, {
-      quickViewerEntity: observable.ref,
+      quickViewerEntities: observable,
+
+      currentQuickViewerEntity: computed,
     });
 
-    this.quickViewerEntity = null;
+    this.quickViewerEntities = [];
+  }
+
+  get currentQuickViewerEntity(): Entity | undefined {
+    return this.quickViewerEntities[this.quickViewerEntities.length - 1];
   }
 
   showQuickViewer(entity: Entity): void {
-    this.quickViewerEntity = entity;
+    this.quickViewerEntities.push(entity);
+  }
+
+  backQuickViewer(): void {
+    this.quickViewerEntities.pop();
   }
 
   closeQuickViewer(): void {
-    this.quickViewerEntity = null;
+    this.quickViewerEntities = [];
   }
 }

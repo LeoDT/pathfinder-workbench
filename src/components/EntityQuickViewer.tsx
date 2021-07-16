@@ -1,6 +1,6 @@
 import { Observer } from 'mobx-react-lite';
 import { useCallback } from 'react';
-import { FaInfoCircle } from 'react-icons/fa';
+import { FaChevronLeft, FaInfoCircle } from 'react-icons/fa';
 
 import {
   Box,
@@ -11,6 +11,7 @@ import {
   DrawerOverlay,
   Heading,
   Icon,
+  IconButton,
   Text,
 } from '@chakra-ui/react';
 
@@ -25,6 +26,7 @@ import {
   Entity,
   Feat as FeatEntity,
   MagicItemType as MagicItemTypeType,
+  SpecialFeat,
   Spell as SpellEntity,
   WeaponType as WeaponTypeType,
 } from '../types/core';
@@ -45,7 +47,7 @@ export function EntityQuickViewer(): JSX.Element {
   const { ui } = useStore();
   const onClose = useCallback(() => ui.closeQuickViewer(), []);
   const renderEntity = useCallback(() => {
-    const e = ui.quickViewerEntity;
+    const e = ui.currentQuickViewerEntity;
 
     if (!e) return null;
 
@@ -81,6 +83,33 @@ export function EntityQuickViewer(): JSX.Element {
               descriptions={convertRecordToDescriptions(desc as Record<string, string>)}
             />
           ) : null;
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        const subs = (e as any).subs as SpecialFeat[];
+        const subsEl = Array.isArray(subs) ? (
+          <>
+            <Box mt="2">
+              {subs.map((sub) => (
+                <Box
+                  key={sub.id}
+                  border="1px"
+                  borderColor="gray.200"
+                  borderRadius="md"
+                  p="2"
+                  mb="2"
+                >
+                  <Heading as="h4" fontSize="md" color={ENTITY_COLORS.feat}>
+                    {sub.name} <small style={{ fontWeight: 'normal' }}>({sub.id})</small>
+                  </Heading>
+                  <Text
+                    pt="1"
+                    whiteSpace="pre-wrap"
+                    dangerouslySetInnerHTML={{ __html: sub.desc }}
+                  />
+                </Box>
+              ))}
+            </Box>
+          </>
+        ) : null;
 
         return (
           <Box>
@@ -88,6 +117,7 @@ export function EntityQuickViewer(): JSX.Element {
               {e.name} <small style={{ fontWeight: 'normal' }}>({e.id})</small>
             </Heading>
             {descEl}
+            {subsEl}
           </Box>
         );
       }
@@ -98,7 +128,7 @@ export function EntityQuickViewer(): JSX.Element {
     <Observer>
       {() => (
         <Drawer
-          isOpen={Boolean(ui.quickViewerEntity)}
+          isOpen={Boolean(ui.currentQuickViewerEntity)}
           onClose={onClose}
           size="lg"
           returnFocusOnClose
@@ -106,6 +136,23 @@ export function EntityQuickViewer(): JSX.Element {
           <DrawerOverlay zIndex="quickViewer">
             <DrawerContent>
               <DrawerBody>{renderEntity()}</DrawerBody>
+              {ui.quickViewerEntities.length > 1 ? (
+                <IconButton
+                  aria-label="后退"
+                  icon={<Icon as={FaChevronLeft} width="1em" height="1em" />}
+                  onClick={() => ui.backQuickViewer()}
+                  position="absolute"
+                  top="10"
+                  right="3"
+                  fontSize="sm"
+                  size="sm"
+                  variant="ghost"
+                  borderRadius="md"
+                  colorScheme="blackAlpha"
+                  color="black"
+                />
+              ) : null}
+
               <DrawerCloseButton />
             </DrawerContent>
           </DrawerOverlay>
