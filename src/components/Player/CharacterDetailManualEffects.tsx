@@ -1,9 +1,12 @@
 import yaml from 'js-yaml';
 import { toJS } from 'mobx';
+import { Observer } from 'mobx-react-lite';
 import { useEffect, useRef, useState } from 'react';
 
 import {
+  Box,
   Button,
+  Flex,
   HStack,
   Modal,
   ModalBody,
@@ -11,6 +14,12 @@ import {
   ModalFooter,
   ModalHeader,
   ModalOverlay,
+  Switch,
+  Tab,
+  TabList,
+  TabPanel,
+  TabPanels,
+  Tabs,
   Text,
 } from '@chakra-ui/react';
 import { EditorState, EditorView, basicSetup } from '@codemirror/basic-setup';
@@ -135,53 +144,97 @@ export function CharacterDetailManualEffectsModal({ isOpen, onClose }: ModalProp
       <ModalContent>
         <ModalHeader>管理手动效果</ModalHeader>
         <ModalBody>
-          <CharacterDetailManualEffects value={value} onChange={(v) => setValue(v)} />
+          <Tabs isLazy>
+            <TabList>
+              <Tab>开关</Tab>
+              <Tab>编辑</Tab>
+            </TabList>
+            <TabPanels>
+              <TabPanel>
+                <Observer>
+                  {() =>
+                    character.manualEffects.length ? (
+                      <Box>
+                        {character.manualEffects.map((me, i) => (
+                          <Flex key={`${me.name}_${i}`} width="48" mb="2">
+                            <Text fontSize="lg">{me.name}</Text>
 
-          <HStack>
-            {SHORTCUTS.map(({ name, text }) => (
-              <Text
-                key={name}
-                onClick={() => {
-                  setValue([value, text].join(''));
-                }}
-                color="blue.500"
-                cursor="pointer"
-                _hover={{
-                  textDecoration: 'underline',
-                }}
-              >
-                {name}
-              </Text>
-            ))}
-          </HStack>
+                            <Switch
+                              ml="auto"
+                              size="lg"
+                              isChecked={me.enabled}
+                              onChange={() => {
+                                if (me.enabled) {
+                                  character.disableManualEffect(me);
+                                } else {
+                                  character.enableManualEffect(me);
+                                }
+                              }}
+                            />
+                          </Flex>
+                        ))}
+                      </Box>
+                    ) : (
+                      <Text>暂无手动效果</Text>
+                    )
+                  }
+                </Observer>
+              </TabPanel>
+              <TabPanel>
+                <CharacterDetailManualEffects value={value} onChange={(v) => setValue(v)} />
+
+                <Flex mt="2">
+                  <HStack>
+                    {SHORTCUTS.map(({ name, text }) => (
+                      <Text
+                        key={name}
+                        onClick={() => {
+                          setValue([value, text].join(''));
+                        }}
+                        color="blue.500"
+                        cursor="pointer"
+                        _hover={{
+                          textDecoration: 'underline',
+                        }}
+                      >
+                        {name}
+                      </Text>
+                    ))}
+                  </HStack>
+
+                  <Button
+                    colorScheme="teal"
+                    ml="auto"
+                    onClick={() => {
+                      if (value === '') {
+                        character.setManualEffects([]);
+
+                        onClose();
+
+                        return;
+                      }
+
+                      const effects = validateManualEffects(yaml.load(value));
+
+                      if (effects) {
+                        character.setManualEffects(effects);
+
+                        onClose();
+                      } else {
+                        alert('手动效果验证未通过');
+                      }
+                    }}
+                  >
+                    保存
+                  </Button>
+                </Flex>
+              </TabPanel>
+            </TabPanels>
+          </Tabs>
         </ModalBody>
         <ModalFooter>
           <HStack>
-            <Button onClick={() => onClose()}>取消</Button>
-            <Button
-              colorScheme="teal"
-              onClick={() => {
-                if (value === '') {
-                  character.manualEffects = [];
-
-                  onClose();
-
-                  return;
-                }
-
-                const effects = validateManualEffects(yaml.load(value));
-
-                if (effects) {
-                  character.manualEffects = effects;
-
-                  onClose();
-                } else {
-                  alert('手动效果验证未通过');
-                }
-              }}
-            >
-              确认
-            </Button>
+            <Button onClick={() => onClose()}>关闭</Button>
           </HStack>
         </ModalFooter>
       </ModalContent>

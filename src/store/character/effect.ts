@@ -211,11 +211,13 @@ export class CharacterEffect {
       });
     });
 
-    this.character.manualEffects.forEach(({ name, effects, inputs }) => {
+    this.character.manualEffects.forEach(({ name, effects, inputs, enabled }) => {
       const source = makeManualEffectSource(name);
 
       effects.forEach((effect, i) => {
-        add({ effect, source, input: inputs?.[i] ?? undefined });
+        if (enabled) {
+          add({ effect, source, input: inputs?.[i] ?? undefined });
+        }
       });
     });
 

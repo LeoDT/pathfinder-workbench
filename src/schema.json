@@ -75,6 +75,12 @@
           "const": "arcaneSchool",
           "type": "string"
         },
+        "calculatedValues": {
+          "items": {
+            "$ref": "#/definitions/CalculatedValue"
+          },
+          "type": "array"
+        },
         "conflict": {
           "items": {
             "type": "string"
@@ -121,6 +127,12 @@
         "_type": {
           "const": "arcaneSchool",
           "type": "string"
+        },
+        "calculatedValues": {
+          "items": {
+            "$ref": "#/definitions/CalculatedValue"
+          },
+          "type": "array"
         },
         "deprecated": {
           "type": "boolean"
@@ -174,6 +186,12 @@
         "_type": {
           "const": "arcaneSchool",
           "type": "string"
+        },
+        "calculatedValues": {
+          "items": {
+            "$ref": "#/definitions/CalculatedValue"
+          },
+          "type": "array"
         },
         "deprecated": {
           "type": "boolean"
@@ -238,6 +256,12 @@
         "book": {
           "type": "string"
         },
+        "calculatedValues": {
+          "items": {
+            "$ref": "#/definitions/CalculatedValue"
+          },
+          "type": "array"
+        },
         "class": {
           "type": "string"
         },
@@ -280,6 +304,12 @@
         "_type": {
           "const": "common",
           "type": "string"
+        },
+        "calculatedValues": {
+          "items": {
+            "$ref": "#/definitions/CalculatedValue"
+          },
+          "type": "array"
         },
         "deprecated": {
           "type": "boolean"
@@ -349,6 +379,12 @@
           "const": "armorType",
           "type": "string"
         },
+        "calculatedValues": {
+          "items": {
+            "$ref": "#/definitions/CalculatedValue"
+          },
+          "type": "array"
+        },
         "deprecated": {
           "type": "boolean"
         },
@@ -417,7 +453,7 @@
       ],
       "type": "object"
     },
-    "BaseEffect<enum-425666241-1014-1068-425666241-189-1216-425666241-0-7998,EffectTwoHandDamageMultiplierArgs>": {
+    "BaseEffect<enum-425666241-1014-1068-425666241-189-1246-425666241-0-8428,EffectTwoHandDamageMultiplierArgs>": {
       "additionalProperties": false,
       "properties": {
         "args": {
@@ -459,7 +495,7 @@
       ],
       "type": "object"
     },
-    "BaseEffect<enum-425666241-1069-1097-425666241-189-1216-425666241-0-7998,EffectAddTrackerArgs>": {
+    "BaseEffect<enum-425666241-1069-1097-425666241-189-1246-425666241-0-8428,EffectAddTrackerArgs>": {
       "additionalProperties": false,
       "properties": {
         "args": {
@@ -501,7 +537,7 @@
       ],
       "type": "object"
     },
-    "BaseEffect<enum-425666241-1098-1139-425666241-189-1216-425666241-0-7998,EffectGainArcaneSchoolArgs>": {
+    "BaseEffect<enum-425666241-1098-1139-425666241-189-1246-425666241-0-8428,EffectGainArcaneSchoolArgs>": {
       "additionalProperties": false,
       "properties": {
         "args": {
@@ -543,7 +579,7 @@
       ],
       "type": "object"
     },
-    "BaseEffect<enum-425666241-1140-1175-425666241-189-1216-425666241-0-7998,EffectGainBloodlineArgs>": {
+    "BaseEffect<enum-425666241-1140-1175-425666241-189-1246-425666241-0-8428,EffectGainBloodlineArgs>": {
       "additionalProperties": false,
       "properties": {
         "args": {
@@ -585,7 +621,49 @@
       ],
       "type": "object"
     },
-    "BaseEffect<enum-425666241-1176-1213-425666241-189-1216-425666241-0-7998,EffectSelectFromSubsArgs>": {
+    "BaseEffect<enum-425666241-1176-1205-425666241-189-1246-425666241-0-8428,EffectGainDomainArgs>": {
+      "additionalProperties": false,
+      "properties": {
+        "args": {
+          "$ref": "#/definitions/EffectGainDomainArgs"
+        },
+        "growArgs": {
+          "items": {
+            "additionalProperties": false,
+            "properties": {
+              "args": {
+                "$ref": "#/definitions/EffectGainDomainArgs"
+              },
+              "level": {
+                "type": "number"
+              }
+            },
+            "required": [
+              "level",
+              "args"
+            ],
+            "type": "object"
+          },
+          "type": "array"
+        },
+        "origin": {
+          "$ref": "#/definitions/Effect"
+        },
+        "type": {
+          "const": "gainDomain",
+          "type": "string"
+        },
+        "when": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "type",
+        "args"
+      ],
+      "type": "object"
+    },
+    "BaseEffect<enum-425666241-1206-1243-425666241-189-1246-425666241-0-8428,EffectSelectFromSubsArgs>": {
       "additionalProperties": false,
       "properties": {
         "args": {
@@ -627,7 +705,7 @@
       ],
       "type": "object"
     },
-    "BaseEffect<enum-425666241-215-239-425666241-189-1216-425666241-0-7998,(EffectGainFeatArgs|null)>": {
+    "BaseEffect<enum-425666241-215-239-425666241-189-1246-425666241-0-8428,(EffectGainFeatArgs|null)>": {
       "additionalProperties": false,
       "properties": {
         "args": {
@@ -683,7 +761,7 @@
       ],
       "type": "object"
     },
-    "BaseEffect<enum-425666241-240-273-425666241-189-1216-425666241-0-7998,EffectAbilityBonusArgs>": {
+    "BaseEffect<enum-425666241-240-273-425666241-189-1246-425666241-0-8428,EffectAbilityBonusArgs>": {
       "additionalProperties": false,
       "properties": {
         "args": {
@@ -725,7 +803,7 @@
       ],
       "type": "object"
     },
-    "BaseEffect<enum-425666241-274-318-425666241-189-1216-425666241-0-7998,EffectRacialAbilityBonusArgs>": {
+    "BaseEffect<enum-425666241-274-318-425666241-189-1246-425666241-0-8428,EffectRacialAbilityBonusArgs>": {
       "additionalProperties": false,
       "properties": {
         "args": {
@@ -767,7 +845,7 @@
       ],
       "type": "object"
     },
-    "BaseEffect<enum-425666241-319-360-425666241-189-1216-425666241-0-7998,EffectGainSpellCastingArgs>": {
+    "BaseEffect<enum-425666241-319-360-425666241-189-1246-425666241-0-8428,EffectGainSpellCastingArgs>": {
       "additionalProperties": false,
       "properties": {
         "args": {
@@ -809,7 +887,7 @@
       ],
       "type": "object"
     },
-    "BaseEffect<enum-425666241-361-413-425666241-189-1216-425666241-0-7998,EffectGainFavoredClassAmountArgs>": {
+    "BaseEffect<enum-425666241-361-413-425666241-189-1246-425666241-0-8428,EffectGainFavoredClassAmountArgs>": {
       "additionalProperties": false,
       "properties": {
         "args": {
@@ -851,7 +929,7 @@
       ],
       "type": "object"
     },
-    "BaseEffect<enum-425666241-414-452-425666241-189-1216-425666241-0-7998,EffectGainProficiencyArgs>": {
+    "BaseEffect<enum-425666241-414-452-425666241-189-1246-425666241-0-8428,EffectGainProficiencyArgs>": {
       "additionalProperties": false,
       "properties": {
         "args": {
@@ -893,7 +971,7 @@
       ],
       "type": "object"
     },
-    "BaseEffect<enum-425666241-453-519-425666241-189-1216-425666241-0-7998,EffectGainSelectedWeaponProficiencyArgs>": {
+    "BaseEffect<enum-425666241-453-519-425666241-189-1246-425666241-0-8428,EffectGainSelectedWeaponProficiencyArgs>": {
       "additionalProperties": false,
       "properties": {
         "args": {
@@ -935,7 +1013,7 @@
       ],
       "type": "object"
     },
-    "BaseEffect<enum-425666241-520-557-425666241-189-1216-425666241-0-7998,EffectGainClassSkillArgs>": {
+    "BaseEffect<enum-425666241-520-557-425666241-189-1246-425666241-0-8428,EffectGainClassSkillArgs>": {
       "additionalProperties": false,
       "properties": {
         "args": {
@@ -977,7 +1055,7 @@
       ],
       "type": "object"
     },
-    "BaseEffect<enum-425666241-558-584-425666241-189-1216-425666241-0-7998,EffectGainSkillArgs>": {
+    "BaseEffect<enum-425666241-558-584-425666241-189-1246-425666241-0-8428,EffectGainSkillArgs>": {
       "additionalProperties": false,
       "properties": {
         "args": {
@@ -1019,7 +1097,7 @@
       ],
       "type": "object"
     },
-    "BaseEffect<enum-425666241-585-622-425666241-189-1216-425666241-0-7998,EffectGainInitiativeArgs>": {
+    "BaseEffect<enum-425666241-585-622-425666241-189-1246-425666241-0-8428,EffectGainInitiativeArgs>": {
       "additionalProperties": false,
       "properties": {
         "args": {
@@ -1061,7 +1139,7 @@
       ],
       "type": "object"
     },
-    "BaseEffect<enum-425666241-623-643-425666241-189-1216-425666241-0-7998,EffectGainACArgs>": {
+    "BaseEffect<enum-425666241-623-643-425666241-189-1246-425666241-0-8428,EffectGainACArgs>": {
       "additionalProperties": false,
       "properties": {
         "args": {
@@ -1103,7 +1181,7 @@
       ],
       "type": "object"
     },
-    "BaseEffect<enum-425666241-644-666-425666241-189-1216-425666241-0-7998,EffectGainCMDArgs>": {
+    "BaseEffect<enum-425666241-644-666-425666241-189-1246-425666241-0-8428,EffectGainCMDArgs>": {
       "additionalProperties": false,
       "properties": {
         "args": {
@@ -1145,7 +1223,7 @@
       ],
       "type": "object"
     },
-    "BaseEffect<enum-425666241-667-691-425666241-189-1216-425666241-0-7998,EffectGainSaveArgs>": {
+    "BaseEffect<enum-425666241-667-691-425666241-189-1246-425666241-0-8428,EffectGainSaveArgs>": {
       "additionalProperties": false,
       "properties": {
         "args": {
@@ -1187,7 +1265,7 @@
       ],
       "type": "object"
     },
-    "BaseEffect<enum-425666241-692-712-425666241-189-1216-425666241-0-7998,EffectGainHPArgs>": {
+    "BaseEffect<enum-425666241-692-712-425666241-189-1246-425666241-0-8428,EffectGainHPArgs>": {
       "additionalProperties": false,
       "properties": {
         "args": {
@@ -1229,7 +1307,7 @@
       ],
       "type": "object"
     },
-    "BaseEffect<enum-425666241-713-763-425666241-189-1216-425666241-0-7998,EffectGainTwoWeaponFightingArgs>": {
+    "BaseEffect<enum-425666241-713-763-425666241-189-1246-425666241-0-8428,EffectGainTwoWeaponFightingArgs>": {
       "additionalProperties": false,
       "properties": {
         "args": {
@@ -1271,7 +1349,7 @@
       ],
       "type": "object"
     },
-    "BaseEffect<enum-425666241-764-790-425666241-189-1216-425666241-0-7998,EffectGainSpeedArgs>": {
+    "BaseEffect<enum-425666241-764-790-425666241-189-1246-425666241-0-8428,EffectGainSpeedArgs>": {
       "additionalProperties": false,
       "properties": {
         "args": {
@@ -1313,7 +1391,7 @@
       ],
       "type": "object"
     },
-    "BaseEffect<enum-425666241-791-830-425666241-189-1216-425666241-0-7998,EffectClassFeatSourceArgs>": {
+    "BaseEffect<enum-425666241-791-830-425666241-189-1246-425666241-0-8428,EffectClassFeatSourceArgs>": {
       "additionalProperties": false,
       "properties": {
         "args": {
@@ -1355,7 +1433,7 @@
       ],
       "type": "object"
     },
-    "BaseEffect<enum-425666241-831-879-425666241-189-1216-425666241-0-7998,EffectClassFeatPlaceholderArgs>": {
+    "BaseEffect<enum-425666241-831-879-425666241-189-1246-425666241-0-8428,EffectClassFeatPlaceholderArgs>": {
       "additionalProperties": false,
       "properties": {
         "args": {
@@ -1397,7 +1475,7 @@
       ],
       "type": "object"
     },
-    "BaseEffect<enum-425666241-880-929-425666241-189-1216-425666241-0-7998,EffectEnchantUnarmedStrikeArgs>": {
+    "BaseEffect<enum-425666241-880-929-425666241-189-1246-425666241-0-8428,EffectEnchantUnarmedStrikeArgs>": {
       "additionalProperties": false,
       "properties": {
         "args": {
@@ -1439,7 +1517,7 @@
       ],
       "type": "object"
     },
-    "BaseEffect<enum-425666241-930-968-425666241-189-1216-425666241-0-7998,EffectAddAttackOptionArgs>": {
+    "BaseEffect<enum-425666241-930-968-425666241-189-1246-425666241-0-8428,EffectAddAttackOptionArgs>": {
       "additionalProperties": false,
       "properties": {
         "args": {
@@ -1481,7 +1559,7 @@
       ],
       "type": "object"
     },
-    "BaseEffect<enum-425666241-969-1013-425666241-189-1216-425666241-0-7998,EffectMeleeAttackAbilityArgs>": {
+    "BaseEffect<enum-425666241-969-1013-425666241-189-1246-425666241-0-8428,EffectMeleeAttackAbilityArgs>": {
       "additionalProperties": false,
       "properties": {
         "args": {
@@ -1532,6 +1610,12 @@
         },
         "arcana": {
           "$ref": "#/definitions/ClassFeat"
+        },
+        "calculatedValues": {
+          "items": {
+            "$ref": "#/definitions/CalculatedValue"
+          },
+          "type": "array"
         },
         "deprecated": {
           "type": "boolean"
@@ -1630,6 +1714,12 @@
         "_type": {
           "$ref": "#/definitions/EntityType"
         },
+        "calculatedValues": {
+          "items": {
+            "$ref": "#/definitions/CalculatedValue"
+          },
+          "type": "array"
+        },
         "deprecated": {
           "type": "boolean"
         },
@@ -1654,6 +1744,28 @@
         "id",
         "name",
         "stack"
+      ],
+      "type": "object"
+    },
+    "CalculatedValue": {
+      "additionalProperties": false,
+      "properties": {
+        "formula": {
+          "type": "string"
+        },
+        "name": {
+          "type": "string"
+        },
+        "showInName": {
+          "type": "boolean"
+        },
+        "showInNameTemplate": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "name",
+        "formula"
       ],
       "type": "object"
     },
@@ -1777,6 +1889,12 @@
           },
           "type": "array"
         },
+        "calculatedValues": {
+          "items": {
+            "$ref": "#/definitions/CalculatedValue"
+          },
+          "type": "array"
+        },
         "classSkills": {
           "items": {
             "type": "string"
@@ -1785,6 +1903,12 @@
         },
         "deprecated": {
           "type": "boolean"
+        },
+        "desc": {
+          "additionalProperties": {
+            "type": "string"
+          },
+          "type": "object"
         },
         "feats": {
           "items": {
@@ -1815,6 +1939,7 @@
         "_type",
         "alignment",
         "classSkills",
+        "desc",
         "feats",
         "hd",
         "id",
@@ -1830,6 +1955,12 @@
         "_type": {
           "const": "classFeat",
           "type": "string"
+        },
+        "calculatedValues": {
+          "items": {
+            "$ref": "#/definitions/CalculatedValue"
+          },
+          "type": "array"
         },
         "deprecated": {
           "type": "boolean"
@@ -1902,6 +2033,12 @@
         "_type": {
           "const": "common",
           "type": "string"
+        },
+        "calculatedValues": {
+          "items": {
+            "$ref": "#/definitions/CalculatedValue"
+          },
+          "type": "array"
         },
         "deprecated": {
           "type": "boolean"
@@ -1976,6 +2113,64 @@
         "fortitude",
         "reflex",
         "will"
+      ],
+      "type": "object"
+    },
+    "Domain": {
+      "additionalProperties": false,
+      "properties": {
+        "_type": {
+          "const": "domain",
+          "type": "string"
+        },
+        "calculatedValues": {
+          "items": {
+            "$ref": "#/definitions/CalculatedValue"
+          },
+          "type": "array"
+        },
+        "deprecated": {
+          "type": "boolean"
+        },
+        "desc": {
+          "type": "string"
+        },
+        "druid": {
+          "type": "boolean"
+        },
+        "id": {
+          "type": "string"
+        },
+        "inquisition": {
+          "type": "boolean"
+        },
+        "name": {
+          "type": "string"
+        },
+        "powers": {
+          "items": {
+            "$ref": "#/definitions/ClassFeat"
+          },
+          "type": "array"
+        },
+        "spells": {
+          "items": {
+            "type": "string"
+          },
+          "type": "array"
+        },
+        "subDomains": {
+          "items": {
+            "$ref": "#/definitions/Domain"
+          },
+          "type": "array"
+        }
+      },
+      "required": [
+        "_type",
+        "id",
+        "name",
+        "powers"
       ],
       "type": "object"
     },
@@ -2054,12 +2249,15 @@
           "$ref": "#/definitions/EffectGainBloodline"
         },
         {
+          "$ref": "#/definitions/EffectGainDomain"
+        },
+        {
           "$ref": "#/definitions/EffectSelectFromSubs"
         }
       ]
     },
     "EffectAbilityBonus": {
-      "$ref": "#/definitions/BaseEffect%3Cenum-425666241-240-273-425666241-189-1216-425666241-0-7998%2CEffectAbilityBonusArgs%3E"
+      "$ref": "#/definitions/BaseEffect%3Cenum-425666241-240-273-425666241-189-1246-425666241-0-8428%2CEffectAbilityBonusArgs%3E"
     },
     "EffectAbilityBonusArgs": {
       "additionalProperties": false,
@@ -2078,7 +2276,7 @@
       "type": "object"
     },
     "EffectAddAttackOption": {
-      "$ref": "#/definitions/BaseEffect%3Cenum-425666241-930-968-425666241-189-1216-425666241-0-7998%2CEffectAddAttackOptionArgs%3E"
+      "$ref": "#/definitions/BaseEffect%3Cenum-425666241-930-968-425666241-189-1246-425666241-0-8428%2CEffectAddAttackOptionArgs%3E"
     },
     "EffectAddAttackOptionArgs": {
       "additionalProperties": false,
@@ -2135,7 +2333,7 @@
       "type": "object"
     },
     "EffectAddTracker": {
-      "$ref": "#/definitions/BaseEffect%3Cenum-425666241-1069-1097-425666241-189-1216-425666241-0-7998%2CEffectAddTrackerArgs%3E"
+      "$ref": "#/definitions/BaseEffect%3Cenum-425666241-1069-1097-425666241-189-1246-425666241-0-8428%2CEffectAddTrackerArgs%3E"
     },
     "EffectAddTrackerArgs": {
       "additionalProperties": false,
@@ -2156,14 +2354,14 @@
       "type": "object"
     },
     "EffectClassFeatPlaceholder": {
-      "$ref": "#/definitions/BaseEffect%3Cenum-425666241-831-879-425666241-189-1216-425666241-0-7998%2CEffectClassFeatPlaceholderArgs%3E"
+      "$ref": "#/definitions/BaseEffect%3Cenum-425666241-831-879-425666241-189-1246-425666241-0-8428%2CEffectClassFeatPlaceholderArgs%3E"
     },
     "EffectClassFeatPlaceholderArgs": {
       "additionalProperties": false,
       "type": "object"
     },
     "EffectClassFeatSource": {
-      "$ref": "#/definitions/BaseEffect%3Cenum-425666241-791-830-425666241-189-1216-425666241-0-7998%2CEffectClassFeatSourceArgs%3E"
+      "$ref": "#/definitions/BaseEffect%3Cenum-425666241-791-830-425666241-189-1246-425666241-0-8428%2CEffectClassFeatSourceArgs%3E"
     },
     "EffectClassFeatSourceArgs": {
       "additionalProperties": false,
@@ -2175,7 +2373,7 @@
       "type": "object"
     },
     "EffectEnchantUnarmedStrike": {
-      "$ref": "#/definitions/BaseEffect%3Cenum-425666241-880-929-425666241-189-1216-425666241-0-7998%2CEffectEnchantUnarmedStrikeArgs%3E"
+      "$ref": "#/definitions/BaseEffect%3Cenum-425666241-880-929-425666241-189-1246-425666241-0-8428%2CEffectEnchantUnarmedStrikeArgs%3E"
     },
     "EffectEnchantUnarmedStrikeArgs": {
       "additionalProperties": false,
@@ -2190,7 +2388,7 @@
       "type": "object"
     },
     "EffectGainAC": {
-      "$ref": "#/definitions/BaseEffect%3Cenum-425666241-623-643-425666241-189-1216-425666241-0-7998%2CEffectGainACArgs%3E"
+      "$ref": "#/definitions/BaseEffect%3Cenum-425666241-623-643-425666241-189-1246-425666241-0-8428%2CEffectGainACArgs%3E"
     },
     "EffectGainACArgs": {
       "additionalProperties": false,
@@ -2205,7 +2403,7 @@
       "type": "object"
     },
     "EffectGainArcaneSchool": {
-      "$ref": "#/definitions/BaseEffect%3Cenum-425666241-1098-1139-425666241-189-1216-425666241-0-7998%2CEffectGainArcaneSchoolArgs%3E"
+      "$ref": "#/definitions/BaseEffect%3Cenum-425666241-1098-1139-425666241-189-1246-425666241-0-8428%2CEffectGainArcaneSchoolArgs%3E"
     },
     "EffectGainArcaneSchoolArgs": {
       "additionalProperties": false,
@@ -2242,17 +2440,21 @@
       "type": "object"
     },
     "EffectGainBloodline": {
-      "$ref": "#/definitions/BaseEffect%3Cenum-425666241-1140-1175-425666241-189-1216-425666241-0-7998%2CEffectGainBloodlineArgs%3E"
+      "$ref": "#/definitions/BaseEffect%3Cenum-425666241-1140-1175-425666241-189-1246-425666241-0-8428%2CEffectGainBloodlineArgs%3E"
     },
     "EffectGainBloodlineArgs": {
       "additionalProperties": false,
       "properties": {
-        "bloodline": {
-          "type": "string"
+        "bloodrager": {
+          "type": "boolean"
+        },
+        "sorcerer": {
+          "type": "boolean"
         }
       },
       "required": [
-        "bloodline"
+        "sorcerer",
+        "bloodrager"
       ],
       "type": "object"
     },
@@ -2269,7 +2471,7 @@
       "type": "object"
     },
     "EffectGainCMD": {
-      "$ref": "#/definitions/BaseEffect%3Cenum-425666241-644-666-425666241-189-1216-425666241-0-7998%2CEffectGainCMDArgs%3E"
+      "$ref": "#/definitions/BaseEffect%3Cenum-425666241-644-666-425666241-189-1246-425666241-0-8428%2CEffectGainCMDArgs%3E"
     },
     "EffectGainCMDArgs": {
       "additionalProperties": false,
@@ -2284,7 +2486,7 @@
       "type": "object"
     },
     "EffectGainClassSkill": {
-      "$ref": "#/definitions/BaseEffect%3Cenum-425666241-520-557-425666241-189-1216-425666241-0-7998%2CEffectGainClassSkillArgs%3E"
+      "$ref": "#/definitions/BaseEffect%3Cenum-425666241-520-557-425666241-189-1246-425666241-0-8428%2CEffectGainClassSkillArgs%3E"
     },
     "EffectGainClassSkillArgs": {
       "additionalProperties": false,
@@ -2298,8 +2500,50 @@
       ],
       "type": "object"
     },
+    "EffectGainDomain": {
+      "$ref": "#/definitions/BaseEffect%3Cenum-425666241-1176-1205-425666241-189-1246-425666241-0-8428%2CEffectGainDomainArgs%3E"
+    },
+    "EffectGainDomainArgs": {
+      "additionalProperties": false,
+      "properties": {
+        "amount": {
+          "type": "number"
+        },
+        "druid": {
+          "type": "boolean"
+        },
+        "inquisition": {
+          "type": "boolean"
+        },
+        "spells": {
+          "type": "boolean"
+        }
+      },
+      "required": [
+        "inquisition",
+        "druid",
+        "amount",
+        "spells"
+      ],
+      "type": "object"
+    },
+    "EffectGainDomainInput": {
+      "additionalProperties": false,
+      "properties": {
+        "domains": {
+          "items": {
+            "type": "string"
+          },
+          "type": "array"
+        }
+      },
+      "required": [
+        "domains"
+      ],
+      "type": "object"
+    },
     "EffectGainFavoredClassAmount": {
-      "$ref": "#/definitions/BaseEffect%3Cenum-425666241-361-413-425666241-189-1216-425666241-0-7998%2CEffectGainFavoredClassAmountArgs%3E"
+      "$ref": "#/definitions/BaseEffect%3Cenum-425666241-361-413-425666241-189-1246-425666241-0-8428%2CEffectGainFavoredClassAmountArgs%3E"
     },
     "EffectGainFavoredClassAmountArgs": {
       "additionalProperties": false,
@@ -2314,7 +2558,7 @@
       "type": "object"
     },
     "EffectGainFeat": {
-      "$ref": "#/definitions/BaseEffect%3Cenum-425666241-215-239-425666241-189-1216-425666241-0-7998%2C(EffectGainFeatArgs%7Cnull)%3E"
+      "$ref": "#/definitions/BaseEffect%3Cenum-425666241-215-239-425666241-189-1246-425666241-0-8428%2C(EffectGainFeatArgs%7Cnull)%3E"
     },
     "EffectGainFeatArgs": {
       "additionalProperties": false,
@@ -2322,8 +2566,11 @@
         "bloodlineFeat": {
           "type": "boolean"
         },
-        "featType": {
-          "$ref": "#/definitions/FeatType"
+        "featTypes": {
+          "items": {
+            "$ref": "#/definitions/FeatType"
+          },
+          "type": "array"
         },
         "feats": {
           "items": {
@@ -2341,7 +2588,7 @@
       "type": "object"
     },
     "EffectGainHP": {
-      "$ref": "#/definitions/BaseEffect%3Cenum-425666241-692-712-425666241-189-1216-425666241-0-7998%2CEffectGainHPArgs%3E"
+      "$ref": "#/definitions/BaseEffect%3Cenum-425666241-692-712-425666241-189-1246-425666241-0-8428%2CEffectGainHPArgs%3E"
     },
     "EffectGainHPArgs": {
       "additionalProperties": false,
@@ -2356,7 +2603,7 @@
       "type": "object"
     },
     "EffectGainInitiative": {
-      "$ref": "#/definitions/BaseEffect%3Cenum-425666241-585-622-425666241-189-1216-425666241-0-7998%2CEffectGainInitiativeArgs%3E"
+      "$ref": "#/definitions/BaseEffect%3Cenum-425666241-585-622-425666241-189-1246-425666241-0-8428%2CEffectGainInitiativeArgs%3E"
     },
     "EffectGainInitiativeArgs": {
       "additionalProperties": false,
@@ -2371,7 +2618,7 @@
       "type": "object"
     },
     "EffectGainProficiency": {
-      "$ref": "#/definitions/BaseEffect%3Cenum-425666241-414-452-425666241-189-1216-425666241-0-7998%2CEffectGainProficiencyArgs%3E"
+      "$ref": "#/definitions/BaseEffect%3Cenum-425666241-414-452-425666241-189-1246-425666241-0-8428%2CEffectGainProficiencyArgs%3E"
     },
     "EffectGainProficiencyArgs": {
       "additionalProperties": false,
@@ -2423,7 +2670,7 @@
       "type": "object"
     },
     "EffectGainSave": {
-      "$ref": "#/definitions/BaseEffect%3Cenum-425666241-667-691-425666241-189-1216-425666241-0-7998%2CEffectGainSaveArgs%3E"
+      "$ref": "#/definitions/BaseEffect%3Cenum-425666241-667-691-425666241-189-1246-425666241-0-8428%2CEffectGainSaveArgs%3E"
     },
     "EffectGainSaveArgs": {
       "additionalProperties": false,
@@ -2448,7 +2695,7 @@
       "type": "object"
     },
     "EffectGainSelectedWeaponProficiency": {
-      "$ref": "#/definitions/BaseEffect%3Cenum-425666241-453-519-425666241-189-1216-425666241-0-7998%2CEffectGainSelectedWeaponProficiencyArgs%3E"
+      "$ref": "#/definitions/BaseEffect%3Cenum-425666241-453-519-425666241-189-1246-425666241-0-8428%2CEffectGainSelectedWeaponProficiencyArgs%3E"
     },
     "EffectGainSelectedWeaponProficiencyArgs": {
       "additionalProperties": false,
@@ -2466,7 +2713,7 @@
       "type": "object"
     },
     "EffectGainSkill": {
-      "$ref": "#/definitions/BaseEffect%3Cenum-425666241-558-584-425666241-189-1216-425666241-0-7998%2CEffectGainSkillArgs%3E"
+      "$ref": "#/definitions/BaseEffect%3Cenum-425666241-558-584-425666241-189-1246-425666241-0-8428%2CEffectGainSkillArgs%3E"
     },
     "EffectGainSkillArgs": {
       "additionalProperties": false,
@@ -2479,12 +2726,13 @@
         }
       },
       "required": [
+        "skillId",
         "bonus"
       ],
       "type": "object"
     },
     "EffectGainSpeed": {
-      "$ref": "#/definitions/BaseEffect%3Cenum-425666241-764-790-425666241-189-1216-425666241-0-7998%2CEffectGainSpeedArgs%3E"
+      "$ref": "#/definitions/BaseEffect%3Cenum-425666241-764-790-425666241-189-1246-425666241-0-8428%2CEffectGainSpeedArgs%3E"
     },
     "EffectGainSpeedArgs": {
       "additionalProperties": false,
@@ -2499,7 +2747,7 @@
       "type": "object"
     },
     "EffectGainSpellCasting": {
-      "$ref": "#/definitions/BaseEffect%3Cenum-425666241-319-360-425666241-189-1216-425666241-0-7998%2CEffectGainSpellCastingArgs%3E"
+      "$ref": "#/definitions/BaseEffect%3Cenum-425666241-319-360-425666241-189-1246-425666241-0-8428%2CEffectGainSpellCastingArgs%3E"
     },
     "EffectGainSpellCastingArgs": {
       "additionalProperties": false,
@@ -2509,6 +2757,15 @@
         },
         "castingType": {
           "$ref": "#/definitions/SpellCastingType"
+        },
+        "maxSpellLevel": {
+          "type": "number"
+        },
+        "spellSourceClass": {
+          "items": {
+            "type": "string"
+          },
+          "type": "array"
         }
       },
       "required": [
@@ -2518,14 +2775,14 @@
       "type": "object"
     },
     "EffectGainTwoWeaponFighting": {
-      "$ref": "#/definitions/BaseEffect%3Cenum-425666241-713-763-425666241-189-1216-425666241-0-7998%2CEffectGainTwoWeaponFightingArgs%3E"
+      "$ref": "#/definitions/BaseEffect%3Cenum-425666241-713-763-425666241-189-1246-425666241-0-8428%2CEffectGainTwoWeaponFightingArgs%3E"
     },
     "EffectGainTwoWeaponFightingArgs": {
       "additionalProperties": false,
       "type": "object"
     },
     "EffectMeleeAttackAbility": {
-      "$ref": "#/definitions/BaseEffect%3Cenum-425666241-969-1013-425666241-189-1216-425666241-0-7998%2CEffectMeleeAttackAbilityArgs%3E"
+      "$ref": "#/definitions/BaseEffect%3Cenum-425666241-969-1013-425666241-189-1246-425666241-0-8428%2CEffectMeleeAttackAbilityArgs%3E"
     },
     "EffectMeleeAttackAbilityArgs": {
       "additionalProperties": false,
@@ -2542,9 +2799,6 @@
     "EffectNeedInput": {
       "anyOf": [
         {
-          "$ref": "#/definitions/EffectGainSkill"
-        },
-        {
           "$ref": "#/definitions/EffectGainArcaneSchool"
         },
         {
@@ -2554,12 +2808,15 @@
           "$ref": "#/definitions/EffectGainBloodline"
         },
         {
+          "$ref": "#/definitions/EffectGainDomain"
+        },
+        {
           "$ref": "#/definitions/EffectSelectFromSubs"
         }
       ]
     },
     "EffectRacialAbilityBonus": {
-      "$ref": "#/definitions/BaseEffect%3Cenum-425666241-274-318-425666241-189-1216-425666241-0-7998%2CEffectRacialAbilityBonusArgs%3E"
+      "$ref": "#/definitions/BaseEffect%3Cenum-425666241-274-318-425666241-189-1246-425666241-0-8428%2CEffectRacialAbilityBonusArgs%3E"
     },
     "EffectRacialAbilityBonusArgs": {
       "additionalProperties": false,
@@ -2571,7 +2828,7 @@
       "type": "object"
     },
     "EffectSelectFromSubs": {
-      "$ref": "#/definitions/BaseEffect%3Cenum-425666241-1176-1213-425666241-189-1216-425666241-0-7998%2CEffectSelectFromSubsArgs%3E"
+      "$ref": "#/definitions/BaseEffect%3Cenum-425666241-1206-1243-425666241-189-1246-425666241-0-8428%2CEffectSelectFromSubsArgs%3E"
     },
     "EffectSelectFromSubsArgs": {
       "additionalProperties": false,
@@ -2584,7 +2841,7 @@
       "type": "array"
     },
     "EffectTwoHandDamageMultiplier": {
-      "$ref": "#/definitions/BaseEffect%3Cenum-425666241-1014-1068-425666241-189-1216-425666241-0-7998%2CEffectTwoHandDamageMultiplierArgs%3E"
+      "$ref": "#/definitions/BaseEffect%3Cenum-425666241-1014-1068-425666241-189-1246-425666241-0-8428%2CEffectTwoHandDamageMultiplierArgs%3E"
     },
     "EffectTwoHandDamageMultiplierArgs": {
       "additionalProperties": false,
@@ -2625,6 +2882,7 @@
         "addTracker",
         "gainArcaneSchool",
         "gainBloodline",
+        "gainDomain",
         "selectFromSubs"
       ],
       "type": "string"
@@ -2634,6 +2892,12 @@
       "properties": {
         "_type": {
           "$ref": "#/definitions/EntityType"
+        },
+        "calculatedValues": {
+          "items": {
+            "$ref": "#/definitions/CalculatedValue"
+          },
+          "type": "array"
         },
         "deprecated": {
           "type": "boolean"
@@ -2668,7 +2932,8 @@
         "armorType",
         "magicItemType",
         "arcaneSchool",
-        "bloodline"
+        "bloodline",
+        "domain"
       ],
       "type": "string"
     },
@@ -2717,6 +2982,12 @@
         },
         "brief": {
           "type": "string"
+        },
+        "calculatedValues": {
+          "items": {
+            "$ref": "#/definitions/CalculatedValue"
+          },
+          "type": "array"
         },
         "deprecated": {
           "type": "boolean"
@@ -2802,6 +3073,12 @@
           "const": "common",
           "type": "string"
         },
+        "calculatedValues": {
+          "items": {
+            "$ref": "#/definitions/CalculatedValue"
+          },
+          "type": "array"
+        },
         "deprecated": {
           "type": "boolean"
         },
@@ -2852,6 +3129,12 @@
         "_type": {
           "const": "magicItemType",
           "type": "string"
+        },
+        "calculatedValues": {
+          "items": {
+            "$ref": "#/definitions/CalculatedValue"
+          },
+          "type": "array"
         },
         "deprecated": {
           "type": "boolean"
@@ -2927,6 +3210,9 @@
           },
           "type": "array"
         },
+        "enabled": {
+          "type": "boolean"
+        },
         "inputs": {
           "items": {
           },
@@ -2995,6 +3281,12 @@
           },
           "type": "array"
         },
+        "calculatedValues": {
+          "items": {
+            "$ref": "#/definitions/CalculatedValue"
+          },
+          "type": "array"
+        },
         "deprecated": {
           "type": "boolean"
         },
@@ -3049,6 +3341,12 @@
         "_type": {
           "const": "racialTrait",
           "type": "string"
+        },
+        "calculatedValues": {
+          "items": {
+            "$ref": "#/definitions/CalculatedValue"
+          },
+          "type": "array"
         },
         "deprecated": {
           "type": "boolean"
@@ -3116,6 +3414,12 @@
         "armorPenalty": {
           "type": "boolean"
         },
+        "calculatedValues": {
+          "items": {
+            "$ref": "#/definitions/CalculatedValue"
+          },
+          "type": "array"
+        },
         "category": {
           "type": "boolean"
         },
@@ -3161,6 +3465,12 @@
       "properties": {
         "_type": {
           "$ref": "#/definitions/EntityType"
+        },
+        "calculatedValues": {
+          "items": {
+            "$ref": "#/definitions/CalculatedValue"
+          },
+          "type": "array"
         },
         "deprecated": {
           "type": "boolean"
@@ -3225,6 +3535,12 @@
         "book": {
           "type": "string"
         },
+        "calculatedValues": {
+          "items": {
+            "$ref": "#/definitions/CalculatedValue"
+          },
+          "type": "array"
+        },
         "deprecated": {
           "type": "boolean"
         },
@@ -3265,6 +3581,12 @@
         "_type": {
           "const": "common",
           "type": "string"
+        },
+        "calculatedValues": {
+          "items": {
+            "$ref": "#/definitions/CalculatedValue"
+          },
+          "type": "array"
         },
         "deprecated": {
           "type": "boolean"
@@ -3376,6 +3698,12 @@
           "const": "common",
           "type": "string"
         },
+        "calculatedValues": {
+          "items": {
+            "$ref": "#/definitions/CalculatedValue"
+          },
+          "type": "array"
+        },
         "deprecated": {
           "type": "boolean"
         },
@@ -3460,6 +3788,12 @@
         "_type": {
           "const": "weaponType",
           "type": "string"
+        },
+        "calculatedValues": {
+          "items": {
+            "$ref": "#/definitions/CalculatedValue"
+          },
+          "type": "array"
         },
         "deprecated": {
           "type": "boolean"

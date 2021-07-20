@@ -93,7 +93,7 @@ export class Character {
   spellbooks: IObservableArray<CharacterSpellbook>;
   deity: string;
 
-  manualEffects: ManualEffect[];
+  manualEffects: IObservableArray<ManualEffect>;
 
   status: CharacterStatus;
   equipment: CharacterEquip;
@@ -176,7 +176,9 @@ export class Character {
 
       bloodline: computed,
 
-      manualEffects: observable.ref,
+      enableManualEffect: action,
+      disableManualEffect: action,
+
       formulaParserReady: observable,
     });
 
@@ -204,7 +206,7 @@ export class Character {
 
     this.formulaParserReady = false;
 
-    this.manualEffects = manualEffects || [];
+    this.manualEffects = observable.array(manualEffects || []);
 
     this.effect = new CharacterEffect(this);
     this.status = new CharacterStatus(this);
@@ -881,6 +883,22 @@ export class Character {
   }
   aggregateNamedBonusesAmount(bonuses: NamedBonus[]): number[] {
     return this.aggregateBonusesAmount(bonuses.map((n) => n.bonus));
+  }
+
+  setManualEffects(ms: ManualEffect[]): void {
+    this.manualEffects.replace(
+      ms.map((me) => ({
+        ...me,
+        enabled: me.enabled ?? true,
+      }))
+    );
+  }
+  enableManualEffect(me: ManualEffect): void {
+    me.enabled = true;
+  }
+
+  disableManualEffect(me: ManualEffect): void {
+    me.enabled = false;
   }
 
   static serializableProps = [

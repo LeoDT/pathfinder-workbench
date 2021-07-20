@@ -323,4 +323,5 @@ export interface ManualEffect {
   name: string;
   effects: Effect[];
   inputs?: unknown[];
+  enabled?: boolean;
 }
