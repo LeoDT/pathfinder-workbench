@@ -72,15 +72,17 @@ export function CharacterDetailManualEffects({ value, onChange }: Props): JSX.El
   }, []);
 
   useEffect(() => {
-    cmRef.current?.update([
-      cmRef.current.state.update({
-        changes: {
-          from: 0,
-          to: cmRef.current.state.doc.length,
-          insert: value,
-        },
-      }),
-    ]);
+    if (value !== cmRef.current?.state.doc.toJSON().join('\n')) {
+      cmRef.current?.update([
+        cmRef.current.state.update({
+          changes: {
+            from: 0,
+            to: cmRef.current.state.doc.length,
+            insert: value,
+          },
+        }),
+      ]);
+    }
   }, [value]);
 
   return <div ref={cmWrapperRef} />;
