@@ -4,6 +4,7 @@ import { Search2Icon } from '@chakra-ui/icons';
 import { Box, Container, Flex, HStack, Heading, Icon, IconButton, Spacer } from '@chakra-ui/react';
 
 import { NavLink } from './NavLink';
+import { Network } from './Network';
 import { QuickSearchToggler } from './QuickSearchToggler';
 
 export function Navbar(): JSX.Element {
@@ -22,9 +23,12 @@ export function Navbar(): JSX.Element {
             <NavLink to="/dm">DM</NavLink>
           </HStack>
           <Spacer />
-          <QuickSearchToggler>
-            <IconButton aria-label="Quick Search" size="sm" icon={<Search2Icon />} />
-          </QuickSearchToggler>
+          <HStack>
+            <Network />
+            <QuickSearchToggler>
+              <IconButton aria-label="Quick Search" size="sm" icon={<Search2Icon />} />
+            </QuickSearchToggler>
+          </HStack>
         </Flex>
       </Container>
     </Box>

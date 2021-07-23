@@ -20,7 +20,6 @@ const quickSearchCollections = [
 export class Store {
   dm: DMStore;
   ui: UIStore;
-
   collections: typeof collections; // for components
 
   characters: IObservableArray<Character>;

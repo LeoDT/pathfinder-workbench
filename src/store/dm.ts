@@ -11,6 +11,7 @@ export interface Tracker {
 
 export interface DMCharacter {
   id: string;
+  syncId?: string;
   name: string;
   hp: string;
   maxHP: string;
@@ -73,11 +74,12 @@ export class DMStore {
     });
   }
 
-  addCharacter(name: string): void {
+  addCharacter(name: string, props?: Partial<Omit<DMCharacter, 'id' | 'name'>>): void {
     this.characters.push({
       id: shortid(),
       name: this.getNonConflictName(name),
       ...cloneDeep(DEFAULT_CHARACTER_PROPS),
+      ...props,
     });
   }
 
