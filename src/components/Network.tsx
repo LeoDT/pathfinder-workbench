@@ -73,7 +73,7 @@ export function Network(): JSX.Element {
             aria-label="网络功能"
             icon={<Icon as={FaWifi} />}
             onClick={() => onOpen()}
-            colorScheme={network?.connect ? 'green' : 'gray'}
+            colorScheme={network?.connected ? 'green' : 'gray'}
           />
         )}
       </Observer>
