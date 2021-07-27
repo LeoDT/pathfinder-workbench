@@ -63,9 +63,6 @@ function SpellsForLevel({ createOrUpgrade, spellbook, level, perday }: SpellsFor
             pickerProps.onPick = spells.length < slots ? onPick : undefined;
             break;
           }
-
-          case 'cleric-like': {
-          }
         }
 
         return (

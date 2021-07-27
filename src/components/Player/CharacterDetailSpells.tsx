@@ -18,9 +18,10 @@ interface Props {
 export function CharacterDetailSpells({ spellbook }: Props): JSX.Element {
   const { collections } = useStore();
   const character = useCurrentCharacter();
-  const [spells, setSpells] = useState<Map<Spell, number>>(() => {
+  const [spellTrackers, setSpellTrackers] = useState<Map<Spell, number>>(() => {
     return new Map();
   });
+  const [spellsByLevel, setSpellsByLevel] = useState<Spell[][]>([]);
   const calculateSpells = useCallback(() => {
     const { tracker } = character;
     const casted = tracker.spellTracker.get(spellbook.class.id) ?? [];
@@ -120,7 +121,8 @@ export function CharacterDetailSpells({ spellbook }: Props): JSX.Element {
         break;
     }
 
-    setSpells(result);
+    setSpellTrackers(result);
+    setSpellsByLevel(spellbook.partitionSpellsByLevel(Array.from(result.keys())));
   }, []);
 
   useEffect(() => {
@@ -149,31 +151,57 @@ export function CharacterDetailSpells({ spellbook }: Props): JSX.Element {
 
       <Observer>
         {() =>
-          spells.size > 0 ? (
-            <Wrap>
-              {Array.from(spells.entries()).map(([spell, remain]) => {
-                const disabled = remain === 0;
+          spellTrackers.size > 0 ? (
+            <>
+              {spellsByLevel.map((spells, level) => {
+                const dc = 10 + spellbook.abilityModifier + level;
 
                 return (
-                  <WrapItem key={spell.id}>
-                    <Tag
-                      colorScheme={ENTITY_COLOR_SCHEME.spell}
-                      variant="outline"
-                      cursor={disabled ? 'not-allowed' : 'pointer'}
-                      opacity={disabled ? 0.4 : 1}
-                      _hover={disabled ? {} : { opacity: 0.8 }}
-                      onClick={() => {
-                        if (remain > 0) {
-                          character.tracker.castSpell(spellbook, spell);
-                        }
-                      }}
+                  <Box key={level}>
+                    <Text
+                      fontSize="sm"
+                      bgColor="gray.50"
+                      borderTop="1px"
+                      borderBottom="1px"
+                      borderColor="gray.200"
+                      px="2"
+                      mb="2"
                     >
-                      {spell.name} &times; {remain < 0 ? '∞' : remain}
-                    </Tag>
-                  </WrapItem>
+                      {level} 环法术, DC{dc}
+                    </Text>
+                    <Wrap mb="2">
+                      {spells.map((spell) => {
+                        const remain = spellTrackers.get(spell) || -1;
+                        const disabled = remain === 0;
+                        const spellDC = spellbook.getDifficultyClass(spell);
+                        console.log(spellDC);
+
+                        return (
+                          <WrapItem key={spell.id}>
+                            <Tag
+                              colorScheme={ENTITY_COLOR_SCHEME.spell}
+                              variant="outline"
+                              cursor={disabled ? 'not-allowed' : 'pointer'}
+                              opacity={disabled ? 0.4 : 1}
+                              _hover={disabled ? {} : { opacity: 0.8 }}
+                              onClick={() => {
+                                if (remain > 0) {
+                                  character.tracker.castSpell(spellbook, spell);
+                                }
+                              }}
+                            >
+                              {spell.name}
+                              {spellDC !== dc ? `(DC${spellDC})` : ''} &times;{' '}
+                              {remain < 0 ? '∞' : remain}
+                            </Tag>
+                          </WrapItem>
+                        );
+                      })}
+                    </Wrap>
+                  </Box>
                 );
               })}
-            </Wrap>
+            </>
           ) : (
             <Text color="grey">毫无准备</Text>
           )

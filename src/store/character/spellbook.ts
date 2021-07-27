@@ -2,12 +2,13 @@ import { range, without } from 'lodash-es';
 import { action, computed, makeObservable } from 'mobx';
 
 import { ArcaneSchool } from '../../types/arcaneSchool';
-import { AbilityType, Class, Spell, SpellCastingType } from '../../types/core';
+import { AbilityType, Bonus, Class, Spell, SpellCastingType } from '../../types/core';
 import { Domain } from '../../types/domain';
 import { EffectGainSpellCastingArgs } from '../../types/effectType';
 import {
   validateGainArcaneSchoolEffectInput,
   validateGainDomainEffectInput,
+  validateGainSchoolSpellDCEffectInput,
 } from '../../utils/effect';
 import { spellsPerDayByAbilityModifier } from '../../utils/spell';
 import { collections } from '../collection';
@@ -287,6 +288,10 @@ export class CharacterSpellbook {
     if (es) {
       const input = validateGainDomainEffectInput(es.input);
 
+      if (!input) {
+        return null;
+      }
+
       return {
         domains: collections.domain.getByIds(input.domains),
         spells: es.effect.args.spells,
@@ -461,5 +466,25 @@ export class CharacterSpellbook {
     } else {
       this.character.spellManageHistory.push({ action: 'remove', spellId: id });
     }
+  }
+
+  getDifficultyClass(s: Spell): number {
+    const l = this.getSpellLevel(s);
+
+    const es = this.character.effect.getGainSchoolSpellDCEffects();
+    const bonuses: Bonus[] = [];
+
+    if (es) {
+      es.forEach(({ effect, input }) => {
+        const realInput = validateGainSchoolSpellDCEffectInput(input);
+        const school = collections.arcaneSchool.getById(realInput.school);
+
+        if (s.meta.school.toLowerCase() === school.id.toLowerCase()) {
+          bonuses.push(effect.args.bonus);
+        }
+      });
+    }
+
+    return 10 + this.abilityModifier + l + this.character.aggregateBonusesMaxAmount(bonuses);
   }
 }

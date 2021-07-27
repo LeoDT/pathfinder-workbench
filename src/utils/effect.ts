@@ -4,6 +4,7 @@ import {
   EffectGainBloodlineInput,
   EffectGainDomainInput,
   EffectGainFeatArgs,
+  EffectGainSchoolSpellDCInput,
   EffectSelectFromSubsInput,
   ManualEffect,
 } from '../types/effectType';
@@ -69,4 +70,8 @@ export function validateGainDomainEffectInput(i: unknown): EffectGainDomainInput
 
 export function validateSelectFromSubsEffectInput(i: unknown): EffectSelectFromSubsInput {
   return i ? (i as EffectSelectFromSubsInput) : [];
+}
+
+export function validateGainSchoolSpellDCEffectInput(i: unknown): EffectGainSchoolSpellDCInput {
+  return i as EffectGainSchoolSpellDCInput;
 }

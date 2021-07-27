@@ -7,7 +7,7 @@ import {
   validateGainArcaneSchoolEffectInput,
   validateGainBloodlineEffectInput,
   validateGainDomainEffectInput,
-  validateGainSkillEffectInput,
+  validateGainSchoolSpellDCEffectInput,
   validateSelectFromSubsEffectInput,
 } from '../utils/effect';
 import { SimpleEntity, SimpleEntityBadge } from './SimpleEntity';
@@ -25,13 +25,13 @@ export function EffectInputDisplayer({ input, effect, source }: Props): JSX.Elem
   if (!input) return null;
 
   switch (effect.type) {
-    case EffectType.gainSkill:
+    case EffectType.gainSchoolSpellDC:
       {
-        const realInput = validateGainSkillEffectInput(input);
+        const realInput = validateGainSchoolSpellDCEffectInput(input);
 
-        const skill = collections.coreSkill.getById(realInput);
+        const school = collections.arcaneSchool.getById(realInput.school);
 
-        child = <SimpleEntityBadge entity={skill} />;
+        child = <SimpleEntityBadge entity={school} />;
       }
       break;
 

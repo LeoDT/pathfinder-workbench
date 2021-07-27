@@ -14,6 +14,7 @@ import {
   useDisclosure,
 } from '@chakra-ui/react';
 
+import { useStore } from '../../store';
 import { CreateCharacterStore } from '../../store/createCharacter';
 import { Entity, SpecialFeat } from '../../types/core';
 import { EffectNeedInput, EffectType } from '../../types/effectType';
@@ -21,7 +22,7 @@ import { ArcaneSchoolPicker } from '../ArcaneSchoolPicker';
 import { BloodlinePicker } from '../BloodlinePicker';
 import { DomainPicker } from '../DomainPicker';
 import { EffectInputDisplayer } from '../EffectInputDisplayer';
-import { EntityPickerInputRefContext } from '../EntityPicker';
+import { EntityPicker, EntityPickerInputRefContext } from '../EntityPicker';
 import { SimpleEntityWithChild } from '../SimpleEntity';
 import { SubsSelector } from '../SubsSelector';
 import { WeaponProficiencyPicker } from '../WeaponProficiencyPicker';
@@ -45,6 +46,8 @@ export function EffectInput({
   effect,
   onClose,
 }: Props): JSX.Element | null {
+  const { collections } = useStore();
+
   switch (effect.type) {
     case EffectType.gainArcaneSchool: {
       return (
@@ -58,6 +61,24 @@ export function EffectInput({
         />
       );
     }
+
+    case EffectType.gainSchoolSpellDC: {
+      return (
+        <EntityPicker
+          items={value ? [value.school] : []}
+          onPick={(school) =>
+            onChange({
+              school: school,
+            })
+          }
+          entities={collections.arcaneSchool.data.filter(
+            (s) => s.type === 'standard' && !s.noConflict
+          )}
+          listAll
+        />
+      );
+    }
+
     case EffectType.gainSelectedWeaponProficiency: {
       return (
         <WeaponProficiencyPicker

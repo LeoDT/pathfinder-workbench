@@ -352,6 +352,12 @@ export class CharacterEffect {
     );
   }
 
+  getGainSchoolSpellDCEffects(): EffectAndSource<Effects.EffectGainSchoolSpellDC>[] {
+    return this.getEffectsByType<Effects.EffectGainSchoolSpellDC>(
+      Effects.EffectType.gainSchoolSpellDC
+    );
+  }
+
   getGainFavoredClassAmountEffects(): EffectAndSource<Effects.EffectGainFavoredClassAmount>[] {
     return this.getEffectsByType<Effects.EffectGainFavoredClassAmount>(
       Effects.EffectType.gainFavoredClassAmount
