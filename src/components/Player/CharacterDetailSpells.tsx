@@ -174,7 +174,6 @@ export function CharacterDetailSpells({ spellbook }: Props): JSX.Element {
                         const remain = spellTrackers.get(spell) || -1;
                         const disabled = remain === 0;
                         const spellDC = spellbook.getDifficultyClass(spell);
-                        console.log(spellDC);
 
                         return (
                           <WrapItem key={spell.id}>
