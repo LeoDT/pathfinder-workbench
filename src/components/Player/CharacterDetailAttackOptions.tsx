@@ -1,8 +1,9 @@
-import { Box, Text, HStack } from '@chakra-ui/react';
 import { Observer } from 'mobx-react-lite';
 
+import { Box, HStack, Text } from '@chakra-ui/react';
+
 import { showModifier, showModifiers } from '../../utils/modifier';
-import { HBlockItem, Block, HBlockItemForBonus } from './CharacterBlock';
+import { Block, HBlockItem, HBlockItemForBonus } from './CharacterBlock';
 import { useCurrentCharacter } from './context';
 
 export function CharacterDetailAttackOptions(): JSX.Element {
@@ -17,7 +18,7 @@ export function CharacterDetailAttackOptions(): JSX.Element {
               <Box key={i} _notLast={{ mb: '2' }}>
                 <Text mb="1">{a.option.name}</Text>
                 <Block>
-                  <HStack>
+                  <HStack spacing="0" justifyContent="stretch" w="full">
                     <HBlockItemForBonus label="加值" bonuses={a.attackBonuses}>
                       {showModifiers(a.attackModifier)}
                     </HBlockItemForBonus>
@@ -26,7 +27,9 @@ export function CharacterDetailAttackOptions(): JSX.Element {
                       {a.damageModifier !== 0 ? showModifier(a.damageModifier) : ''}
                     </HBlockItemForBonus>
                     <Box flexBasis={1 / 3} flexGrow={1}>
-                      <HBlockItem label="重击">{a.option.critical}</HBlockItem>
+                      <HBlockItem label="重击" borderRight="0">
+                        {a.option.critical}
+                      </HBlockItem>
                     </Box>
                   </HStack>
                 </Block>

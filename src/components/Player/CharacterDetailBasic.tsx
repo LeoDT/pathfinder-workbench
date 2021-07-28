@@ -49,7 +49,6 @@ const abilityStyle: StackProps = {
   flexBasis: ['50%', '33%'],
   flexGrow: 1,
   flexShrink: 1,
-  p: '2',
   borderRight: '1px',
   borderBottom: '1px',
   borderColor: 'gray.200',
@@ -68,7 +67,7 @@ export function CharacterDetailBasic(): JSX.Element {
   function showAbility(t: AbilityType) {
     return (
       <NamedBonusPopover bonuses={character.getBonusesForAbilityType(t, true)}>
-        <HStack>
+        <HStack p="2">
           <AbilityIcon ability={t} iconSize={[8, 9]} />
           <Text whiteSpace="nowrap">{abilityTranslates[t]}</Text>
           <Spacer />
@@ -125,7 +124,7 @@ export function CharacterDetailBasic(): JSX.Element {
                 </Box>
                 <Box w="50%">
                   <Block>
-                    <VBlockItem label="职业">
+                    <VBlockItem label="职业" overflowX="auto">
                       {character.levelDetailForShow.map((t) => (
                         <Box key={t}>{t}</Box>
                       ))}
