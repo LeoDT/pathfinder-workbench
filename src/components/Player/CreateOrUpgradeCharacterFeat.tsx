@@ -76,7 +76,16 @@ export function CreateOrUpgradeCharacterFeat({
                     {r.ignorePrerequisites ? ', 忽略先决条件' : ''})
                   </Heading>
                   <Box mb="2">
-                    {r.forceFeat ? null : maybeFeatsWithInput ? (
+                    {r.forceFeat ? null : maybeFeatsWithInput && r.featTypes ? (
+                      <EntityPickerPopover
+                        {...pickerProps}
+                        entities={[
+                          ...maybeFeatsWithInput.map(({ feat }) => feat),
+                          ...r.featTypes.map((t) => collections.feat.getByType(t)).flat(),
+                        ]}
+                        listAll
+                      />
+                    ) : maybeFeatsWithInput ? (
                       <EntityPickerPopover
                         {...pickerProps}
                         entities={maybeFeatsWithInput.map(({ feat }) => feat)}

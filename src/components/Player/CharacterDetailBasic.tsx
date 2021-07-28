@@ -25,6 +25,7 @@ import { showModifier } from '../../utils/modifier';
 import { sizeTranslates } from '../../utils/race';
 import { carryLoadTranslates } from '../../utils/weight';
 import { AbilityIcon } from '../AbilityIcon';
+import { NamedBonusPopover } from '../NamedBonusPopover';
 import { StatNumber } from '../StatNumber';
 import {
   Block,
@@ -66,25 +67,27 @@ export function CharacterDetailBasic(): JSX.Element {
 
   function showAbility(t: AbilityType) {
     return (
-      <>
-        <AbilityIcon ability={t} iconSize={[8, 9]} />
-        <Text whiteSpace="nowrap">{abilityTranslates[t]}</Text>
-        <Spacer />
-        <StatNumber
-          numberProps={{
-            fontSize: 'xl',
-          }}
-          number={character.ability[t]}
-          text="score"
-        />
-        <StatNumber
-          numberProps={{
-            fontSize: 'xl',
-          }}
-          number={showModifier(character.abilityModifier[t])}
-          text="mod"
-        />
-      </>
+      <NamedBonusPopover bonuses={character.getBonusesForAbilityType(t, true)}>
+        <HStack>
+          <AbilityIcon ability={t} iconSize={[8, 9]} />
+          <Text whiteSpace="nowrap">{abilityTranslates[t]}</Text>
+          <Spacer />
+          <StatNumber
+            numberProps={{
+              fontSize: 'xl',
+            }}
+            number={character.ability[t]}
+            text="score"
+          />
+          <StatNumber
+            numberProps={{
+              fontSize: 'xl',
+            }}
+            number={showModifier(character.abilityModifier[t])}
+            text="mod"
+          />
+        </HStack>
+      </NamedBonusPopover>
     );
   }
 
@@ -152,26 +155,26 @@ export function CharacterDetailBasic(): JSX.Element {
               <Box flex="1" w={['full', 'auto']}>
                 <Block>
                   <HStack spacing="0" flexWrap="wrap">
-                    <HStack {...abilityStyle}>{showAbility(AbilityType.str)}</HStack>
-                    <HStack {...abilityStyle} borderRightWidth={['0px', '1px']}>
+                    <Box {...abilityStyle}>{showAbility(AbilityType.str)}</Box>
+                    <Box {...abilityStyle} borderRightWidth={['0px', '1px']}>
                       {showAbility(AbilityType.dex)}
-                    </HStack>
-                    <HStack {...abilityStyle} borderRightWidth={['1px', '0px']}>
+                    </Box>
+                    <Box {...abilityStyle} borderRightWidth={['1px', '0px']}>
                       {showAbility(AbilityType.con)}
-                    </HStack>
-                    <HStack
+                    </Box>
+                    <Box
                       {...abilityStyle}
                       borderRightWidth={['0px', '1px']}
                       borderBottomWidth={['1px', '0px']}
                     >
                       {showAbility(AbilityType.int)}
-                    </HStack>
-                    <HStack {...abilityStyle} borderBottomWidth="0px">
+                    </Box>
+                    <Box {...abilityStyle} borderBottomWidth="0px">
                       {showAbility(AbilityType.wis)}
-                    </HStack>
-                    <HStack {...abilityStyle} borderRightWidth="0px" borderBottomWidth="0px">
+                    </Box>
+                    <Box {...abilityStyle} borderRightWidth="0px" borderBottomWidth="0px">
                       {showAbility(AbilityType.cha)}
-                    </HStack>
+                    </Box>
                   </HStack>
                 </Block>
               </Box>
