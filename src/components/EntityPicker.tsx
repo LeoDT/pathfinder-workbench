@@ -17,6 +17,7 @@ import {
   PopoverBody,
   PopoverContent,
   PopoverTrigger,
+  Portal,
   Spacer,
   Text,
   useDisclosure,
@@ -202,20 +203,22 @@ export function EntityPickerPopover<T extends Entity>({
           </HStack>
         </Button>
       </PopoverTrigger>
-      <PopoverContent>
-        <PopoverArrow />
-        <PopoverBody>
-          <EntityPicker
-            inputRef={initialFocusRef}
-            afterPick={() => {
-              if (closeOnPick) {
-                onClose();
-              }
-            }}
-            {...props}
-          />
-        </PopoverBody>
-      </PopoverContent>
+      <Portal>
+        <PopoverContent>
+          <PopoverArrow />
+          <PopoverBody>
+            <EntityPicker
+              inputRef={initialFocusRef}
+              afterPick={() => {
+                if (closeOnPick) {
+                  onClose();
+                }
+              }}
+              {...props}
+            />
+          </PopoverBody>
+        </PopoverContent>
+      </Portal>
     </Popover>
   );
 }

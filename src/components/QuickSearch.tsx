@@ -12,6 +12,7 @@ import {
   MenuButton,
   MenuItem,
   MenuList,
+  Portal,
   Tag,
 } from '@chakra-ui/react';
 
@@ -119,20 +120,22 @@ export function QuickSearch(): JSX.Element {
               >
                 {entityTypeTranslates[currentType]}
               </MenuButton>
-              <MenuList>
-                {searchResult.map(([type, r]) =>
-                  r.length > 0 ? (
-                    <MenuItem
-                      key={type}
-                      onClick={() => {
-                        setCurrentType(type);
-                      }}
-                    >
-                      {entityTypeTranslates[type]}
-                    </MenuItem>
-                  ) : null
-                )}
-              </MenuList>
+              <Portal>
+                <MenuList>
+                  {searchResult.map(([type, r]) =>
+                    r.length > 0 ? (
+                      <MenuItem
+                        key={type}
+                        onClick={() => {
+                          setCurrentType(type);
+                        }}
+                      >
+                        {entityTypeTranslates[type]}
+                      </MenuItem>
+                    ) : null
+                  )}
+                </MenuList>
+              </Portal>
             </Menu>
           ) : (
             <HStack pt="2">

@@ -11,6 +11,7 @@ import {
   PopoverBody,
   PopoverContent,
   PopoverTrigger,
+  Portal,
   useDisclosure,
 } from '@chakra-ui/react';
 
@@ -161,11 +162,13 @@ export function SimpleEntityWithEffectInput({
                   isDisabled={readonly}
                 />
               </PopoverTrigger>
-              <PopoverContent w="auto" minW="xs">
-                <PopoverBody maxH="50vh" w="" overflowY="auto">
-                  {isOpen ? <EffectInput onClose={onClose} entity={entity} {...props} /> : null}
-                </PopoverBody>
-              </PopoverContent>
+              <Portal>
+                <PopoverContent w="auto" minW="xs">
+                  <PopoverBody maxH="50vh" w="" overflowY="auto">
+                    {isOpen ? <EffectInput onClose={onClose} entity={entity} {...props} /> : null}
+                  </PopoverBody>
+                </PopoverContent>
+              </Portal>
             </Popover>
           }
           child={<EffectInputDisplayer source={entity} input={props.value} effect={props.effect} />}

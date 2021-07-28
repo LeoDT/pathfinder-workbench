@@ -12,6 +12,7 @@ import {
   MenuButton,
   MenuItem,
   MenuList,
+  Portal,
   Text,
 } from '@chakra-ui/react';
 
@@ -48,20 +49,22 @@ export function Select<T>({
           {withArrow ? <Icon as={FaChevronDown} display="inine-block" /> : null}
         </HStack>
       </MenuButton>
-      <MenuList backgroundColor="white" {...menuListProps}>
-        {options.map((o, i) => (
-          <MenuItem
-            key={o.key ?? i}
-            onClick={() => {
-              onChange(o.value);
-            }}
-            icon={o.value === value ? <Icon as={FaCheck} /> : undefined}
-            isDisabled={o.disabled}
-          >
-            {o.text}
-          </MenuItem>
-        ))}
-      </MenuList>
+      <Portal>
+        <MenuList backgroundColor="white" {...menuListProps}>
+          {options.map((o, i) => (
+            <MenuItem
+              key={o.key ?? i}
+              onClick={() => {
+                onChange(o.value);
+              }}
+              icon={o.value === value ? <Icon as={FaCheck} /> : undefined}
+              isDisabled={o.disabled}
+            >
+              {o.text}
+            </MenuItem>
+          ))}
+        </MenuList>
+      </Portal>
     </Menu>
   );
 }
@@ -97,37 +100,39 @@ export function MultipleSelect<T>({
           {withArrow ? <Icon as={FaChevronDown} display="inine-block" /> : null}
         </HStack>
       </MenuButton>
-      <MenuList backgroundColor="white" {...menuListProps}>
-        {options.map((o, i) => {
-          const checked = Boolean(value.includes(o.value));
-          return (
-            <MenuItem
-              key={o.key ?? i}
-              onClick={() => {
-                if (checked) {
-                  const v = without(value, o.value);
+      <Portal>
+        <MenuList backgroundColor="white" {...menuListProps}>
+          {options.map((o, i) => {
+            const checked = Boolean(value.includes(o.value));
+            return (
+              <MenuItem
+                key={o.key ?? i}
+                onClick={() => {
+                  if (checked) {
+                    const v = without(value, o.value);
 
-                  if (v.length >= min) {
-                    onChange(v);
-                  }
-                } else {
-                  const v = [...value, o.value];
-
-                  if (max && v.length > max) {
-                    onChange([...tail(value), o.value]);
+                    if (v.length >= min) {
+                      onChange(v);
+                    }
                   } else {
-                    onChange([...value, o.value]);
+                    const v = [...value, o.value];
+
+                    if (max && v.length > max) {
+                      onChange([...tail(value), o.value]);
+                    } else {
+                      onChange([...value, o.value]);
+                    }
                   }
-                }
-              }}
-              icon={checked ? <Icon as={FaCheck} /> : undefined}
-              isDisabled={o.disabled || (value.length === min && checked)}
-            >
-              {o.text}
-            </MenuItem>
-          );
-        })}
-      </MenuList>
+                }}
+                icon={checked ? <Icon as={FaCheck} /> : undefined}
+                isDisabled={o.disabled || (value.length === min && checked)}
+              >
+                {o.text}
+              </MenuItem>
+            );
+          })}
+        </MenuList>
+      </Portal>
     </Menu>
   );
 }

@@ -21,6 +21,7 @@ import {
   ModalHeader,
   ModalOverlay,
   OrderedList,
+  Portal,
   SimpleGrid,
   Spacer,
   Text,
@@ -70,28 +71,30 @@ export function DMPage(): JSX.Element {
           <Button onClick={() => dm.rollAllInitiative()}>全员投先攻</Button>
           <Menu placement="bottom-end" isLazy>
             <MenuButton as={IconButton} icon={<FaChevronDown />} aria-label="More Action" />
-            <MenuList>
-              <MenuItem
-                onClick={() => {
-                  dm.rollAllPerception();
-                  setRolling('perception');
-                  onOpen();
-                }}
-              >
-                全员投察觉
-              </MenuItem>
-              <MenuItem
-                onClick={() => {
-                  dm.rollAllWillSave();
-                  setRolling('will');
-                  onOpen();
-                }}
-              >
-                全员投意志
-              </MenuItem>
-              <MenuItem onClick={() => dm.healAll()}>全员恢复</MenuItem>
-              <MenuItem onClick={() => dm.recoverAllTracker()}>全员恢复Tracker</MenuItem>
-            </MenuList>
+            <Portal>
+              <MenuList>
+                <MenuItem
+                  onClick={() => {
+                    dm.rollAllPerception();
+                    setRolling('perception');
+                    onOpen();
+                  }}
+                >
+                  全员投察觉
+                </MenuItem>
+                <MenuItem
+                  onClick={() => {
+                    dm.rollAllWillSave();
+                    setRolling('will');
+                    onOpen();
+                  }}
+                >
+                  全员投意志
+                </MenuItem>
+                <MenuItem onClick={() => dm.healAll()}>全员恢复</MenuItem>
+                <MenuItem onClick={() => dm.recoverAllTracker()}>全员恢复Tracker</MenuItem>
+              </MenuList>
+            </Portal>
           </Menu>
         </ButtonGroup>
         <ButtonSwitch
