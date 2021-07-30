@@ -5,6 +5,7 @@ import shortid from 'shortid';
 
 import { Bloodline } from '../../types/bloodline';
 import { CharacterUpgrade } from '../../types/characterUpgrade';
+import { CombatStyle } from '../../types/combatStyle';
 import {
   Abilities,
   AbilityType,
@@ -34,6 +35,7 @@ import {
 import { markUnstackableBonus } from '../../utils/bonus';
 import {
   validateGainBloodlineEffectInput,
+  validateGainCombatStyleEffectInput,
   validateGainSkillEffectInput,
   validateSelectFromSubsEffectInput,
 } from '../../utils/effect';
@@ -175,6 +177,8 @@ export class Character {
       gainedFeats: computed,
 
       bloodline: computed,
+
+      grit: computed,
 
       enableManualEffect: action,
       disableManualEffect: action,
@@ -336,7 +340,7 @@ export class Character {
 
   startUpgrade(): void {
     const lastUpgrade = last(this.upgrades);
-    const lastUpgradeClass = lastUpgrade ? lastUpgrade.classId : 'Cleric';
+    const lastUpgradeClass = lastUpgrade ? lastUpgrade.classId : 'Ranger';
     const levelFeat =
       this.level === 1 && this.upgrades.length === 0 ? true : (this.level + 1) % 2 === 1;
     const levelAbility = (this.level + 1) % 4 === 0;
@@ -697,6 +701,32 @@ export class Character {
     return null;
   }
 
+  get combatStyle(): CombatStyle | null {
+    const es = this.effect.getGainCombatStyleEffects()?.[0];
+
+    if (es && es.input) {
+      const input = validateGainCombatStyleEffectInput(es.input);
+
+      return collections.rangerCombatStyles.getById(input);
+    }
+
+    return null;
+  }
+
+  get grit(): number {
+    const es = this.effect.getGainGritEffects()?.[0];
+
+    if (es) {
+      const tracker = this.tracker.trackers.find((t) => t.id === es.effect.args.trackerId);
+
+      if (tracker) {
+        return tracker.current;
+      }
+    }
+
+    return 0;
+  }
+
   hasFeatSubs(feat: SpecialFeat, subIds: string[]): boolean {
     let realFeat = feat;
     if (realFeat._type === 'classFeat') {
@@ -746,12 +776,15 @@ export class Character {
           'mainHandCategory',
           this.equipment.mainHand?.type.meta.category || 'unarmed strike'
         );
+        p.setVariable('mainHandDamageType', this.equipment.mainHand?.type.meta.damageType || 'B');
         p.setVariable('offHand', this.equipment.offHand?.type.id || 'none');
         p.setVariable(
           'offHandCategory',
           this.equipment.offHand?.type.meta.category || 'unarmed strike'
         );
+
         p.setVariable('maxBab', this.status.maxBab);
+        p.setVariable('grit', this.grit);
 
         [
           AbilityType.str,

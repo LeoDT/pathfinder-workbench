@@ -18,9 +18,11 @@ import FEAT_DATA from '../../data/feats.json';
 import INQUISITION_DATA from '../../data/inquisitions.json';
 import MAGIC_ITEM_TYPES_DATA from '../../data/magic-item-types.json';
 import RACE_DATA from '../../data/races.json';
+import COMBAT_STYLE_DATA from '../../data/ranger-combat-styles.json';
 import SORCERER_BLOODLINES_DATA from '../../data/sorcerer-bloodlines.json';
 import SPELL_DATA from '../../data/spells.json';
 import WEAPON_TYPES_DATA from '../../data/weapon-types.json';
+import { CombatStyle } from '../../types/combatStyle';
 import { ArmorType, BonusType, MagicItemType, Skill } from '../../types/core';
 import { ArcaneSchoolCollection } from './arcaneSchool';
 import { ArchetypeCollection } from './archetype';
@@ -41,6 +43,7 @@ export const collections = {
   armorType: new Collection<ArmorType>('armorType', ARMOR_TYPES_DATA as any),
   bonusType: new Collection<BonusType>('bonusType', BONUS_TYPES_DATA as any),
   class: new ClassCollection(CLASS_DATA as any),
+  rangerCombatStyles: new Collection<CombatStyle>('combatStyle', COMBAT_STYLE_DATA as any),
   consolidatedSkill: new Collection<Skill>('skill', CONSOLIDATED_SKILL_DATA as any),
   coreSkill: new Collection<Skill>('skill', CORE_SKILL_DATA as any),
   domain: new DomainCollection(DOMAIN_DATA as any, INQUISITION_DATA as any),

@@ -5,6 +5,7 @@ import { Collection, CollectionOptions } from './base';
 
 export class DomainCollection extends Collection<Domain> {
   dataWithoutInquisition: Domain[];
+  dataDruid: Domain[];
   subDomainIndex: Record<string, Domain>;
 
   constructor(
@@ -35,6 +36,7 @@ export class DomainCollection extends Collection<Domain> {
     }
 
     this.dataWithoutInquisition = this.data.filter((d) => !d.inquisition);
+    this.dataDruid = this.data.filter((d) => d.druid);
     this.subDomainIndex = keyBy(
       this.data
         .filter((d) => d.subDomains)

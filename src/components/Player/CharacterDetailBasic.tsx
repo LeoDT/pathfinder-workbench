@@ -124,7 +124,7 @@ export function CharacterDetailBasic(): JSX.Element {
                 </Box>
                 <Box w="50%">
                   <Block>
-                    <VBlockItem label="职业" overflowX="auto">
+                    <VBlockItem label="职业" overflowX="hidden">
                       {character.levelDetailForShow.map((t) => (
                         <Box key={t}>{t}</Box>
                       ))}

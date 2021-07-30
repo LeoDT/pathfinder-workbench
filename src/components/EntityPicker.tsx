@@ -17,7 +17,6 @@ import {
   PopoverBody,
   PopoverContent,
   PopoverTrigger,
-  Portal,
   Spacer,
   Text,
   useDisclosure,
@@ -186,7 +185,6 @@ export function EntityPickerPopover<T extends Entity>({
 }: PopoverProps<T>): JSX.Element {
   const { isOpen, onClose, onToggle } = useDisclosure();
   const initialFocusRef = useRef<HTMLInputElement>(null);
-
   return (
     <Popover
       initialFocusRef={initialFocusRef}
@@ -203,22 +201,20 @@ export function EntityPickerPopover<T extends Entity>({
           </HStack>
         </Button>
       </PopoverTrigger>
-      <Portal>
-        <PopoverContent>
-          <PopoverArrow />
-          <PopoverBody>
-            <EntityPicker
-              inputRef={initialFocusRef}
-              afterPick={() => {
-                if (closeOnPick) {
-                  onClose();
-                }
-              }}
-              {...props}
-            />
-          </PopoverBody>
-        </PopoverContent>
-      </Portal>
+      <PopoverContent zIndex="tooltip">
+        <PopoverArrow />
+        <PopoverBody>
+          <EntityPicker
+            inputRef={initialFocusRef}
+            afterPick={() => {
+              if (closeOnPick) {
+                onClose();
+              }
+            }}
+            {...props}
+          />
+        </PopoverBody>
+      </PopoverContent>
     </Popover>
   );
 }

@@ -12,7 +12,6 @@ import {
   MenuButton,
   MenuItem,
   MenuList,
-  Portal,
   Text,
 } from '@chakra-ui/react';
 
@@ -26,6 +25,7 @@ export interface Props<T = string> {
   buttonProps?: ButtonProps;
   withArrow?: boolean;
   menuListProps?: BoxProps;
+  portal?: boolean;
 }
 
 export function Select<T>({
@@ -49,22 +49,20 @@ export function Select<T>({
           {withArrow ? <Icon as={FaChevronDown} display="inine-block" /> : null}
         </HStack>
       </MenuButton>
-      <Portal>
-        <MenuList backgroundColor="white" {...menuListProps}>
-          {options.map((o, i) => (
-            <MenuItem
-              key={o.key ?? i}
-              onClick={() => {
-                onChange(o.value);
-              }}
-              icon={o.value === value ? <Icon as={FaCheck} /> : undefined}
-              isDisabled={o.disabled}
-            >
-              {o.text}
-            </MenuItem>
-          ))}
-        </MenuList>
-      </Portal>
+      <MenuList backgroundColor="white" {...menuListProps}>
+        {options.map((o, i) => (
+          <MenuItem
+            key={o.key ?? i}
+            onClick={() => {
+              onChange(o.value);
+            }}
+            icon={o.value === value ? <Icon as={FaCheck} /> : undefined}
+            isDisabled={o.disabled}
+          >
+            {o.text}
+          </MenuItem>
+        ))}
+      </MenuList>
     </Menu>
   );
 }
@@ -100,39 +98,37 @@ export function MultipleSelect<T>({
           {withArrow ? <Icon as={FaChevronDown} display="inine-block" /> : null}
         </HStack>
       </MenuButton>
-      <Portal>
-        <MenuList backgroundColor="white" {...menuListProps}>
-          {options.map((o, i) => {
-            const checked = Boolean(value.includes(o.value));
-            return (
-              <MenuItem
-                key={o.key ?? i}
-                onClick={() => {
-                  if (checked) {
-                    const v = without(value, o.value);
+      <MenuList backgroundColor="white" {...menuListProps}>
+        {options.map((o, i) => {
+          const checked = Boolean(value.includes(o.value));
+          return (
+            <MenuItem
+              key={o.key ?? i}
+              onClick={() => {
+                if (checked) {
+                  const v = without(value, o.value);
 
-                    if (v.length >= min) {
-                      onChange(v);
-                    }
-                  } else {
-                    const v = [...value, o.value];
-
-                    if (max && v.length > max) {
-                      onChange([...tail(value), o.value]);
-                    } else {
-                      onChange([...value, o.value]);
-                    }
+                  if (v.length >= min) {
+                    onChange(v);
                   }
-                }}
-                icon={checked ? <Icon as={FaCheck} /> : undefined}
-                isDisabled={o.disabled || (value.length === min && checked)}
-              >
-                {o.text}
-              </MenuItem>
-            );
-          })}
-        </MenuList>
-      </Portal>
+                } else {
+                  const v = [...value, o.value];
+
+                  if (max && v.length > max) {
+                    onChange([...tail(value), o.value]);
+                  } else {
+                    onChange([...value, o.value]);
+                  }
+                }
+              }}
+              icon={checked ? <Icon as={FaCheck} /> : undefined}
+              isDisabled={o.disabled || (value.length === min && checked)}
+            >
+              {o.text}
+            </MenuItem>
+          );
+        })}
+      </MenuList>
     </Menu>
   );
 }

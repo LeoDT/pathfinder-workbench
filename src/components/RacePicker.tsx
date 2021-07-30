@@ -121,6 +121,7 @@ export function RacePicker({ onChange, value }: Props): JSX.Element {
                 onChange={(v) => setRaceId(v)}
                 placeholder="选择种族"
                 collection={collections.race}
+                portal={false}
               />
 
               {race ? (

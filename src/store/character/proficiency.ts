@@ -68,7 +68,7 @@ export class CharacterProficiency {
       return true;
     }
 
-    if (this.all.weaponWithSpecial) {
+    if (this.all.weaponWithSpecial.length > 0) {
       return this.all.weaponWithSpecial.some((s) => weaponType.meta.special?.includes(s));
     }
 

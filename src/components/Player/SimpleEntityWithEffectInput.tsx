@@ -21,6 +21,7 @@ import { Entity, SpecialFeat } from '../../types/core';
 import { EffectNeedInput, EffectType } from '../../types/effectType';
 import { ArcaneSchoolPicker } from '../ArcaneSchoolPicker';
 import { BloodlinePicker } from '../BloodlinePicker';
+import { CollectionEntityPicker } from '../CollectionEntityPicker';
 import { DomainPicker } from '../DomainPicker';
 import { EffectInputDisplayer } from '../EffectInputDisplayer';
 import { EntityPicker, EntityPickerInputRefContext } from '../EntityPicker';
@@ -115,6 +116,17 @@ export function EffectInput({
           value={value}
           onChange={onChange}
           feat={entity as SpecialFeat}
+        />
+      );
+    }
+
+    case EffectType.gainCombatStyle: {
+      return (
+        <CollectionEntityPicker
+          collection={collections.rangerCombatStyles}
+          items={value ? [value] : []}
+          onPick={(i) => onChange(i)}
+          listAll
         />
       );
     }

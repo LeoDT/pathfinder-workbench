@@ -8,6 +8,7 @@ import {
   validateGainArcaneSchoolEffectInput,
   validateGainBloodlineEffectInput,
   validateGainDomainEffectInput,
+  validateSelectFromSubsEffectInput,
 } from '../../utils/effect';
 import { collections } from '../collection';
 import { Character } from '.';
@@ -89,6 +90,27 @@ export class CharacterEffect {
   extendEffect(es: EffectAndSource): EffectAndSource | EffectAndSource[] {
     const { effect, input } = es;
     switch (effect.type) {
+      case Effects.EffectType.selectFromSubs: {
+        if (!input) return es;
+
+        if (es.source._type === 'classFeat') {
+          const realInput = validateSelectFromSubsEffectInput(input);
+          const subs = es.source.subs?.filter((s) => realInput.includes(s.id)) || [];
+          const newES = subs
+            .map(
+              (s) =>
+                s.effects
+                  ?.map((effect): EffectAndSource => ({ effect, source: s, extendedFrom: es }))
+                  .flat() ?? []
+            )
+            .flat();
+
+          return [es, ...newES];
+        }
+
+        return es;
+      }
+
       case Effects.EffectType.gainArcaneSchool: {
         if (!input) return es;
 
@@ -456,5 +478,13 @@ export class CharacterEffect {
 
   getSelectFromSubsEffects(): EffectAndSource<Effects.EffectSelectFromSubs>[] {
     return this.getEffectsByType<Effects.EffectSelectFromSubs>(Effects.EffectType.selectFromSubs);
+  }
+
+  getGainCombatStyleEffects(): EffectAndSource<Effects.EffectGainCombatStyle>[] {
+    return this.getEffectsByType<Effects.EffectGainCombatStyle>(Effects.EffectType.gainCombatStyle);
+  }
+
+  getGainGritEffects(): EffectAndSource<Effects.EffectGainGrit>[] {
+    return this.getEffectsByType<Effects.EffectGainGrit>(Effects.EffectType.gainGrit);
   }
 }

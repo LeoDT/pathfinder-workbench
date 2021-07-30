@@ -35,8 +35,17 @@ export function CreateOrUpgradeCharacterFeat({
               if (r.bloodlineFeat && !bloodline) {
                 throw new Error('gain bloodline feat need character has a bloodline');
               }
-              const maybeFeatIdsWithInput =
-                r.bloodlineFeat && bloodline ? bloodline.feats : r.feats;
+
+              const { combatStyle } = createOrUpgrade.character;
+
+              let maybeFeatIdsWithInput: string[] | undefined = [
+                ...(r.bloodlineFeat && bloodline ? bloodline.feats : []),
+                ...(r.combatStyleFeat && combatStyle ? combatStyle.feats : []),
+              ];
+              if (maybeFeatIdsWithInput.length === 0) {
+                maybeFeatIdsWithInput = r.feats;
+              }
+
               const maybeFeatsWithInput = maybeFeatIdsWithInput
                 ? collections.feat.getByIdsWithInputs(maybeFeatIdsWithInput)
                 : undefined;
@@ -120,17 +129,22 @@ export function CreateOrUpgradeCharacterFeat({
         )}
       </Observer>
       <Divider m="4" />
-      <Heading as="h3" fontSize="lg" mb="4">
-        获得职业特性
-      </Heading>
-      <Observer>
-        {() => (
-          <FeatWithEffectInputGrid
-            entities={createOrUpgrade.allNewGainedClassFeats}
-            createOrUpgrade={createOrUpgrade}
-          />
-        )}
-      </Observer>
+      {createOrUpgrade.allNewGainedClassFeats.length > 0 ? (
+        <>
+          <Heading as="h3" fontSize="lg" mb="4">
+            获得职业特性
+          </Heading>
+          <Observer>
+            {() => (
+              <FeatWithEffectInputGrid
+                entities={createOrUpgrade.allNewGainedClassFeats}
+                createOrUpgrade={createOrUpgrade}
+              />
+            )}
+          </Observer>
+        </>
+      ) : null}
+
       {showRaceTraits ? (
         <>
           <Heading as="h3" fontSize="lg" my="4">

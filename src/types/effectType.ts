@@ -48,7 +48,11 @@ export enum EffectType {
 
   gainDomain = 'gainDomain',
 
+  gainCombatStyle = 'gainCombatStyle',
+
   selectFromSubs = 'selectFromSubs',
+
+  gainGrit = 'gainGrit',
 }
 
 export interface BaseEffect<TYPE extends EffectType, ARGS> {
@@ -63,7 +67,8 @@ export interface EffectGainFeatArgs {
   ignorePrerequisites?: boolean;
   featTypes?: FeatType[];
   feats?: string[]; // override above
-  bloodlineFeat?: boolean; // override above
+  bloodlineFeat?: boolean; // merge above
+  combatStyleFeat?: boolean; // merge above
   forceFeat?: string; // override above
 }
 export type EffectGainFeat = BaseEffect<EffectType.gainFeat, EffectGainFeatArgs | null>;
@@ -226,7 +231,7 @@ export interface EffectAddAttackOptionArgs {
   damageMultiplier?: number;
   attackBonuses?: NamedBonus[];
   damageBonuses?: Array<{
-    applyMultiplier: AbilityType;
+    applyMultiplier?: AbilityType;
     bonus: NamedBonus;
   }>;
 }
@@ -284,6 +289,18 @@ export interface EffectSelectFromSubsArgs {}
 export type EffectSelectFromSubs = BaseEffect<EffectType.selectFromSubs, EffectSelectFromSubsArgs>;
 export type EffectSelectFromSubsInput = string[];
 
+export interface EffectGainCombatStyleArgs {}
+export type EffectGainCombatStyle = BaseEffect<
+  EffectType.gainCombatStyle,
+  EffectGainCombatStyleArgs
+>;
+export type EffectGainCombatStyleInput = string;
+
+export interface EffectGainGritArgs {
+  trackerId: string;
+}
+export type EffectGainGrit = BaseEffect<EffectType.gainGrit, EffectGainGritArgs>;
+
 export type Effect =
   | EffectRacialAbilityBonus
   | EffectAbilityBonus
@@ -311,7 +328,9 @@ export type Effect =
   | EffectAddTracker
   | EffectGainBloodline
   | EffectGainDomain
-  | EffectSelectFromSubs;
+  | EffectSelectFromSubs
+  | EffectGainCombatStyle
+  | EffectGainGrit;
 
 export type ArgsTypeForEffect<T extends Effect> = T['args'];
 
@@ -321,7 +340,8 @@ export type EffectNeedInput =
   | EffectGainSelectedWeaponProficiency
   | EffectGainBloodline
   | EffectGainDomain
-  | EffectSelectFromSubs;
+  | EffectSelectFromSubs
+  | EffectGainCombatStyle;
 
 export const effectTypesNeedInput: Array<EffectType> = [
   EffectType.gainArcaneSchool,
@@ -334,6 +354,8 @@ export const effectTypesNeedInput: Array<EffectType> = [
   EffectType.gainDomain,
 
   EffectType.selectFromSubs,
+
+  EffectType.gainCombatStyle,
 ];
 
 export interface ManualEffect {

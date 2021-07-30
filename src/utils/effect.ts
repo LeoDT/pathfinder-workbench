@@ -2,6 +2,7 @@ import { ClassFeat, Feat, RacialTrait } from '../types/core';
 import {
   EffectGainArcaneSchoolInput,
   EffectGainBloodlineInput,
+  EffectGainCombatStyleInput,
   EffectGainDomainInput,
   EffectGainFeatArgs,
   EffectGainSchoolSpellDCInput,
@@ -74,4 +75,8 @@ export function validateSelectFromSubsEffectInput(i: unknown): EffectSelectFromS
 
 export function validateGainSchoolSpellDCEffectInput(i: unknown): EffectGainSchoolSpellDCInput {
   return i as EffectGainSchoolSpellDCInput;
+}
+
+export function validateGainCombatStyleEffectInput(i: unknown): EffectGainCombatStyleInput {
+  return i as EffectGainCombatStyleInput;
 }

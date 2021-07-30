@@ -115,6 +115,7 @@ export function ClassPicker({ value, onChange, levels, excludedArchetypes }: Pro
                 textWithArrow
                 closeOnPick
                 labelRenderer={levels ? pickerLabelRenderer : undefined}
+                portal={false}
               />
 
               <Heading as="h4" fontSize="lg" mt="4" mb="2">

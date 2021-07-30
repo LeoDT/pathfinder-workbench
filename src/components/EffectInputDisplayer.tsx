@@ -6,6 +6,7 @@ import { EffectNeedInput, EffectType } from '../types/effectType';
 import {
   validateGainArcaneSchoolEffectInput,
   validateGainBloodlineEffectInput,
+  validateGainCombatStyleEffectInput,
   validateGainDomainEffectInput,
   validateGainSchoolSpellDCEffectInput,
   validateSelectFromSubsEffectInput,
@@ -133,6 +134,16 @@ export function EffectInputDisplayer({ input, effect, source }: Props): JSX.Elem
           ) : (
             <SimpleEntityBadge entity={items[0]} quickViewer />
           );
+      }
+      break;
+
+    case EffectType.gainCombatStyle:
+      {
+        const realInput = validateGainCombatStyleEffectInput(input);
+
+        const combatStyle = collections.rangerCombatStyles.getById(realInput);
+
+        child = <SimpleEntityBadge entity={combatStyle} quickViewer />;
       }
       break;
 

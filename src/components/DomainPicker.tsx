@@ -32,11 +32,16 @@ const disabledStyle = {
   cursor: 'not-allowed',
 };
 
-export function DomainPicker({ inquisition, amount, value, onChange }: Props): JSX.Element {
+export function DomainPicker({ inquisition, amount, value, onChange, druid }: Props): JSX.Element {
   const { collections } = useStore();
   const entities = useMemo(
-    () => (inquisition ? collections.domain.data : collections.domain.dataWithoutInquisition),
-    [inquisition]
+    () =>
+      inquisition
+        ? collections.domain.data
+        : druid
+        ? collections.domain.dataDruid
+        : collections.domain.dataWithoutInquisition,
+    [inquisition, druid]
   );
   const realValue = value?.domains || [];
   const onPick = useCallback(

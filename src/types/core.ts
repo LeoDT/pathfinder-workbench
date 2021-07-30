@@ -46,7 +46,8 @@ export type EntityType =
   | 'magicItemType'
   | 'arcaneSchool'
   | 'bloodline'
-  | 'domain';
+  | 'domain'
+  | 'combatStyle';
 
 export interface CalculatedValue {
   name: string;
@@ -165,6 +166,7 @@ export interface ClassFeat extends SpecialFeat {
   grow?: Array<ClassFeatGrow>;
   origin?: ClassFeat;
   placeholder?: boolean;
+  subs?: ClassFeat[];
 }
 
 export interface ClassLevel {
