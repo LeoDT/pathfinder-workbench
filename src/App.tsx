@@ -3,6 +3,7 @@ import { Redirect, Route, BrowserRouter as Router, Switch } from 'react-router-d
 import { EntityQuickViewer } from './components/EntityQuickViewer';
 import { Navbar } from './components/Navbar';
 import { DMPage } from './pages/DMPage';
+import { ExplorePage } from './pages/ExplorePage';
 import { PlayerPage } from './pages/PlayerPage';
 
 export function App(): JSX.Element {
@@ -11,14 +12,13 @@ export function App(): JSX.Element {
       <>
         <Navbar />
 
-        <>
-          <Switch>
-            <Route path="/player" component={PlayerPage} />
-            <Route path="/dm" component={DMPage} />
+        <Switch>
+          <Route path="/player" component={PlayerPage} />
+          <Route path="/dm" component={DMPage} />
+          <Route path="/explore" component={ExplorePage} />
 
-            <Redirect to="/player" />
-          </Switch>
-        </>
+          <Redirect to="/player" />
+        </Switch>
 
         <EntityQuickViewer />
       </>

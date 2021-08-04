@@ -21,6 +21,7 @@ export function Navbar(): JSX.Element {
           <HStack>
             <NavLink to="/player">PC</NavLink>
             <NavLink to="/dm">DM</NavLink>
+            <NavLink to="/explore">Explore</NavLink>
           </HStack>
           <Spacer />
           <HStack>

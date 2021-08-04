@@ -103,7 +103,7 @@ export interface Race extends Entity {
 export interface SpellMeta {
   school: string;
   subschool?: string;
-  level?: string;
+  level: string;
   castingTime?: string;
   components?: string;
   effect?: string;

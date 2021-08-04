@@ -3,20 +3,22 @@ import { Class, Spell } from '../../types/core';
 import { Collection, CollectionOptions } from './base';
 
 export class SpellCollection extends Collection<Spell> {
-  static spellByClassLevel = SPELL_BY_CLASS_LEVEL as Record<string, string[][]>;
+  SPELL_BY_CLASS_LEVEL: Record<string, string[][]>;
 
   constructor(data: Array<Spell>, options?: CollectionOptions) {
     super('spell', data, options);
+
+    this.SPELL_BY_CLASS_LEVEL = SPELL_BY_CLASS_LEVEL as Record<string, string[][]>;
   }
 
   getByClass(clas: Class | string): string[][] {
     const cId = (typeof clas === 'string' ? clas : clas.id).toLowerCase();
 
-    if (!SpellCollection.spellByClassLevel[cId]) {
+    if (!this.SPELL_BY_CLASS_LEVEL[cId]) {
       throw Error(`no class/spell data for ${cId}`);
     }
 
-    return SpellCollection.spellByClassLevel[cId];
+    return this.SPELL_BY_CLASS_LEVEL[cId];
   }
 
   getByClassLevel(clas: Class | string, level: number): string[] {
