@@ -26,6 +26,12 @@ interface Props {
   character: DMCharacter;
 }
 
+const characterTypeTranslates = {
+  player: '玩家',
+  npc: 'NPC',
+  enemy: '敌人',
+};
+
 export function Character({ character: c }: Props): JSX.Element {
   const { dm } = useStore();
 
@@ -52,7 +58,7 @@ export function Character({ character: c }: Props): JSX.Element {
           >
             <Box flexBasis="50%">
               <Text fontSize="xx-small" color="gray.400">
-                姓名
+                {characterTypeTranslates[c.type]}姓名
               </Text>
               <Input
                 value={c.name}

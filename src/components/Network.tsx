@@ -52,7 +52,7 @@ export function Network(): JSX.Element {
           if (inDM) {
             Object.assign(inDM, omit(rc, 'id'));
           } else {
-            store.dm.addCharacter(rc.name, {
+            store.dm.addCharacter('player', rc.name, {
               syncId: rc.id,
               ...omit(rc, 'id', 'name'),
             });

@@ -30,6 +30,7 @@ import {
 
 import { ButtonSwitch } from '../components/ButtonSwitch';
 import { Character as DMCharacter } from '../components/DM/Character';
+import { PrestigeModal } from '../components/DM/Prestige';
 import { useStore } from '../store';
 import { useIsSmallerScreen } from '../utils/react';
 
@@ -53,20 +54,29 @@ export function DMPage(): JSX.Element {
           mb={[2, 0]}
           mr={[2, 0]}
           onClick={() => {
-            dm.addCharacter('无名氏');
+            dm.addCharacter('player', '无名氏');
           }}
         >
-          添加人物
+          添加玩家
         </Button>
         <Button
           mb={[2, 0]}
           onClick={() => {
-            dm.addCharacter('敌人');
+            dm.addCharacter('npc', 'NPC');
+          }}
+        >
+          添加NPC
+        </Button>
+        <Button
+          mb={[2, 0]}
+          onClick={() => {
+            dm.addCharacter('enemy', '敌人');
           }}
         >
           添加敌人
         </Button>
         <Spacer />
+        <PrestigeModal />
         <ButtonGroup isAttached mb={[2, 0]}>
           <Button onClick={() => dm.rollAllInitiative()}>全员投先攻</Button>
           <Menu placement="bottom-end" isLazy>

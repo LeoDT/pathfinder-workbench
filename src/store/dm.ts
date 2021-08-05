@@ -1,6 +1,8 @@
-import { cloneDeep } from 'lodash-es';
+import { cloneDeep, without } from 'lodash-es';
 import { IObservableArray, action, computed, makeObservable, observable, toJS } from 'mobx';
 import shortid from 'shortid';
+
+import { nonConflictName } from '../utils/misc';
 
 export interface Tracker {
   id: string;
@@ -9,10 +11,12 @@ export interface Tracker {
   max: string;
 }
 
+export type DMCharacterType = 'player' | 'npc' | 'enemy';
 export interface DMCharacter {
   id: string;
   syncId?: string;
   name: string;
+  type: DMCharacterType;
   hp: string;
   maxHP: string;
   attunement: string;
@@ -42,8 +46,32 @@ const DEFAULT_CHARACTER_PROPS = {
   trackers: [],
 };
 
+export interface PrestigeFaction {
+  id: string;
+  name: string;
+}
+
+export interface PrestigeCharacter {
+  id: string;
+  name: string;
+}
+
+export interface PrestigeLevel {
+  id: string;
+  name: string;
+  max: number;
+}
+
+export interface Prestiges {
+  factions: IObservableArray<PrestigeFaction>;
+  characters: IObservableArray<PrestigeCharacter>;
+  levels: IObservableArray<PrestigeLevel>;
+  prestige: Map<string, number>;
+}
+
 export class DMStore {
   characters: IObservableArray<DMCharacter>;
+  prestiges: Prestiges;
 
   constructor() {
     makeObservable(this, {
@@ -51,6 +79,10 @@ export class DMStore {
       rollAllPerception: action,
       rollAllSenseMotive: action,
       rollAllWillSave: action,
+      rollInitiative: action,
+      rollPerception: action,
+      rollSenseMotive: action,
+      rollWillSave: action,
 
       healAll: action,
 
@@ -59,10 +91,27 @@ export class DMStore {
       recoverAllTracker: action,
       recoverAllAttunment: action,
 
+      addCharacter: action,
+      addPrestigeCharacter: action,
+      addPrestigeFaction: action,
+      addPrestigeLevel: action,
+      removeCharacter: action,
+      removePrestigeCharacter: action,
+      removePrestigeFaction: action,
+      removePrestigeLevel: action,
+      increasePresitge: action,
+      decreasePresitge: action,
+
       sortedCharacters: computed,
     });
 
     this.characters = observable.array([]);
+    this.prestiges = observable({
+      levels: observable.array([]),
+      factions: observable.array([]),
+      characters: observable.array([]),
+      prestige: new Map<string, number>(),
+    });
   }
 
   get sortedCharacters(): Array<DMCharacter> {
@@ -74,10 +123,15 @@ export class DMStore {
     });
   }
 
-  addCharacter(name: string, props?: Partial<Omit<DMCharacter, 'id' | 'name'>>): void {
+  addCharacter(
+    type: DMCharacterType,
+    name: string,
+    props?: Partial<Omit<DMCharacter, 'id' | 'name'>>
+  ): void {
     this.characters.push({
       id: shortid(),
       name: this.getNonConflictName(name),
+      type,
       ...cloneDeep(DEFAULT_CHARACTER_PROPS),
       ...props,
     });
@@ -172,9 +226,78 @@ export class DMStore {
   }
 
   getNonConflictName(name: string): string {
-    const existed = this.characters.filter((c) => c.name.startsWith(name));
+    return nonConflictName(
+      name,
+      this.characters.map((c) => c.name)
+    );
+  }
 
-    return `${name} ${existed.length + 1}`;
+  addPrestigeLevel(name: string, max = 3): void {
+    const allNames = this.prestiges.levels.map((c) => c.name);
+
+    this.prestiges.levels.push({ id: shortid(), name: nonConflictName(name, allNames), max });
+  }
+
+  removePrestigeLevel(c: PrestigeLevel): void {
+    this.prestiges.levels.remove(c);
+  }
+
+  addPrestigeCharacter(name: string): void {
+    const allNames = this.prestiges.characters.map((c) => c.name);
+
+    this.prestiges.characters.push({ id: shortid(), name: nonConflictName(name, allNames) });
+  }
+
+  removePrestigeCharacter(c: PrestigeCharacter): void {
+    this.prestiges.characters.remove(c);
+  }
+
+  addPrestigeFaction(name: string, max = 3): void {
+    const allNames = this.prestiges.factions.map((c) => c.name);
+
+    this.prestiges.factions.push({ id: shortid(), name: nonConflictName(name, allNames) });
+  }
+
+  removePrestigeFaction(f: PrestigeFaction): void {
+    this.prestiges.factions.remove(f);
+  }
+
+  getPrestigeLevel(prestige: number): [PrestigeLevel | null, number] {
+    let level = this.prestiges.levels[0] || null;
+    let p = prestige;
+
+    for (const [i, l] of this.prestiges.levels.entries()) {
+      if (p - l.max > 0) {
+        level = l;
+        p = i < this.prestiges.levels.length - 1 ? p - l.max : p;
+
+        continue;
+      }
+
+      level = l;
+      break;
+    }
+
+    return [level, p];
+  }
+
+  showPrestige(prestige: number): string {
+    const [l, p] = this.getPrestigeLevel(prestige);
+
+    return `${l?.name ? l.name : '无'}${p > 0 ? `(${p})` : ''}`;
+  }
+
+  increasePresitge(f: PrestigeFaction, c: PrestigeCharacter): void {
+    const id = `${f.id}:${c.id}`;
+    const p = this.prestiges.prestige.get(id) || 0;
+
+    this.prestiges.prestige.set(id, p + 1);
+  }
+  decreasePresitge(f: PrestigeFaction, c: PrestigeCharacter): void {
+    const id = `${f.id}:${c.id}`;
+    const p = this.prestiges.prestige.get(id) || 0;
+
+    this.prestiges.prestige.set(id, Math.max(p - 1, 0));
   }
 
   static parseCharacters(s: string): Array<DMCharacter> {
@@ -182,6 +305,7 @@ export class DMStore {
 
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     return json.map((c: any) => ({
+      type: 'player', // default type for saved character
       ...DEFAULT_CHARACTER_PROPS,
       ...c,
     }));

@@ -71,3 +71,9 @@ export async function readFileAsString(file: File): Promise<string> {
     reader.readAsText(file);
   });
 }
+
+export function nonConflictName(name: string, all: string[]): string {
+  const existed = all.filter((s) => s.startsWith(name));
+
+  return `${name} ${existed.length + 1}`;
+}

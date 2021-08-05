@@ -61,6 +61,7 @@ export class Store {
       });
 
       set('dm:characters', JSON.stringify(this.dm.characters));
+      set('dm:prestiges', JSON.stringify(this.dm.prestiges));
     });
 
     observe(this.characters, (change) => {
@@ -83,6 +84,15 @@ export class Store {
 
         if (k === 'dm:characters') {
           this.dm.characters.replace(DMStore.parseCharacters(v));
+        }
+
+        if (k === 'dm:prestiges') {
+          const p = JSON.parse(v);
+
+          this.dm.prestiges.levels.replace(p.levels || []);
+          this.dm.prestiges.factions.replace(p.factions || []);
+          this.dm.prestiges.characters.replace(p.characters || []);
+          this.dm.prestiges.prestige = new Map(p.prestige);
         }
       }
     });
