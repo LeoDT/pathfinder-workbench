@@ -76,8 +76,15 @@ export class DMStore {
     });
   }
 
+  get enabledCharacters(): Array<DMCharacter> {
+    return this.characters.filter((c) => !c.disabled);
+  }
+  get disabledCharacters(): Array<DMCharacter> {
+    return this.characters.filter((c) => c.disabled);
+  }
+
   get sortedCharacters(): Array<DMCharacter> {
-    return [...this.characters].sort((a, b) => {
+    return [...this.enabledCharacters].sort((a, b) => {
       const ac = parseInt(a.initiative) + a.rolledInitiative;
       const bc = parseInt(b.initiative) + b.rolledInitiative;
 
@@ -86,6 +93,9 @@ export class DMStore {
   }
 
   get players(): DMCharacter[] {
+    return this.enabledCharacters.filter((c) => c.type === 'player');
+  }
+  get allPlayers(): DMCharacter[] {
     return this.characters.filter((c) => c.type === 'player');
   }
 
@@ -122,6 +132,13 @@ export class DMStore {
     });
   }
 
+  disableCharacter(c: DMCharacter): void {
+    c.disabled = true;
+  }
+  enableCharacter(c: DMCharacter): void {
+    c.disabled = false;
+  }
+
   rollInitiative(c: DMCharacter): void {
     c.rolledInitiative = Math.ceil(Math.random() * 20);
   }
@@ -146,14 +163,14 @@ export class DMStore {
     c.rolledSenseMotive = Math.ceil(Math.random() * 20);
   }
   rollAllSenseMotive(): void {
-    this.characters.forEach((c) => this.rollSenseMotive(c));
+    this.enabledCharacters.forEach((c) => this.rollSenseMotive(c));
   }
 
   rollWillSave(c: DMCharacter): void {
     c.rolledWillSave = Math.ceil(Math.random() * 20);
   }
   rollAllWillSave(): void {
-    this.characters.forEach((c) => this.rollWillSave(c));
+    this.enabledCharacters.forEach((c) => this.rollWillSave(c));
   }
   getFinalWillSave(c: DMCharacter): number {
     return parseInt(c.willSave) + c.rolledWillSave;
@@ -163,7 +180,7 @@ export class DMStore {
     c.hp = c.maxHP;
   }
   healAll(): void {
-    this.characters.forEach((c) => {
+    this.enabledCharacters.forEach((c) => {
       c.hp = c.maxHP;
     });
   }
@@ -182,11 +199,11 @@ export class DMStore {
     });
   }
   recoverAllTracker(): void {
-    this.characters.forEach((c) => this.recoverTracker(c));
+    this.enabledCharacters.forEach((c) => this.recoverTracker(c));
   }
 
   recoverAllAttunment(): void {
-    this.characters.forEach((c) => {
+    this.enabledCharacters.forEach((c) => {
       c.attunement = '0';
     });
   }

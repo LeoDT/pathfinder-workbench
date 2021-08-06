@@ -127,7 +127,7 @@ export function Prestige(): JSX.Element {
                       <Thead>
                         <Tr>
                           <Th />
-                          {dm.players.map(({ id, name }) => (
+                          {dm.allPlayers.map(({ id, name }) => (
                             <Th key={id} textAlign="center">
                               {name}
                             </Th>
@@ -138,7 +138,7 @@ export function Prestige(): JSX.Element {
                         {current.factions.map((f) => (
                           <Tr key={f.id}>
                             <Td>{f.name}</Td>
-                            {dm.players.map((c) => {
+                            {dm.allPlayers.map((c) => {
                               const pId = `${f.id}:${c.id}`;
                               const p = current.prestiges.get(pId) || 0;
                               const [pl] = current.getPrestigeLevel(p);

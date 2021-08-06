@@ -7,6 +7,7 @@ import {
   ButtonGroup,
   Container,
   HStack,
+  Heading,
   IconButton,
   ListItem,
   Menu,
@@ -62,6 +63,7 @@ export function DMPage(): JSX.Element {
         <Button
           mb={[2, 0]}
           onClick={() => {
+            ``;
             dm.addCharacter('npc', 'NPC');
           }}
         >
@@ -120,11 +122,28 @@ export function DMPage(): JSX.Element {
       <Observer>
         {() => (
           <SimpleGrid py="2" spacing="2" columns={isSmallerScreen ? 1 : 3}>
-            {(order === 'initiative' ? dm.sortedCharacters : dm.characters).map((c) => (
+            {(order === 'initiative' ? dm.sortedCharacters : dm.enabledCharacters).map((c) => (
               <DMCharacter key={c.id} character={c} />
             ))}
           </SimpleGrid>
         )}
+      </Observer>
+
+      <Observer>
+        {() =>
+          dm.disabledCharacters.length > 0 ? (
+            <>
+              <Heading as="h3" fontSize="xl" mt="4">
+                隐藏的人物
+              </Heading>
+              <SimpleGrid py="2" spacing="2" columns={isSmallerScreen ? 1 : 3}>
+                {dm.disabledCharacters.map((c) => (
+                  <DMCharacter key={c.id} character={c} />
+                ))}
+              </SimpleGrid>
+            </>
+          ) : null
+        }
       </Observer>
 
       {rolling ? (
@@ -137,7 +156,7 @@ export function DMPage(): JSX.Element {
               <Observer>
                 {() => (
                   <OrderedList fontSize="lg">
-                    {[...dm.characters]
+                    {[...dm.enabledCharacters]
                       .sort((a, b) => {
                         let aa = 0;
                         let bb = 0;
