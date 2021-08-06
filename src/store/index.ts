@@ -7,6 +7,7 @@ import { createContextNoNullCheck } from '../utils/react';
 import { Character } from './character';
 import { Collection, collections } from './collection';
 import { DMStore } from './dm';
+import { Prestige } from './dm/prestige';
 import { UIStore } from './ui';
 
 const quickSearchCollections = [
@@ -61,13 +62,24 @@ export class Store {
       });
 
       set('dm:characters', JSON.stringify(this.dm.characters));
-      set('dm:prestiges', JSON.stringify(this.dm.prestiges));
+
+      this.dm.prestiges.forEach((p) => {
+        set(`dm:prestige:${p.id}`, Prestige.stringify(p));
+      });
     });
 
     observe(this.characters, (change) => {
       if (change.type === 'splice') {
         change.removed.forEach((i) => {
           del(`character:${i.id}`);
+        });
+      }
+    });
+
+    observe(this.dm.prestiges, (change) => {
+      if (change.type === 'splice') {
+        change.removed.forEach((i) => {
+          del(`dm:prestige:${i.id}`);
         });
       }
     });
@@ -86,13 +98,8 @@ export class Store {
           this.dm.characters.replace(DMStore.parseCharacters(v));
         }
 
-        if (k === 'dm:prestiges') {
-          const p = JSON.parse(v);
-
-          this.dm.prestiges.levels.replace(p.levels || []);
-          this.dm.prestiges.factions.replace(p.factions || []);
-          this.dm.prestiges.characters.replace(p.characters || []);
-          this.dm.prestiges.prestige = new Map(p.prestige);
+        if (k.startsWith('dm:prestige')) {
+          this.dm.prestiges.push(Prestige.parse(v));
         }
       }
     });

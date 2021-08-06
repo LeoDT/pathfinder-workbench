@@ -27,7 +27,7 @@ interface Props {
 }
 
 const characterTypeTranslates = {
-  player: '玩家',
+  player: 'PC',
   npc: 'NPC',
   enemy: '敌人',
 };

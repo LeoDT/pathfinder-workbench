@@ -57,7 +57,7 @@ export function DMPage(): JSX.Element {
             dm.addCharacter('player', '无名氏');
           }}
         >
-          添加玩家
+          添加PC
         </Button>
         <Button
           mb={[2, 0]}

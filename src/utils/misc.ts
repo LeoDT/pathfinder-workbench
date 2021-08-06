@@ -75,5 +75,5 @@ export async function readFileAsString(file: File): Promise<string> {
 export function nonConflictName(name: string, all: string[]): string {
   const existed = all.filter((s) => s.startsWith(name));
 
-  return `${name} ${existed.length + 1}`;
+  return `${name}${existed.length > 0 ? ` ${existed.length + 1}` : ''}`;
 }
