@@ -1,4 +1,4 @@
-import { pick } from 'lodash-es';
+import { pick, range } from 'lodash-es';
 import { IObservableArray, makeAutoObservable, observable, observe } from 'mobx';
 import shortid from 'shortid';
 
@@ -12,6 +12,7 @@ export const prestigeTemplates: PrestigeTemplate[] = [
 export class Prestige {
   id: string;
   name: string;
+  indicators?: string;
 
   factions: IObservableArray<PrestigeFaction>;
   levels: IObservableArray<PrestigeLevel>;
@@ -19,11 +20,12 @@ export class Prestige {
   prestiges: Map<string, number>;
   disposes: Array<() => void>;
 
-  constructor(name: string, id?: string) {
+  constructor(name: string, id?: string, indicators?: string) {
     makeAutoObservable(this);
 
     this.id = id ?? shortid();
     this.name = name;
+    this.indicators = indicators ?? '';
 
     this.levels = observable.array([]);
     this.factions = observable.array([]);
@@ -94,10 +96,23 @@ export class Prestige {
     return [level, p];
   }
 
+  get isIndicatorsValid(): boolean {
+    return this.indicators?.split(',').length === 2;
+  }
+
   showPrestige(prestige: number): string {
     const [l, p] = this.getPrestigeLevel(prestige);
 
-    return `${l?.name ? l.name : '无'}${p > 0 ? `(${p})` : ''}`;
+    let sp: string = p.toString();
+    if (l && this.indicators && this.isIndicatorsValid) {
+      const indicators = this.indicators.split(',');
+
+      sp = range(1, l.max + 1)
+        .map((i) => (i <= p ? indicators[0] : indicators[1]))
+        .join('');
+    }
+
+    return `${l?.name ? l.name : '无'}${p > 0 ? `(${sp})` : ''}`;
   }
 
   getPrestige(f: PrestigeFaction, c: DMCharacter): number {
@@ -118,14 +133,14 @@ export class Prestige {
   }
 
   static stringify(p: Prestige): string {
-    return JSON.stringify(pick(p, ['id', 'name', 'levels', 'factions', 'prestiges']));
+    return JSON.stringify(pick(p, ['id', 'name', 'indicators', 'levels', 'factions', 'prestiges']));
   }
 
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   static parse(s: string | any): Prestige {
     const json = typeof s === 'string' ? JSON.parse(s) : s;
 
-    const p = new Prestige(json.name, json.id);
+    const p = new Prestige(json.name, json.id, json.indicators);
 
     p.levels.replace(json.levels);
     p.factions.replace(json.factions);

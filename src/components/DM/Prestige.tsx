@@ -1,11 +1,14 @@
+import { range } from 'lodash-es';
 import { autorun } from 'mobx';
 import { Observer } from 'mobx-react-lite';
-import { useEffect, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import { FaMinus, FaPlus, FaTrash } from 'react-icons/fa';
 
 import {
   Box,
   Button,
+  FormControl,
+  FormLabel,
   HStack,
   Heading,
   Icon,
@@ -31,6 +34,7 @@ import {
   Tbody,
   Td,
   Text,
+  Textarea,
   Th,
   Thead,
   Tr,
@@ -48,12 +52,33 @@ export function Prestige(): JSX.Element {
   const { dm } = useStore();
   const [currentId, setCurrentId] = useState<string | null>(() => dm.prestiges[0]?.id ?? null);
   const [current, setCurrent] = useState<PrestigeStore | null>(() => dm.prestiges[0] ?? null);
+  const [markdown, setMarkdown] = useState<string>('');
 
   useEffect(() => {
     const dispose = autorun(() => {
       const hit = dm.prestiges.find((p) => p.id === currentId);
 
       setCurrent(hit ?? null);
+
+      if (hit) {
+        setMarkdown(
+          [
+            `### ${hit.name}`,
+            '',
+            `||${dm.allPlayers.map((c) => c.name).join('|')}|`,
+            `|${range(dm.allPlayers.length + 1)
+              .map(() => '---')
+              .join('|')}|`,
+            ...hit.factions.map(
+              (f) =>
+                `|${[
+                  f.name,
+                  ...dm.allPlayers.map((c) => hit.showPrestige(hit.getPrestige(f, c))),
+                ].join('|')}|`
+            ),
+          ].join('\n')
+        );
+      }
     });
 
     return () => dispose();
@@ -117,6 +142,7 @@ export function Prestige(): JSX.Element {
           <TabList>
             <Tab>声望</Tab>
             <Tab>配置</Tab>
+            <Tab>Markdown</Tab>
           </TabList>
           <TabPanels>
             <TabPanel>
@@ -186,16 +212,25 @@ export function Prestige(): JSX.Element {
                 {() => (
                   <Box w="50%">
                     <Box mb="2">
-                      <Heading as="h4" fontSize="lg">
-                        名称
-                      </Heading>
-                      <Input
-                        mt="2"
-                        value={current.name}
-                        onChange={(e) => {
-                          current.name = e.target.value;
-                        }}
-                      />
+                      <FormControl mb="2">
+                        <FormLabel>名称</FormLabel>
+                        <Input
+                          value={current.name}
+                          onChange={(e) => {
+                            current.name = e.target.value;
+                          }}
+                        />
+                      </FormControl>
+
+                      <FormControl>
+                        <FormLabel>等级图标(emoji, 逗号隔开)</FormLabel>
+                        <Input
+                          value={current.indicators}
+                          onChange={(e) => {
+                            current.indicators = e.target.value;
+                          }}
+                        />
+                      </FormControl>
                     </Box>
                     <HStack>
                       <Heading as="h4" fontSize="lg">
@@ -223,6 +258,7 @@ export function Prestige(): JSX.Element {
                           >
                             <NumberInputField />
                           </NumberInput>
+
                           <IconButton
                             aria-label="删除友好等级"
                             colorScheme="red"
@@ -262,6 +298,16 @@ export function Prestige(): JSX.Element {
                   </Box>
                 )}
               </Observer>
+            </TabPanel>
+            <TabPanel>
+              <Textarea
+                value={markdown}
+                rows={10}
+                isReadOnly
+                onClick={(e) => {
+                  (e.target as HTMLTextAreaElement).select();
+                }}
+              />
             </TabPanel>
           </TabPanels>
         </Tabs>
