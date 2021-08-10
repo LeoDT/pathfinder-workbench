@@ -18,7 +18,7 @@ import {
 } from '@chakra-ui/react';
 
 import { useStore } from '../../store';
-import { DMCharacter, Tracker as TrackerType } from '../../store/dm';
+import { DMCharacter, Tracker as TrackerType } from '../../store/dm/types';
 
 interface Props {
   character: DMCharacter;
