@@ -82,9 +82,10 @@ export class Prestige {
     let p = prestige;
 
     for (const [i, l] of this.levels.entries()) {
-      if (p - l.max > 0) {
+      const max = l.max + 1;
+      if (p - max >= 0) {
         level = l;
-        p = i < this.levels.length - 1 ? p - l.max : p;
+        p = i < this.levels.length - 1 ? p - max : p;
 
         continue;
       }
