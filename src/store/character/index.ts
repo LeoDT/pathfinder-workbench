@@ -213,11 +213,11 @@ export class Character {
     this.manualEffects = observable.array(manualEffects || []);
 
     this.effect = new CharacterEffect(this);
-    this.status = new CharacterStatus(this);
     this.equipment = equipment ? CharacterEquip.parse(equipment, this) : new CharacterEquip(this);
     this.proficiency = new CharacterProficiency(this);
-    this.attack = new CharacterAttack(this);
     this.tracker = tracker ? CharacterTracker.parse(tracker, this) : new CharacterTracker(this);
+    this.status = new CharacterStatus(this);
+    this.attack = new CharacterAttack(this);
 
     this.spellbooks = observable.array([], { deep: false });
     this.ensureSpellbooks();
@@ -280,7 +280,16 @@ export class Character {
     return abilities;
   }
   get abilityModifier(): Abilities {
-    return getModifiers(this.ability);
+    const mods = getModifiers(this.ability);
+
+    if (this.equipment.maxDexBonus < mods.dex) {
+      return {
+        ...mods,
+        dex: this.equipment.maxDexBonus,
+      };
+    }
+
+    return mods;
   }
   get maxBonusAbilityType(): number {
     const effects = this.effect.getRacialAbilityBonusEffects();
@@ -825,9 +834,7 @@ export class Character {
             return this.hasFeatSubs(feat.origin ?? feat, subIds as string[]);
           } else {
             return Boolean(
-              classFeats.find((f) =>
-                f.origin ? f.origin.id === classFeatId : f.id === classFeatId
-              )
+              classFeats.find((f) => f.origin?.id === classFeatId || f.id === classFeatId)
             );
           }
         });

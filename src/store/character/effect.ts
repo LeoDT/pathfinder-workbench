@@ -177,27 +177,7 @@ export class CharacterEffect {
     const effects: Array<EffectAndSource> = [];
     const add = (effectAndSources: EffectAndSource | EffectAndSource[]) => {
       [effectAndSources].flat().forEach((es) => {
-        if ((es.effect.when || es.source.effectsWhen) && this.character.formulaParserReady) {
-          let result = false;
-
-          if (es.effect.when) {
-            result = this.character.parseFormulaBoolean(es.effect.when);
-          } else if (es.source.effectsWhen) {
-            result = this.character.parseFormulaBoolean(es.source.effectsWhen);
-          }
-
-          if (result) {
-            effects.push(es);
-          }
-
-          if (typeof result !== 'boolean') {
-            console.warn(
-              `got a non boolean value for effect's when, effect ${es.effect.type} from ${es.source.name}`
-            );
-          }
-        } else {
-          effects.push(es);
-        }
+        effects.push(es);
       });
     };
 
@@ -266,9 +246,29 @@ export class CharacterEffect {
     t: Effects.EffectType,
     fromEffects?: Array<EffectAndSource>
   ): EffectAndSource<T>[] {
-    return (fromEffects ?? this.allEffects).filter(
-      (es): es is EffectAndSource<T> => es.effect.type === t
-    );
+    return (fromEffects ?? this.allEffects)
+      .filter((es): es is EffectAndSource<T> => es.effect.type === t)
+      .filter((es) => {
+        if ((es.effect.when || es.source.effectsWhen) && this.character.formulaParserReady) {
+          let result = false;
+
+          if (es.effect.when) {
+            result = this.character.parseFormulaBoolean(es.effect.when);
+          } else if (es.source.effectsWhen) {
+            result = this.character.parseFormulaBoolean(es.source.effectsWhen);
+          }
+
+          if (typeof result !== 'boolean') {
+            console.warn(
+              `got a non boolean value for effect's when, effect ${es.effect.type} from ${es.source.name}`
+            );
+          }
+
+          return Boolean(result);
+        }
+
+        return true;
+      });
   }
 
   private makeGrowedEffect<T extends Effects.Effect>(
@@ -486,5 +486,23 @@ export class CharacterEffect {
 
   getGainGritEffects(): EffectAndSource<Effects.EffectGainGrit>[] {
     return this.getEffectsByType<Effects.EffectGainGrit>(Effects.EffectType.gainGrit);
+  }
+
+  getGainFighterWeaponTrainingEffects(): EffectAndSource<Effects.EffectGainFighterWeaponTraining>[] {
+    return this.getEffectsByType<Effects.EffectGainFighterWeaponTraining>(
+      Effects.EffectType.gainFighterWeaponTraining
+    );
+  }
+
+  getGainArmorCheckPenaltyEffects(): EffectAndSource<Effects.EffectGainArmorCheckPenalty>[] {
+    return this.getEffectsByType<Effects.EffectGainArmorCheckPenalty>(
+      Effects.EffectType.gainArmorCheckPenalty
+    );
+  }
+
+  getGainArmorMaxDexBonusEffects(): EffectAndSource<Effects.EffectGainArmorMaxDexBonus>[] {
+    return this.getEffectsByType<Effects.EffectGainArmorMaxDexBonus>(
+      Effects.EffectType.gainArmorMaxDexBonus
+    );
   }
 }

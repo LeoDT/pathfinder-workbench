@@ -4,7 +4,12 @@ import { IObservableArray, action, computed, makeObservable, observable } from '
 import { Armor, Equipment, MagicItem, Weapon } from '../../types/core';
 import { SelectOptions } from '../../types/misc';
 import { Coin, coinAdd, makeCoin } from '../../utils/coin';
-import { equipmentCostWeight, getArmorPenalty, showEquipment } from '../../utils/equipment';
+import {
+  equipmentCostWeight,
+  getArmorMaxDex,
+  getArmorPenalty,
+  showEquipment,
+} from '../../utils/equipment';
 import { collections } from '../collection';
 import { Character } from '.';
 
@@ -61,6 +66,7 @@ export class CharacterEquip {
 
       armorClassModifier: computed,
       armorPenalty: computed,
+      maxDexBonus: computed,
 
       hold: action,
       unhold: action,
@@ -215,7 +221,29 @@ export class CharacterEquip {
       mod = Math.max(getArmorPenalty(this.buckler), mod);
     }
 
+    const es = this.character.effect.getGainArmorCheckPenaltyEffects();
+
+    mod += es.reduce((acc, { effect }) => acc + effect.args.amount, 0);
+
     return mod;
+  }
+
+  get maxDexBonus(): number {
+    const armors = [];
+
+    if (this.armor) {
+      armors.push(this.armor);
+    }
+
+    if (this.offHand?.equipmentType === 'armor') {
+      armors.push(this.offHand);
+    }
+
+    const es = this.character.effect.getGainArmorCheckPenaltyEffects();
+
+    const fromEffects = es.reduce((acc, { effect }) => acc + effect.args.amount, 0);
+
+    return Math.min(...armors.map(getArmorMaxDex)) + fromEffects;
   }
 
   get isHoldingTwoHandWeapon(): boolean {

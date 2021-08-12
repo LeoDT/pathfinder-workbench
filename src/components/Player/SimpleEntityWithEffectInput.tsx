@@ -131,6 +131,17 @@ export function EffectInput({
       );
     }
 
+    case EffectType.gainFighterWeaponTraining: {
+      return (
+        <CollectionEntityPicker
+          collection={collections.fighterWeaponTrainingGroup}
+          items={value ? [value] : []}
+          onPick={(i) => onChange(i)}
+          listAll
+        />
+      );
+    }
+
     default:
       return null;
   }

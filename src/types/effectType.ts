@@ -50,6 +50,10 @@ export enum EffectType {
 
   gainCombatStyle = 'gainCombatStyle',
 
+  gainFighterWeaponTraining = 'gainFighterWeaponTraining',
+  gainArmorCheckPenalty = 'gainArmorCheckPenalty',
+  gainArmorMaxDexBonus = 'gainArmorMaxDexBonus',
+
   selectFromSubs = 'selectFromSubs',
 
   gainGrit = 'gainGrit',
@@ -301,6 +305,29 @@ export interface EffectGainGritArgs {
 }
 export type EffectGainGrit = BaseEffect<EffectType.gainGrit, EffectGainGritArgs>;
 
+export interface EffectGainArmorCheckPenaltyArgs {
+  amount: number;
+}
+export type EffectGainArmorCheckPenalty = BaseEffect<
+  EffectType.gainArmorCheckPenalty,
+  EffectGainArmorCheckPenaltyArgs
+>;
+
+export interface EffectGainArmorMaxDexBonusArgs {
+  amount: number;
+}
+export type EffectGainArmorMaxDexBonus = BaseEffect<
+  EffectType.gainArmorMaxDexBonus,
+  EffectGainArmorMaxDexBonusArgs
+>;
+
+export interface EffectGainFighterWeaponTrainingArgs {}
+export type EffectGainFighterWeaponTraining = BaseEffect<
+  EffectType.gainFighterWeaponTraining,
+  EffectGainFighterWeaponTrainingArgs
+>;
+export type EffectGainFighterWeaponTrainingInput = string;
+
 export type Effect =
   | EffectRacialAbilityBonus
   | EffectAbilityBonus
@@ -330,7 +357,10 @@ export type Effect =
   | EffectGainDomain
   | EffectSelectFromSubs
   | EffectGainCombatStyle
-  | EffectGainGrit;
+  | EffectGainGrit
+  | EffectGainArmorCheckPenalty
+  | EffectGainArmorMaxDexBonus
+  | EffectGainFighterWeaponTraining;
 
 export type ArgsTypeForEffect<T extends Effect> = T['args'];
 
@@ -341,7 +371,8 @@ export type EffectNeedInput =
   | EffectGainBloodline
   | EffectGainDomain
   | EffectSelectFromSubs
-  | EffectGainCombatStyle;
+  | EffectGainCombatStyle
+  | EffectGainFighterWeaponTraining;
 
 export const effectTypesNeedInput: Array<EffectType> = [
   EffectType.gainArcaneSchool,
@@ -356,6 +387,8 @@ export const effectTypesNeedInput: Array<EffectType> = [
   EffectType.selectFromSubs,
 
   EffectType.gainCombatStyle,
+
+  EffectType.gainFighterWeaponTraining,
 ];
 
 export interface ManualEffect {

@@ -11,6 +11,7 @@ export const weaponTypeMetaTranslates: Record<keyof WeaponTypeMeta, string> = {
   damageType: '伤害类型',
   special: '特性',
   bothHand: '两手使用',
+  fighterWeaponTrainingGroup: '战士武器组',
 };
 
 export const weaponTrainingTranslates: Record<WeaponTraining, string> = {

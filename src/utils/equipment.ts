@@ -290,3 +290,7 @@ export function getArmorPenalty(a: Armor): number {
 
   return mod;
 }
+
+export function getArmorMaxDex(a: Armor): number {
+  return a.type.meta.maxDex ?? Infinity;
+}

@@ -3,6 +3,7 @@ import { memo, useCallback } from 'react';
 import { Badge, Box, HStack, Heading, Table, Tbody, Td, Text, Tr } from '@chakra-ui/react';
 
 import { ENTITY_COLORS } from '../constant';
+import { useStore } from '../store';
 import { WeaponType as WeaponTypeType } from '../types/core';
 import { showDistance, showWeight } from '../utils/misc';
 import {
@@ -22,6 +23,7 @@ interface Props {
 }
 
 function WeaponTypeMeta({ weaponType }: { weaponType: WeaponTypeType }): JSX.Element {
+  const { collections } = useStore();
   const { meta } = weaponType;
   const row = useCallback(
     (name, value) => (
@@ -54,6 +56,14 @@ function WeaponTypeMeta({ weaponType }: { weaponType: WeaponTypeType }): JSX.Ele
           ? row(
               weaponTypeMetaTranslates.special,
               meta.special.map((s) => weaponSpecialTranslates[s]).join(', ')
+            )
+          : null}
+        {meta.fighterWeaponTrainingGroup
+          ? row(
+              weaponTypeMetaTranslates.fighterWeaponTrainingGroup,
+              meta.fighterWeaponTrainingGroup
+                .map((s) => collections.fighterWeaponTrainingGroup.getById(s).name)
+                .join(', ')
             )
           : null}
       </Tbody>

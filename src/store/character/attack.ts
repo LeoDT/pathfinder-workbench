@@ -2,6 +2,7 @@ import { computed, makeObservable } from 'mobx';
 
 import { AbilityType, NamedBonus, Weapon, WeaponType } from '../../types/core';
 import { abilityTranslates } from '../../utils/ability';
+import { validateGainFighterWeaponTrainingEffectInput } from '../../utils/effect';
 import { getWeaponDamageModifier, getWeaponModifier, showEquipment } from '../../utils/equipment';
 import { collections } from '../collection';
 import { Character } from '.';
@@ -47,6 +48,7 @@ export class CharacterAttack {
       isTwoWeaponFighter: computed,
       mainHandAttackOption: computed,
       offHandAttackOption: computed,
+      fighterWeaponTrainingGroups: computed,
 
       attackOptionsFromWeapons: computed,
       attackOptionsFromEffects: computed,
@@ -93,6 +95,30 @@ export class CharacterAttack {
 
     return holding.type._type === 'armorType' && holding.type.meta.category === 'shield';
   }
+  get fighterWeaponTrainingGroups(): string[] {
+    return this.character.effect
+      .getGainFighterWeaponTrainingEffects()
+      .map(({ input }) => validateGainFighterWeaponTrainingEffectInput(input));
+  }
+
+  getFighterWeaponTrainingBonus(weaponType: WeaponType): NamedBonus | null {
+    if (weaponType.meta.fighterWeaponTrainingGroup) {
+      const amounts = weaponType.meta.fighterWeaponTrainingGroup
+        .map((g) => this.fighterWeaponTrainingGroups.indexOf(g))
+        .map((i) => (i !== -1 ? this.fighterWeaponTrainingGroups.length - i : 0));
+      const amount = Math.max(...amounts);
+
+      return {
+        name: '武器训练',
+        bonus: {
+          amount,
+          type: 'untyped',
+        },
+      };
+    }
+
+    return null;
+  }
 
   getAttackOptionForWeapon(
     weapon?: Weapon,
@@ -136,6 +162,11 @@ export class CharacterAttack {
       name: abilityTranslates[ability],
       bonus: { amount: this.character.abilityModifier[ability], type: 'untyped' },
     });
+
+    const fighterWeaponTrainingBonus = this.getFighterWeaponTrainingBonus(weaponType);
+    if (fighterWeaponTrainingBonus) {
+      attackBonuses.push(fighterWeaponTrainingBonus);
+    }
 
     attackBonuses.push({
       name: '武器品质',

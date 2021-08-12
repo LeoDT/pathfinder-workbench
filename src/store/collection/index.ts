@@ -15,6 +15,7 @@ import CONSOLIDATED_SKILL_DATA from '../../data/consolidated-skills.json';
 import CORE_SKILL_DATA from '../../data/core-skills.json';
 import DOMAIN_DATA from '../../data/domains.json';
 import FEAT_DATA from '../../data/feats.json';
+import FIGHTER_WEAPON_TRAINING_GROUPS_DATA from '../../data/fighter-weapon-training-groups.json';
 import INQUISITION_DATA from '../../data/inquisitions.json';
 import MAGIC_ITEM_TYPES_DATA from '../../data/magic-item-types.json';
 import RACE_DATA from '../../data/races.json';
@@ -23,7 +24,13 @@ import SORCERER_BLOODLINES_DATA from '../../data/sorcerer-bloodlines.json';
 import SPELL_DATA from '../../data/spells.json';
 import WEAPON_TYPES_DATA from '../../data/weapon-types.json';
 import { CombatStyle } from '../../types/combatStyle';
-import { ArmorType, BonusType, MagicItemType, Skill } from '../../types/core';
+import {
+  ArmorType,
+  BonusType,
+  FighterWeaponTrainingGroup,
+  MagicItemType,
+  Skill,
+} from '../../types/core';
 import { ArcaneSchoolCollection } from './arcaneSchool';
 import { ArchetypeCollection } from './archetype';
 import { Collection } from './base';
@@ -53,6 +60,10 @@ export const collections = {
   sorcererBloodline: new BloodlineCollection(SORCERER_BLOODLINES_DATA as any),
   spell: new SpellCollection(SPELL_DATA as any),
   weaponType: new WeaponTypeCollection(WEAPON_TYPES_DATA as any),
+  fighterWeaponTrainingGroup: new Collection<FighterWeaponTrainingGroup>(
+    'fighterWeaponTrainingGroup',
+    FIGHTER_WEAPON_TRAINING_GROUPS_DATA as any
+  ),
 };
 
 (window as any).collections = collections;

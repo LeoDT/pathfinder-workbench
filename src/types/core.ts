@@ -47,7 +47,8 @@ export type EntityType =
   | 'arcaneSchool'
   | 'bloodline'
   | 'domain'
-  | 'combatStyle';
+  | 'combatStyle'
+  | 'fighterWeaponTrainingGroup';
 
 export interface CalculatedValue {
   name: string;
@@ -203,6 +204,11 @@ export type WeaponTraining = 'simple' | 'martial' | 'exotic';
 export type WeaponCategory = 'light' | 'one-handed' | 'two-handed' | 'ranged' | 'unarmed attacks';
 export type WeaponDamageType = 'P' | 'B' | 'S' | 'P or S' | 'B or S' | 'B and P' | 'P and S';
 
+export interface FighterWeaponTrainingGroup extends Entity {
+  _type: 'fighterWeaponTrainingGroup';
+  weapons: string[];
+}
+
 export interface WeaponTypeMeta {
   training: WeaponTraining;
   category: WeaponCategory;
@@ -214,6 +220,7 @@ export interface WeaponTypeMeta {
   damageType?: WeaponDamageType;
   special?: string[];
   bothHand?: boolean;
+  fighterWeaponTrainingGroup?: string[];
 }
 
 export interface WeaponType extends Entity {

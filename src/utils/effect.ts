@@ -5,6 +5,7 @@ import {
   EffectGainCombatStyleInput,
   EffectGainDomainInput,
   EffectGainFeatArgs,
+  EffectGainFighterWeaponTrainingInput,
   EffectGainSchoolSpellDCInput,
   EffectSelectFromSubsInput,
   ManualEffect,
@@ -79,4 +80,10 @@ export function validateGainSchoolSpellDCEffectInput(i: unknown): EffectGainScho
 
 export function validateGainCombatStyleEffectInput(i: unknown): EffectGainCombatStyleInput {
   return i as EffectGainCombatStyleInput;
+}
+
+export function validateGainFighterWeaponTrainingEffectInput(
+  i: unknown
+): EffectGainFighterWeaponTrainingInput {
+  return i as EffectGainFighterWeaponTrainingInput;
 }

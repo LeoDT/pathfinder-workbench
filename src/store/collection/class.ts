@@ -32,8 +32,8 @@ export class ClassCollection extends Collection<Class> {
     return f;
   }
 
-  classFeatsCache = new WeakMap<Class, ClassFeat[]>();
-  getClassFeats(clas: Class): ClassFeat[] {
+  classFeatsCache = new WeakMap<Class | Archetype, ClassFeat[]>();
+  getClassFeats(clas: Class | Archetype): ClassFeat[] {
     const cached = this.classFeatsCache.get(clas);
 
     if (cached) return cached;
@@ -55,16 +55,14 @@ export class ClassCollection extends Collection<Class> {
 
   getClassFeatsByLevel(clas: Class, l: number, archetypes: Archetype[] = []): ClassFeat[] {
     const level = this.getClassLevel(clas, l);
-    const archetypeFeats = archetypes.map((a) => a.feats).flat();
+    const archetypeFeats = archetypes.map((a) => this.getClassFeats(a)).flat();
 
     const feats = level.special?.map((s) => {
       const feat = this.getClassFeats(clas).find((f) => f.id === s);
 
       if (feat) {
         const replace = archetypeFeats.find((af) => {
-          const f = feat?.origin ?? feat;
-
-          return af.replace?.includes(f.id);
+          return af.replace?.includes(feat.origin?.id ?? '') || af.replace?.includes(feat.id);
         });
 
         if (replace) return replace;

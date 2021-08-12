@@ -8,6 +8,7 @@ import {
   validateGainBloodlineEffectInput,
   validateGainCombatStyleEffectInput,
   validateGainDomainEffectInput,
+  validateGainFighterWeaponTrainingEffectInput,
   validateGainSchoolSpellDCEffectInput,
   validateSelectFromSubsEffectInput,
 } from '../utils/effect';
@@ -144,6 +145,16 @@ export function EffectInputDisplayer({ input, effect, source }: Props): JSX.Elem
         const combatStyle = collections.rangerCombatStyles.getById(realInput);
 
         child = <SimpleEntityBadge entity={combatStyle} quickViewer />;
+      }
+      break;
+
+    case EffectType.gainFighterWeaponTraining:
+      {
+        const realInput = validateGainFighterWeaponTrainingEffectInput(input);
+
+        const group = collections.fighterWeaponTrainingGroup.getById(realInput);
+
+        child = <SimpleEntityBadge entity={group} quickViewer />;
       }
       break;
 
