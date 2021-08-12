@@ -468,6 +468,10 @@ export class CharacterEffect {
     );
   }
 
+  getGainWeaponBonusEffects(): EffectAndSource<Effects.EffectGainWeaponBonus>[] {
+    return this.getEffectsByType<Effects.EffectGainWeaponBonus>(Effects.EffectType.gainWeaponBonus);
+  }
+
   getGainDomainEffects(): EffectAndSource<Effects.EffectGainDomain>[] {
     return this.getEffectsByType<Effects.EffectGainDomain>(Effects.EffectType.gainDomain);
   }

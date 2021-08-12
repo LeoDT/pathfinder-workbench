@@ -64,12 +64,13 @@ export function EffectInputDisplayer({ input, effect, source }: Props): JSX.Elem
       break;
 
     case EffectType.gainSelectedWeaponProficiency:
+    case EffectType.gainWeaponBonus:
       {
         if (typeof input !== 'string') return null;
 
         const weaponType = collections.weaponType.getById(input);
 
-        child = <SimpleEntity entity={weaponType} />;
+        child = <SimpleEntityBadge entity={weaponType} quickViewer />;
       }
       break;
 

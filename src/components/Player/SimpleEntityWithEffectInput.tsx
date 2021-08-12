@@ -94,6 +94,18 @@ export function EffectInput({
       );
     }
 
+    case EffectType.gainWeaponBonus: {
+      return (
+        <EntityPicker
+          items={value ? [value] : []}
+          entities={collections.weaponType.data.filter((wt) =>
+            createOrUpgrade.character.proficiency.hasWeapon(wt)
+          )}
+          onPick={(i) => onChange(i)}
+        />
+      );
+    }
+
     case EffectType.gainBloodline: {
       return (
         <BloodlinePicker

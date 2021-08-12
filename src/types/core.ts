@@ -153,6 +153,7 @@ export interface Feat extends Entity {
   type: FeatType[];
   brief: string;
   desc?: string;
+  multipleTimes?: boolean;
   effectsWhen?: string;
   effects?: Effect[];
 }

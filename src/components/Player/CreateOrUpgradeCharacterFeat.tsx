@@ -75,7 +75,9 @@ export function CreateOrUpgradeCharacterFeat({
                   );
                   createOrUpgrade.upgrade.feats[r.index] = '';
                 },
-                disabledEntityIds: createOrUpgrade.character.gainedFeats.map((f) => f.id),
+                disabledEntityIds: createOrUpgrade.character.gainedFeats
+                  .filter((f) => f.multipleTimes !== true)
+                  .map((f) => f.id),
               };
 
               return (

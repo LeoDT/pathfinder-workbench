@@ -40,6 +40,8 @@ export enum EffectType {
   addAttackOption = 'addAttackOption',
   meleeAttackAbility = 'meleeAttackAbility',
   twoHandDamageMultiplier = 'twoHandDamageMultiplier',
+  gainWeaponBonus = 'gainWeaponBonus',
+
   addTracker = 'addTracker',
 
   gainArcaneSchool = 'gainArcaneSchool',
@@ -260,6 +262,16 @@ export type EffectTwoHandDamageMultiplier = BaseEffect<
   EffectTwoHandDamageMultiplierArgs
 >;
 
+export interface EffectGainWeaponBonusArgs {
+  attackBonus?: Bonus;
+  damageBonus?: Bonus;
+}
+export type EffectGainWeaponBonus = BaseEffect<
+  EffectType.gainWeaponBonus,
+  EffectGainWeaponBonusArgs
+>;
+export type EffectGainWeaponBonusInput = string;
+
 export interface EffectAddTrackerArgs {
   id?: string;
   name?: string;
@@ -352,6 +364,7 @@ export type Effect =
   | EffectEnchantUnarmedStrike
   | EffectAddAttackOption
   | EffectMeleeAttackAbility
+  | EffectGainWeaponBonus
   | EffectAddTracker
   | EffectGainBloodline
   | EffectGainDomain
@@ -372,7 +385,8 @@ export type EffectNeedInput =
   | EffectGainDomain
   | EffectSelectFromSubs
   | EffectGainCombatStyle
-  | EffectGainFighterWeaponTraining;
+  | EffectGainFighterWeaponTraining
+  | EffectGainWeaponBonus;
 
 export const effectTypesNeedInput: Array<EffectType> = [
   EffectType.gainArcaneSchool,
@@ -389,6 +403,8 @@ export const effectTypesNeedInput: Array<EffectType> = [
   EffectType.gainCombatStyle,
 
   EffectType.gainFighterWeaponTraining,
+
+  EffectType.gainWeaponBonus,
 ];
 
 export interface ManualEffect {

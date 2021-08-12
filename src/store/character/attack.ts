@@ -2,7 +2,10 @@ import { computed, makeObservable } from 'mobx';
 
 import { AbilityType, NamedBonus, Weapon, WeaponType } from '../../types/core';
 import { abilityTranslates } from '../../utils/ability';
-import { validateGainFighterWeaponTrainingEffectInput } from '../../utils/effect';
+import {
+  validateGainFighterWeaponTrainingEffectInput,
+  validateGainWeaponBonusEffectInput,
+} from '../../utils/effect';
 import { getWeaponDamageModifier, getWeaponModifier, showEquipment } from '../../utils/equipment';
 import { collections } from '../collection';
 import { Character } from '.';
@@ -120,6 +123,32 @@ export class CharacterAttack {
     return null;
   }
 
+  getWeaponBonus(
+    weaponType: WeaponType
+  ): Array<{ attack: NamedBonus | null; damage: NamedBonus | null }> {
+    const es = this.character.effect.getGainWeaponBonusEffects();
+
+    return es.map(({ effect, source, input }) => {
+      const wId = validateGainWeaponBonusEffectInput(input);
+      const result: { attack: NamedBonus | null; damage: NamedBonus | null } = {
+        attack: null,
+        damage: null,
+      };
+
+      if (wId === weaponType.id) {
+        if (effect.args.attackBonus) {
+          result.attack = { name: source.name, bonus: effect.args.attackBonus };
+        }
+
+        if (effect.args.damageBonus) {
+          result.attack = { name: source.name, bonus: effect.args.damageBonus };
+        }
+      }
+
+      return result;
+    });
+  }
+
   getAttackOptionForWeapon(
     weapon?: Weapon,
     partialOptions?: Partial<GetAttackOptionOptions>
@@ -167,6 +196,16 @@ export class CharacterAttack {
     if (fighterWeaponTrainingBonus) {
       attackBonuses.push(fighterWeaponTrainingBonus);
     }
+
+    this.getWeaponBonus(weaponType).forEach(({ attack, damage }) => {
+      if (attack) {
+        attackBonuses.push(attack);
+      }
+
+      if (damage) {
+        damageBonuses.push(damage);
+      }
+    });
 
     attackBonuses.push({
       name: '武器品质',

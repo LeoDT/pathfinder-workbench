@@ -116,7 +116,7 @@ export class Character {
       skillSystem = 'core',
       alignment = Alignment.N,
       bonusAbilityType,
-      raceId = 'Elf',
+      raceId = 'Human',
       alternateRaceTraitIds,
       preparedSpellIds,
       preparedSpecialSpellIds,
@@ -349,7 +349,7 @@ export class Character {
 
   startUpgrade(): void {
     const lastUpgrade = last(this.upgrades);
-    const lastUpgradeClass = lastUpgrade ? lastUpgrade.classId : 'Ranger';
+    const lastUpgradeClass = lastUpgrade ? lastUpgrade.classId : 'Fighter';
     const levelFeat =
       this.level === 1 && this.upgrades.length === 0 ? true : (this.level + 1) % 2 === 1;
     const levelAbility = (this.level + 1) % 4 === 0;
