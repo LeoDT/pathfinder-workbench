@@ -1,7 +1,7 @@
 import { range } from 'lodash-es';
 import { autorun } from 'mobx';
 import { Observer } from 'mobx-react-lite';
-import { useCallback, useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { FaMinus, FaPlus, FaTrash } from 'react-icons/fa';
 
 import {

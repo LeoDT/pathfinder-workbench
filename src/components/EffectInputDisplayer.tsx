@@ -12,7 +12,7 @@ import {
   validateGainSchoolSpellDCEffectInput,
   validateSelectFromSubsEffectInput,
 } from '../utils/effect';
-import { SimpleEntity, SimpleEntityBadge } from './SimpleEntity';
+import { SimpleEntityBadge } from './SimpleEntity';
 
 interface Props {
   input: unknown;
