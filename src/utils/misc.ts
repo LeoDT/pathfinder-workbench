@@ -37,6 +37,16 @@ export function uniqByLast<T>(arr: Array<T>, iter: (v: T) => unknown): Array<T> 
   return Array.from(map.values());
 }
 
+export function takeByIndexes<T>(arr: T[], indexes: number[]): T[] {
+  const r: T[] = [];
+
+  for (const i of indexes) {
+    r.push(arr[i]);
+  }
+
+  return r;
+}
+
 export function stringToBlobUrl(content: string): string {
   const blob = new Blob([content]);
 
