@@ -5,7 +5,7 @@ import { Physics, usePlane } from '@react-three/cannon';
 import { OrbitControls } from '@react-three/drei';
 import { Canvas, useFrame, useThree } from '@react-three/fiber';
 
-import { makeD10, makeD12, makeD6, makeD8 } from './dices';
+import { makeD10, makeD12, makeD20, makeD4, makeD6, makeD8 } from './dices';
 
 export function useAspect(width: number, height: number, factor = 1): [number, number, number] {
   const { viewport: v } = useThree();
@@ -16,10 +16,32 @@ export function useAspect(width: number, height: number, factor = 1): [number, n
   return [adaptedWidth * factor, adaptedHeight * factor, 1];
 }
 
+export function D4(): JSX.Element {
+  const { geometry, materials, cannon } = makeD4(1, 'white', 'black');
+
+  return (
+    <mesh
+      ref={cannon[0]}
+      castShadow
+      geometry={geometry}
+      material={materials}
+      position={[-15, 10, 0]}
+    />
+  );
+}
+
 export function D6(): JSX.Element {
   const { geometry, materials, cannon } = makeD6(2, 'white', 'black');
 
-  return <mesh castShadow ref={cannon[0]} geometry={geometry} material={materials} />;
+  return (
+    <mesh
+      ref={cannon[0]}
+      castShadow
+      geometry={geometry}
+      material={materials}
+      position={[-10, 10, 0]}
+    />
+  );
 }
 
 export function D8(): JSX.Element {
@@ -31,7 +53,7 @@ export function D8(): JSX.Element {
       castShadow
       geometry={geometry}
       material={materials}
-      position={[0, 10, 0]}
+      position={[-5, 10, 0]}
     />
   );
 }
@@ -59,7 +81,21 @@ export function D12(): JSX.Element {
       castShadow
       geometry={geometry}
       material={materials}
-      position={[0, 10, 0]}
+      position={[5, 10, 0]}
+    />
+  );
+}
+
+export function D20(): JSX.Element {
+  const { geometry, materials, cannon } = makeD20(0.9, 'white', 'black');
+
+  return (
+    <mesh
+      ref={cannon[0]}
+      castShadow
+      geometry={geometry}
+      material={materials}
+      position={[10, 10, 0]}
     />
   );
 }
@@ -91,7 +127,7 @@ function FloorAndWalls(): JSX.Element {
     position: [0, halfWallSize, ch],
   }));
 
-  const opacity = 0.5;
+  const opacity = 0;
 
   return (
     <>
@@ -151,8 +187,9 @@ export function DiceToggler(): JSX.Element {
       {isOpen ? (
         <Box position="fixed" left="0px" top="0px" w="full" h="full" zIndex={9998}>
           <Canvas camera={{ fov: 20, position: [0, 90, 0] }} shadows frameloop="demand">
-            <OrbitControls enableRotate />
+            <OrbitControls enableRotate target={[0, 10, 0]} />
             <Physics
+              allowSleep
               gravity={[0, -9.82 * 20, 0]}
               iterations={16}
               defaultContactMaterial={{
@@ -161,10 +198,12 @@ export function DiceToggler(): JSX.Element {
               }}
             >
               <Fragment key={update}>
+                <D4 />
                 <D6 />
                 <D8 />
                 <D10 />
                 <D12 />
+                <D20 />
               </Fragment>
               <FloorAndWalls />
             </Physics>
