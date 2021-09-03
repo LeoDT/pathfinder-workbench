@@ -1,11 +1,47 @@
-import { Fragment, useRef, useState } from 'react';
+import { Body } from 'cannon-es';
+import { range } from 'lodash-es';
+import { Observer } from 'mobx-react-lite';
+import {
+  Fragment,
+  useCallback,
+  useEffect,
+  useLayoutEffect,
+  useMemo,
+  useRef,
+  useState,
+} from 'react';
+import { GiRollingDices } from 'react-icons/gi';
 
-import { Box, Button, useDisclosure } from '@chakra-ui/react';
-import { Physics, usePlane } from '@react-three/cannon';
+import {
+  Box,
+  Button,
+  Center,
+  HStack,
+  Icon,
+  IconButton,
+  Popover,
+  PopoverArrow,
+  PopoverBody,
+  PopoverContent,
+  PopoverTrigger,
+  Text,
+  VStack,
+  useDisclosure,
+} from '@chakra-ui/react';
 import { OrbitControls } from '@react-three/drei';
-import { Canvas, useFrame, useThree } from '@react-three/fiber';
+import { Canvas, useThree } from '@react-three/fiber';
 
-import { makeD10, makeD12, makeD20, makeD4, makeD6, makeD8 } from './dices';
+import { useStore } from '../../store';
+import { DiceNotation, merge, parse } from '../../utils/dice';
+import { DiceNotationInput } from './DiceNotationInput';
+import { standardDiceSizes } from './dices';
+import {
+  DiceStore,
+  DiceStoreContext,
+  updateObject3DWithBody,
+  useDice,
+  useDiceStore,
+} from './store';
 
 export function useAspect(width: number, height: number, factor = 1): [number, number, number] {
   const { viewport: v } = useThree();
@@ -16,154 +52,70 @@ export function useAspect(width: number, height: number, factor = 1): [number, n
   return [adaptedWidth * factor, adaptedHeight * factor, 1];
 }
 
-export function D4(): JSX.Element {
-  const { geometry, materials, cannon } = makeD4(1, 'white', 'black');
+function Dice({ notation }: { notation: DiceNotation }): JSX.Element {
+  const [dice, ref] = useDice(notation, { size: standardDiceSizes[notation] });
 
-  return (
-    <mesh
-      ref={cannon[0]}
-      castShadow
-      geometry={geometry}
-      material={materials}
-      position={[-15, 10, 0]}
-    />
-  );
-}
-
-export function D6(): JSX.Element {
-  const { geometry, materials, cannon } = makeD6(2, 'white', 'black');
-
-  return (
-    <mesh
-      ref={cannon[0]}
-      castShadow
-      geometry={geometry}
-      material={materials}
-      position={[-10, 10, 0]}
-    />
-  );
-}
-
-export function D8(): JSX.Element {
-  const { geometry, materials, cannon } = makeD8(1.8, 'white', 'black');
-
-  return (
-    <mesh
-      ref={cannon[0]}
-      castShadow
-      geometry={geometry}
-      material={materials}
-      position={[-5, 10, 0]}
-    />
-  );
-}
-
-export function D10(): JSX.Element {
-  const { geometry, materials, cannon } = makeD10(1.6, 'white', 'black');
-
-  return (
-    <mesh
-      ref={cannon[0]}
-      castShadow
-      geometry={geometry}
-      material={materials}
-      position={[0, 10, 0]}
-    />
-  );
-}
-
-export function D12(): JSX.Element {
-  const { geometry, materials, cannon } = makeD12(0.9, 'white', 'black');
-
-  return (
-    <mesh
-      ref={cannon[0]}
-      castShadow
-      geometry={geometry}
-      material={materials}
-      position={[5, 10, 0]}
-    />
-  );
-}
-
-export function D20(): JSX.Element {
-  const { geometry, materials, cannon } = makeD20(0.9, 'white', 'black');
-
-  return (
-    <mesh
-      ref={cannon[0]}
-      castShadow
-      geometry={geometry}
-      material={materials}
-      position={[10, 10, 0]}
-    />
-  );
+  return <mesh ref={ref} castShadow geometry={dice.geometry} material={dice.materials} />;
 }
 
 function FloorAndWalls(): JSX.Element {
   const [w, h] = useAspect(window.innerWidth, window.innerHeight);
-  const cw = w / 2;
-  const ch = h / 2;
+  const diceStore = useDiceStore();
   const wallSize = Math.max(w, h);
-  const halfWallSize = wallSize / 2;
 
-  const [floorRef] = usePlane(() => ({
-    rotation: [-Math.PI / 2, 0, 0],
-  }));
-  const [wallLeftRef] = usePlane(() => ({
-    rotation: [0, Math.PI / 2, 0],
-    position: [-cw, halfWallSize, 0],
-  }));
-  const [wallFrontRef] = usePlane(() => ({
-    rotation: [0, 0, 0],
-    position: [0, halfWallSize, -ch],
-  }));
-  const [wallRightRef] = usePlane(() => ({
-    rotation: [0, -Math.PI / 2, 0],
-    position: [cw, halfWallSize, 0],
-  }));
-  const [wallBackRef] = usePlane(() => ({
-    rotation: [0, Math.PI, 0],
-    position: [0, halfWallSize, ch],
-  }));
+  const floorRef = useRef(null);
+  const leftWallRef = useRef(null);
+  const frontWallRef = useRef(null);
+  const rightWallRef = useRef(null);
+  const backWallRef = useRef(null);
+
+  useEffect(() => {
+    diceStore.updateFloorAndWalls(w, h);
+
+    updateObject3DWithBody(floorRef.current, diceStore.floor);
+    updateObject3DWithBody(leftWallRef.current, diceStore.walls[0]);
+    updateObject3DWithBody(frontWallRef.current, diceStore.walls[1]);
+    updateObject3DWithBody(rightWallRef.current, diceStore.walls[2]);
+    updateObject3DWithBody(backWallRef.current, diceStore.walls[3]);
+  }, [w, h]);
 
   const opacity = 0;
 
   return (
     <>
-      <mesh ref={floorRef} receiveShadow position={[0, 0, 0]} scale={[w, h, 1]}>
+      <mesh rotation={[-Math.PI / 2, 0, 0]} receiveShadow position={[0, 0, 0]} scale={[w, h, 1]}>
         <planeGeometry />
         <shadowMaterial opacity={0.6} />
       </mesh>
 
-      <mesh rotation={[-Math.PI / 2, 0, 0]} scale={[w, h, 1]} position={[0, 0.1, 0]}>
+      <mesh ref={floorRef} position={[0, 0, 0]} scale={[w, h, 1]}>
         <planeGeometry />
         <meshBasicMaterial color="green" transparent opacity={opacity} />
       </mesh>
 
-      <mesh ref={wallLeftRef} castShadow={false} scale={[h, wallSize, 1]}>
+      <mesh ref={leftWallRef} castShadow={false} scale={[h, wallSize, 1]}>
         <planeGeometry />
         <meshBasicMaterial color="red" transparent opacity={opacity} />
       </mesh>
 
-      <mesh ref={wallFrontRef} castShadow={false} scale={[wallSize, wallSize, 1]}>
+      <mesh ref={frontWallRef} castShadow={false} scale={[wallSize, wallSize, 1]}>
         <planeGeometry />
         <meshBasicMaterial color="red" transparent opacity={opacity} />
       </mesh>
 
-      <mesh ref={wallRightRef} castShadow={false} scale={[h, wallSize, 1]}>
+      <mesh ref={rightWallRef} castShadow={false} scale={[h, wallSize, 1]}>
         <planeGeometry />
         <meshBasicMaterial color="red" transparent opacity={opacity} />
       </mesh>
 
-      <mesh ref={wallBackRef} castShadow={false} scale={[wallSize, wallSize, 1]}>
+      <mesh ref={backWallRef} castShadow={false} scale={[wallSize, wallSize, 1]}>
         <planeGeometry />
         <meshBasicMaterial color="red" transparent opacity={opacity} />
       </mesh>
 
       <ambientLight color={0xf0f5fb} />
       <spotLight
-        position={[-ch, h * 2, ch]}
+        position={[-h / 2, h * 2, h / 2]}
         color={0xefdfd5}
         castShadow
         intensity={2}
@@ -174,42 +126,192 @@ function FloorAndWalls(): JSX.Element {
   );
 }
 
-export function DiceToggler(): JSX.Element {
-  const { isOpen, onToggle } = useDisclosure();
-  const [update, forceUpdate] = useState(1);
+export function DiceBox({
+  dices,
+  onRolled,
+}: {
+  dices: Record<DiceNotation, number>;
+  onRolled: (v: Record<DiceNotation, number[]>) => void;
+}): JSX.Element {
+  const [diceStore] = useState(() => new DiceStore());
+  const { invalidate } = useThree();
+
+  useLayoutEffect(() => {
+    const dispose = diceStore.roll(
+      () => {
+        diceStore.dices.forEach((o, d) => {
+          if (d.body.sleepState !== Body.SLEEPING) {
+            updateObject3DWithBody(o, d.body);
+          }
+        });
+
+        invalidate();
+      },
+      () => {
+        const results = {} as Record<DiceNotation, number[]>;
+
+        for (const [k, v] of diceStore.getDiceValues().entries()) {
+          if (results[k.notation]) {
+            results[k.notation].push(v + 1);
+          } else {
+            results[k.notation] = [v + 1];
+          }
+        }
+
+        onRolled(results);
+      }
+    );
+
+    return () => dispose();
+  }, [diceStore, invalidate]);
 
   return (
-    <Box onClick={() => forceUpdate(update + 1)}>
-      <Button size="sm" onClick={onToggle} position="relative" zIndex={9999}>
-        Dice
-      </Button>
+    <DiceStoreContext.Provider value={diceStore}>
+      <Fragment>
+        {Object.entries(dices).map(([d, count]) => (
+          <Fragment key={d}>
+            {range(count).map((i) => (
+              <Dice key={i} notation={d as DiceNotation} />
+            ))}
+          </Fragment>
+        ))}
+      </Fragment>
+      <FloorAndWalls />
+    </DiceStoreContext.Provider>
+  );
+}
 
-      {isOpen ? (
-        <Box position="fixed" left="0px" top="0px" w="full" h="full" zIndex={9998}>
-          <Canvas camera={{ fov: 20, position: [0, 90, 0] }} shadows frameloop="demand">
-            <OrbitControls enableRotate target={[0, 10, 0]} />
-            <Physics
-              allowSleep
-              gravity={[0, -9.82 * 20, 0]}
-              iterations={16}
-              defaultContactMaterial={{
-                friction: 0.01,
-                restitution: 0.5,
+export function DiceToggler(): JSX.Element {
+  const { ui } = useStore();
+  const { isOpen, onOpen, onClose } = useDisclosure();
+  const [reroll, setReroll] = useState(1);
+  const [dice, setDice] = useState('');
+  const [rollResults, setRollResults] = useState<number[]>([]);
+  const parsedDice = useMemo(() => merge(parse(dice)), [dice]);
+  const dices = useMemo(() => {
+    const dices = {} as Record<DiceNotation, number>;
+
+    for (const d of parsedDice) {
+      if (d.type === 'dice') {
+        dices[d.die] = d.count;
+      }
+    }
+
+    return dices;
+  }, [parsedDice]);
+  const onRolled = useCallback(
+    (results: Record<DiceNotation, number[]>) => {
+      const numbers: number[][] = [];
+
+      for (const d of parsedDice) {
+        if (d.type === 'dice') {
+          const n = results[d.die];
+
+          if (n) {
+            numbers.push(d.multiplier === -1 ? n.map((i) => i * -1) : n);
+          }
+        }
+
+        if (d.type === 'number') {
+          numbers.push([d.value * d.multiplier]);
+        }
+      }
+
+      setRollResults(numbers.flat());
+    },
+    [parsedDice]
+  );
+  const close = useCallback(() => {
+    ui.closeRoll();
+    setDice('');
+    setRollResults([]);
+    setReroll(1);
+  }, []);
+
+  return (
+    <Box>
+      <Popover placement="bottom-end" isLazy isOpen={isOpen} onOpen={onOpen} onClose={onClose}>
+        <PopoverTrigger>
+          <IconButton
+            aria-label="Roll"
+            icon={<Icon as={GiRollingDices} width={6} height={6} />}
+            size="sm"
+          />
+        </PopoverTrigger>
+        <PopoverContent>
+          <PopoverArrow />
+          <PopoverBody>
+            <DiceNotationInput
+              onRoll={(d) => {
+                setDice(d);
+
+                onClose();
+                ui.roll();
               }}
-            >
-              <Fragment key={update}>
-                <D4 />
-                <D6 />
-                <D8 />
-                <D10 />
-                <D12 />
-                <D20 />
-              </Fragment>
-              <FloorAndWalls />
-            </Physics>
-          </Canvas>
-        </Box>
-      ) : null}
+            />
+          </PopoverBody>
+        </PopoverContent>
+      </Popover>
+
+      <Observer>
+        {() => (
+          <>
+            {ui.rollOpen ? (
+              <Box
+                key={reroll}
+                position="fixed"
+                left="0px"
+                top="0px"
+                w="full"
+                h="full"
+                backgroundColor="whiteAlpha.600"
+                zIndex={9998}
+              >
+                {rollResults.length > 0 ? (
+                  <Center position="absolute" left="0px" top="0px" w="full" h="full" zIndex={10000}>
+                    <VStack>
+                      <Text
+                        fontSize="xx-large"
+                        backgroundColor="blackAlpha.700"
+                        color="white"
+                        px="6"
+                      >
+                        {rollResults
+                          .map((v, i) => {
+                            if (i === 0) {
+                              return v > 0 ? v : `- ${Math.abs(v)}`;
+                            }
+
+                            return `${v > 0 ? '+' : '-'} ${v}`;
+                          })
+                          .join(' ')}
+                        {' = '}
+                        {rollResults.reduce((a, r) => a + r, 0)}
+                      </Text>
+
+                      <HStack>
+                        <Button
+                          colorScheme="red"
+                          onClick={() => {
+                            setRollResults([]);
+                            setReroll((r) => r + 1);
+                          }}
+                        >
+                          重投
+                        </Button>
+                        <Button onClick={close}>OK</Button>
+                      </HStack>
+                    </VStack>
+                  </Center>
+                ) : null}
+                <Canvas camera={{ fov: 12, position: [0, 90, 0] }} shadows frameloop="demand">
+                  <DiceBox dices={dices} onRolled={onRolled} />
+                </Canvas>
+              </Box>
+            ) : null}
+          </>
+        )}
+      </Observer>
     </Box>
   );
 }

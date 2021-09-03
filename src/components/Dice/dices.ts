@@ -1,18 +1,55 @@
-import { random, range } from 'lodash-es';
+import { Body, BodyOptions, ConvexPolyhedron, Material as PhysicsMaterial, Vec3 } from 'cannon-es';
+import { range } from 'lodash-es';
 import {
-  BoxGeometry,
   BufferGeometry,
   CanvasTexture,
   Float32BufferAttribute,
   Material,
   MeshPhongMaterial,
   Vector2,
-  Vector3,
 } from 'three';
 
-import { Api as CannonAPI, useBox, useConvexPolyhedron } from '@react-three/cannon';
-
+import { DiceNotation } from '../../utils/dice';
 import { takeByIndexes } from '../../utils/misc';
+
+export interface Dice {
+  notation: DiceNotation;
+  geometry: BufferGeometry;
+  materials: Material[] | Material;
+  body: Body;
+}
+
+export interface BaseDiceOptions {
+  size: number;
+  bgColor: string;
+  fgColor: string;
+}
+
+export const dicePhysicMaterial = new PhysicsMaterial();
+export const bodyOptions: BodyOptions = {
+  material: dicePhysicMaterial,
+  allowSleep: true,
+  sleepTimeLimit: 0.4,
+  sleepSpeedLimit: 0.2,
+};
+
+export const trianglePerFaces: Record<DiceNotation, number> = {
+  d4: 1,
+  d6: 2,
+  d8: 1,
+  d10: 2,
+  d12: 3,
+  d20: 1,
+};
+
+export const standardDiceSizes: Record<DiceNotation, number> = {
+  d4: 1,
+  d6: 1,
+  d8: 1.6,
+  d10: 1.6,
+  d12: 0.8,
+  d20: 0.8,
+};
 
 const materialOptions = {
   specular: 0x172022,
@@ -71,14 +108,40 @@ function createTextMaterial(
   throw Error('no 2d context');
 }
 
-interface DiceArgs {
-  geometry: BufferGeometry;
-  materials: Material[] | Material;
-  cannon: CannonAPI;
+function makeBodyVertices(size: number, vertices: number[][]): Vec3[] {
+  return vertices.map((v) => new Vec3(...v).scale(size));
 }
 
-function randomVelocity(min = 40, max = 60) {
-  return random(min, max) * (random(2) === 1 ? -1 : 1);
+function makePositions(
+  size: number,
+  vertices: number[][],
+  faces: number[][]
+): Float32BufferAttribute {
+  let positions: number[] = [];
+  for (const face of faces) {
+    const p = takeByIndexes(vertices, face).flat();
+
+    positions = [...positions, ...p];
+  }
+
+  return new Float32BufferAttribute(
+    positions.map((i) => i * size),
+    3
+  );
+}
+
+const TRIANGLE_UV = [
+  [0.5, 1],
+  [0, 0],
+  [1, 0],
+];
+
+export function makeTriangleUV(triangleCount: number): Float32BufferAttribute {
+  const uvs = range(triangleCount)
+    .map(() => TRIANGLE_UV.flat())
+    .flat();
+
+  return new Float32BufferAttribute(uvs, 2);
 }
 
 const D4_LABELS = [
@@ -88,7 +151,7 @@ const D4_LABELS = [
   [3, 1, 2],
 ];
 
-export function makeD4(size: number, fgColor: string, bgColor: string): DiceArgs {
+export function makeD4({ size, fgColor, bgColor }: BaseDiceOptions): Dice {
   const vertices = [
     [1, 1, 1],
     [-1, -1, 1],
@@ -102,32 +165,10 @@ export function makeD4(size: number, fgColor: string, bgColor: string): DiceArgs
     [1, 2, 3],
   ];
 
-  const uv = [
-    [0.5, 1],
-    [0, 0],
-    [1, 0],
-  ];
   const geometry = new BufferGeometry();
 
-  let positions: number[] = [];
-  for (const face of faces) {
-    const p = takeByIndexes(vertices, face).flat();
-
-    positions = [...positions, ...p];
-  }
-
-  geometry.setAttribute(
-    'position',
-    new Float32BufferAttribute(
-      positions.map((i) => i * size),
-      3
-    )
-  );
-
-  const uvs = range(4)
-    .map(() => uv.flat())
-    .flat();
-  geometry.setAttribute('uv', new Float32BufferAttribute(uvs, 2));
+  geometry.setAttribute('position', makePositions(size, vertices, faces));
+  geometry.setAttribute('uv', makeTriangleUV(4));
 
   const textMargin = 2;
   const materials = D4_LABELS.map((labels) => {
@@ -166,48 +207,112 @@ export function makeD4(size: number, fgColor: string, bgColor: string): DiceArgs
     });
   });
 
-  range(0, 8).forEach((i) => {
+  range(0, 4).forEach((i) => {
     geometry.addGroup(i * 3, 3, i);
   });
 
-  const cannon = useConvexPolyhedron(() => ({
-    args: [
-      vertices.map((v) => new Vector3(v[0] * size, v[1] * size, v[2] * size)),
-      faces,
-      undefined,
-      undefined,
-      size,
-    ],
-    position: [0, 20, 0],
+  const body = new Body({
     mass: 70,
-    velocity: [randomVelocity(), randomVelocity(), 0],
-    angularVelocity: [randomVelocity(10, 20), randomVelocity(10, 20), randomVelocity(10, 20)],
-  }));
+    shape: new ConvexPolyhedron({
+      vertices: makeBodyVertices(size, vertices),
+      faces,
+    }),
+    ...bodyOptions,
+  });
 
   return {
+    notation: 'd4',
     geometry,
     materials,
-    cannon,
+    body,
   };
 }
 
-export function makeD6(size: number, fgColor: string, bgColor: string): DiceArgs {
-  const geometry = new BoxGeometry(size, size, size);
+const D6_FACE_INDEX = [
+  [0, 1, 2],
+  [0, 2, 3],
+];
+
+export function makeD6({ size, fgColor, bgColor }: BaseDiceOptions): Dice {
+  const vertices = [
+    [-1, -1, -1],
+    [1, -1, -1],
+    [1, 1, -1],
+    [-1, 1, -1],
+    [-1, -1, 1],
+    [1, -1, 1],
+    [1, 1, 1],
+    [-1, 1, 1],
+  ];
+  const faces = [
+    [0, 3, 2, 1],
+    [1, 2, 6, 5],
+    [0, 1, 5, 4],
+    [3, 7, 6, 2],
+    [0, 4, 7, 3],
+    [4, 5, 6, 7],
+  ];
+  const uv = [
+    [0, 1],
+    [0, 0],
+    [1, 0],
+    [0, 1],
+    [1, 0],
+    [1, 1],
+  ].flat();
+
+  const geometry = new BufferGeometry();
+
+  let positions: number[] = [];
+  for (const face of faces) {
+    for (const subFace of D6_FACE_INDEX) {
+      const f = takeByIndexes(face, subFace);
+      const p = takeByIndexes(vertices, f).flat();
+
+      positions = [...positions, ...p];
+    }
+  }
+
+  geometry.setAttribute(
+    'position',
+    new Float32BufferAttribute(
+      positions.map((i) => i * size),
+      3
+    )
+  );
+
+  const uvs = range(6)
+    .map(() => uv)
+    .flat();
+  geometry.setAttribute('uv', new Float32BufferAttribute(uvs, 2));
+
   const materials = range(1, 7).map((i) =>
     createTextMaterial(i.toString(), size, fgColor, bgColor, 1)
   );
-  const cannon = useBox(() => ({
-    args: [size, size, size],
-    position: [0, 20, 0],
-    mass: 70,
-    velocity: [randomVelocity(), randomVelocity(), 0],
-    angularVelocity: [randomVelocity(), randomVelocity(), randomVelocity()],
-  }));
 
-  return { geometry, materials, cannon };
+  range(0, 12).forEach((i) => {
+    geometry.addGroup(i * 3, 3, Math.floor(i / 2));
+  });
+
+  const body = new Body({
+    // cannon unit is twice larger than three.js
+    shape: new ConvexPolyhedron({
+      vertices: makeBodyVertices(size, vertices),
+      faces,
+    }),
+    mass: 70,
+    ...bodyOptions,
+  });
+
+  return {
+    notation: 'd6',
+    geometry,
+    materials,
+    body,
+  };
 }
 
-export function makeD8(size: number, fgColor: string, bgColor: string): DiceArgs {
+export function makeD8({ size, fgColor, bgColor }: BaseDiceOptions): Dice {
   const vertices = [
     [1, 0, 0],
     [-1, 0, 0],
@@ -226,32 +331,11 @@ export function makeD8(size: number, fgColor: string, bgColor: string): DiceArgs
     [1, 4, 2],
     [1, 5, 3],
   ];
-  const uv = [
-    [0.5, 1],
-    [0, 0],
-    [1, 0],
-  ];
+
   const geometry = new BufferGeometry();
 
-  let positions: number[] = [];
-  for (const face of faces) {
-    const p = takeByIndexes(vertices, face).flat();
-
-    positions = [...positions, ...p];
-  }
-
-  geometry.setAttribute(
-    'position',
-    new Float32BufferAttribute(
-      positions.map((i) => i * size),
-      3
-    )
-  );
-
-  const uvs = range(8)
-    .map(() => uv.flat())
-    .flat();
-  geometry.setAttribute('uv', new Float32BufferAttribute(uvs, 2));
+  geometry.setAttribute('position', makePositions(size, vertices, faces));
+  geometry.setAttribute('uv', makeTriangleUV(8));
 
   const materials = range(1, 9).map((i) =>
     createTextMaterial(i.toString(), size, fgColor, bgColor, 1.2, 0.15)
@@ -261,28 +345,24 @@ export function makeD8(size: number, fgColor: string, bgColor: string): DiceArgs
     geometry.addGroup(i * 3, 3, i);
   });
 
-  const cannon = useConvexPolyhedron(() => ({
-    args: [
-      vertices.map((v) => new Vector3(v[0] * size, v[1] * size, v[2] * size)),
+  const body = new Body({
+    shape: new ConvexPolyhedron({
+      vertices: makeBodyVertices(size, vertices),
       faces,
-      undefined,
-      undefined,
-      size,
-    ],
-    position: [0, 20, 0],
+    }),
     mass: 80,
-    velocity: [randomVelocity(), randomVelocity(), 0],
-    angularVelocity: [randomVelocity(10, 20), randomVelocity(10, 20), randomVelocity(10, 20)],
-  }));
+    ...bodyOptions,
+  });
 
   return {
+    notation: 'd8',
     geometry,
     materials,
-    cannon,
+    body,
   };
 }
 
-export function makeD10(size: number, fgColor: string, bgColor: string): DiceArgs {
+export function makeD10({ size, fgColor, bgColor }: BaseDiceOptions): Dice {
   const a = (Math.PI * 2) / 10;
   const h = 0.105;
 
@@ -296,53 +376,31 @@ export function makeD10(size: number, fgColor: string, bgColor: string): DiceArg
 
   const faces = [
     [11, 5, 7],
-    [10, 4, 2],
-    [11, 1, 3],
-    [10, 0, 8],
-    [11, 7, 9],
-    [10, 8, 6],
-    [11, 9, 1],
-    [10, 2, 0],
-    [11, 3, 5],
-    [10, 6, 4],
-    [1, 0, 2],
-    [1, 2, 3],
-    [3, 2, 4],
-    [3, 4, 5],
-    [5, 4, 6],
     [5, 6, 7],
-    [7, 6, 8],
-    [7, 8, 9],
+    [10, 4, 2],
+    [3, 2, 4],
+    [11, 1, 3],
+    [1, 2, 3],
+    [10, 0, 8],
     [9, 8, 0],
+    [11, 7, 9],
+    [7, 8, 9],
+    [10, 8, 6],
+    [7, 6, 8],
+    [11, 9, 1],
     [9, 0, 1],
-  ];
-  const uv = [
-    [0.5, 1],
-    [0, 0],
-    [1, 0],
+    [10, 2, 0],
+    [1, 0, 2],
+    [11, 3, 5],
+    [3, 4, 5],
+    [10, 6, 4],
+    [5, 4, 6],
   ];
 
   const geometry = new BufferGeometry();
 
-  let positions: number[] = [];
-  for (const face of faces) {
-    const p = takeByIndexes(vertices, face).flat();
-
-    positions = [...positions, ...p];
-  }
-
-  geometry.setAttribute(
-    'position',
-    new Float32BufferAttribute(
-      positions.map((i) => i * size),
-      3
-    )
-  );
-
-  const uvs = range(20)
-    .map(() => uv.flat())
-    .flat();
-  geometry.setAttribute('uv', new Float32BufferAttribute(uvs, 2));
+  geometry.setAttribute('position', makePositions(size, vertices, faces));
+  geometry.setAttribute('uv', makeTriangleUV(20));
 
   const materials = range(1, 11).map((i) =>
     createTextMaterial(i.toString(), size, fgColor, bgColor, 1, 0.15)
@@ -350,31 +408,23 @@ export function makeD10(size: number, fgColor: string, bgColor: string): DiceArg
   materials.push(new MeshPhongMaterial({ ...materialOptions, color: bgColor }));
 
   range(0, 20).forEach((i) => {
-    if (i < 10) {
-      geometry.addGroup(i * 3, 3, i);
-    } else {
-      geometry.addGroup(i * 3, 3, 10);
-    }
+    geometry.addGroup(i * 3, 3, i % 2 === 0 ? Math.floor(i / 2) : 10);
   });
 
-  const cannon = useConvexPolyhedron(() => ({
-    args: [
-      vertices.map((v) => new Vector3(v[0] * size, v[1] * size, v[2] * size)),
+  const body = new Body({
+    shape: new ConvexPolyhedron({
+      vertices: makeBodyVertices(size, vertices),
       faces,
-      undefined,
-      undefined,
-      size,
-    ],
-    position: [0, 20, 0],
+    }),
     mass: 85,
-    velocity: [randomVelocity(), randomVelocity(), 0],
-    angularVelocity: [randomVelocity(10, 20), randomVelocity(10, 20), randomVelocity(10, 20)],
-  }));
+    ...bodyOptions,
+  });
 
   return {
+    notation: 'd10',
     geometry,
     materials,
-    cannon,
+    body,
   };
 }
 
@@ -384,7 +434,7 @@ const D12_FACE_INDEX = [
   [0, 3, 4],
 ];
 
-export function makeD12(size: number, fgColor: string, bgColor: string): DiceArgs {
+export function makeD12({ size, fgColor, bgColor }: BaseDiceOptions): Dice {
   const p = (1 + Math.sqrt(5)) / 2;
   const q = 1 / p;
 
@@ -435,6 +485,7 @@ export function makeD12(size: number, fgColor: string, bgColor: string): DiceArg
     [0.82, 0],
     [1, 0.61],
   ].flat();
+
   const geometry = new BufferGeometry();
 
   let positions: number[] = [];
@@ -446,9 +497,6 @@ export function makeD12(size: number, fgColor: string, bgColor: string): DiceArg
       positions = [...positions, ...p];
     }
   }
-  const uvs = range(12)
-    .map(() => uv)
-    .flat();
 
   geometry.setAttribute(
     'position',
@@ -457,6 +505,10 @@ export function makeD12(size: number, fgColor: string, bgColor: string): DiceArg
       3
     )
   );
+
+  const uvs = range(12)
+    .map(() => uv)
+    .flat();
   geometry.setAttribute('uv', new Float32BufferAttribute(uvs, 2));
 
   const materials = range(1, 13).map((i) =>
@@ -468,29 +520,24 @@ export function makeD12(size: number, fgColor: string, bgColor: string): DiceArg
     geometry.addGroup(i * 3, 3, Math.floor(i / 3));
   });
 
-  const cannon = useConvexPolyhedron(() => ({
-    args: [
-      vertices.map((v) => new Vector3(v[0] * size, v[1] * size, v[2] * size)),
+  const body = new Body({
+    shape: new ConvexPolyhedron({
+      vertices: makeBodyVertices(size, vertices),
       faces,
-      undefined,
-      undefined,
-      size,
-    ],
-    position: [0, 20, 0],
+    }),
     mass: 85,
-    sleepSpeedLimit: 1,
-    velocity: [randomVelocity(), randomVelocity(), 0],
-    angularVelocity: [randomVelocity(10, 20), randomVelocity(10, 20), randomVelocity(10, 20)],
-  }));
+    ...bodyOptions,
+  });
 
   return {
+    notation: 'd12',
     geometry,
     materials,
-    cannon,
+    body,
   };
 }
 
-export function makeD20(size: number, fgColor: string, bgColor: string): DiceArgs {
+export function makeD20({ size, fgColor, bgColor }: BaseDiceOptions): Dice {
   const t = (1 + Math.sqrt(5)) / 2;
   const vertices = [
     [-1, t, 0],
@@ -528,32 +575,11 @@ export function makeD20(size: number, fgColor: string, bgColor: string): DiceArg
     [2, 4, 11], // 17- 19
     [9, 8, 1], // 20- 20
   ];
-  const uv = [
-    [0.5, 1],
-    [0, 0],
-    [1, 0],
-  ];
 
   const geometry = new BufferGeometry();
 
-  let positions: number[] = [];
-  for (const face of faces) {
-    const p = takeByIndexes(vertices, face).flat();
-
-    positions = [...positions, ...p];
-  }
-  const uvs = range(20)
-    .map(() => uv.flat())
-    .flat();
-
-  geometry.setAttribute(
-    'position',
-    new Float32BufferAttribute(
-      positions.map((i) => i * size),
-      3
-    )
-  );
-  geometry.setAttribute('uv', new Float32BufferAttribute(uvs, 2));
+  geometry.setAttribute('position', makePositions(size, vertices, faces));
+  geometry.setAttribute('uv', makeTriangleUV(20));
 
   const materials = range(1, 21).map((i) =>
     createTextMaterial(i.toString(), size, fgColor, bgColor, 1.3, 0.15)
@@ -563,23 +589,19 @@ export function makeD20(size: number, fgColor: string, bgColor: string): DiceArg
     geometry.addGroup(i * 3, 3, i);
   });
 
-  const cannon = useConvexPolyhedron(() => ({
-    args: [
-      vertices.map((v) => new Vector3(v[0] * size, v[1] * size, v[2] * size)),
+  const body = new Body({
+    shape: new ConvexPolyhedron({
+      vertices: makeBodyVertices(size, vertices),
       faces,
-      undefined,
-      undefined,
-      size,
-    ],
-    position: [0, 20, 0],
+    }),
     mass: 100,
-    velocity: [randomVelocity(), randomVelocity(), 0],
-    angularVelocity: [randomVelocity(10, 20), randomVelocity(10, 20), randomVelocity(10, 20)],
-  }));
+    ...bodyOptions,
+  });
 
   return {
+    notation: 'd20',
     geometry,
     materials,
-    cannon,
+    body,
   };
 }

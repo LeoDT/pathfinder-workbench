@@ -1,5 +1,5 @@
 import Fuse from 'fuse.js';
-import { del, entries, set } from 'idb-keyval';
+import { del, entries, get, set } from 'idb-keyval';
 import { IObservableArray, autorun, observable, observe } from 'mobx';
 
 import { Entity, EntityType } from '../types/core';
@@ -103,6 +103,14 @@ export class Store {
         }
       }
     });
+  }
+
+  persistMisc(k: string, v: string): void {
+    set(`misc:${k}`, v);
+  }
+
+  async restoreMisc(k: string): Promise<string> {
+    return (await get(`misc:${k}`)) || '';
   }
 }
 
