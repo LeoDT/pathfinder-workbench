@@ -11,6 +11,7 @@ import {
   useState,
 } from 'react';
 import { GiRollingDices } from 'react-icons/gi';
+import { LineBasicMaterial } from 'three';
 
 import {
   Box,
@@ -52,10 +53,22 @@ export function useAspect(width: number, height: number, factor = 1): [number, n
   return [adaptedWidth * factor, adaptedHeight * factor, 1];
 }
 
-function Dice({ notation }: { notation: DiceNotation }): JSX.Element {
-  const [dice, ref] = useDice(notation, { size: standardDiceSizes[notation] });
+const lineMaterial = new LineBasicMaterial({
+  color: 0x060606,
+  linewidth: 3,
+  linecap: 'round', //ignored by WebGLRenderer
+  linejoin: 'round', //ignored by WebGLRenderer
+});
 
-  return <mesh ref={ref} castShadow geometry={dice.geometry} material={dice.materials} />;
+function Dice({ notation }: { notation: DiceNotation }): JSX.Element {
+  const [dice, ref, edge, lineRef] = useDice(notation, { size: standardDiceSizes[notation] });
+
+  return (
+    <>
+      <mesh ref={ref} castShadow geometry={dice.geometry} material={dice.materials} />
+      <lineSegments ref={lineRef} geometry={edge} material={lineMaterial} />
+    </>
+  );
 }
 
 function FloorAndWalls(): JSX.Element {
@@ -115,13 +128,15 @@ function FloorAndWalls(): JSX.Element {
 
       <ambientLight color={0xf0f5fb} />
       <spotLight
-        position={[-h / 2, h * 2, h / 2]}
+        position={[-h, h * 3, h]}
         color={0xefdfd5}
         castShadow
         intensity={2}
         distance={150}
         decay={2}
       />
+
+      {/* <OrbitControls /> */}
     </>
   );
 }
@@ -139,9 +154,11 @@ export function DiceBox({
   useLayoutEffect(() => {
     const dispose = diceStore.roll(
       () => {
-        diceStore.dices.forEach((o, d) => {
+        diceStore.dices.forEach((objs, d) => {
           if (d.body.sleepState !== Body.SLEEPING) {
-            updateObject3DWithBody(o, d.body);
+            for (const o of objs) {
+              updateObject3DWithBody(o, d.body);
+            }
           }
         });
 
@@ -304,7 +321,7 @@ export function DiceToggler(): JSX.Element {
                     </VStack>
                   </Center>
                 ) : null}
-                <Canvas camera={{ fov: 12, position: [0, 90, 0] }} shadows frameloop="demand">
+                <Canvas camera={{ fov: 14, position: [0, 90, 0] }} shadows frameloop="demand">
                   <DiceBox dices={dices} onRolled={onRolled} />
                 </Canvas>
               </Box>

@@ -9,10 +9,10 @@ import {
   World,
 } from 'cannon-es';
 import { MutableRefObject, useEffect, useMemo, useRef } from 'react';
-import { Matrix3, Matrix4, Mesh, Quaternion, Vector3 } from 'three';
+import { EdgesGeometry, Matrix3, Matrix4, Mesh, Quaternion, Vector3 } from 'three';
 
 import { DiceNotation } from '../../utils/dice';
-import { randomPick } from '../../utils/random';
+import { random, randomPick } from '../../utils/random';
 import { createContextNoNullCheck } from '../../utils/react';
 import {
   BaseDiceOptions,
@@ -32,7 +32,7 @@ const floorPhysicsMaterial = new PhysicsMaterial();
 
 export class DiceStore {
   world: World;
-  dices: Map<Dice, Mesh>;
+  dices: Map<Dice, Mesh[]>;
 
   walls: Body[];
   floor: Body;
@@ -113,7 +113,7 @@ export class DiceStore {
     });
   }
 
-  addDice(d: Dice, o: Mesh): void {
+  addDice(d: Dice, o: Mesh[]): void {
     this.dices.set(d, o);
 
     this.world.addBody(d.body);
@@ -156,7 +156,7 @@ export class DiceStore {
     const values = new Map<Dice, number>();
 
     this.dices.forEach((o, d) => {
-      const index = getFaceUpIndex(o, trianglePerFaces[d.notation], d.notation === 'd4');
+      const index = getFaceUpIndex(o[0], trianglePerFaces[d.notation], d.notation === 'd4');
 
       values.set(d, index);
     });
@@ -229,26 +229,28 @@ const makes: Record<DiceNotation, (o: BaseDiceOptions) => Dice> = {
 export function useDice(
   notation: DiceNotation,
   diceOptions?: Partial<BaseDiceOptions>
-): [Dice, MutableRefObject<Mesh | null>] {
+): [Dice, MutableRefObject<Mesh | null>, EdgesGeometry, MutableRefObject<Mesh | null>] {
   const diceStore = useDiceStore();
   const ref = useRef<Mesh | null>(null);
+  const lineRef = useRef<Mesh | null>(null);
   const options = Object.assign({ size: 1, fgColor: 'white', bgColor: 'black' }, diceOptions);
   const dice = useMemo(() => makes[notation](options), [notation, diceOptions]);
+  const edge = useMemo(() => new EdgesGeometry(dice.geometry, 30), [dice]);
 
   useEffect(() => {
-    if (ref.current) {
+    if (ref.current && lineRef.current) {
       dice.body.position.set(0, 20, 0);
 
-      dice.body.applyImpulse(
+      dice.body.applyLocalImpulse(
         new Vec3(
-          10000 * Math.random() * randomPick([-1, 1]),
-          4000 * Math.random(),
-          10000 * Math.random() * randomPick([-1, 1])
+          10000 * random(0.3, 1, true) * randomPick([-1, 1]),
+          4000 * random(0.3, 1, true),
+          10000 * random(0.3, 1, true) * randomPick([-1, 1])
         ),
         new Vec3(0.1, 0.1, 0.1)
       );
 
-      diceStore.addDice(dice, ref.current);
+      diceStore.addDice(dice, [ref.current, lineRef.current]);
     }
 
     return () => {
@@ -256,5 +258,5 @@ export function useDice(
     };
   }, [dice]);
 
-  return [dice, ref];
+  return [dice, ref, edge, lineRef];
 }
