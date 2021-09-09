@@ -145,7 +145,7 @@ export function Prestige(): JSX.Element {
             <Tab>Markdown</Tab>
           </TabList>
           <TabPanels>
-            <TabPanel>
+            <TabPanel px="0" overflowX="auto">
               <Observer>
                 {() => (
                   <>
@@ -154,7 +154,7 @@ export function Prestige(): JSX.Element {
                         <Tr>
                           <Th />
                           {dm.allPlayers.map(({ id, name }) => (
-                            <Th key={id} textAlign="center">
+                            <Th key={id} textAlign="center" minWidth="150px" px="2">
                               {name}
                             </Th>
                           ))}
@@ -163,7 +163,7 @@ export function Prestige(): JSX.Element {
                       <Tbody>
                         {current.factions.map((f) => (
                           <Tr key={f.id}>
-                            <Td>{f.name}</Td>
+                            <Td px="2">{f.name}</Td>
                             {dm.allPlayers.map((c) => {
                               const pId = `${f.id}:${c.id}`;
                               const p = current.prestiges.get(pId) || 0;
@@ -180,7 +180,7 @@ export function Prestige(): JSX.Element {
                               }
 
                               return (
-                                <Td key={c.id} textAlign="center">
+                                <Td key={c.id} textAlign="center" minWidth="150px" px="2">
                                   <VStack alignItems="center">
                                     <IconButton
                                       aria-label="增加声望"
@@ -323,7 +323,7 @@ export function PrestigeModal(): JSX.Element {
     <>
       <Button onClick={() => onOpen()}>声望</Button>
 
-      <Modal isOpen={isOpen} onClose={onClose} size="4xl">
+      <Modal isOpen={isOpen} onClose={onClose} size="full">
         <ModalOverlay />
         <ModalContent>
           <ModalBody>

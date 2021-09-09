@@ -3,6 +3,7 @@ import { useState } from 'react';
 import { FaChevronDown } from 'react-icons/fa';
 
 import {
+  Box,
   Button,
   ButtonGroup,
   Container,
@@ -26,10 +27,11 @@ import {
   SimpleGrid,
   Spacer,
   Text,
+  VStack,
   useDisclosure,
 } from '@chakra-ui/react';
 
-import { ButtonSwitch } from '../components/ButtonSwitch';
+import { Battle } from '../components/Battle';
 import { Character as DMCharacter } from '../components/DM/Character';
 import { PrestigeModal } from '../components/DM/Prestige';
 import { useStore } from '../store';
@@ -43,10 +45,10 @@ const rollingTranslates = {
 
 export function DMPage(): JSX.Element {
   const { dm } = useStore();
-  const [order, setOrder] = useState('normal');
   const isSmallerScreen = useIsSmallerScreen();
   const { isOpen, onOpen, onClose } = useDisclosure();
   const [rolling, setRolling] = useState<Rolling | null>(null);
+  const { isOpen: isBattleViewOpen, onToggle: onBattleViewToggle } = useDisclosure();
 
   return (
     <Container pt="2">
@@ -63,7 +65,6 @@ export function DMPage(): JSX.Element {
         <Button
           mb={[2, 0]}
           onClick={() => {
-            ``;
             dm.addCharacter('npc', 'NPC');
           }}
         >
@@ -109,21 +110,57 @@ export function DMPage(): JSX.Element {
             </Portal>
           </Menu>
         </ButtonGroup>
-        <ButtonSwitch
-          options={[
-            { text: '创建顺序', value: 'normal' },
-            { text: '先攻顺序', value: 'initiative' },
-          ]}
-          value={order}
-          onChange={(v) => setOrder(v)}
-        />
+        <Observer>
+          {() => (
+            <Button
+              colorScheme={dm.inBattle ? 'red' : 'teal'}
+              onClick={() => (dm.inBattle ? dm.endBattle() : dm.startBattle())}
+            >
+              {dm.inBattle ? '结束战斗' : '开始战斗'}
+            </Button>
+          )}
+        </Observer>
+        <Button onClick={onBattleViewToggle}>战场</Button>
       </HStack>
+
+      {isBattleViewOpen ? (
+        <Box mt="2">
+          <Battle />
+        </Box>
+      ) : null}
 
       <Observer>
         {() => (
-          <SimpleGrid py="2" spacing="2" columns={isSmallerScreen ? 1 : 3}>
-            {(order === 'initiative' ? dm.sortedCharacters : dm.enabledCharacters).map((c) => (
-              <DMCharacter key={c.id} character={c} />
+          <SimpleGrid mt="2" spacing="2" columns={isSmallerScreen ? 1 : 3}>
+            {(dm.inBattle ? dm.battleSortedCharacters : dm.enabledCharacters).map((c, i) => (
+              <Box key={c.id} position="relative">
+                {dm.inBattle ? (
+                  <Box className="order-tools" position="absolute" top="8px" right="4px">
+                    {dm.changingOrder ? (
+                      dm.changingOrder === c ? (
+                        <Button size="xs" onClick={() => (dm.changingOrder = null)}>
+                          取消
+                        </Button>
+                      ) : (
+                        <VStack>
+                          <Button size="xs" onClick={() => dm.endChangeBattleOrder(i)}>
+                            之前
+                          </Button>
+                          <Button size="xs" onClick={() => dm.endChangeBattleOrder(i + 1)}>
+                            之后
+                          </Button>
+                        </VStack>
+                      )
+                    ) : (
+                      <Button size="xs" onClick={() => dm.startChangeBattleOrder(c)}>
+                        延后
+                      </Button>
+                    )}
+                  </Box>
+                ) : null}
+
+                <DMCharacter character={c} />
+              </Box>
             ))}
           </SimpleGrid>
         )}

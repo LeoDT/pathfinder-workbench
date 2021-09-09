@@ -1,21 +1,21 @@
 {
-	"new effect type": {
-		"scope": "typescript",
-		"prefix": "newef",
-		"body": [
-			"export interface Effect$1Args {",
-			"  $3",
-			"}",
-			"export type Effect$1 = BaseEffect<EffectType.$2, Effect$1Args>;"
-		]
-	},
+  "new effect type": {
+    "scope": "typescript",
+    "prefix": "newef",
+    "body": [
+      "export interface Effect$1Args {",
+      "  $3",
+      "}",
+      "export type Effect$1 = BaseEffect<EffectType.$2, Effect$1Args>;"
+    ]
+  },
   "effect manager get effect": {
     "scope": "typescript",
-		"prefix": "efmget",
-		"body": [
-			"get$1Effects(): EffectAndSource<Effects.Effect$1>[] {",
+    "prefix": "efmget",
+    "body": [
+      "get$1Effects(): EffectAndSource<Effects.Effect$1>[] {",
       "  return this.getEffectsByType<Effects.Effect$1>(Effects.EffectType.$2);",
       "}"
-		]
-	},
+    ]
+  }
 }

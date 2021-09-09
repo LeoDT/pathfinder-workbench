@@ -1,4 +1,4 @@
-import { cloneDeep } from 'lodash-es';
+import { cloneDeep, orderBy } from 'lodash-es';
 import { IObservableArray, makeAutoObservable, observable, observe, toJS } from 'mobx';
 import shortid from 'shortid';
 
@@ -19,6 +19,7 @@ const DEFAULT_CHARACTER_PROPS = {
   rolledPerception: 0,
   rolledSenseMotive: 0,
   rolledWillSave: 0,
+  battleOrder: 0,
   trackers: [],
 };
 
@@ -49,11 +50,17 @@ export class DMStore {
   characters: IObservableArray<DMCharacter>;
   prestiges: IObservableArray<Prestige>;
 
+  inBattle: boolean;
+  changingOrder: DMCharacter | null;
+
   constructor() {
     makeAutoObservable(this);
 
     this.characters = observable.array([]);
     this.prestiges = observable.array([]);
+
+    this.inBattle = false;
+    this.changingOrder = null;
 
     observe(this.characters, (change) => {
       if (change.type === 'splice') {
@@ -83,20 +90,54 @@ export class DMStore {
     return this.characters.filter((c) => c.disabled);
   }
 
-  get sortedCharacters(): Array<DMCharacter> {
-    return [...this.enabledCharacters].sort((a, b) => {
-      const ac = parseInt(a.initiative) + a.rolledInitiative;
-      const bc = parseInt(b.initiative) + b.rolledInitiative;
-
-      return bc - ac;
-    });
-  }
-
   get players(): DMCharacter[] {
     return this.enabledCharacters.filter((c) => c.type === 'player');
   }
   get allPlayers(): DMCharacter[] {
     return this.characters.filter((c) => c.type === 'player');
+  }
+
+  startBattle(): void {
+    this.inBattle = true;
+
+    this.rollAllInitiative();
+
+    [...this.enabledCharacters]
+      .sort((a, b) => {
+        const ac = parseInt(a.initiative) + a.rolledInitiative;
+        const bc = parseInt(b.initiative) + b.rolledInitiative;
+
+        return bc - ac;
+      })
+      .forEach((c, i) => {
+        c.battleOrder = i;
+      });
+  }
+  endBattle(): void {
+    this.inBattle = false;
+  }
+  get battleSortedCharacters(): Array<DMCharacter> {
+    return orderBy(this.enabledCharacters, ['battleOrder'], ['asc']);
+  }
+  startChangeBattleOrder(c: DMCharacter): void {
+    this.changingOrder = c;
+  }
+  endChangeBattleOrder(to: number): void {
+    if (this.changingOrder) {
+      const from = this.changingOrder.battleOrder;
+      const characters = [...this.battleSortedCharacters] as Array<DMCharacter | null>;
+
+      characters.splice(from, 1, null);
+      characters.splice(to, 0, this.changingOrder);
+
+      characters
+        .filter((c): c is DMCharacter => Boolean(c))
+        .forEach((c, i) => {
+          c.battleOrder = i;
+        });
+
+      this.changingOrder = null;
+    }
   }
 
   addCharacter(

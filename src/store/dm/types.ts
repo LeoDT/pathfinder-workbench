@@ -23,6 +23,7 @@ export interface DMCharacter {
   rolledPerception: number;
   rolledSenseMotive: number;
   rolledWillSave: number;
+  battleOrder: number;
   trackers: Array<Tracker>;
 }
 
