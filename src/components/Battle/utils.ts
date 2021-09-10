@@ -1,5 +1,10 @@
 import shortid from 'shortid';
 
+export const LAYERS = {
+  base: 999,
+  shapes: 1000,
+  draw: 1001,
+};
 export type Vector2 = [number, number];
 
 export function subVector2(a: Vector2, b: Vector2): Vector2 {
@@ -14,6 +19,12 @@ export function sameVector2(a: Vector2, b: Vector2): boolean {
   return a[0] === b[0] && a[1] === b[1];
 }
 
+export interface ShapeStyle {
+  fill: string;
+  stroke: string;
+  fillStyle: string;
+}
+
 export enum ShapeTypes {
   square = 'square',
   circle = 'circle',
@@ -24,6 +35,7 @@ export enum ShapeTypes {
 export interface BaseShape {
   readonly type: ShapeTypes;
   id: string;
+  style: ShapeStyle;
 }
 
 export interface Square extends BaseShape {
@@ -61,7 +73,13 @@ export function normalizeSquareVertex(p1: Vector2, p2: Vector2): [Vector2, Vecto
   return [p2, p1];
 }
 
-export function makeSquare(p1: Vector2, p2: Vector2): Square {
+export const shapeWithFillStyle = {
+  roughness: 2,
+  strokeWidth: 2,
+  fillWeight: 3,
+};
+
+export function makeSquare(p1: Vector2, p2: Vector2, style: ShapeStyle): Square {
   const [lt, rb] = normalizeSquareVertex(p1, p2);
   const [w, h] = subVector2(rb, lt);
 
@@ -71,6 +89,10 @@ export function makeSquare(p1: Vector2, p2: Vector2): Square {
     lt,
     w,
     h,
+    style: {
+      ...shapeWithFillStyle,
+      ...style,
+    },
   };
 }
 
@@ -78,7 +100,7 @@ export function calculateCircleRadius(center: Vector2, other: Vector2): number {
   return Math.max(...subVector2(center, other).map(Math.abs));
 }
 
-export function makeCircle(center: Vector2, other: Vector2): Circle {
+export function makeCircle(center: Vector2, other: Vector2, style: ShapeStyle): Circle {
   const radius = calculateCircleRadius(center, other);
 
   return {
@@ -86,10 +108,21 @@ export function makeCircle(center: Vector2, other: Vector2): Circle {
     id: shortid(),
     center,
     radius,
+    style: {
+      ...shapeWithFillStyle,
+      ...style,
+    },
   };
 }
 
-export function makeLine(points: Vector2[]): Line {
+export const lineStyle = {
+  roughness: 1,
+  strokeWidth: 3,
+  bowing: 3,
+  disableMultiStroke: true,
+};
+
+export function makeLine(points: Vector2[], style: ShapeStyle): Line {
   const offset = points[0];
 
   return {
@@ -97,10 +130,14 @@ export function makeLine(points: Vector2[]): Line {
     id: shortid(),
     offset,
     points: points.map((p) => subVector2(p, offset)),
+    style: {
+      ...lineStyle,
+      ...style,
+    },
   };
 }
 
-export function makePolygon(points: Vector2[]): Polygon {
+export function makePolygon(points: Vector2[], style: ShapeStyle): Polygon {
   const offset = points[0];
 
   return {
@@ -108,6 +145,10 @@ export function makePolygon(points: Vector2[]): Polygon {
     id: shortid(),
     offset,
     points: points.map((p) => subVector2(p, offset)),
+    style: {
+      ...shapeWithFillStyle,
+      ...style,
+    },
   };
 }
 

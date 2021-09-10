@@ -4,27 +4,28 @@ import rough from 'roughjs/bin/rough';
 
 import { useBattleScene } from './scene';
 import {
+  LAYERS,
   Shape,
+  ShapeStyle,
   ShapeTypes,
   Vector2,
   addVector2,
-  calculateCircleRadius,
   makeCircle,
   makeLine,
   makePolygon,
   makeSquare,
-  normalizeSquareVertex,
   sameVector2,
-  subVector2,
   transformTranslate,
 } from './utils';
 
 interface Props {
   type: ShapeTypes;
+  style: ShapeStyle;
+
   onDrawn: (s: Shape) => void;
 }
 
-export function Draw({ type, onDrawn }: Props): JSX.Element {
+export function Draw({ type, onDrawn, style }: Props): JSX.Element {
   const battleScene = useBattleScene();
   const svgRef = useRef<SVGSVGElement>(null);
   const penRef = useRef<SVGGElement>(null);
@@ -52,16 +53,14 @@ export function Draw({ type, onDrawn }: Props): JSX.Element {
             !sameVector2(firstClick, snappedXY) &&
             !sameVector2(placeholderXY.current, snappedXY)
           ) {
-            const [lt, rb] = normalizeSquareVertex(firstClick, snappedXY);
-            const [w, h] = subVector2(rb, lt);
-            const g = canvas.rectangle(0, 0, w, h);
+            const s = makeSquare(firstClick, snappedXY, style);
+            const g = canvas.rectangle(0, 0, s.w, s.h, s.style);
 
-            transformTranslate(g, lt);
+            transformTranslate(g, s.lt);
 
             if (placeholderRef.current) {
               svgRef.current.removeChild(placeholderRef.current);
             }
-
             svgRef.current.appendChild(g);
 
             placeholderRef.current = g;
@@ -70,38 +69,37 @@ export function Draw({ type, onDrawn }: Props): JSX.Element {
           break;
         case ShapeTypes.circle:
           if (firstClick && !sameVector2(firstClick, snappedXY)) {
-            const radius = calculateCircleRadius(firstClick, snappedXY);
+            const s = makeCircle(firstClick, snappedXY, style);
 
-            if (radius !== placeholderRadius.current) {
-              const r = canvas.circle(0, 0, radius * 2);
+            if (s.radius !== placeholderRadius.current) {
+              const g = canvas.circle(0, 0, s.radius * 2, s.style);
 
-              transformTranslate(r, firstClick);
+              transformTranslate(g, s.center);
 
               if (placeholderRef.current) {
                 svgRef.current.removeChild(placeholderRef.current);
               }
+              svgRef.current.appendChild(g);
 
-              svgRef.current.appendChild(r);
-
-              placeholderRef.current = r;
-              placeholderRadius.current = radius;
+              placeholderRef.current = g;
+              placeholderRadius.current = s.radius;
             }
           }
           break;
         case ShapeTypes.line:
         case ShapeTypes.poly:
           if (firstClick && !sameVector2(placeholderXY.current, snappedXY)) {
+            const points = [...clicks.current, snappedXY];
+            const s =
+              type === ShapeTypes.line ? makeLine(points, style) : makePolygon(points, style);
             const create = type === ShapeTypes.line ? 'linearPath' : 'polygon';
-            const g = canvas[create](
-              [...clicks.current, snappedXY].map((v) => subVector2(v, firstClick))
-            );
+            const g = canvas[create](s.points, s.style);
 
-            transformTranslate(g, firstClick);
+            transformTranslate(g, s.offset);
 
             if (placeholderRef.current) {
               svgRef.current.removeChild(placeholderRef.current);
             }
-
             svgRef.current.appendChild(g);
 
             placeholderRef.current = g;
@@ -121,14 +119,14 @@ export function Draw({ type, onDrawn }: Props): JSX.Element {
     switch (type) {
       case ShapeTypes.square:
         if (clicks.current.length === 2 && !sameVector2(clicks.current[0], clicks.current[1])) {
-          onDrawn(makeSquare(clicks.current[0], clicks.current[1]));
+          onDrawn(makeSquare(clicks.current[0], clicks.current[1], style));
 
           clicks.current = [];
         }
         break;
       case ShapeTypes.circle:
         if (clicks.current.length === 2 && !sameVector2(clicks.current[0], clicks.current[1])) {
-          onDrawn(makeCircle(clicks.current[0], clicks.current[1]));
+          onDrawn(makeCircle(clicks.current[0], clicks.current[1], style));
 
           clicks.current = [];
         }
@@ -140,7 +138,9 @@ export function Draw({ type, onDrawn }: Props): JSX.Element {
 
           if (lastClick && clicks.current.length >= 2 && sameVector2(snappedXY, lastClick)) {
             onDrawn(
-              type === ShapeTypes.line ? makeLine(clicks.current) : makePolygon(clicks.current)
+              type === ShapeTypes.line
+                ? makeLine(clicks.current, style)
+                : makePolygon(clicks.current, style)
             );
 
             clicks.current = [];
@@ -156,7 +156,7 @@ export function Draw({ type, onDrawn }: Props): JSX.Element {
         position: 'absolute',
         left: 0,
         top: 0,
-        zIndex: 1001,
+        zIndex: LAYERS.draw,
         width: '100%',
         height: '100%',
       }}
